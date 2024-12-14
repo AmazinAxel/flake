@@ -1,5 +1,11 @@
 { inputs, pkgs, ... }: {
-  
+  sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+    extraPackages = with pkgs; [ swayidle swww brightnessctl ];
+    #xwayland.enable = false;
+  };
+
   services = {
     devmon.enable = true; # Automatically mounts/unmounts attached drives
     udisks2.enable = true; # For getting info about drives

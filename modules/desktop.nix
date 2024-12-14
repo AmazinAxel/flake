@@ -15,6 +15,7 @@ in
 {
   imports = [
     ./hyprland.nix # Hyprland-specific config
+    ./sway.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -29,11 +30,11 @@ in
     mpc # CLI for the Ags music player
     copyq # Clipboard manager (TODO: replace with Ags clipboard system)
     emote # Emoji picker (TODO: replace with Ags emoji picker)
-    swww # Background manager w/ cool transitions - - remove when done migrating to sway
+    #swww # Background manager w/ cool transitions - - remove when done migrating to sway
     hyprlock # Lockscreen system (TODO: replace with Ags lockscreen system)
     jre # For Minecraft - uses the latest stable Java runtime version
     jdk23 # Java JDK version 23 for compling & running jars
-    brightnessctl # Controls laptop brightness - remove when done migrating to sway
+    #brightnessctl # Controls laptop brightness - remove when done migrating to sway
     wl-screenrec # Fast screen recorder
     grimblast # Screenshotting tool (TODO: replace with Grim)
     slurp # Screen selection tool for screenshots & screenrecording
@@ -124,12 +125,6 @@ in
         user.name = "AmazinAxel"; # Git
         push.autoSetupRemote = true;
       };
-    };
-    sway = {
-      enable = true;
-      wrapperFeatures.gtk = true;
-      extraPackages = with pkgs; [ swayidle swww ];
-      #xwayland.enable = false;
     };
   };
 
