@@ -10,11 +10,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    swayfx = { # Better sway compositor
+      url = "github:/WillPower3309/swayfx";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
     self,
     home-manager,
+    swayfx,
     nixpkgs,
     ...
   }: {
@@ -32,6 +38,7 @@
           ./hosts/common.nix
           ./modules/hyprland.nix
           ./modules/desktop.nix
+          swayfx
           home-manager.nixosModules.home-manager
         ];
         #host = {
