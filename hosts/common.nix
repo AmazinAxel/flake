@@ -1,17 +1,5 @@
 { inputs, config, pkgs, modulesPath, ... }: {
 
-  imports = [
-    #"${modulesPath}/profiles/perlless.nix"
-    /*/etc/nixos/hardware-configuration.nix
-    ./system.nix
-    ./audio.nix
-    ./locale.nix
-    ./nautilus.nix
-    ./laptop.nix
-    ./hyprland.nix
-    ./gnome.nix*/
-  ];
-
   home-manager = {
     backupFileExtension = "backup";
     useGlobalPkgs = true;
@@ -56,8 +44,6 @@
   };
 
   time.timeZone = "America/Los_Angeles"; # US West Coast
-
-  # Internationalization settings
   i18n.defaultLocale = "en_US.UTF-8";
 
   nixpkgs.config.allowUnfree = true; # Allow installing of non open-source applications
@@ -90,7 +76,6 @@
 
   # Remove even more useless stuff 
   environment.defaultPackages = []; # Remove all default packages
-  programs.less.lessopen = null;
   programs.command-not-found.enable = false; # Don't show recommendations when a package is missing
 
   # Even if the latest NixOS version is newer than this, we don't need to update.

@@ -1,16 +1,15 @@
 { inputs, config, lib, pkgs, makeDesktopItem, ... }:
 
 let
-  #makeWebappLib = import ../lib/makeWebapp.nix { inherit pkgs; };
-  #makeWebapp = makeWebappLib.makeWebapp;
+  makeWebappLib = import ../lib/makeWebapp.nix { inherit pkgs; };
+  makeWebapp = makeWebappLib.makeWebapp;
 
-  #webappName = makeWebappLib.makeWebapp {
-  #  name = "Webapp";
-  #  url = "amazinaxel.com/tools/textconverter";
-  #  icon = "view-grid-symbolic";
-  #  comment = "Webapp Description";
-  #};
-
+  textConvert = makeWebappLib.makeWebapp {
+    name = "Text Converter";
+    url = "amazinaxel.com/tools/textconverter";
+    icon = "insert-text-symbolic";
+    comment = "Minecraft small text converter";
+  };
 in
 {
   imports = [
@@ -67,7 +66,8 @@ in
     thunderbird # Best email/IRC client
     obs-studio # For better recording
     gnome-system-monitor # Task manager
-        
+    textConvert # AmazinAxel.com small text converter
+
     # Wayland MC
     (prismlauncher.override {
       glfw3-minecraft = glfw3-minecraft.overrideAttrs (prev: {
