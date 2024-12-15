@@ -10,11 +10,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    swayfx = { # Better sway compositor
-      url = "github:/WillPower3309/swayfx";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = inputs @ {
@@ -29,21 +24,14 @@
       # Laptop config
       "alecslaptop" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs;
-          #asztal = self.packages.x86_64-linux.default;
-        };
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecslaptop/default.nix
           ./hosts/common.nix
           ./modules/hyprland.nix
           ./modules/desktop.nix
-          swayfx
           home-manager.nixosModules.home-manager
         ];
-        #host = {
-        #  primaryMonitor = "HDMI-A-1";
-        #};
       };
 
       # Desktop config TODO add me

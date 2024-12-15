@@ -1,75 +1,64 @@
-set $mod Mod4
+{}:
+wayland.windowManager.sway = {
+  keybindings = let
+    mod = "Mod4";
+  in {
+    "${mod}+Shift+r" = "exec ags -q && ags"; # Restart Ags 
+    
+    # Volume & media controls
+    XF86AudioRaiseVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05+";
+    XF86AudioLowerVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05-";
+    XF86AudioMute = "exec wpctl set-mute @DEFAULT_SINK@ toggle";
 
-# Development settings to be disabled later!
-bindsym Ctrl+Shift+r exec ags quit; ags -b hypr && hyprctl reload # Restart Ags
+    # Brightness controls
+    XF86MonBrightnessUp = "exec brightnessctl set +5%";
+    XF86MonBrightnessDown = "exec brightnessctl set -5%";
 
-# Volume buttons + media controls
-bindsym XF86AudioRaiseVolume exec 'audio.speaker.volume += 0.05; indicator.speaker()'
-bindsym XF86AudioLowerVolume exec 'audio.speaker.volume -= 0.05; indicator.speaker()'
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
+    # Quick application access
+    XF86PowerOff = "exec ags -t powermenu"; # Power menu
+    "${mod}+e" = "exec microsoft-edge-stable";
+    "${mod}+Return" = "exec foot"; # Terminal
+    "${mod}+v" = "exec copyq toggle"; # Clipboard TODO replace w/ ags
+    "${mod}+space" = "exec ags -t launcher"; # App laucher
+    "${mod}+period" = "exec emote"; # Emoji picker TODO migrate to ags
+    # TODO: Make Super + C hide the last notification
 
-# Brightness buttons
-bindsym XF86MonBrightnessUp exec ags -r 'brightness.screen += 0.05; indicator.display()'
-bindsym XF86MonBrightnessDown exec ags -r 'brightness.screen -= 0.05; indicator.display()'
+    # Screen recording
+    "${mod}+R" = "exec ags -r 'recorder.start()'";
+    "Control+${mod}+R" = "exec ags -r 'recorder.start(true)'"; # Custom video selection size
+    Print = "exec ags -r 'recorder.screenshot()'";
+    "Shift+Print" = "exec ags -r 'recorder.screenshot(true)'"; # Fullscreen screensot
 
-# Quick application access
-bindsym $mod+e exec microsoft-edge-stable --enable-features=UseOzonePlatform --ozone-platform=wayland --gtk-version=4 --enable-wayland-ime
-bindsym $mod+Return exec foot # Terminal
+    # Mpc player manipluation (Ags integration)
+    # TODO: Add Super + , (left arrow) for previous track
+    # TODO: Add Super + . (right arrow) for next track
+    # TODO: Add super + / to play/pause MPC 
 
-# Wofi features
-bindsym $mod+period exec bemoji -n # Emoji picker
-bindsym $mod+v exec cliphist list | wofi --dmenu --allow-images | cliphist decode | wl-copy
+    # Widow positioning
+    "${mod}+Shift+Left" = "move left";
+    "${mod}+Shift+Right" = "move right";
+    "${mod}+Shift+Up" = "move up";
+    "${mod}+Shift+Down" = "move down";
 
-# Screenshot and screen recording tools
-bindsym $mod+r exec ags -r 'recorder.start()' 
-bindsym Print exec ags -r 'recorder.screenshot()'
-bindsym Print+Shift exec ags -r 'recorder.screenshot(true)' # Fullscreen screenshot
+    # Workspace, window, tab manipulation
+    "Control+${mod}+Right" = "workspace next";
+    "Control+${mod}+Left" = "workspace prev";
+    "Control+${mod}+bracketright" = "workspace next";
+    "Control+${mod}+bracketleft" = "workspace prev";
+    "Control+${mod}+Button2" = "workspace next";
+    "Control+${mod}+Button1" = "workspace prev";
+    "Control+${mod}+Shift+Right" = "move to workspace next";
+    "Control+${mod}+Shift+Left" = "move to workspace prev";
+    "${mod}+s" "togglefloating"; # Make window non-tiling
+    F11 = "fullscreen toggle"; # F11 functionality
+    "${mod}+q" = "kill" # Close window
 
-# Desktop utilities
-bindsym $mod+s togglefloating # Make window non-tiling
-
-# App launcher
-bindsym $mod+space exec ags -t applauncher
-
-# Using $mod + F will make that workspace floating
-bindsym $mod+f workspace all floating enable
-
-# Move windows around
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Right move right
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Down move down
-
-# Workspace, window, tab switch with keyboard
-bindsym Control+$mod+Right workspace next
-bindsym Control+$mod+Left workspace prev
-bindsym Control+$mod+bracketleft workspace prev
-bindsym Control+$mod+bracketright workspace next
-bindsym Control+$mod+Button1 workspace prev
-bindsym Control+$mod+Button2 workspace next
-bindsym Control+$mod+Shift+Right move to workspace next
-bindsym Control+$mod+Shift+Left move to workspace prev
-
-# Alt+Tab functionality
-bindsym Alt+Tab focus right
-bindsym Alt+Shift+Tab focus left
-
-# Fullscreen
-bindsym F11 fullscreen toggle # F11 functionality
-
-# Close window
-bindsym $mod+q kill
-
-# Scroll through workspaces
-bindsym $mod+Button4 workspace next
-bindsym $mod+Button5 workspace prev
-
-# Move and resize windows
-bindsym $mod+Button1 move
-bindsym $mod+Button3 resize
-
-# Reload sway easily
-bindsym Mod4+Shift+c reload
+    # Scroll through workspaces
+    "${mod}+Button4" = "workspace next";
+    "${mod}+Button5" = "workspace prev";
+    
+    # Move and resize windows
+    "${mod}+Button1" = "move";
+    "${mod}+Button3" = "resize";
+  };
+}

@@ -12,6 +12,9 @@
     ./starship.nix
     ./swappy.nix
     ./vscode.nix
+
+    ./sway/sway.nix
+    ./sway/keybinds.nix
   ];
 
   # Adds all wallpapers

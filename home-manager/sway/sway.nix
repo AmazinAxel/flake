@@ -1,3 +1,49 @@
+{
+  wayland.windowManager.sway = {
+    enable = true;
+    package = pkgs.swayfx;
+
+    checkConfig = false;
+    wrapperFeatures.gtk = true;
+
+    config = {
+      # super key
+      modifier = "Mod4";
+
+      bars = [];
+
+      gaps = {
+        outer = 0;
+        inner = 15;
+      };
+
+      input = {
+        "*".xkb_variant = "nodeadkeys";
+        "type:touchpad".tap = "enabled";
+      };
+
+      output = {
+        "*" = {
+          background = "~/.config/wallpaper.jpeg fill";
+          scale = 1.3;
+        };
+        "HDMI-A-1".pos = "1280 0";
+      };
+
+
+
+
+
+
+
+    # SwayFX settings
+    extraConfig = ''
+      for_window [app_id="foot"] blur enable
+      blur_radius 10
+      corner_radius 4
+    '';
+  };
+}
 # Variables
 set $mod Mod4
 
@@ -29,13 +75,6 @@ set $ws7   7:7
 set $ws8   8:8
 set $ws9   9:9
 
-# SwayFX eye candy
-
-blur enable
-blur_radius 10
-scratchpad_minimize enable
-corner_radius 4
-
 # Font
 font pango:monospace 5
 
@@ -60,25 +99,12 @@ exec --no-startup-id wl-paste --type image --watch cliphist store # Enable wayla
 exec --no-startup-id wl-paste -p --watch wl-copy -p '' # Disables middle mouse paste
 exec --no-startup-id gammastep -O 4000 # Screen color temp (filters blue light)
 
-# Input configuration
-input * {
-    xkb_variant nodeadkeys
-}
-
-input type:touchpad {
-    tap enabled
-}
-
-# Output configuration
-output * bg ~/.config/wallpaper.jpeg fill
-output * scale 1.3
-
 # Idle configuration
 exec swayidle \
-    timeout 300 'exec $lock' \
-    timeout 600 'swaymsg "output * dpms off"' \
-    after-resume 'swaymsg "output * dpms on"' \
-    before-sleep 'exec $lock'
+  timeout 300 'exec $lock' \
+  timeout 600 'swaymsg "output * dpms off"' \
+  after-resume 'swaymsg "output * dpms on"' \
+  before-sleep 'exec $lock'
 
 # Toggle the current focus between tiling and floating mode
 bindsym $mod+Shift+space floating toggle
@@ -91,14 +117,14 @@ bindsym $mod+x scratchpad show
 
 # Modes
 mode "resize" {
-    bindsym Left resize shrink width 10px
-    bindsym Down resize grow height 10px
-    bindsym Up resize shrink height 10px
-    bindsym Right resize grow width 10px
+  bindsym Left resize shrink width 10px
+  bindsym Down resize grow height 10px
+  bindsym Up resize shrink height 10px
+  bindsym Right resize grow width 10px
 
-    # return to default mode
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
+  # return to default mode
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
 }
 bindsym $mod+Control+r mode "resize"
 
