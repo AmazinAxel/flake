@@ -20,7 +20,7 @@ in
   environment.systemPackages = with pkgs; [
     ags # Widget system & desktop overlay
     foot # Terminal
-    nordic # GTK theme - must add it here to apply system-wide
+    #graphite-gtk-theme # GTK theme - must add it here to apply system-wide
     bun # Fast all-in-one JS toolkit 
     dart-sass # Ags Desktop dependency
     fd # Ags Desktop dependency
