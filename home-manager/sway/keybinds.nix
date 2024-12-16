@@ -1,8 +1,5 @@
 {
   wayland.windowManager.sway.config = {
-    menu = "ags -t launcher";
-    #terminal = "foot";
-    
     keybindings = let
       mod = "Mod4";
     in {

@@ -2,7 +2,7 @@
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
-    extraPackages = with pkgs; [ swayidle swww brightnessctl ];
+    extraPackages = with pkgs; [ swayidle swww brightnessctl gammastep bibata-cursors ];
     #xwayland.enable = false;
   };
 
