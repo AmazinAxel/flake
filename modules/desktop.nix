@@ -144,7 +144,6 @@ in
       ];
 
       waylandFrontend = true; # Hide warnings on Wayland
-      ignoreUserConfig = true; # Ignore .config options - only Nix config applies
       settings = {
         inputMethod = { # Options in 'fcitx5/profile'
           "Groups/0" = {

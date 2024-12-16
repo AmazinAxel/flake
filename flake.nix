@@ -15,7 +15,6 @@
   outputs = inputs @ {
     self,
     home-manager,
-    swayfx,
     nixpkgs,
     ...
   }: {

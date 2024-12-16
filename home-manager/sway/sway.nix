@@ -1,40 +1,114 @@
-{
+{ pkgs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
     package = pkgs.swayfx;
 
     checkConfig = false;
     wrapperFeatures.gtk = true;
-
+# INSTALL GAMMASTEP - temporary until Swayfx filter system is finished
     config = {
       # super key
       modifier = "Mod4";
-
-      bars = [];
-
+      bars = []; # No default ugly sway bar
       gaps = {
         outer = 0;
         inner = 15;
       };
+
+      #workspaceLayout = "tabbed";
+      workspaceAutoBackAndForth = true;
 
       input = {
         "*".xkb_variant = "nodeadkeys";
         "type:touchpad".tap = "enabled";
       };
 
-      output = {
+      output = { # Monitors
         "*" = {
           background = "~/.config/wallpaper.jpeg fill";
-          scale = 1.3;
+          scale = "1.3";
         };
         "HDMI-A-1".pos = "1280 0";
       };
 
+      colors = let # Color vars
+        dark0 = "#2e3440"; # Darkest
+        dark4 = "#4c566a"; # Dark
+        white0 = "#d8dee9"; # Off-white
+        white1 = "e5e9f0"; # White
+        white2 = "#eceff4"; # Snow White
 
+      in {
+        background = ""; # background color of window
+        
+        focused = { # focused window
+          background = "#285577";
+          border = "#4c7899";
+          childBorder = "#285577";
+          indicator = "#2e9ef4";
+          text = "#ffffff";
+        };
 
+        /*focusedInactive = {
 
+        };
 
+        placeholder = {
 
+        };
+
+        unfocused = {
+
+        };
+
+        urgent = {
+
+        };
+
+        # Main (blue)
+        set $cl_high #81A1C1
+        # Indicator (gray)
+        set $cl_indi #D8DEE9
+        # Background (black)
+        set $cl_back #3B4252
+        # Foreground (gray)
+        set $cl_fore #ECEFF4
+        # Urgent (red)
+        set $cl_urge #BF616A
+
+        # Color group       border     bg         text       indi       childborder
+        focused          = "${cl_high} ${cl_high} ${cl_fore} ${cl_indi} ${cl_high}";
+        focused_inactive = "${cl_back} ${cl_back} ${cl_fore} ${cl_back} ${cl_back}";
+        unfocused        = "${cl_back} ${cl_back} ${cl_fore} ${cl_back} ${cl_back}";
+        urgent           = "${cl_urge} ${cl_urge} ${cl_fore} ${cl_urge} ${cl_urge}";*/
+      };
+
+      
+
+      window = {
+        border = 5;
+        titlebar = false;
+        #commands = [
+        #  {
+        #    floating = false;
+        #    criteria.class = "Minecraft";
+        #  }
+        #];
+        hideEdgeBorders = "smart"; # or "both" or "none"
+      };
+
+      # Windows that should be opened in floating mode
+      #floating = [
+      #  { title = ""; }
+      #  { class = ""; }
+      #];
+
+      startup = [
+        { command = "ags &"; always = true; }
+      ];
+
+      #xwayland = false;
+    };
 
     # SwayFX settings
     extraConfig = ''
@@ -42,93 +116,11 @@
       blur_radius 10
       corner_radius 4
     '';
+
+    extraSessionCommands = ''
+      export SDL_VIDEODRIVER=wayland
+      export QT_QPA_PLATFORM=wayland
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+    '';
   };
 }
-# Variables
-set $mod Mod4
-
-# Main (blue)
-set $cl_high #81A1C1
-# Indicator (gray)
-set $cl_indi #D8DEE9
-# Background (black)
-set $cl_back #3B4252
-# Foreground (gray)
-set $cl_fore #ECEFF4
-# Urgent (red)
-set $cl_urge #BF616A
-
-# Colors                border   bg       text     indi     childborder
-client.focused          $cl_high $cl_high $cl_fore $cl_indi $cl_high
-client.focused_inactive $cl_back $cl_back $cl_fore $cl_back $cl_back
-client.unfocused        $cl_back $cl_back $cl_fore $cl_back $cl_back
-client.urgent           $cl_urge $cl_urge $cl_fore $cl_urge $cl_urge
-
-# workspaces
-set $ws1   1:1
-set $ws2   2:2
-set $ws3   3:3
-set $ws4   4:4
-set $ws5   5:5
-set $ws6   6:6
-set $ws7   7:7
-set $ws8   8:8
-set $ws9   9:9
-
-# Font
-font pango:monospace 5
-
-# Window borders
-default_border pixel 2
-default_floating_border none
-
-gaps inner 5
-
-# Desktop components
-exec --no-startup-id ags
-exec --no-startup-id dbus-update-activation-environment --all &
-exec --no-startup-id fcitx5 & # Enable Chinese + English language switching
-#exec_always /usr/bin/gnome-keyring-daemon --start --components=secrets &
-#exec_always /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-exec --no-startup-id swayidle -w timeout 300 'gtklock' before-sleep 'gtklock' & # Change gtklock to my custom lockscreen!
-exec --no-startup-id swayidle -w timeout 450 'pidof java || systemctl suspend' & # dont sleep if playing minecraft, else nvidia will die
-exec --no-startup-id dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-#exec --no-startup-id swaybg -i ~/.config/wallpaper.jpeg
-exec --no-startup-id wl-paste --type text --watch cliphist store # Enable wayland paste
-exec --no-startup-id wl-paste --type image --watch cliphist store # Enable wayland image paste
-exec --no-startup-id wl-paste -p --watch wl-copy -p '' # Disables middle mouse paste
-exec --no-startup-id gammastep -O 4000 # Screen color temp (filters blue light)
-
-# Idle configuration
-exec swayidle \
-  timeout 300 'exec $lock' \
-  timeout 600 'swaymsg "output * dpms off"' \
-  after-resume 'swaymsg "output * dpms on"' \
-  before-sleep 'exec $lock'
-
-# Toggle the current focus between tiling and floating mode
-bindsym $mod+Shift+space floating toggle
-
-# Move the currently focused window to the scratchpad
-bindsym $mod+z move scratchpad
-# Show the next scratchpad window or hide the focused scratchpad window.
-# If there are multiple scratchpad windows, this command cycles through them.
-bindsym $mod+x scratchpad show
-
-# Modes
-mode "resize" {
-  bindsym Left resize shrink width 10px
-  bindsym Down resize grow height 10px
-  bindsym Up resize shrink height 10px
-  bindsym Right resize grow width 10px
-
-  # return to default mode
-  bindsym Return mode "default"
-  bindsym Escape mode "default"
-}
-bindsym $mod+Control+r mode "resize"
-
-# Include keybinds
-include ~/.config/sway/keybinds
-
-INSTALL GAMMASTEP - temporary until Swayfx filter system is finished
