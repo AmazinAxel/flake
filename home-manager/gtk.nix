@@ -19,12 +19,6 @@
             package = pkgs.nerd-fonts.ubuntu-sans; 
             size = 11;
         };
-        # Although we use Hyprcursor, GTK apps use their own cursor for some reason
-        #cursorTheme = {
-        #    name = "Bibata-Modern-Ice";
-        #    package = pkgs.bibata-cursors;
-        #    size = 24;
-        #};
         iconTheme = {
             name = "MoreWaita";
             package = pkgs.morewaita-icon-theme;
@@ -33,7 +27,7 @@
             name = "Graphite-Dark-nord";
             package = (pkgs.graphite-gtk-theme.override {
                 tweaks = [ "nord" ];
-                themeVariants = [ "default" ]; # default: grey | teal, blue
+                themeVariants = [ "default" ]; # default: grey | teal, blue TODO see if blue looks better
                 colorVariants = [ "dark" ];
             });
         };
@@ -51,7 +45,8 @@
     home.pointerCursor = {
         name = "Bibata-Modern-Ice";
         package = pkgs.bibata-cursors;
-        size = 16;
+        size = 24;
+        gtk.enable = true;
         #x11.enable = true; # for sway maybe??
     };
 }

@@ -2,7 +2,7 @@
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
-    extraPackages = with pkgs; [ swayidle swww brightnessctl gammastep bibata-cursors ];
+    extraPackages = with pkgs; [ swayidle swww brightnessctl gammastep ];
     #xwayland.enable = false;
   };
 
@@ -19,7 +19,6 @@
     xdg-desktop-portal-wlr
     adwaita-icon-theme # Icon theme
     gnome-bluetooth # Bluetooth service
-    bibata-cursors # Custom cursor (for GTK & xwayland apps) - unrelated to Hyprcursor
   ];
 
   # Enable custom fonts

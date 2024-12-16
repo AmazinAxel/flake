@@ -18,7 +18,6 @@
     xdg-desktop-portal-wlr
     adwaita-icon-theme # Icon theme
     gnome-bluetooth # Bluetooth service
-    bibata-cursors # Custom cursor (for GTK & xwayland apps) - unrelated to Hyprcursor
   ];
 
   # Enable custom fonts
