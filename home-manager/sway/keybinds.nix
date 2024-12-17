@@ -4,7 +4,7 @@
       mod = "Mod4";
     in {
       "${mod}+Shift+r" = "exec ags -q && ags"; # Restart Ags 
-      
+      "${mod}+Shift+c" = "reload"; # Sway reload for quick config
       # Volume & media controls
       XF86AudioRaiseVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05+";
       XF86AudioLowerVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05-";

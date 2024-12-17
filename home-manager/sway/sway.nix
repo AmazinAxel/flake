@@ -20,6 +20,10 @@
       input = {
         "*".xkb_variant = "nodeadkeys";
         "type:touchpad".tap = "enabled";
+        "type:keyboard" = {
+          repeat_delay = "200";
+          repeat_rate = "30";
+        };
       };
 
       output = { # Monitors
@@ -113,6 +117,7 @@
         { command = "emote"; } # TODO replace with ags
         { command = "mpd"; } # Daemon for mpc player
         { command = "sleep 10 && reminders"; } # TODO replace with ags
+        { command = "spice-vdagent"; } # TODO remove when finished with vm
         # TODO set up swayidle
       ];
 

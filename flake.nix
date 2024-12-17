@@ -5,6 +5,9 @@
     # Nixpkgs - always pull from unstable
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Widget system - Ags v2
+    ags.url = "github:Aylur/ags";
+
     # Manages home configs
     home-manager = {
       url = "github:nix-community/home-manager";

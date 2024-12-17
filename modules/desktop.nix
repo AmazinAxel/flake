@@ -16,7 +16,6 @@ in
 
   environment.systemPackages = with pkgs; [
     #gnome-boxes # For sway branch development
-    ags # Widget system & desktop overlay
     foot # Terminal
     #graphite-gtk-theme # GTK theme - must add it here to apply system-wide
     bun # Fast all-in-one JS toolkit 
@@ -128,6 +127,16 @@ in
   # For gnome-boxes & vm stuff
   virtualisation.libvirtd.enable = true;
   services.spice-vdagentd.enable = true;
+  systemd.user.services.spice-vdagent-client = {
+    description = "spice-vdagent client";
+    wantedBy = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.spice-vdagent}/bin/spice-vdagent -x";
+      Restart = "on-failure";
+      RestartSec = "5";
+    };
+  };
+  systemd.user.services.spice-vdagent-client.enable = lib.mkDefault true;
 
   # Keyboard layout & language (with Chinese support)
   i18n.inputMethod = {
