@@ -60,6 +60,9 @@
       # Move and resize windows
       "${mod}+Button1" = "move";
       "${mod}+Button3" = "resize";
+
+      # Alt+tab functionality
+      "${mod}+tab" = "workspace back_and_forth";
     };
   };
 }

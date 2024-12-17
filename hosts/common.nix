@@ -57,7 +57,7 @@
   
   users.users.alec = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "video" "networkmanager" ]; 
+    extraGroups = [ "wheel" "audio" "video" "networkmanager" "libvirtd" ]; 
   };
 
   # Random settings to optimize the system

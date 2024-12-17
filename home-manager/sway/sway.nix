@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
-    package = pkgs.swayfx;
+    package = pkgs.sway;
 
     checkConfig = false;
     wrapperFeatures.gtk = true;
@@ -23,10 +23,7 @@
       };
 
       output = { # Monitors
-        "*" = {
-          background = "~/.config/wallpaper.jpeg fill";
-          scale = "1.3";
-        };
+        #"*".scale = "1.3";
         "HDMI-A-1".pos = "1280 0";
       };
 
@@ -47,9 +44,7 @@
         yellow = "#ebcb8b";
         orange = "#d08770";
         red = "#bf616a";
-      in {
-        background = ""; # background color of window
-        
+      in {        
         focused = { # focused window
           background = blue0;
           border = blue0;
@@ -125,11 +120,11 @@
     };
 
     # SwayFX settings
-    extraConfig = ''
-      for_window [app_id="foot"] blur enable
-      blur_radius 10
-      corner_radius 4
-    '';
+    #extraConfig = ''
+    #  for_window [app_id="foot"] blur enable
+    #  blur_radius 10
+    #  corner_radius 4
+    #'';
     # may have to add this to extraConfig: seat seat0 xcursor_theme Bibata-Modern-Ice 24
 
     extraSessionCommands = ''

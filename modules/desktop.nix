@@ -18,6 +18,7 @@ in
   ];
 
   environment.systemPackages = with pkgs; [
+    gnome-boxes # For sway branch development
     ags # Widget system & desktop overlay
     foot # Terminal
     #graphite-gtk-theme # GTK theme - must add it here to apply system-wide
@@ -127,6 +128,10 @@ in
       };
     };
   };
+
+  # For gnome-boxes & vm stuff
+  virtualisation.libvirtd.enable = true;
+
 
   # Keyboard layout & language (with Chinese support)
   i18n.inputMethod = {
