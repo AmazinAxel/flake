@@ -25,9 +25,8 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/vm/hardware-configuration.nix
+          ./hosts/alecslaptop/default.nix
           ./hosts/common.nix
-          #./modules/hyprland.nix
           ./modules/desktop.nix
           home-manager.nixosModules.home-manager
         ];
@@ -43,6 +42,18 @@
           #home-manager.nixosModules.home-manager
         ];
       };*/
+
+      # VM config
+      "vm" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/vm/hardware-configuration.nix
+          ./hosts/common.nix
+          ./modules/desktop.nix
+          home-manager.nixosModules.home-manager
+        ];
+      };
 
       # Raspberry Pi
       /*"alecpi" = nixpkgs.lib.nixosSystem {

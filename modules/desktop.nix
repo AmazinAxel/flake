@@ -12,10 +12,7 @@ let
   };
 in
 {
-  imports = [
-    #./hyprland.nix # Hyprland-specific config
-    ./sway.nix
-  ];
+  imports = [ ./sway.nix ];
 
   environment.systemPackages = with pkgs; [
     #gnome-boxes # For sway branch development
@@ -30,8 +27,6 @@ in
     mpc # CLI for the Ags music player
     copyq # Clipboard manager (TODO: replace with Ags clipboard system)
     emote # Emoji picker (TODO: replace with Ags emoji picker)
-    #swww # Background manager w/ cool transitions - - remove when done migrating to sway
-    hyprlock # Lockscreen system (TODO: replace with Ags lockscreen system)
     jre # For Minecraft - uses the latest stable Java runtime version
     jdk23 # Java JDK version 23 for compling & running jars
     #brightnessctl # Controls laptop brightness - remove when done migrating to sway
@@ -123,7 +118,8 @@ in
         core.editor = "codium";
         credential.helper = "store";
         github.user = "AmazinAxel"; # Github
-        user.name = "AmazinAxel"; # Git
+        user.name = "AmazinAxel";
+        user.email = "[Private]"; 
         push.autoSetupRemote = true;
       };
     };

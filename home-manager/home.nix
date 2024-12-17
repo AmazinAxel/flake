@@ -1,8 +1,8 @@
 { lib, config, pkgs, ... }: {
   imports = [
-    #./hypr/hyprland.nix
-    #./hypr/keybinds.nix
-    #./hypr/hyprlock.nix
+    ./sway/sway.nix
+    ./sway/keybinds.nix
+    
     ./fastfetch.nix # TODO remove me after patching microfetch
     ./fish.nix
     ./fonts.nix
@@ -12,9 +12,6 @@
     ./starship.nix
     ./swappy.nix
     ./vscode.nix
-
-    ./sway/sway.nix
-    ./sway/keybinds.nix
   ];
 
   programs.home-manager.enable = true;

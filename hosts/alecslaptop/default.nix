@@ -1,9 +1,7 @@
 { inputs, config, lib, pkgs, ... }:
 
 {
-  imports = [
-    ./hardware-configuration.nix # Hardware-specific settings
-  ];
+  imports = [ ./hardware-configuration.nix ]; # Hardware-specific settings
 
   networking.hostName = "alecslaptop"; # Hostname
   

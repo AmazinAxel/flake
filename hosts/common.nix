@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, modulesPath, ... }: {
+{ inputs, config, pkgs, modulesPath, lib, ... }: {
 
   home-manager = {
     backupFileExtension = "backup";
@@ -15,8 +15,8 @@
   # Optimized bootloader settings
   boot = {
     loader = {
-      #systemd-boot.enable = true; # Systemd boot
-      #efi.canTouchEfiVariables = false;
+      systemd-boot.enable = lib.mkDefault true; # Systemd boot
+      efi.canTouchEfiVariables = true;
       timeout = 0; # Hold down space on boot to access menu
       systemd-boot.configurationLimit = 3; # Save space in the /boot partition
     };
