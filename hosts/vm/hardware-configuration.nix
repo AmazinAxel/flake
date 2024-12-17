@@ -9,14 +9,13 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  # Enable grub & disable systemd boot because of weird rebuild bug
+  # When booting UEFI we can use systemd boot but qemu only supports BIOS by default
+  # so we enable grub & disable systemd boot
   boot.loader = {
     systemd-boot.enable = false;
     grub = {
-      enable = true;
-      device = "nodev"; 
-      efiSupport = true;
-      efiInstallAsRemovable = false;
+      enable = false;
+      device = "nodev";
     };
   };
 

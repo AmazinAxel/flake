@@ -3,7 +3,6 @@
     ./sway/sway.nix
     ./sway/keybinds.nix
     
-    ./fastfetch.nix # TODO remove me after patching microfetch
     ./fish.nix
     ./fonts.nix
     ./foot.nix
@@ -32,7 +31,6 @@
       package = pkgs.bibata-cursors;
       size = 24;
       gtk.enable = true;
-      #x11.enable = true; # TODO for sway maybe??
     };
   };
 
