@@ -13,12 +13,12 @@ let
 in
 {
   imports = [
-    ./hyprland.nix # Hyprland-specific config
+    #./hyprland.nix # Hyprland-specific config
     ./sway.nix
   ];
 
   environment.systemPackages = with pkgs; [
-    gnome-boxes # For sway branch development
+    #gnome-boxes # For sway branch development
     ags # Widget system & desktop overlay
     foot # Terminal
     #graphite-gtk-theme # GTK theme - must add it here to apply system-wide
@@ -56,56 +56,56 @@ in
     starship # Fish prompt theme
 
     # Normal user apps
-    microsoft-edge # Web browser
-    neovide # GUI-based Neovim
+    #microsoft-edge # Web browser
+    #neovide # GUI-based Neovim
     vscodium # Backup IDE (Neovim is main)
-    discord-canary # Voice & video chat app
-    libsForQt5.kdenlive # Video editor
-    lunar-client # PvP Minecraft client
-    blockbench-electron # Minecraft 3D modeler
-    jetbrains.idea-community # Jetbrains IDEA
-    thunderbird # Best email/IRC client
-    obs-studio # For better recording
-    gnome-system-monitor # Task manager
-    textConvert # AmazinAxel.com small text converter
+    #discord-canary # Voice & video chat app
+    #libsForQt5.kdenlive # Video editor
+    #lunar-client # PvP Minecraft client
+    #blockbench-electron # Minecraft 3D modeler
+    #jetbrains.idea-community # Jetbrains IDEA
+    #thunderbird # Best email/IRC client
+    #obs-studio # For better recording
+    #gnome-system-monitor # Task manager
+    #textConvert # AmazinAxel.com small text converter
 
     # Wayland MC
-    (prismlauncher.override {
-      glfw3-minecraft = glfw3-minecraft.overrideAttrs (prev: {
-        patches = [ ../overlays/glfw/Key-Modifiers-Fix.patch ];
-      });
-    })
-
+    #(prismlauncher.override {
+    #  glfw3-minecraft = glfw3-minecraft.overrideAttrs (prev: {
+    #    patches = [ ../overlays/glfw/Key-Modifiers-Fix.patch ];
+    #  });
+    #})
+#
     (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     (writeScriptBin "reminders" (builtins.readFile ../scripts/reminders.fish))
     (writeScriptBin "spotify-sync" (builtins.readFile ../scripts/spotify-sync.fish))
 
-    gimp # GNU image manipulation program
-    teams-for-linux # Unoffical MS Teams client
-    libreoffice # Preview Word documents and Excel sheets
-    spotdl # Download Spotify playlists
+    #gimp # GNU image manipulation program
+    #teams-for-linux # Unoffical MS Teams client
+    #libreoffice # Preview Word documents and Excel sheets
+    #spotdl # Download Spotify playlists
 
     # this needs to be removed after fixed https://github.com/russelltg/wl-screenrec/issues/50
-    wf-recorder
+    #wf-recorder
 
     # Patched fetch program
-    (microfetch.overrideAttrs ({ patches, ... }: {
-      patches = [ ../overlays/microfetch/Microfetch.patch ];
-    }))
+    #(microfetch.overrideAttrs ({ patches, ... }: {
+    #  patches = [ ../overlays/microfetch/Microfetch.patch ];
+    #}))
 
     
-    (pkgs.makeDesktopItem { # War Thunder
-      comment = "The most comprehensive free-to-play, cross-platform, MMO military game with over 2000 vehicles.";
-      desktopName = "War Thunder";
-      exec =  "steam-run /home/alec/Desktop/WarThunder/launcher";
-      genericName = "The most comprehensive free-to-play, cross-platform, MMO military game with over 2000 vehicles.";
-      icon = "/home/alec/Desktop/WarThunder/launcher.ico";
-      name = "warthunder";
-      startupNotify = true;
-      startupWMClass = "warthunder";
-      terminal = false;
-      type = "Application";
-    })
+    #(pkgs.makeDesktopItem { # War Thunder
+    #  comment = "The most comprehensive free-to-play, cross-platform, MMO military game with over 2000 vehicles.";
+    #  desktopName = "War Thunder";
+    #  exec =  "steam-run /home/alec/Desktop/WarThunder/launcher";
+    #  genericName = "The most comprehensive free-to-play, cross-platform, MMO military game with over 2000 vehicles.";
+    #  icon = "/home/alec/Desktop/WarThunder/launcher.ico";
+    #  name = "warthunder";
+    #  startupNotify = true;
+    #  startupWMClass = "warthunder";
+    #  terminal = false;
+    #  type = "Application";
+    #})
   ];
 
   programs = {
@@ -131,7 +131,7 @@ in
 
   # For gnome-boxes & vm stuff
   virtualisation.libvirtd.enable = true;
-
+  services.spice-vdagentd.enable = true;
 
   # Keyboard layout & language (with Chinese support)
   i18n.inputMethod = {

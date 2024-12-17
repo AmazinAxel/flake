@@ -14,9 +14,9 @@
 
     polkit_gnome
     gsettings-desktop-schemas
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-hyprland
-    xdg-desktop-portal-wlr
+    #xdg-desktop-portal-gtk
+   # xdg-desktop-portal-hyprland
+    #xdg-desktop-portal-wlr
     adwaita-icon-theme # Icon theme
     gnome-bluetooth # Bluetooth service
   ];
@@ -38,12 +38,12 @@
     devmon.enable = true; # Automatically mounts/unmounts attached drives
     #udisks2.enable = true; # For getting info about drives
     #gnome.gnome-keyring.enable = true; # TODO learn how to properly set up keyring
-    #greetd = {
-    #  enable = true;
-    #  settings.default_session = {
-    #    command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --cmd dbus-run-session ${pkgs.swayfx}/bin/sway";
-    #    user = "greeter"; # Probably not required
-    #  };
-    #};
+    greetd = {
+      enable = true;
+      settings.default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --cmd dbus-run-session ${pkgs.swayfx}/bin/sway";
+        user = "greeter"; # Probably not required
+      };
+    };
   };
 }

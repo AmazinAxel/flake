@@ -25,9 +25,9 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/alecslaptop/default.nix
+          ./hosts/vm/hardware-configuration.nix
           ./hosts/common.nix
-          ./modules/hyprland.nix
+          #./modules/hyprland.nix
           ./modules/desktop.nix
           home-manager.nixosModules.home-manager
         ];

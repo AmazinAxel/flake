@@ -32,41 +32,41 @@
     wqy_zenhei # Chinese font for generally cleaner chars
   ];
   
-  programs.hyprland.enable = true;
+  #programs.hyprland.enable = true;
 
-  xdg.autostart.enable = true;
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [ 
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-hyprland
-      xdg-desktop-portal-wlr
-    ];
-  };
+  #xdg.autostart.enable = true;
+  #xdg.portal = {
+  #  enable = true;
+  #  extraPortals = with pkgs; [ 
+  #    xdg-desktop-portal-gtk
+  #    xdg-desktop-portal-hyprland
+  #    xdg-desktop-portal-wlr
+  #  ];
+  #};
 
   # Required for hyprlock to work with home-manager
-  security.pam.services.hyprlock = {};
+  #security.pam.services.hyprlock = {};
 
   # Set all Electron apps to use Wayland by default 
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  #environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  security.polkit.enable = true;
+  #security.polkit.enable = true;
 
-  systemd = {
-    user.services.polkit-gnome-authentication-agent-1 = {
-      description = "polkit-gnome-authentication-agent-1";
-      wantedBy = [ "graphical-session.target" ];
-      wants = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-        Restart = "on-failure";
-        RestartSec = 1;
-        TimeoutStopSec = 10;
-      };
-    };
-  };
+  #systemd = {
+  #  user.services.polkit-gnome-authentication-agent-1 = {
+  #    description = "polkit-gnome-authentication-agent-1";
+  #    wantedBy = [ "graphical-session.target" ];
+  #    wants = [ "graphical-session.target" ];
+  #    after = [ "graphical-session.target" ];
+  #    serviceConfig = {
+  #      Type = "simple";
+  #      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+  #      Restart = "on-failure";
+  #      RestartSec = 1;
+  #      TimeoutStopSec = 10;
+  #    };
+  #  };
+  #};
 
   services = {
     devmon.enable = true; # Automatically mounts/unmounts attached drives
@@ -75,14 +75,14 @@
     greetd = {
       enable = true;
       settings.default_session = {
-        command = "Hyprland";
+        command = "sway";
         user = "alec"; # Probably not required
       };
     };
   };
 
-  environment.sessionVariables = {
-    POLKIT_AUTH_AGENT = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-    GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas";
-  };
+  #environment.sessionVariables = {
+  #  POLKIT_AUTH_AGENT = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+  #  GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas";
+  #};
 }

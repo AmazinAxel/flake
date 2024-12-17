@@ -1,8 +1,8 @@
 { lib, config, pkgs, ... }: {
   imports = [
-    ./hypr/hyprland.nix
-    ./hypr/keybinds.nix
-    ./hypr/hyprlock.nix
+    #./hypr/hyprland.nix
+    #./hypr/keybinds.nix
+    #./hypr/hyprlock.nix
     ./fastfetch.nix # TODO remove me after patching microfetch
     ./fish.nix
     ./fonts.nix

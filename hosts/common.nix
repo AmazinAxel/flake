@@ -15,8 +15,8 @@
   # Optimized bootloader settings
   boot = {
     loader = {
-      systemd-boot.enable = true; # Systemd boot
-      efi.canTouchEfiVariables = true;
+      #systemd-boot.enable = true; # Systemd boot
+      #efi.canTouchEfiVariables = false;
       timeout = 0; # Hold down space on boot to access menu
       systemd-boot.configurationLimit = 3; # Save space in the /boot partition
     };
