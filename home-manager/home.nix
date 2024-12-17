@@ -1,4 +1,4 @@
-{ lib, config, ... }: {
+{ lib, config, pkgs, ... }: {
   imports = [
     ./hypr/hyprland.nix
     ./hypr/keybinds.nix
@@ -17,17 +17,26 @@
     ./sway/keybinds.nix
   ];
 
-  # Adds all wallpapers
-  home.file."wallpapers" = {
-    target = "./wallpapers";
-    source = ./wallpapers;
-  };
-
   programs.home-manager.enable = true;
   systemd.user.startServices = "sd-switch"; # Better system unit reloads
   home = {
     packages = lib.mkForce []; # Don't install packages to user PATH
     stateVersion = "23.05";
+
+    # Symlink all wallpapers
+    file."wallpapers" = {
+      target = "./wallpapers";
+      source = ./wallpapers;
+    };
+
+    # Glboal cursor system
+    pointerCursor = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 24;
+      gtk.enable = true;
+      #x11.enable = true; # TODO for sway maybe??
+    };
   };
 
   xdg = {
@@ -42,7 +51,7 @@
     };
   };
 
-  # for postmarketos
+  # for postmarketos to optimize local connection
   programs.ssh.enable = true;
   programs.ssh.extraConfig = ''
     Host 172.16.42.1 pmos

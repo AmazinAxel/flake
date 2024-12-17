@@ -27,7 +27,7 @@
             name = "Graphite-Dark-nord";
             package = (pkgs.graphite-gtk-theme.override {
                 tweaks = [ "nord" ];
-                themeVariants = [ "default" ]; # default: grey | teal, blue TODO see if blue looks better
+                themeVariants = [ "default" ];
                 colorVariants = [ "dark" ];
             });
         };
@@ -40,13 +40,5 @@
             gtk-application-prefer-dark-theme = 1;
             gtk-im-module = "fcitx";
         };
-    };
-
-    home.pointerCursor = {
-        name = "Bibata-Modern-Ice";
-        package = pkgs.bibata-cursors;
-        size = 24;
-        gtk.enable = true;
-        #x11.enable = true; # for sway maybe??
     };
 }
