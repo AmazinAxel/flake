@@ -14,16 +14,15 @@
   boot.loader = {
     systemd-boot.enable = false;
     grub = {
-      enable = false;
-      device = "nodev";
+      enable = true;
+      device = "/dev/vda";
     };
   };
 
   fileSystems."/" = { 
-    device = "/dev/disk/by-uuid/63547912-74ae-442a-bda4-9c07eb438aa1";
+    device = "/dev/disk/by-uuid/9d1f2a8c-65de-4217-b65f-6dd3db81347b";
     fsType = "ext4";
   };
-
   swapDevices = [ ];
   networking.useDHCP = lib.mkDefault true;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

@@ -50,7 +50,7 @@ in
     starship # Fish prompt theme
 
     # Normal user apps
-    #microsoft-edge # Web browser
+    microsoft-edge # Web browser
     #neovide # GUI-based Neovim
     vscodium # Backup IDE (Neovim is main)
     #discord-canary # Voice & video chat app
@@ -69,7 +69,7 @@ in
     #    patches = [ ../overlays/glfw/Key-Modifiers-Fix.patch ];
     #  });
     #})
-#
+
     (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     (writeScriptBin "reminders" (builtins.readFile ../scripts/reminders.fish))
     (writeScriptBin "spotify-sync" (builtins.readFile ../scripts/spotify-sync.fish))
@@ -83,9 +83,9 @@ in
     #wf-recorder
 
     # Patched fetch program
-    #(microfetch.overrideAttrs ({ patches, ... }: {
-    #  patches = [ ../overlays/microfetch/Microfetch.patch ];
-    #}))
+    (microfetch.overrideAttrs ({ patches, ... }: {
+      patches = [ ../overlays/microfetch/Microfetch.patch ];
+    }))
 
     
     #(pkgs.makeDesktopItem { # War Thunder
