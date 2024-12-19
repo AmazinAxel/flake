@@ -9,7 +9,7 @@
     ./mpd.nix
     ./starship.nix
     ./swappy.nix
-    ./vscode.nix
+    ./codium.nix
   ];
 
   programs.home-manager.enable = true;

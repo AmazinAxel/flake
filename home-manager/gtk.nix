@@ -23,8 +23,10 @@
             name = "MoreWaita";
             package = pkgs.morewaita-icon-theme;
         };
-        theme.name = "Graphite-Dark-nord"; # or -hdpi or -xhdpi for high-res screens
-
+        theme = {
+            name = "Graphite-Dark-nord";
+            package = pkgs.graphite-gtk-theme; # maybe not needed TODO
+        };
         gtk3.extraConfig = {
             gtk-application-prefer-dark-theme = 1;
             gtk-im-module = "fcitx";
@@ -33,5 +35,11 @@
             gtk-application-prefer-dark-theme = 1;
             gtk-im-module = "fcitx";
         };
+    };
+    dconf = {
+        enable = true;
+
+        # Force dark mode on all apps - including Edge
+        settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
     };
 }
