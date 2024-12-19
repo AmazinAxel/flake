@@ -17,7 +17,6 @@ in
   environment.systemPackages = with pkgs; [
     #gnome-boxes # For sway branch development
     foot # Terminal
-    #graphite-gtk-theme # GTK theme - must add it here to apply system-wide
     bun # Fast all-in-one JS toolkit 
     dart-sass # Ags Desktop dependency
     fd # Ags Desktop dependency
@@ -48,6 +47,12 @@ in
     wrangler # Local Workers development
     fish # Better shell
     starship # Fish prompt theme
+    # Putting graphite in hm-managed gtk will not apply - so add it here
+    (pkgs.graphite-gtk-theme.override {
+      tweaks = [ "nord" ];
+      themeVariants = [ "default" ];
+      colorVariants = [ "dark" ];
+    })
 
     # Normal user apps
     microsoft-edge # Web browser

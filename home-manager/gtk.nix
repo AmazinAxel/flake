@@ -23,16 +23,7 @@
             name = "MoreWaita";
             package = pkgs.morewaita-icon-theme;
         };
-
-        # TODO figure out why this theme is not applying to sway
-        theme = {
-            name = "Graphite-Dark-nord";
-            package = (pkgs.graphite-gtk-theme.override {
-                tweaks = [ "nord" ];
-                themeVariants = [ "default" ];
-                colorVariants = [ "dark" ];
-            });
-        };
+        theme.name = "Graphite-Dark-nord"; # or -hdpi or -xhdpi for high-res screens
 
         gtk3.extraConfig = {
             gtk-application-prefer-dark-theme = 1;
