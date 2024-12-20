@@ -1,9 +1,10 @@
 { inputs, pkgs, ... }: {
   programs.sway = {
     enable = true;
+    package = pkgs.sway; # TODO swayfx
     wrapperFeatures.gtk = true;
-    extraPackages = with pkgs; [ swayidle swww brightnessctl gammastep ];
-    xwayland.enable = false;
+    extraPackages = with pkgs; [ swww brightnessctl gammastep ];
+    #xwayland.enable = false;
   };
 
   environment.systemPackages = with pkgs; [
@@ -18,6 +19,13 @@
     gnome-bluetooth # Bluetooth service
   ];
 
+  environment.sessionVariables = {
+    QT_QPA_PLATFORM = "wayland";
+    XDG_CURRENT_DESKTOP = "sway";
+    GDK_BACKEND = "wayland";
+    NIXOS_OZONE_WL = "1";
+  };
+
   # Enable custom fonts
   fonts.fontconfig.enable = true;
   fonts.packages = with pkgs; [ 
@@ -30,14 +38,13 @@
     wqy_zenhei # Chinese font for generally clearer chars
   ];
 
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
   services = {
     devmon.enable = true; # Automatically mounts/unmounts attached drives
     #udisks2.enable = true; # For getting info about drives
     #gnome.gnome-keyring.enable = true; # TODO learn how to properly set up keyring
     greetd = {
       enable = true;
-      settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --cmd 'dbus-run-session ${pkgs.sway}/bin/sway'";
+      settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --cmd 'dbus-run-session ${pkgs.swayfx}/bin/sway'";
     };
   };
 }

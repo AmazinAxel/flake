@@ -1,4 +1,3 @@
-full migrate to Sway
 rewrite to ags v2 and redesign w/ a left sidebar
 full ags integration with clipboard, notifications, reminders, etc
 use new lockscreen program for tty (greetd.tuigreet)

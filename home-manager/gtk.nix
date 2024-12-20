@@ -23,10 +23,7 @@
             name = "MoreWaita";
             package = pkgs.morewaita-icon-theme;
         };
-        theme = {
-            name = "Graphite-Dark-nord";
-            package = pkgs.graphite-gtk-theme; # maybe not needed TODO
-        };
+        theme.name = "Graphite-Dark-nord";
         gtk3.extraConfig = {
             gtk-application-prefer-dark-theme = 1;
             gtk-im-module = "fcitx";

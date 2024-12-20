@@ -5,6 +5,7 @@
 
     checkConfig = false;
     wrapperFeatures.gtk = true;
+    #xwayland = false; 
     config = {
       # super key
       modifier = "Mod4";
@@ -120,18 +121,16 @@
         { command = "spice-vdagent"; } # TODO remove when finished with vm
         # TODO set up swayidle
       ];
-
-      #xwayland = false;
     };
 
     # SwayFX settings
     #extraConfig = ''
+    #  shadows enable
+    #  corner_radius 2
     #  for_window [app_id="foot"] blur enable
     #  blur_radius 10
-    #  corner_radius 4
     #'';
-    # may have to add this to extraConfig: seat seat0 xcursor_theme Bibata-Modern-Ice 24
-
+    
     extraSessionCommands = ''
       export SDL_VIDEODRIVER=wayland
       export QT_QPA_PLATFORM=wayland
