@@ -1,17 +1,5 @@
 { inputs, config, pkgs, modulesPath, lib, ... }: {
 
-  home-manager = {
-    backupFileExtension = "backup";
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = { inherit inputs; };
-    users.alec = {
-      home.username = "alec";
-      home.homeDirectory = "/home/alec";
-      imports = [ ../home-manager/home.nix ];
-    };
-  };
-
   # Optimized bootloader settings
   boot = {
     loader = {
@@ -23,7 +11,15 @@
     tmp.cleanOnBoot = true;
     kernelPackages = pkgs.linuxPackages_latest; # Use the latest Linux kernel version
     enableContainers = false;
+
+    #plymouth.enable = true; # Hide boot stuff TODO test me
   };
+
+  # Faster systemd boot TODO test me
+  #systemd.services = {
+  #  systemd-udev-settle.enable = false;
+  #  NetworkManager-wait-online.enable = false;
+  #}
 
   # Networking configuration using iwd
   networking = {

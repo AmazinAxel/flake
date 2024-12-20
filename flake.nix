@@ -6,7 +6,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Widget system - Ags v2
-    ags.url = "github:Aylur/ags";
+    ags = {
+      url = "github:aylur/ags";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Manages home configs
     home-manager = {
@@ -31,7 +34,19 @@
           ./hosts/alecslaptop/default.nix
           ./hosts/common.nix
           ./modules/desktop.nix
-          home-manager.nixosModules.home-manager
+          home-manager.nixosModules.home-manager {
+            home-manager = {
+              backupFileExtension = "backup";
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = { inherit inputs; };
+              users.alec = {
+                home.username = "alec";
+                home.homeDirectory = "/home/alec";
+                imports = [ ./home-manager/home.nix ];
+              };
+            };
+          }
         ];
       };
 
@@ -54,7 +69,19 @@
           ./hosts/vm/hardware-configuration.nix
           ./hosts/common.nix
           ./modules/desktop.nix
-          home-manager.nixosModules.home-manager
+          home-manager.nixosModules.home-manager {
+            home-manager = {
+              backupFileExtension = "backup";
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = { inherit inputs; };
+              users.alec = {
+                home.username = "alec";
+                home.homeDirectory = "/home/alec";
+                imports = [ ./home-manager/home.nix ];
+              };
+            };
+          }
         ];
       };
 

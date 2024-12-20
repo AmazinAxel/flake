@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }: {
+{ lib, inputs, config, pkgs, ... }: {
   imports = [
     ./sway/sway.nix
     ./sway/keybinds.nix
@@ -10,6 +10,8 @@
     ./starship.nix
     ./swappy.nix
     ./codium.nix
+
+    inputs.ags.homeManagerModules.default
   ];
 
   programs.home-manager.enable = true;
@@ -31,6 +33,18 @@
       size = 24;
       gtk.enable = true;
     };
+  };
+
+  programs.ags = {
+    enable = true;
+    configDir = ../ags;
+
+    extraPackages = [
+      inputs.ags.packages.${pkgs.system}.astal3
+      inputs.ags.packages.${pkgs.system}.apps
+      inputs.ags.packages.${pkgs.system}.mpris
+      inputs.ags.packages.${pkgs.system}.tray
+    ];
   };
 
   xdg = {
