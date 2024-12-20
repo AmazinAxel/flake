@@ -37,7 +37,7 @@
     #gnome.gnome-keyring.enable = true; # TODO learn how to properly set up keyring
     greetd = {
       enable = true;
-      settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --cmd 'dbus-run-session ${pkgs.swayfx}/bin/sway'";
+      settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --cmd 'dbus-run-session sway'";
     };
   };
 }

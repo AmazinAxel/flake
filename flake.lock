@@ -49,11 +49,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1734344598,
-        "narHash": "sha256-wNX3hsScqDdqKWOO87wETUEi7a/QlPVgpC/Lh5rFOuA=",
+        "lastModified": 1734622215,
+        "narHash": "sha256-OOfI0XhSJGHblfdNDhfnn8QnZxng63rWk9eeJ2tCbiI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "83ecd50915a09dca928971139d3a102377a8d242",
+        "rev": "1395379a7a36e40f2a76e7b9936cc52950baa1be",
         "type": "github"
       },
       "original": {
@@ -64,11 +64,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1734119587,
-        "narHash": "sha256-AKU6qqskl0yf2+JdRdD0cfxX4b9x3KKV5RqA6wijmPM=",
+        "lastModified": 1734424634,
+        "narHash": "sha256-cHar1vqHOOyC7f1+tVycPoWTfKIaqkoe1Q6TnKzuti4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "3566ab7246670a43abd2ffa913cc62dad9cdf7d5",
+        "rev": "d3c42f187194c26d9f0309a8ecc469d6c878ce33",
         "type": "github"
       },
       "original": {
@@ -78,11 +78,67 @@
         "type": "github"
       }
     },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1713128889,
+        "narHash": "sha256-aB90ZqzosyRDpBh+rILIcyP5lao8SKz8Sr2PSWvZrzk=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "2748d22b45a99fb2deafa5f11c7531c212b2cefa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "ags": "ags",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "swayfx": "swayfx"
+      }
+    },
+    "scenefx": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1726812372,
+        "narHash": "sha256-JyEaeuwgPr041MaNz7EgvxPmYcx/Z46xEvalw5eu8Q4=",
+        "owner": "wlrfx",
+        "repo": "scenefx",
+        "rev": "be3eea191cb9aecea1ddf4f1399bcbb390027998",
+        "type": "github"
+      },
+      "original": {
+        "owner": "wlrfx",
+        "repo": "scenefx",
+        "type": "github"
+      }
+    },
+    "swayfx": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "scenefx": "scenefx"
+      },
+      "locked": {
+        "lastModified": 1731703705,
+        "narHash": "sha256-ZzdGyoffeKZARaqEuWpgt+T1DJLBJpJACXXQGprQ/Lo=",
+        "owner": "WillPower3309",
+        "repo": "swayfx",
+        "rev": "3e4b6b75f4b42b4cb04d883033b04b4a1b57bc90",
+        "type": "github"
+      },
+      "original": {
+        "owner": "WillPower3309",
+        "repo": "swayfx",
+        "type": "github"
       }
     }
   },

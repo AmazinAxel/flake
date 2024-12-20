@@ -1,11 +1,12 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
-    package = pkgs.sway;
+    package = inputs.swayfx.packages."x86_64-linux".swayfx-unwrapped;
 
     checkConfig = false;
     wrapperFeatures.gtk = true;
-    #xwayland = false; 
+    systemd.xdgAutostart = true;
+    xwayland = true;
     config = {
       # super key
       modifier = "Mod4";
@@ -13,6 +14,8 @@
       gaps = {
         outer = 0;
         inner = 15;
+        smartBorders = "no_gaps"; # on or off
+        smartGaps = true;
       };
 
       #workspaceLayout = "tabbed";
@@ -124,12 +127,12 @@
     };
 
     # SwayFX settings
-    #extraConfig = ''
-    #  shadows enable
-    #  corner_radius 2
-    #  for_window [app_id="foot"] blur enable
-    #  blur_radius 10
-    #'';
+    extraConfig = ''
+      shadows enable
+      corner_radius 2
+      for_window [app_id="foot"] blur enable
+      blur_radius 10
+    '';
     
     extraSessionCommands = ''
       export SDL_VIDEODRIVER=wayland
