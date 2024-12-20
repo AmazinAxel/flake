@@ -110,7 +110,7 @@
       #];
 
       startup = [
-        { command = "ags &"; always = true; }
+        #{ command = "desktop-widgets &"; always = true; } # Ags widgets
         { command = "gammastep -O 4500"; } # TODO replace with shader
         { command = "fcitx5 -d"; } # Chinese support
         { command = "swww-daemon"; } # Wallpaper service        

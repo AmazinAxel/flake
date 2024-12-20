@@ -16,7 +16,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             <button
                 onClicked="echo hello"
                 halign={Gtk.Align.CENTER} >
-                Welcome to AGS!
+                Hi!!
             </button>
             <box />
             <button

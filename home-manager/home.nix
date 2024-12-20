@@ -1,4 +1,17 @@
-{ inputs, config, pkgs, ... }: {
+{ inputs, config, pkgs, ... }: let 
+  ags-widgets = inputs.ags.lib.bundle {
+    inherit pkgs;
+    src = ../ags;
+    name = "desktop-widgets";
+    entry = "app.ts";
+    extraPackages = [
+      inputs.ags.packages.${pkgs.system}.astal3
+      inputs.ags.packages.${pkgs.system}.apps
+      inputs.ags.packages.${pkgs.system}.mpris
+      inputs.ags.packages.${pkgs.system}.tray
+    ];
+  };
+in {
   imports = [
     ./sway/sway.nix
     ./sway/keybinds.nix
@@ -32,18 +45,10 @@
       size = 24;
       gtk.enable = true;
     };
-  };
 
-  programs.ags = {
-    enable = true;
-    configDir = ../ags;
-
-    extraPackages = [
-      inputs.ags.packages.${pkgs.system}.astal3
-      inputs.ags.packages.${pkgs.system}.apps
-      inputs.ags.packages.${pkgs.system}.mpris
-      inputs.ags.packages.${pkgs.system}.tray
-    ];
+    # For fast ags development:
+    # nix shell github:aylur/ags#agsFull
+    packages = [ ags-widgets ];
   };
 
   xdg = {

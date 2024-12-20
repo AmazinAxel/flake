@@ -1,11 +1,4 @@
 { inputs, pkgs, ... }: {
-  programs.sway = {
-    enable = true;
-    package = pkgs.sway; # TODO swayfx
-    wrapperFeatures.gtk = true;
-    extraPackages = with pkgs; [ swww brightnessctl gammastep ];
-    #xwayland.enable = false;
-  };
 
   environment.systemPackages = with pkgs; [
     # Icon packs

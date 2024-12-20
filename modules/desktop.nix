@@ -16,6 +16,9 @@ in
 
   environment.systemPackages = with pkgs; [
     #gnome-boxes # For sway branch development
+    swww 
+    brightnessctl 
+    gammastep
     foot # Terminal
     bun # Fast all-in-one JS toolkit 
     dart-sass # Ags Desktop dependency
