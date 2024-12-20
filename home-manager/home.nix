@@ -1,4 +1,4 @@
-{ lib, inputs, config, pkgs, ... }: {
+{ inputs, config, pkgs, ... }: {
   imports = [
     ./sway/sway.nix
     ./sway/keybinds.nix
@@ -17,7 +17,6 @@
   programs.home-manager.enable = true;
   systemd.user.startServices = "sd-switch"; # Better system unit reloads
   home = {
-    packages = lib.mkForce []; # Don't install packages to user PATH
     stateVersion = "23.05";
 
     # Symlink all wallpapers

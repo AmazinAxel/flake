@@ -1,5 +1,14 @@
 { inputs, config, pkgs, modulesPath, lib, ... }: {
 
+  home-manager = {
+    backupFileExtension = "backup";
+    extraSpecialArgs = { inherit inputs; };
+    users.alec = {
+      home.username = "alec";
+      home.homeDirectory = "/home/alec";
+      imports = [ ../home-manager/home.nix ];
+    };
+  };
   # Optimized bootloader settings
   boot = {
     loader = {

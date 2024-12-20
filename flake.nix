@@ -34,19 +34,7 @@
           ./hosts/alecslaptop/default.nix
           ./hosts/common.nix
           ./modules/desktop.nix
-          home-manager.nixosModules.home-manager {
-            home-manager = {
-              backupFileExtension = "backup";
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              extraSpecialArgs = { inherit inputs; };
-              users.alec = {
-                home.username = "alec";
-                home.homeDirectory = "/home/alec";
-                imports = [ ./home-manager/home.nix ];
-              };
-            };
-          }
+          home-manager.nixosModules.home-manager
         ];
       };
 
@@ -69,19 +57,7 @@
           ./hosts/vm/hardware-configuration.nix
           ./hosts/common.nix
           ./modules/desktop.nix
-          home-manager.nixosModules.home-manager {
-            home-manager = {
-              backupFileExtension = "backup";
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              extraSpecialArgs = { inherit inputs; };
-              users.alec = {
-                home.username = "alec";
-                home.homeDirectory = "/home/alec";
-                imports = [ ./home-manager/home.nix ];
-              };
-            };
-          }
+          home-manager.nixosModules.home-manager
         ];
       };
 
