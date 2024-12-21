@@ -1,7 +1,7 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
-    package = inputs.swayfx.packages."x86_64-linux".swayfx-unwrapped;
+    #package = pkgs.swayfx
 
     checkConfig = false;
     wrapperFeatures.gtk = true;
@@ -127,12 +127,13 @@
     };
 
     # SwayFX settings
-    extraConfig = ''
-      shadows enable
-      corner_radius 2
-      for_window [app_id="foot"] blur enable
-      blur_radius 10
-    '';
+    # TODO enable when migrate to swayfx
+    #extraConfig = ''
+    #  shadows enable
+    #  corner_radius 2
+    #  for_window [app_id="foot"] blur enable
+    #  blur_radius 10
+    #'';
     
     extraSessionCommands = ''
       export SDL_VIDEODRIVER=wayland

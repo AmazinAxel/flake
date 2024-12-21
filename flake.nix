@@ -11,12 +11,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Swayfx from nixpkgs doesn't work for some reason
-    swayfx = {
-      url = "github:WillPower3309/swayfx";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Manages home configs
     home-manager = {
       url = "github:nix-community/home-manager";
