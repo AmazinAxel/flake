@@ -1,7 +1,9 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk3"
-import { Variable } from "astal"
+// @ts-nocheck TODO fix types
 
-const time = Variable("").poll(1000, "date")
+import { App, Astal, Gtk, Gdk } from "astal/gtk3";
+import { Variable } from "astal";
+
+const time = Variable("").poll(1000, "date");
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
     return <window

@@ -1,6 +1,8 @@
-import { App } from "astal/gtk3"
-import style from "./style.css"
-import bar from "./widget/bar"
+// @ts-nocheck TODO fix types
+
+import { App } from "astal/gtk3";
+import style from "./style.css";
+import bar from "./widgets/bar";
 
 App.start({
     css: style,
