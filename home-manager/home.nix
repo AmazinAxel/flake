@@ -16,13 +16,13 @@ in {
     ./sway/sway.nix
     ./sway/keybinds.nix
     
+    ./codium.nix
     ./fish.nix
     ./foot.nix
     ./gtk.nix
     ./mpd.nix
     ./starship.nix
     ./swappy.nix
-    ./codium.nix
 
     inputs.ags.homeManagerModules.default
   ];

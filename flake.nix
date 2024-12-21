@@ -1,5 +1,5 @@
 {
-  description = "Alec's Nix config";
+  description = "Alec's Nix system configurations";
 
   inputs = {
     # Nixpkgs - always pull from unstable
@@ -18,13 +18,7 @@
     };
   };
 
-  outputs = inputs @ {
-    self,
-    home-manager,
-    nixpkgs,
-    ...
-  }: {
-
+  outputs = inputs @ { self, home-manager, nixpkgs, ... }: {
     nixosConfigurations = {
       # Laptop config
       "alecslaptop" = nixpkgs.lib.nixosSystem {

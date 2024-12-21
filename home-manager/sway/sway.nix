@@ -13,8 +13,8 @@
       bars = []; # No default ugly sway bar
       gaps = {
         outer = 0;
-        inner = 15;
-        smartBorders = "no_gaps"; # on or off
+        inner = 5;
+        smartBorders = "no_gaps"; # on or offe
         smartGaps = true;
       };
 
@@ -95,8 +95,8 @@
       };
 
       window = {
-        border = 5;
         titlebar = false;
+        border = 3;
         #commands = [
         #  {
         #    floating = false;
@@ -105,6 +105,8 @@
         #];
         hideEdgeBorders = "smart"; # or "both" or "none"
       };
+
+      floating.border = 3;
 
       # Windows that should be opened in floating mode
       #floating = [
@@ -120,7 +122,6 @@
         { command = "copyq --start-server"; } # TODO replace with ags
         { command = "emote"; } # TODO replace with ags
         { command = "mpd"; } # Daemon for mpc player
-        { command = "sleep 10 && reminders"; } # TODO replace with ags
         { command = "spice-vdagent"; } # TODO remove when finished with vm
         # TODO set up swayidle
       ];
