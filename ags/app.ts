@@ -9,9 +9,14 @@ App.start({
     main() {
         App.get_monitors().map(bar)
     },
+    requestHandler(req, res) {
+        if (req == "hideNotif") {
+            res("ok");
+        };
+    }
 })
 
-/* Run reminders!
+/* Reminders script:
 if it's a monday and there's more than five files in Downloads folder
     Utils.notify({summary: "Clear Downloads folder", body: "Clean up some unused files to keep the system clean", actions: { "View folder": () => Utils.execAsync("nemo Downloads/")
 

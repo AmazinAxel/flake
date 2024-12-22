@@ -18,6 +18,8 @@
         smartGaps = true;
       };
 
+      focus.newWindow = "focus";
+
       #workspaceLayout = "tabbed";
       workspaceAutoBackAndForth = true;
 

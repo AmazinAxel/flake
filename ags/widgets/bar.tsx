@@ -1,31 +1,58 @@
 // @ts-nocheck TODO fix types
 
-import { App, Astal, Gtk, Gdk } from "astal/gtk3";
-import { Variable } from "astal";
+import { Tray, trayVisible } from "./Tray";
+import Time from "./Time";
+import Media from "./Media";
 
-const time = Variable("").poll(1000, "date");
+import { App, Astal } from "astal/gtk3";
+import { bind, execAsync } from "astal";
 
-export default function Bar(gdkmonitor: Gdk.Monitor) {
-    return <window
-        className="Bar"
-        gdkmonitor={gdkmonitor}
-        exclusivity={Astal.Exclusivity.EXCLUSIVE}
-        anchor={Astal.WindowAnchor.TOP
-            | Astal.WindowAnchor.LEFT
-            | Astal.WindowAnchor.RIGHT}
-        application={App}>
-        <centerbox>
-            <button
-                onClicked="echo hello"
-                halign={Gtk.Align.CENTER} >
-                Hi!!
-            </button>
-            <box />
-            <button
-                onClick={() => print("hello")}
-                halign={Gtk.Align.CENTER} >
-                <label label={time()} />
-            </button>
-        </centerbox>
+export default function bar(gdkmonitor: Gdk.Monitor) {
+    return (
+    <window
+      className="bar"
+      gdkmonitor={gdkmonitor}
+      exclusivity={Astal.Exclusivity.EXCLUSIVE}
+      anchor={
+        Astal.WindowAnchor.LEFT |
+        Astal.WindowAnchor.TOP |
+        Astal.WindowAnchor.BOTTOM
+      }
+      application={App}
+    >
+      <box vertical hexpand>
+        1
+        {/* TODO sway integration
+        <box className="container">
+          
+        </box>*/}
+
+
+        <box vertical vexpand hexpand />
+        2
+
+        {/* <box className="Container">
+          <Media />
+        </box> */}
+
+        <box className="Container">
+        3
+          {/*<button
+            className={"VerticalButton"}
+            onClick={() => {
+              execAsync("ags request 'pane datemenu'");
+            }}
+          >
+            <Time />
+          </button>*/}
+        </box>
+
+        <box className="Container">
+        4aa
+          {/* control center:
+          battery power, bluetooth, sound, DND */}
+        </box>
+      </box>
     </window>
+  );
 }

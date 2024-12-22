@@ -1,3 +1,5 @@
+// @ts-nocheck TODO fix types
+
 declare const SRC: string;
 
 declare module "inline:*" {
