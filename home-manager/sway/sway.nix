@@ -14,7 +14,7 @@
       gaps = {
         outer = 0;
         inner = 5;
-        smartBorders = "no_gaps"; # on or offe
+        smartBorders = "no_gaps";
         smartGaps = true;
       };
 
@@ -98,7 +98,7 @@
 
       window = {
         titlebar = false;
-        border = 3;
+        border = 3; # Also gets rid of titlebar
         #commands = [
         #  {
         #    floating = false;

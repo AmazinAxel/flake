@@ -3,8 +3,10 @@
 import { App } from "astal/gtk3";
 import style from "./style.css";
 import bar from "./widgets/bar";
+import { subprocess } from "astal";
 
 App.start({
+    instanceName: "desktop-widgets",
     css: style,
     main() {
         App.get_monitors().map(bar)
@@ -15,6 +17,16 @@ App.start({
         };
     }
 })
+
+subprocess('swaymsg -m -t subscribe \'["output"]\'', (out) => {
+  const data = JSON.parse(out);
+  // unspecified is currently the only value for change
+  // https://man.archlinux.org/man/sway-ipc.7.en#0x80000001._OUTPUT
+  if (data && data.change && data.change === "unspecified") {
+    // Reattach taskbar here
+  }
+});
+
 
 /* Reminders script:
 if it's a monday and there's more than five files in Downloads folder

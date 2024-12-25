@@ -3,8 +3,6 @@
     keybindings = let
       mod = "Mod4";
     in {
-      "${mod}+Shift+r" = "exec ags -q && ags"; # Restart Ags 
-      "${mod}+Shift+c" = "reload"; # Sway reload for quick config
       # Volume & media controls
       XF86AudioRaiseVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05+";
       XF86AudioLowerVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05-";
@@ -41,10 +39,15 @@
       "${mod}+Shift+Down" = "move down";
 
       # Workspace, window, tab manipulation
-      "Control+${mod}+Right" = "workspace next";
-      "Control+${mod}+Left" = "workspace prev";
-      "Control+${mod}+bracketright" = "workspace next";
-      "Control+${mod}+bracketleft" = "workspace prev";
+      
+      # Next workspace
+      "Control+${mod}+Right" = "swaymsg -t get_workspaces | jq '.[] | select(.visible == true) | .num + 1' | xargs swaymsg workspace";
+      "Control+${mod}+bracketright" = "swaymsg -t get_workspaces | jq '.[] | select(.visible == true) | .num + 1' | xargs swaymsg workspace";
+
+      # Prev workspace
+      "Control+${mod}+Left" = "swaymsg -t get_workspaces | jq '.[] | select(.visible == true) | .num - 1' | xargs swaymsg workspace";
+      "Control+${mod}+bracketleft" = "swaymsg -t get_workspaces | jq '.[] | select(.visible == true) | .num + 1' | xargs swaymsg workspace";
+
       "Control+${mod}+Button2" = "workspace next";
       "Control+${mod}+Button1" = "workspace prev";
       "Control+${mod}+Shift+Right" = "move to workspace next";
@@ -62,7 +65,7 @@
       "${mod}+Button3" = "resize";
 
       # Alt+tab functionality
-      "${mod}+tab" = "workspace back_and_forth";
+      "alt+tab" = "workspace back_and_forth";
     };
   };
 }

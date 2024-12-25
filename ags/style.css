@@ -1,7 +1,28 @@
-* {
-    transition-duration: 0;
-}
+/* Graphite Nord theme colors:
+  https://github.com/vinceliuice/Graphite-gtk-theme/blob/main/src/sass/gtk/_colors-public.scss
+*/
 
 window.bar {
-    background: transparent;
+  background: @theme_bg_color;
+  font-family: 'Hammersmith One';
+}
+
+window.bar button {
+  border-radius: 0;
+  padding: 0.2rem 0.5rem;
+}
+
+
+/* Time bar widget */
+.time .date {
+  font-size:  0.6rem;
+  font-family: 'Sora';
+  color: #81A1C1; /* Nord Green frost color */ 
+}
+
+.time .time {
+  font-size:  1.2rem;
+  font-family: 'Iosveka'; /* Monospaced font */
+  font-weight: bold;
+  color: #5E81AC; /* Nord frost color */
 }

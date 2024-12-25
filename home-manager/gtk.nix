@@ -10,7 +10,6 @@
             "file:///${home}/Music"
             "file:///${home}/Pictures"
             "file:///${home}/Projects"
-            "file:///${home}/Other"
             "file:///${home}/Videos"
         ];
 

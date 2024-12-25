@@ -16,6 +16,7 @@ in {
     ./sway/sway.nix
     ./sway/keybinds.nix
     
+    ./bash.nix # TODO move/rename me
     ./codium.nix
     ./fish.nix
     ./foot.nix

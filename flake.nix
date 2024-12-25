@@ -11,6 +11,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Astal - dep for ags & sway IPC
+    astal = {
+      url = "github:aylur/astal";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Manages home configs
     home-manager = {
       url = "github:nix-community/home-manager";

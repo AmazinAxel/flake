@@ -1,11 +1,10 @@
 // @ts-nocheck TODO fix types
 
 import { Tray, trayVisible } from "./Tray";
-import Time from "./Time";
-import Media from "./Media";
-
+import { Workspaces } from "./workspaces";
 import { App, Astal } from "astal/gtk3";
 import { bind, execAsync } from "astal";
+import { Time } from "./modules/time";
 
 export default function bar(gdkmonitor: Gdk.Monitor) {
     return (
@@ -21,34 +20,25 @@ export default function bar(gdkmonitor: Gdk.Monitor) {
       application={App}
     >
       <box vertical hexpand>
-        1
-        {/* TODO sway integration
         <box className="container">
-          
-        </box>*/}
+          <Workspaces/>
+        </box>
 
 
         <box vertical vexpand hexpand />
-        2
+        
 
         {/* <box className="Container">
           <Media />
         </box> */}
 
         <box className="Container">
-        3
-          {/*<button
-            className={"VerticalButton"}
-            onClick={() => {
-              execAsync("ags request 'pane datemenu'");
-            }}
-          >
-            <Time />
-          </button>*/}
+        
+          <Time/>
         </box>
 
         <box className="Container">
-        4aa
+        
           {/* control center:
           battery power, bluetooth, sound, DND */}
         </box>
