@@ -27,19 +27,7 @@
 
   services = {
     upower.enable = true; # For displaying battery level on astal shell
-    tlp = { # Better battery life
-      enable = true;
-      settings = {
-        CPU_SCALING_GOVERNOR_ON_AC = "performance";
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-      };
-    };
-
-    # For micro:bit development
-    udev.packages = [
+    udev.packages = [ # For micro:bit development
       (pkgs.writeTextFile {
         name = "microbit_udev";
         text = ''
