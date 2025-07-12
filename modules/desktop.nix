@@ -24,6 +24,7 @@
     nemo-fileroller # Create archives in nemo
     file-roller # Open archives in nemo
     discord # Voice & video chat app
+    filezilla # FTP client
 
     spotdl # Download Spotify playlists (TODO remove me after finishing homelab sync)
 
