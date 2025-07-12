@@ -1,7 +1,7 @@
 { pkgs, lib, ... }: {
   users.users.alec = { # Default user
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "video" "dialout" "networkmanager" ];
+    extraGroups = [ "wheel" "audio" "video" "dialout" ];
   };
 
   boot = {
@@ -27,8 +27,7 @@
     };
   };
 
-  time.timeZone = "America/Los_Angeles";
-  i18n.defaultLocale = "en_US.UTF-8";
+  time.timeZone = "America/Los_Angeles"; # Locale setting also set to en_US by default
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
@@ -37,7 +36,7 @@
     warn-dirty = false;
   };
 
-  services.journald.extraConfig = "SystemMaxUse=1G";
+  services.journald.extraConfig = "SystemMaxUse=20M";
   fileSystems."/".options = [ "noatime" "nodiratime" "discard" ]; # Optimize SSD trim
   documentation.enable = false;
 

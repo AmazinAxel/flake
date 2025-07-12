@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-# TODO move me to pi scripts
+# TODO move me to homelab repo
 
 set playlists \
     "Synthwave https://open.spotify.com/playlist/1YIe34rcmLjCYpY9wJoM2p" \

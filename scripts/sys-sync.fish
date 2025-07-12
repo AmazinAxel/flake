@@ -2,11 +2,11 @@
 
 # TODO
 
-## Pull music from shared Pi storage
-echo "[Sync] Pulling music from Pi.."
+## Pull music from shared homelab storage
+echo "[Sync] Pulling music from homelab.."
 # Loop the music folder & check which tracks don't exist on the system and download + add it to counter
 mpc update
-echo "[Sync] Pulled [song amount here] new tracks from Pi"
+echo "[Sync] Pulled [song amount here] new tracks from homelab"
 
 ## Update system
 cd /home/alec/Projects/flake/

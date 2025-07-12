@@ -15,16 +15,17 @@
     killall # Astal screenrecord util
 
     # Desktop applications
+    amberol # Media player
     swappy # Screenshot editor
     gthumb # Image & video viewer & lightweight editor
-    gnome-text-editor # GTK text editor
+    gnome-text-editor # Simple text editor
     gnome-system-monitor # Task manager
     nemo-with-extensions # File manager
     nemo-fileroller # Create archives in nemo
     file-roller # Open archives in nemo
     discord # Voice & video chat app
 
-    spotdl # Download Spotify playlists (TODO remove me after finishing Pi sync)
+    spotdl # Download Spotify playlists (TODO remove me after finishing homelab sync)
 
     # Wayland MC w/ key modifiers patch
     (prismlauncher.override {
@@ -57,7 +58,7 @@
     (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
     (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     (writeScriptBin "screenshot" (builtins.readFile ../scripts/screenshot.fish))
-    (writeScriptBin "spotify-sync" (builtins.readFile ../scripts/spotify-sync.fish)) # TODO remove me after finishing Pi server
+    (writeScriptBin "spotify-sync" (builtins.readFile ../scripts/spotify-sync.fish)) # TODO remove me after finishing homelab server
   ];
 
   # Custom fonts

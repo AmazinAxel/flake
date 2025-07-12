@@ -36,15 +36,6 @@
           home-manager.nixosModules.home-manager
         ];
       };
-
-      # RPi 4B home server
-      "alecpi" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/alecpi/default.nix
-          home-manager.nixosModules.home-manager
-        ];
-      };
     };
   };
 }
