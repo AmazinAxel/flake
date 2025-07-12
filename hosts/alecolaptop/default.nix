@@ -17,6 +17,7 @@
 
     arduino-ide # Embedded microcontroller programming
     python3 # Required for Arduino IDE
+    bun # All-in-one JS toolkit
   ];
 
   # Bootloader settings (w/ AMD GPU support)
