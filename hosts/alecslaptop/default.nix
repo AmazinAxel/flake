@@ -17,6 +17,7 @@
     teams-for-linux # Unoffical Teams client
     libreoffice # Preview Word documents and Excel sheets offline
     gnome-sound-recorder # Voice recording app
+    gnome-disk-utility # Drive repartitioning utility
     flashprint # Flashforge 3D printer
     thunderbird # Email client
     worldpainter # Minecraft world generator

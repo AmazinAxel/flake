@@ -15,8 +15,7 @@
       timeout = 0; # Hold down space on boot to access menu
     };
     tmp.cleanOnBoot = true;
-    kernelPackages = pkgs.linuxPackages_latest; # Latest Linux kernel version
-    enableContainers = false;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
   networking.wireless.iwd = {
