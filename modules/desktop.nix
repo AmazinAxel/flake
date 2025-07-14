@@ -114,7 +114,7 @@
   };
 
   services = {
-    gvfs.enable = true; # For nemo trash support
+    gvfs.enable = true; # For nemo trash & NAS autodiscovery support
     devmon.enable = true; # Automatically mounts/unmounts drives
 
     # Sound support
