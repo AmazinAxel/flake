@@ -1,7 +1,5 @@
 #!/usr/bin/env fish
 
-# TODO
-
 ## Pull music from shared homelab storage
 echo "[Sync] Pulling music from homelab.."
 # Loop the music folder & check which tracks don't exist on the system and download + add it to counter

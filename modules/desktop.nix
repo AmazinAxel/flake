@@ -26,8 +26,6 @@
     discord # Voice & video chat app
     filezilla # FTP client
 
-    spotdl # Download Spotify playlists (TODO remove me after finishing homelab sync)
-
     # Wayland MC w/ key modifiers patch
     (prismlauncher.override {
       glfw3-minecraft = glfw3-minecraft.overrideAttrs (prev: {
@@ -59,7 +57,6 @@
     (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
     (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     (writeScriptBin "screenshot" (builtins.readFile ../scripts/screenshot.fish))
-    (writeScriptBin "spotify-sync" (builtins.readFile ../scripts/spotify-sync.fish)) # TODO remove me after finishing homelab server
   ];
 
   # Custom fonts
