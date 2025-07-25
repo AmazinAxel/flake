@@ -26,7 +26,9 @@ sudo umount /mnt/alechomelab
 
 ## Update system
 cd /home/alec/Projects/flake/
-if test -n (git status --porcelain)
+set isDirty (git status --porcelain)
+
+if test -n "$isDirty"
     echo "[Sync] System flake is dirty - not updating system"
 else
     if test (git rev-parse HEAD) == (git rev-parse @{u})
