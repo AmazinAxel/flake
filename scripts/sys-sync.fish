@@ -4,7 +4,6 @@ set mntPoint /mnt/alechomelab
 
 ## Pull music from shared homelab storage
 read -l -P "[Sync] Enter NAS password: " passwd --silent
-echo "[Sync] Pulling music from NAS"
 
 # Mount share
 mkdir -p $mntPoint
@@ -20,6 +19,7 @@ else
 end
 
 # Sync music directory from share 
+echo "[Sync] Pulling music from NAS"
 rsync -av --ignore-existing "$driveDir/Music/" /home/alec/Music/
 mpc update > /dev/null
 sudo umount /mnt/alechomelab
