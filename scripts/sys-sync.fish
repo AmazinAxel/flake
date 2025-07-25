@@ -26,7 +26,7 @@ umount /mnt/alechomelab
 
 ## Update system
 cd /home/alec/Projects/flake/
-if test -n "(git diff)"
+if test -n (git status --porcelain)
     echo "[Sync] System configuration has uncommited changes - not updating system"
 else
     if test (git rev-parse HEAD) == (git rev-parse @{u})
