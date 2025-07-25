@@ -22,12 +22,12 @@ end
 # Sync music directory from share 
 rsync -av --ignore-existing "$driveDir/Music/" /home/alec/Music/
 mpc update > /dev/null
-umount /mnt/alechomelab
+sudo umount /mnt/alechomelab
 
 ## Update system
 cd /home/alec/Projects/flake/
-if test -n (git status --porcelain=v1)
-    echo "[Sync] System configuration has uncommited changes - not updating system"
+if test -n (git status --porcelain)
+    echo "[Sync] System flake is dirty - not updating system"
 else
     if test (git rev-parse HEAD) == (git rev-parse @{u})
         echo "[Sync] No new changes in flake repository - not updating system"
