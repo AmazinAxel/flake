@@ -15,7 +15,6 @@
     killall # Astal screenrecord util
 
     # Desktop applications
-    amberol # Media player
     swappy # Screenshot editor
     gthumb # Image & video viewer & lightweight editor
     gnome-text-editor # Simple text editor

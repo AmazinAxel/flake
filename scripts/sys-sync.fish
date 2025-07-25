@@ -1,10 +1,28 @@
 #!/usr/bin/env fish
 
+set mntPoint /mnt/alechomelab
+
 ## Pull music from shared homelab storage
-echo "[Sync] Pulling music from homelab.."
-# Loop the music folder & check which tracks don't exist on the system and download + add it to counter
-mpc update
-echo "[Sync] Pulled [song amount here] new tracks from homelab"
+read -l -P "[Sync] Enter NAS password: " passwd --silent
+echo "[Sync] Pulling music from NAS"
+
+# Mount share
+mkdir -p $mntPoint
+mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
+
+# Check & get mounted drive from share
+set drives (find $mntPoint -mindepth 1 -maxdepth 1 -type d)
+if test (count $drives) -eq 1
+    set driveDir $drives[1]
+else
+    echo "Improper drive amount detected"
+    exit 1
+end
+
+# Sync music directory from share 
+rsync -av --ignore-existing "$driveDir/Music/" /home/alec/Music/
+mpc update > /dev/null
+umount /mnt/alechomelab
 
 ## Update system
 cd /home/alec/Projects/flake/
