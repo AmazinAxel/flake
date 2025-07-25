@@ -8,6 +8,8 @@
     # Desktop services
     libnotify # Astal internal notifications
     mpc # CLI for Astal media player
+    cifs-utils # Needed for mounting Samba NAS drive
+    rsync # Quickly pull files from NAS drive
     brightnessctl # Screen brightness CLI for Astal
     adwaita-icon-theme # Icons for GTK apps
     hyprshot # Screenshot tool

@@ -8,7 +8,7 @@ echo "[Sync] Pulling music from NAS"
 
 # Mount share
 mkdir -p $mntPoint
-mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
+sudo mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
 
 # Check & get mounted drive from share
 set drives (find $mntPoint -mindepth 1 -maxdepth 1 -type d)
