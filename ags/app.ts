@@ -8,7 +8,7 @@ import quicksettingsStyle from './widgets/quicksettings/quicksettings.css';
 import powermenuStyle from './widgets/powermenu/powermenu.css';
 
 import { App, Astal } from 'astal/gtk4';
-import { exec } from 'astal';
+import { exec, AstalIO } from 'astal';
 import Bar from './widgets/bar/bar';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
@@ -109,10 +109,10 @@ App.start({
 });
 
 const reminders = () => {
-    const day = String(exec(`fish -c "echo (date '+%A')"`));
+    const lastSync = Number(AstalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));
     const folderSize = Number(exec(`fish -c "du -sb /home/alec/Downloads | awk '{print \$1}'"`));
-    
-    if (day == 'Friday') { // Send sync message
+
+    if ((Date.now() - lastSync) > 604800000) { // Last sync was over 7 days ago
         notifySend({
             appName: 'Sync',
             title: 'Sync system files',

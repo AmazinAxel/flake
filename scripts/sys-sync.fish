@@ -36,3 +36,6 @@ else
         sudo nixos-rebuild switch --flake /home/alec/Projects/flake/ # Rebuild
     end
 end
+
+# Update last sync time for Astal integration
+date +%s%3N > /home/alec/Projects/flake/ags/lastSync.txt
