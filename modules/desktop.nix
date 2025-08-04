@@ -1,8 +1,11 @@
-{ pkgs, ... }: {
+{ inputs, pkgs, ... }: {
   imports = [ ./hyprland.nix ]; # Hyprland-specific config
 
   # Home-manager primary desktop entrance
-  home-manager.users.alec.imports = [ ../home-manager/home.nix ];
+  home-manager = {
+    extraSpecialArgs = { inherit inputs; };
+    users.alec.imports = [ ../home-manager/home.nix ];
+  };
 
   environment.systemPackages = with pkgs; [
     # Desktop services
@@ -33,25 +36,6 @@
         patches = [ ../overlays/glfw-key-modifiers.patch ];
       });
     })
-
-    # Astal desktop shell
-    (pkgs.ags.bundle {
-      src = ../ags;
-      enableGtk4 = true;
-      pname = "desktop-shell";
-      version = "1.0.0"; # Needed for build to pass
-
-      dependencies = with pkgs.astal; [
-        apps # App launcher
-        mpris # Media controls
-        hyprland # Workspace integration
-        bluetooth # Bluez integration
-        battery # For laptop only - not used on desktop
-        wireplumber # Used by pipewire
-        notifd # Desktop notification integration
-      ];
-    })
-    astal.io # Astal CLI for keybinds
 
     # Scripts
     (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))

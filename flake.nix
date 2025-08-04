@@ -6,13 +6,16 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ags.url = "github:aylur/ags";
+    astal.url = "github:aylur/astal";
   };
 
-  outputs = { home-manager, nixpkgs, ... }: {
+  outputs = { home-manager, nixpkgs, ... }@inputs: {
     nixosConfigurations = {
       # Primary laptop
       "alecslaptop" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecslaptop/default.nix
           home-manager.nixosModules.home-manager
@@ -22,6 +25,7 @@
       # Old laptop
       "alecolaptop" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecolaptop/default.nix
           home-manager.nixosModules.home-manager
@@ -31,6 +35,7 @@
       # Desktop/compute server
       "alecpc" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecpc/default.nix
           home-manager.nixosModules.home-manager

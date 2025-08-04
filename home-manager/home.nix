@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ inputs, pkgs, ... }: {
   imports = [
     ./hypr/hyprland.nix
     ./hypr/keybinds.nix
@@ -11,10 +11,29 @@
     ./librewolf.nix
     ./mpd.nix
     ./starship.nix
+
+    inputs.ags.homeManagerModules.default
   ];
 
-  programs.home-manager.enable = true;
+  programs = {
+    home-manager.enable = true;
+    ags = {
+      enable = true;
+      configDir = ../ags;
+
+      extraPackages = with inputs.astal.packages.${pkgs.system}; [
+        apps # App launcher
+        battery # For laptop only - not used on desktop
+        bluetooth # Bluez integration
+        hyprland # Workspace integration
+        mpris # Media controls
+        notifd # Desktop notification integration
+        wireplumber # Used by pipewire
+      ];
+    };
+  };
   systemd.user.startServices = "sd-switch"; # Better system unit reloads
+
   home = {
     stateVersion = "23.05";
     username = "alec";
@@ -27,6 +46,9 @@
       size = 24;
       gtk.enable = true;
     };
+    
+    # For shell keybinds
+    packages = [ inputs.astal.packages.${pkgs.system}.io ];
   };
 
   # Astal clipboard management
