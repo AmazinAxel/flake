@@ -7,8 +7,12 @@ import osdStyle from './widgets/osd/osd.css';
 import quicksettingsStyle from './widgets/quicksettings/quicksettings.css';
 import powermenuStyle from './widgets/powermenu/powermenu.css';
 
-import { App, Astal } from 'astal/gtk4';
-import { exec, AstalIO } from 'astal';
+import app from "ags/gtk4/app"
+import { exec } from "ags/process";
+import astalIO from "gi://AstalIO"
+import Astal from "gi://Astal?version=4.0"
+import Hyprland from 'gi://AstalHyprland?version=0.1';
+
 import Bar from './widgets/bar/bar';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
@@ -22,7 +26,6 @@ import { isRec, stopRec, startClippingService } from './services/screenRecord';
 import quickSettings from './widgets/quicksettings/quicksettings';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
-import Hyprland from 'gi://AstalHyprland?version=0.1';
 const hypr = Hyprland.get_default();
 
 import { monitorBrightness } from './services/brightness';
@@ -37,7 +40,7 @@ const widgets = (monitor: number): Astal.Window[] => [
     cornerBottom(monitor)
 ];
 
-App.start({
+app.start({
     css: style + lancherStyle + clipboardStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
     main() {
         hypr.get_monitors().map((monitor) => widgetMap.set(monitor.id, widgets(monitor.id)));
@@ -78,7 +81,7 @@ App.start({
                 if (isRec.get() == true) { // If recording, stop
                     stopRec();
                 } else { // Show record menu to clip or begin recording
-                    App.toggle_window("recordMenu");
+                    app.toggle_window("recordMenu");
                 };
                 break;
             case "media":
@@ -109,7 +112,7 @@ App.start({
 });
 
 const reminders = () => {
-    const lastSync = Number(AstalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));
+    const lastSync = Number(astalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));
     const folderSize = Number(exec(`fish -c "du -sb /home/alec/Downloads | awk '{print \$1}'"`));
 
     if ((Date.now() - lastSync) > 604800000) { // Last sync was over 7 days ago

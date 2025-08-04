@@ -2,9 +2,13 @@
   "nodes": {
     "ags": {
       "inputs": {
-        "astal": "astal",
+        "astal": [
+          "astal"
+        ],
         "gnim": "gnim",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1753974398,
@@ -23,27 +27,8 @@
     "astal": {
       "inputs": {
         "nixpkgs": [
-          "ags",
           "nixpkgs"
         ]
-      },
-      "locked": {
-        "lastModified": 1752404970,
-        "narHash": "sha256-XULTToDUkIshNXEO+YP2mAHdQv8bxWDvKjbamBfOC8E=",
-        "owner": "aylur",
-        "repo": "astal",
-        "rev": "2c5eb54f39e1710c6e2c80915a240978beb3269a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "aylur",
-        "repo": "astal",
-        "type": "github"
-      }
-    },
-    "astal_2": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1752404970,
@@ -98,38 +83,6 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1754214453,
-        "narHash": "sha256-Q/I2xJn/j1wpkGhWkQnm20nShYnG7TI99foDBpXm1SY=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "5b09dc45f24cf32316283e62aec81ffee3c3e376",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1754214453,
-        "narHash": "sha256-Q/I2xJn/j1wpkGhWkQnm20nShYnG7TI99foDBpXm1SY=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "5b09dc45f24cf32316283e62aec81ffee3c3e376",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_3": {
-      "locked": {
         "lastModified": 1754292888,
         "narHash": "sha256-1ziydHSiDuSnaiPzCQh1mRFBsM2d2yRX9I+5OPGEmIE=",
         "owner": "NixOS",
@@ -147,9 +100,9 @@
     "root": {
       "inputs": {
         "ags": "ags",
-        "astal": "astal_2",
+        "astal": "astal",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs_3"
+        "nixpkgs": "nixpkgs"
       }
     }
   },

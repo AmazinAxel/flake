@@ -1,5 +1,8 @@
-import { execAsync, bind } from 'astal';
-import { App, Astal } from 'astal/gtk4';
+import { execAsync } from "ags/process";
+import { createBinding } from "ags"
+import App from 'astal/gtk4/app';
+import Astal from "gi://Astal?version=4.0"
+
 import { notifySend } from '../services/notifySend'; 
 import { recMic, recQuality, startRec } from '../services/screenRecord';
 

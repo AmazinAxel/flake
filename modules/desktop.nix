@@ -3,6 +3,7 @@
 
   # Home-manager primary desktop entrance
   home-manager = {
+    backupFileExtension = "backup";
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
   };
