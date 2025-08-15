@@ -1,17 +1,20 @@
-//import { bind } from 'astal'; // todo
 import AstalHyprland from 'gi://AstalHyprland';
 import { Gtk } from 'ags/gtk4';
+import { createBinding } from "ags"
 
 const hyprland = AstalHyprland.get_default();
+const focusedWorkspaceBind = createBinding(hyprland, 'focusedWorkspace');
 
 export const Workspaces = () =>
   <box
     orientation={Gtk.Orientation.VERTICAL}
     cssClasses={['workspaceList']}
-    onScroll={(_, __, y) => hyprland.dispatch('workspace', (y > 0) ? '+1' : '-1')}
   >
+    <Gtk.EventControllerScroll
+      flags={Gtk.EventControllerScrollFlags.VERTICAL}
+      onScroll={(_, __, y) => hyprland.dispatch('workspace', (y > 0) ? '+1' : '-1')}/>
     {[...Array(9).keys()].map((id) => id + 1).map((id) =>
-      <box cssClasses={bind(hyprland, 'focusedWorkspace').as((focused) => {
+      <box cssClasses={focusedWorkspaceBind((focused) => {
         const workspace = hyprland.workspaces.find((w) => w.id == id);
 
         // Empty workspace or monitor was reconnected

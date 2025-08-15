@@ -19,22 +19,23 @@ import clipboard from './widgets/clipboard/clipboard';
 import corners from './widgets/corners';
 import emojiPicker from './widgets/emojiPicker';
 import launcher from './widgets/launcher/launcher';
-//import recordMenu from './widgets/record';
-import { notifications, clearOldestNotification, DND } from './widgets/notifications/notifications';
+import recordMenu from './widgets/record';
+import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/quicksettings/quicksettings';
 import { notifySend } from './services/notifySend';
-//import { isRec, stopRec, startClippingService } from './services/screenRecord';
+import { isRec, stopRec, startClippingService } from './services/screenRecord';
 const hypr = Hyprland.get_default();
 
 import { monitorBrightness } from './services/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPlayer';
 
-const widgetMap: Map<number, Astal.Window[]> = new Map();
+// todo fix Any type
+const widgetMap: Map<number, any> = new Map();
 
 // Per-monitor widgets
-const widgets = (monitor: number): Astal.Window[] => [
+const widgets = (monitor: number) => [
     Bar(monitor),
     corners(monitor)
 ];
@@ -46,27 +47,27 @@ app.start({
 
         setTimeout(() => {
             notifications();
-            launcher();
-            calendar();
+            //launcher();
+            //calendar();
             clipboard();
-            quickSettings();
+            //quickSettings();
             //recordMenu();
             //startClippingService();
-            osd();
-            powermenu();
+            //osd();
+            //powermenu();
             emojiPicker();
             reminders();
             initMedia();
-        }, 500); // Delay to fix widgets on slow devices
+        }, 500); // Delay to fix widgets on old laptop
 
-        monitorBrightness(); // Start brightness monitor for OSD subscribbable
+        monitorBrightness(); // Begin brightness monitor for OSD subscribbable
 
         // Monitor reactivity
         hypr.connect('monitor-added', (_, monitor) =>
             widgetMap.set(monitor.id, widgets(monitor.id))
         );
         hypr.connect('monitor-removed', (_, monitorID) => {
-            widgetMap.get(monitorID)?.forEach((w) => w.destroy());
+            widgetMap.get(monitorID)?.forEach((w: Astal.Window) => w.destroy());
             widgetMap.delete(monitorID);
         });
     },
@@ -76,13 +77,11 @@ app.start({
             case "hideNotif":
                 clearOldestNotification();
                 break;
-            /*case "record":
-                if (isRec.get() == true) { // If recording, stop
-                    stopRec();
-                } else { // Show record menu to clip or begin recording
-                    app.toggle_window("recordMenu");
-                };
-                break;*/
+            case "record":
+                (isRec.get() == true)
+                    ? stopRec()
+                    : app.toggle_window("recordMenu");
+                break;
             case "media":
                 switch (reqArgs[1]) {
                     case "next":
@@ -103,7 +102,7 @@ app.start({
                 };
                 break;
             case "toggleDND":
-                DND.set(!DND.get())
+                setDND(!DND.get())
                 break;
         };
         res("Request handled successfully");

@@ -1,21 +1,23 @@
 import Wp from 'gi://AstalWp';
-//import { bind } from 'ags/gtk4'; // todo
+import { createBinding } from "ags"
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
 import Gdk from "gi://Gdk"
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 const audio = Wp.get_default()?.audio!;
 
+const speakerIconBind = createBinding(speaker, 'volumeIcon');
+const speakerVolumeBind = createBinding(speaker, 'volume');
 export const VolumeSlider = () =>
     <box>
-        <image iconName={bind(speaker, "volumeIcon")}/>
+        <image iconName={speakerIconBind}/>
         <slider
             hexpand
             onChangeValue={({ value }) => {
                 speaker.volume = value;
                 speaker.mute = false;
             }}
-            value={bind(speaker, "volume")}
+            value={speakerVolumeBind}
         />
     </box>
 
@@ -33,8 +35,9 @@ const nameSubstitute = (name: string) => {
 	return name;
 };
 
+const speakersBind = createBinding(audio, 'speakers');
 export const SinkSelector = () =>
-	<box>{bind(audio, 'speakers').as((speakers) => {
+	<box>{speakersBind((speakers) => {
 		const menu = new Gio.Menu();
 
 		speakers.forEach((speaker) => {

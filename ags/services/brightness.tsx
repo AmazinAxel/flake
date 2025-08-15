@@ -1,12 +1,12 @@
 import { monitorFile, readFileAsync } from 'ags/file';
 import { exec, execAsync } from 'ags/process';
-//import { createBinding } from 'ags'; // todo
+import { createState } from 'ags';
 
 const get = (args: string) => Number(exec('brightnessctl ' + args));
 const screen = exec('bash -c "ls -w1 /sys/class/backlight | head -1"');
 
 const screenMax = get("max");
-export const brightness: Variable<number> = new Variable(get("get") / (screenMax || 1));
+export const [brightness, setBrightnessValue] = createState(get("get") / (screenMax || 1)) 
 
 const setBrightness = (percent: number) => {
     if (percent < 0)
@@ -16,13 +16,13 @@ const setBrightness = (percent: number) => {
         percent = 1;
 
     execAsync(`brightnessctl set ${Math.floor(percent * 100)}% -q`)
-    .then(() => brightness.set(percent));
+    .then(() => setBrightnessValue(percent));
 };
 
 export const monitorBrightness = () =>
     monitorFile(`/sys/class/backlight/${screen}/brightness`, async (file) => {
         const v = await readFileAsync(file);
-        brightness.set(Number(v) / screenMax);
+        setBrightnessValue(Number(v) / screenMax);
     });
 
 export const BrightnessSlider = () =>
@@ -30,7 +30,7 @@ export const BrightnessSlider = () =>
         <image iconName="display-brightness-symbolic"/>
         <slider
             hexpand
-            value={brightnessBind}
+            value={brightness.bind((v: number) => v)}
             onChangeValue={({ value }) => setBrightness(value)}
         />
     </box>

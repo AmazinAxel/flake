@@ -1,34 +1,33 @@
 
-import { AstalIO, exec, execAsync, GLib, interval, bind, Variable } from 'ags/gtk4';
-import { Gtk } from 'ags/gtk4'
+import { Gtk } from 'ags/gtk4';
+import { createState } from 'ags';
+import { exec, execAsync } from 'ags/process';
+import AstalIO from 'gi://AstalIO';
+import GLib from 'gi://GLib';
+import Hyprland from 'gi://AstalHyprland';
 
 import { notifySend } from './notifySend';
-import Hyprland from 'gi://AstalHyprland?version=0.1';
 
 const hypr = Hyprland.get_default();
 const captureDir = '/home/alec/Videos/Captures';
 
 const now = () => GLib.DateTime.new_now_local().format('%Y-%m-%d_%H-%M-%S');
 
-export const isRec: Variable<boolean> = new Variable(false);
-const recTimer: Variable<number> = new Variable(0);
-
-export const recMic: Variable<boolean> = new Variable(false);
-export const recQuality: Variable<string> = new Variable('ultra')
+export const [ isRec, setIsRec] = createState(false);
+export const [ recMic, setRecMic] = createState(false);
+export const [ recQuality, setRecQuality] = createState('ultra');
 
 let rec: AstalIO.Process | null = null;
-let iterable: AstalIO.Time | null = null;
 let file: string;
 
 export const RecordingIndicator = () =>
 	<box
 		hexpand
-		visible={bind(isRec).as(Boolean)}
+		visible={isRec}
 		halign={Gtk.Align.CENTER}
 		cssClasses={['recIndicator']}
 	>
 		<image iconName="media-record-symbolic"/>
-		<label label={bind(recTimer).as((t) => t + "s")}/>
 	</box>
 
 export const startClippingService = () =>
@@ -45,16 +44,13 @@ export const startRec = () => {
 
 	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.get()} -w ${monitor} -o ${file}`);
 
-	recTimer.set(0);
-	isRec.set(true);
-	iterable = interval(1000, () => recTimer.set(recTimer.get() + 1));
+	setIsRec(true);
 };
 
 export const stopRec = () => {
 	rec?.signal(2); // Send SIGINT to stop recording
 	rec = null;
-	iterable?.cancel();
-	isRec.set(false);
+	setIsRec(false);
 
 	notifySend({
 		appName: 'Screen Recording',

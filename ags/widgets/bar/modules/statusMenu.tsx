@@ -1,7 +1,7 @@
 import Gdk from 'gi://Gdk'
 import app from 'ags/gtk4/app'
 import { Gtk } from 'ags/gtk4'
-//import { bind } from 'astal'; // todo
+import { createBinding } from "ags"
 import { DND } from '../../notifications/notifications';
 import Bluetooth from 'gi://AstalBluetooth';
 import Wp from 'gi://AstalWp';
@@ -11,25 +11,31 @@ const bluetooth = Bluetooth.get_default()
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 const battery = Battery.get_default();
 
+const btConnectedBind = createBinding(bluetooth, 'isConnected');
+const btIsPoweredBind = createBinding(bluetooth, 'isPowered');
 const BluetoothIcon = () =>
   <image
-    cssClasses={bind(bluetooth, 'isConnected').as((isConn) => (isConn) ? ['btConnected'] : [''])}
+    cssClasses={btConnectedBind((isConn) => (isConn) ? ['btConnected'] : [''])}
     iconName='bluetooth-active-symbolic'
-    visible={bind(bluetooth, 'isPowered')}
+    visible={btIsPoweredBind}
   />
 
+const batPercentageBind = createBinding(battery, 'percentage');
+const batteryIconName = createBinding(battery, 'batteryIconName')
 const BatteryWidget = () => 
     <image
-      tooltipText={bind(battery, 'percentage').as((p) => (p * 100) + '%')}
-      iconName={bind(battery, 'batteryIconName')}
-      visible={(!battery.percentage == 0)} // Hide if on desktop
+      tooltipText={batPercentageBind((p) => (p * 100) + '%')}
+      iconName={batteryIconName}
+      //visible={(!battery.percentage == 0)} // Hide if on desktop TODO
     />
 
+const volumeIconBind = createBinding(speaker, 'volumeIcon')
 const VolumeIcon = () =>
-  <image iconName={bind(speaker, 'volumeIcon')}/>
+  <image iconName={volumeIconBind}/>
 
-const DNDIcon = () =>
-  <image visible={bind(DND)} iconName='notifications-disabled-symbolic'/>
+// TODO
+//const DNDIcon = () =>
+//  <image visible={bind(DND)} iconName='notifications-disabled-symbolic'/>
 
 export const Status = () =>
   <button
@@ -38,12 +44,12 @@ export const Status = () =>
       app.toggle_window('quickSettings');
     }}
     cursor={Gdk.Cursor.new_from_name('pointer', null)}
-    onScroll={(_, __, y) => speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }
   >
+    <Gtk.EventControllerScroll
+      onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}/>
     <box orientation={Gtk.Orientation.VERTICAL} spacing={7} cssClasses={['statusMenu']}>
       <VolumeIcon/>
       <BatteryWidget/>
       <BluetoothIcon/>
-      <DNDIcon/>
     </box>
   </button>

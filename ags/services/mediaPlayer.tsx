@@ -1,12 +1,12 @@
 import app from "ags/gtk4/app"
 import { Gdk, Gtk } from "ags/gtk4";
 import { exec, execAsync } from 'ags/process';
+import { createState } from 'ags';
 
-//import Variable, bind
 export type musicAction = 'next' | 'prev';
-export const isPlaying: Variable<boolean> = new Variable(false);
-export const playlist: Variable<number> = new Variable(1);
-export const playlistName: Variable<string> = new Variable('');
+export const [ isPlaying, setIsPlaying] = createState(false);
+export const [ playlist, setPlaylist] = createState(1);
+export const [ playlistName, setPlaylistName] = createState('');
 
 // These playlists match with the folder names in ~/Music
 const playlists =      ['Study',  'Focus',  'Synthwave', 'SynthAmbient', 'Ambient'];
@@ -18,30 +18,30 @@ export const updTrack = (direction: musicAction) => {
 
     // Start playing again
     execAsync('mpc play');
-    isPlaying.set(true);
+    setIsPlaying(true);
 };
 
 export const playPause = () => {
     execAsync('mpc toggle');
-    isPlaying.set(!isPlaying.get());
+    setIsPlaying(!isPlaying.get());
 };
 
 export const chngPlaylist = (direction: musicAction) => {
     if (direction == 'next') {
         (playlist.get() == playlists.length)
-        ? (playlist.set(1)) // Go to first
-        : (playlist.set(Number(playlist.get()) + 1));
+        ? (setPlaylist(1)) // Go to first
+        : (setPlaylist(Number(playlist.get()) + 1));
     } else if (direction == 'prev') {
         (playlist.get() == 1)
-        ? (playlist.set(playlists.length)) // Go to last
-        : (playlist.set(Number(playlist.get()) - 1));
+        ? (setPlaylist(playlists.length)) // Go to last
+        : (setPlaylist(Number(playlist.get()) - 1));
     }
 
     // Stop playing music
     exec('mpc pause');
-    isPlaying.set(false);
+    setIsPlaying(false);
 
-    playlistName.set(playlists[Number(playlist.get()) - 1]);
+    setPlaylistName(playlists[Number(playlist.get()) - 1]);
     execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type grow --transition-fps 90`);
 
     // Clear the current cache and add the new playlist
@@ -52,7 +52,7 @@ export const chngPlaylist = (direction: musicAction) => {
 };
 
 export const initMedia = () => {
-    playlistName.set('Study'); // Must set to invoke binds
+    setPlaylistName('Study'); // Must set to invoke binds
 
     execAsync('mpc crossfade 2');
     execAsync('swww img /home/alec/Projects/flake/wallpapers/Study.jpg --transition-type grow --transition-fps 90');
@@ -67,22 +67,25 @@ export const Media = () =>
     <box heightRequest={35} marginBottom={1}>
         <overlay>
             <box
-                cssClasses={bind(isPlaying).as((v) => (v) ? ['playing', 'mediaBg'] : ['mediaBg'])}
+                cssClasses={isPlaying.as((v: boolean) => v ? ['playing', 'mediaBg'] : ['mediaBg'])}
                 hexpand
                 $={() =>
-                    playlistName.subscribe((w) =>
-                        app.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlists.indexOf(w)]}; }`)
+                    playlistName.subscribe(() =>
+                        app.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlist.get()]}; }`)
                 )}
             />
             <button
                 cssClasses={['media']}
                 $type="overlay"
                 onActivate={() => playPause()}
-                onScroll={(_, __, y) => execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
             >
-                <image iconName={bind(isPlaying).as(
-                    (v) => (v) ? 'media-playback-pause-symbolic' : 'media-playback-start-symbolic')
+                <Gtk.EventControllerScroll 
+                onScroll={(_, __, y) => {
+                    execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
+                }}/>
+                <image iconName={isPlaying.as(
+                    (v: boolean) => (v) ? 'media-playback-pause-symbolic' : 'media-playback-start-symbolic')
                 }/>
             </button>
         </overlay>
