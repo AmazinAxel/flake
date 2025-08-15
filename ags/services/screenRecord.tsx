@@ -1,6 +1,7 @@
 
-import { AstalIO, exec, execAsync, GLib, interval, bind, Variable } from 'astal';
-import { Gtk } from 'astal/gtk4';
+import { AstalIO, exec, execAsync, GLib, interval, bind, Variable } from 'ags/gtk4';
+import { Gtk } from 'ags/gtk4'
+
 import { notifySend } from './notifySend';
 import Hyprland from 'gi://AstalHyprland?version=0.1';
 

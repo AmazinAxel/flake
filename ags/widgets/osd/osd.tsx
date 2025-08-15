@@ -1,5 +1,6 @@
-import { bind, timeout, Variable } from 'astal';
-import { App, Astal, Gtk } from 'astal/gtk4';
+//import { bind, timeout, Variable } from 'astal'; // todo
+import { Astal, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app';
 import Wp from 'gi://AstalWp';
 import { brightness } from '../../services/brightness';
 
@@ -15,9 +16,9 @@ export default () =>
     <window
         name="osd"
         anchor={Astal.WindowAnchor.BOTTOM}
-        application={App}
+        application={app}
         visible={false}
-        setup={(self) => {
+        $={(self) => {
             brightness.subscribe((v) =>
                 osdChange('display-brightness-symbolic', v, self)
             );

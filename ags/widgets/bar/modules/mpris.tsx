@@ -1,5 +1,5 @@
-import { bind } from 'astal';
-import { Gdk } from 'astal/gtk4';
+//import { bind } from 'astal'; // todo
+import { Gdk } from 'ags/gtk4';
 import MprisService from 'gi://AstalMpris';
 
 const mpris = MprisService.get_default();
@@ -7,7 +7,7 @@ const mpris = MprisService.get_default();
 export const Mpris = () =>
     <button
         cssClasses={['mpris']}
-        onButtonPressed={() => mpris.players[0].play_pause()}
+        onActivate={() => mpris.players[0].play_pause()}
         onScroll={(_, __, y) => {
             const volume = mpris.players[0].get_volume();
             (y > 0)

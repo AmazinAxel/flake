@@ -1,11 +1,12 @@
-import { bind } from 'astal';
+//import { bind } from 'astal'; // todo
 import AstalHyprland from 'gi://AstalHyprland';
+import { Gtk } from 'ags/gtk4';
 
 const hyprland = AstalHyprland.get_default();
 
 export const Workspaces = () =>
   <box
-    vertical
+    orientation={Gtk.Orientation.VERTICAL}
     cssClasses={['workspaceList']}
     onScroll={(_, __, y) => hyprland.dispatch('workspace', (y > 0) ? '+1' : '-1')}
   >

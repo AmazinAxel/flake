@@ -1,6 +1,6 @@
 // Adapted from https://github.com/matt1432/nixos-configs/blob/9a24d7308bb3adf88da54c480c35b44e1aa4f132/modules/ags/config/widgets/corners/screen-corners.tsx
 
-import { Gtk } from 'astal/gtk4';
+import { Gtk } from 'ags/gtk4';
 import Cairo from 'cairo';
 const radius = 10;
 

@@ -16,16 +16,16 @@ import Hyprland from 'gi://AstalHyprland?version=0.1';
 import Bar from './widgets/bar/bar';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
+import corners from './widgets/corners';
 import emojiPicker from './widgets/emojiPicker';
-import { cornerTop, cornerBottom } from './widgets/corners';
-import { notifications, clearOldestNotification, DND } from './widgets/notifications/notifications';
 import launcher from './widgets/launcher/launcher';
-import { notifySend } from './services/notifySend';
-import recordMenu from './widgets/record';
-import { isRec, stopRec, startClippingService } from './services/screenRecord';
-import quickSettings from './widgets/quicksettings/quicksettings';
+//import recordMenu from './widgets/record';
+import { notifications, clearOldestNotification, DND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
+import quickSettings from './widgets/quicksettings/quicksettings';
+import { notifySend } from './services/notifySend';
+//import { isRec, stopRec, startClippingService } from './services/screenRecord';
 const hypr = Hyprland.get_default();
 
 import { monitorBrightness } from './services/brightness';
@@ -36,8 +36,7 @@ const widgetMap: Map<number, Astal.Window[]> = new Map();
 // Per-monitor widgets
 const widgets = (monitor: number): Astal.Window[] => [
     Bar(monitor),
-    cornerTop(monitor),
-    cornerBottom(monitor)
+    corners(monitor)
 ];
 
 app.start({
@@ -51,8 +50,8 @@ app.start({
             calendar();
             clipboard();
             quickSettings();
-            recordMenu();
-            startClippingService();
+            //recordMenu();
+            //startClippingService();
             osd();
             powermenu();
             emojiPicker();
@@ -77,13 +76,13 @@ app.start({
             case "hideNotif":
                 clearOldestNotification();
                 break;
-            case "record":
+            /*case "record":
                 if (isRec.get() == true) { // If recording, stop
                     stopRec();
                 } else { // Show record menu to clip or begin recording
                     app.toggle_window("recordMenu");
                 };
-                break;
+                break;*/
             case "media":
                 switch (reqArgs[1]) {
                     case "next":

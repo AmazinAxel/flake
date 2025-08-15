@@ -1,11 +1,15 @@
-import { execAsync, monitorFile, Gio, GLib } from 'astal';
-import { App, Gtk, Astal } from 'astal/gtk4';
+import { monitorFile } from 'ags/file';
+import { execAsync } from 'ags/process';
+import { Gtk, Astal } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
+import Gio from 'gi://Gio'
+import GLib from 'gi://GLib';
 import { ClipboardItem } from './clipboardItem';
 
 const list = new Gtk.ListBox;
 
 list.connect('row-activated', async (_, row) => {
-    App.get_window('clipboard')?.set_visible(false);
+    app.get_window('clipboard')?.set_visible(false);
 
     const id = row.child.name;
     await execAsync(`bash -c 'cliphist decode ${id} | wl-copy'`);
@@ -42,7 +46,7 @@ const refreshItems = async () => {
 export default () => <window
     name="clipboard"
     keymode={Astal.Keymode.ON_DEMAND}
-    setup={refreshItems}
+    $={refreshItems}
     onShow={() => list.get_first_child()?.grab_focus()}
     onKeyPressed={async (self, key) => {
         switch (key) {
@@ -71,7 +75,7 @@ export default () => <window
                 self.hide()
         };
     }}
-    application={App}
+    application={app}
     visible={false}
     >
         <Gtk.ScrolledWindow

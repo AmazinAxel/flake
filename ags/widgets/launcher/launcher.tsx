@@ -1,12 +1,13 @@
 import Apps from 'gi://AstalApps'
-import { App, Astal, Gtk, Gdk } from 'astal/gtk4';
-import { bind } from 'astal';
+import { Astal, Gtk, Gdk } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
+//import { bind } from 'astal'; // todo
 import { playlistName } from '../../services/mediaPlayer';
 
 const apps = new Apps.Apps()
 let textBox: Gtk.Entry;
 
-const hide = () => App.toggle_window("launcher");
+const hide = () => app.toggle_window("launcher");
 
 const AppBtn = ({ app }: { app: Apps.Application }) =>
     <button
@@ -37,7 +38,7 @@ export default () =>
         name="launcher"
         anchor={Astal.WindowAnchor.TOP}
         keymode={Astal.Keymode.ON_DEMAND}
-        application={App}
+        application={app}
         visible={false}
         onShow={() => textBox.text = ''}
         onKeyPressed={(_, key) =>
@@ -50,7 +51,7 @@ export default () =>
                 <overlay>
                     <box
                         cssClasses={['searchBg']}
-                        setup={() =>
+                        $={() =>
                             playlistName.subscribe((w) =>
                                 App.apply_css(`.searchBg { background-image: url("file:///home/alec/Projects/flake/wallpapers/${w}.jpg"); }`)
                             )
@@ -73,7 +74,7 @@ export default () =>
                         }}
                     />
                 </overlay>
-                <box spacing={6} vertical>
+                <box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
                     {bind(textBox, 'text').as(text =>
                         apps.fuzzy_query(text).slice(0, 5)
                         .map((app: Apps.Application) => <AppBtn app={app}/>)

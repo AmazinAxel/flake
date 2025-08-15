@@ -1,16 +1,17 @@
-import { App, Astal, Gtk } from 'astal/gtk4';
-import { execAsync } from 'astal';
+import { Astal, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
+import { execAsync } from 'ags/process';
 const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
 
-const hide = () => App.get_window('emojiPicker')?.hide();
+const hide = () => app.get_window('emojiPicker')?.hide();
 
 export default () =>
   <window
     name="emojiPicker"
     keymode={Astal.Keymode.ON_DEMAND}
     anchor={TOP | BOTTOM | LEFT | RIGHT}
-    application={App}
+    application={app}
     visible={false}
   >
     <entry
@@ -18,9 +19,9 @@ export default () =>
       showEmojiIcon
       halign={Gtk.Align.CENTER}
       valign={Gtk.Align.CENTER}
-      setup={(self) => {
-        App.connect('window-toggled', () => {
-          if (App.get_window('emojiPicker')?.visible == true) {
+      $={(self) => {
+        app.connect('window-toggled', () => {
+          if (app.get_window('emojiPicker')?.visible == true) {
             self.grab_focus();
             self.text = '';
           };
@@ -33,8 +34,6 @@ export default () =>
           await execAsync('wl-copy ' + self.text);
         };
       }}
-
-      // On escape key pressed
-      onKeyPressed={(_, key) => (key == 65307) && hide()}
     />
+    <Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65307) && hide()} />
   </window>

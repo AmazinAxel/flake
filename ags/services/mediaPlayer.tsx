@@ -1,6 +1,8 @@
-import { App, Gdk } from 'astal/gtk4';
-import { exec, execAsync, Variable, bind } from 'astal';
+import app from "ags/gtk4/app"
+import { Gdk, Gtk } from "ags/gtk4";
+import { exec, execAsync } from 'ags/process';
 
+//import Variable, bind
 export type musicAction = 'next' | 'prev';
 export const isPlaying: Variable<boolean> = new Variable(false);
 export const playlist: Variable<number> = new Variable(1);
@@ -67,15 +69,15 @@ export const Media = () =>
             <box
                 cssClasses={bind(isPlaying).as((v) => (v) ? ['playing', 'mediaBg'] : ['mediaBg'])}
                 hexpand
-                setup={() =>
+                $={() =>
                     playlistName.subscribe((w) =>
-                        App.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlists.indexOf(w)]}; }`)
+                        app.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlists.indexOf(w)]}; }`)
                 )}
             />
             <button
                 cssClasses={['media']}
-                type="overlay"
-                onButtonPressed={() => playPause()}
+                $type="overlay"
+                onActivate={() => playPause()}
                 onScroll={(_, __, y) => execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
             >

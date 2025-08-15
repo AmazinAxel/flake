@@ -1,6 +1,8 @@
 import Wp from 'gi://AstalWp';
-import { bind, Gio, GLib } from 'astal';
-import { Gdk } from 'astal/gtk4';
+//import { bind } from 'ags/gtk4'; // todo
+import GLib from "gi://GLib"
+import Gio from "gi://Gio"
+import Gdk from "gi://Gdk"
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 const audio = Wp.get_default()?.audio!;
 

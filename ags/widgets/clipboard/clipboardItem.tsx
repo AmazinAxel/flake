@@ -1,7 +1,9 @@
-import { GLib, exec } from 'astal';
-import { App, Gtk } from 'astal/gtk4';
+import { exec } from 'ags/process';
+import GLib from "gi://GLib";
+import { Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
 
-export const ClipboardItem = (id: string, content: string): Gtk.Widget => {
+export const ClipboardItem = (id: string, content: string) => {
     const matches = content.match(/\[\[ binary data (\d+) (B|KiB|MiB) (\w+) (\d+)x(\d+) \]\]/);
     if (matches) { // Image item
         const extension = matches[3];
@@ -25,7 +27,7 @@ export const ClipboardItem = (id: string, content: string): Gtk.Widget => {
             maxWidth = adjustedWidth;
         };
 
-        App.apply_css(`._${id} {
+        app.apply_css(`._${id} {
             background-image: url("file://${path}");
             min-height: ${maxHeight}px;
             min-width: ${maxWidth}px;

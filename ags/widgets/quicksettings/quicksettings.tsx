@@ -1,7 +1,8 @@
 import { BrightnessSlider } from '../../services/brightness';
 import { VolumeSlider, SinkSelector } from './sound';
-import { App, Astal, Gdk } from 'astal/gtk4';
-import { bind } from 'astal';
+import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
+//import { bind } from 'astal'; // todo
 import { DND } from '../notifications/notifications';
 const { BOTTOM, LEFT } = Astal.WindowAnchor;
 
@@ -19,12 +20,12 @@ export default () =>
     <window
         name="quickSettings"
         anchor={BOTTOM | LEFT}
-        application={App}
+        application={app}
         visible={false}
     >
-        <box widthRequest={400} cssClasses={['quickSettings']} vertical>
+        <box widthRequest={400} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
             <box marginBottom={5}>
-                <box vertical>
+                <box orientation={Gtk.Orientation.VERTICAL}>
                     <VolumeSlider/>
                     <BrightnessSlider/>
                 </box>

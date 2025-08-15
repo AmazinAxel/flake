@@ -1,6 +1,6 @@
-import { monitorFile, readFileAsync } from 'astal/file';
-import { exec, execAsync } from 'astal/process';
-import { bind, Variable } from 'astal';
+import { monitorFile, readFileAsync } from 'ags/file';
+import { exec, execAsync } from 'ags/process';
+//import { createBinding } from 'ags'; // todo
 
 const get = (args: string) => Number(exec('brightnessctl ' + args));
 const screen = exec('bash -c "ls -w1 /sys/class/backlight | head -1"');
@@ -30,7 +30,7 @@ export const BrightnessSlider = () =>
         <image iconName="display-brightness-symbolic"/>
         <slider
             hexpand
-            value={bind(brightness)}
+            value={brightnessBind}
             onChangeValue={({ value }) => setBrightness(value)}
         />
     </box>

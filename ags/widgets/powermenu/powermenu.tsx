@@ -1,5 +1,6 @@
-import { Astal, App } from 'astal/gtk4';
-import { execAsync } from 'astal';
+import { Astal } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
+//import { execAsync } from 'astal'; // todo
 import Hyprland from 'gi://AstalHyprland?version=0.1';
 const hypr = Hyprland.get_default();
 
@@ -21,7 +22,7 @@ const centerCursor = () => {
 export default () =>
    <window
       name="powermenu"
-      application={App}
+      application={app}
       visible={false}
       keymode={Astal.Keymode.ON_DEMAND}
       onShow={centerCursor}

@@ -1,6 +1,6 @@
 // Stolen from https://github.com/matt1432/nixos-configs/blob/master/modules/ags/config/lib/notify.ts
 
-import { subprocess, execAsync } from 'astal';
+import { subprocess, execAsync } from 'ags/process';
 
 interface NotifyAction {
     id: number,

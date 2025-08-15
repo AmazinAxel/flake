@@ -1,5 +1,6 @@
-import { GLib } from 'astal';
-import { Gtk, Gdk } from 'astal/gtk4';
+import GLib from "gi://GLib";
+import { Gtk, Gdk } from 'ags/gtk4';
+
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 const { START, CENTER, END } = Gtk.Align
@@ -8,7 +9,7 @@ const notifd = Notifd.get_default();
 const time = (time: number) => GLib.DateTime.new_from_unix_local(time).format("%H:%M")!;
 
 export const notificationItem = (n: Notifd.Notification) =>
-    <box vertical cssClasses={['notification']}>
+    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['notification']}>
         <box cssClasses={['header']}>
             {(n.desktopEntry || n.image) && <image
                 cssClasses={['app-icon']}
@@ -28,7 +29,7 @@ export const notificationItem = (n: Notifd.Notification) =>
             />
         </box>
         <box cssClasses={['content']}>
-            <box vertical>
+            <box orientation={Gtk.Orientation.VERTICAL}>
                 <label
                     cssClasses={['summary']}
                     halign={START}
@@ -53,7 +54,7 @@ export const notificationItem = (n: Notifd.Notification) =>
                         <button
                             hexpand
                             cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            onButtonPressed={() => {
+                            onActivate={() => {
                                 n.invoke(id);
                                 setTimeout(() =>
                                     (notifd.get_notification(n.id)) && n.dismiss()

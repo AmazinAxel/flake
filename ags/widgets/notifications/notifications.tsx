@@ -1,7 +1,8 @@
-import { App, Astal } from 'astal/gtk4';
+import { Astal, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app'
 import Notifd from 'gi://AstalNotifd';
 import { notificationItem } from './notificationItem';
-import { Variable, bind } from 'astal';
+//import { Variable, bind } from 'ags/process'; // todo
 const { TOP, RIGHT } = Astal.WindowAnchor;
 export const DND = Variable(false);
 
@@ -27,11 +28,11 @@ export const notifications = () =>
 	<window
 		name="notifications"
 		anchor={TOP | RIGHT}
-		application={App}
+		application={app}
 
 		// This prop gives broken accounting warning but fixes allocation size
 		visible={bind(notificationlist).as(n => (n.length != 0) ? true : false)}
-		setup={() => {
+		$={() => {
 			const notifd = Notifd.get_default();
 			notifd.connect("notified", (_, id) => {
 				const notif = notifd.get_notification(id);
@@ -43,7 +44,7 @@ export const notifications = () =>
 			);
 		}}
 	>
-		<box vertical>
+		<box orientation={Gtk.Orientation.VERTICAL}>
 			{bind(notificationlist).as((n) => n.map(notificationItem))}
 		</box>
 	</window>
