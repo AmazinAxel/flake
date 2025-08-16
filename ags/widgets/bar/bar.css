@@ -18,22 +18,21 @@
 
 /* Time/date module */
 .time .date, .time .day {
-    font-size: 0.7rem;
-    font-family: 'Liberation Mono';
     font-style: italic;
     color: @blue2;
     text-shadow: 0 0 3px @blue3;
 }
-.time .date { font-size: 0.6rem; }
+.time .date { font-family: 'WenQuanYi Zen Hei Mono'; }
+.date.bottom { margin-bottom: 3px; }
 .time .time {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
     font-family: 'WenQuanYi Zen Hei Mono';
     font-weight: bold;
     letter-spacing: 2px;
     color: @blue2;
     text-shadow: 0 0 5px @blue3;
 }
-
+.time .day { font-size: 0.9rem; }
 
 /* Workspace list */
 .workspaceList {
@@ -58,9 +57,11 @@
 .btConnected { color: @blue3; -gtk-icon-shadow: 0 0 2px @blue3; }
 
 /* Recording indicator */
-.recIndicator { color: #bf616a; }
-.recIndicator image { -gtk-icon-size: 0.7rem; padding-right: 3px; }
-.recIndicator label { font-size: 0.9rem; margin-top: -1px; }
+.recIndicator {
+    color: #bf616a;
+    padding: 0.6rem;
+    -gtk-icon-shadow: 0 0 10px #bf616a;
+}
 
 /* Media players */
 #bar .media, #bar .mpris {

@@ -21,14 +21,11 @@ let rec: AstalIO.Process | null = null;
 let file: string;
 
 export const RecordingIndicator = () =>
-	<box
-		hexpand
+	<image
 		visible={isRec}
 		halign={Gtk.Align.CENTER}
 		cssClasses={['recIndicator']}
-	>
-		<image iconName="media-record-symbolic"/>
-	</box>
+		iconName="media-record-symbolic"/>
 
 export const startClippingService = () =>
 	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${hypr.get_focused_monitor().name} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)

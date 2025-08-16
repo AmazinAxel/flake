@@ -19,7 +19,7 @@ export const Time = () =>
   >
     <box orientation={Gtk.Orientation.VERTICAL} hexpand>
       <label cssClasses={['date']} label={month}/>
-      <label cssClasses={['date']} label={day}/>
+      <label cssClasses={['date', 'bottom']} label={day}/>
 
       <label cssClasses={['time']} label={time((time) => time!.toString())} />
 
