@@ -54,7 +54,7 @@ export const notificationItem = (n: Notifd.Notification) =>
                         <button
                             hexpand
                             cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            onActivate={() => {
+                            onClicked={() => {
                                 n.invoke(id);
                                 setTimeout(() =>
                                     (notifd.get_notification(n.id)) && n.dismiss()

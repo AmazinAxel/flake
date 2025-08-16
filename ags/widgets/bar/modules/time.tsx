@@ -10,7 +10,7 @@ const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H
 
 export const Time = () =>
   <button
-    onActivate={() => {
+    onClicked={() => {
       app.get_window("quickSettings")?.hide();
       app.toggle_window("calendar");
     }}

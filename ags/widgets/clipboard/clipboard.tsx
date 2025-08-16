@@ -39,7 +39,7 @@ const refreshItems = async () => {
 
         if (entries[0].content) // Only remap if there is clipboard history to show
             entries.forEach((entry) =>
-                list.append(ClipboardItem(entry.id, entry.content))
+                list.append(ClipboardItem(entry.id, entry.content) as Gtk.Widget)
             );
 };
 

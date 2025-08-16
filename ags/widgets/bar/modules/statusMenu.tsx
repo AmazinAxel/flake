@@ -26,30 +26,31 @@ const BatteryWidget = () =>
     <image
       tooltipText={batPercentageBind((p) => (p * 100) + '%')}
       iconName={batteryIconName}
-      //visible={(!battery.percentage == 0)} // Hide if on desktop TODO
+      visible={Boolean(battery.percentage)} // Hide if on desktop
     />
 
 const volumeIconBind = createBinding(speaker, 'volumeIcon')
 const VolumeIcon = () =>
   <image iconName={volumeIconBind}/>
 
-// TODO
-//const DNDIcon = () =>
-//  <image visible={bind(DND)} iconName='notifications-disabled-symbolic'/>
+const DNDIcon = () =>
+  <image visible={DND} iconName='notifications-disabled-symbolic'/>
 
 export const Status = () =>
   <button
-    onActivate={() => {
+    onClicked={() => {
       app.get_window('calendar')?.hide();
       app.toggle_window('quickSettings');
     }}
     cursor={Gdk.Cursor.new_from_name('pointer', null)}
   >
     <Gtk.EventControllerScroll
+      flags={Gtk.EventControllerScrollFlags.VERTICAL}
       onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}/>
     <box orientation={Gtk.Orientation.VERTICAL} spacing={7} cssClasses={['statusMenu']}>
       <VolumeIcon/>
       <BatteryWidget/>
       <BluetoothIcon/>
+      <DNDIcon/>
     </box>
   </button>

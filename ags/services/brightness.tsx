@@ -30,7 +30,7 @@ export const BrightnessSlider = () =>
         <image iconName="display-brightness-symbolic"/>
         <slider
             hexpand
-            value={brightness.bind((v: number) => v)}
+            value={brightness.as((v: number) => v)}
             onChangeValue={({ value }) => setBrightness(value)}
         />
     </box>

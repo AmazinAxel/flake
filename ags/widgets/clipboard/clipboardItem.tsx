@@ -3,7 +3,7 @@ import GLib from "gi://GLib";
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 
-export const ClipboardItem = (id: string, content: string): Gtk.Widget => {
+export const ClipboardItem = (id: string, content: string) => {
     const matches = content.match(/\[\[ binary data (\d+) (B|KiB|MiB) (\w+) (\d+)x(\d+) \]\]/);
     if (matches) { // Image item
         const extension = matches[3];

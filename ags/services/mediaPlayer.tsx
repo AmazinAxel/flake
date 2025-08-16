@@ -43,6 +43,7 @@ export const chngPlaylist = (direction: musicAction) => {
 
     setPlaylistName(playlists[Number(playlist.get()) - 1]);
     execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type grow --transition-fps 90`);
+    app.apply_css(`.searchBg { background-image: url("file:///home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg"); }`) // Update the launcher background TODO find a better way to do this
 
     // Clear the current cache and add the new playlist
     exec('mpc clear');
@@ -53,6 +54,7 @@ export const chngPlaylist = (direction: musicAction) => {
 
 export const initMedia = () => {
     setPlaylistName('Study'); // Must set to invoke binds
+    app.apply_css(`.searchBg { background-image: url("file:///home/alec/Projects/flake/wallpapers/Study.jpg"); }`) // Update the launcher background
 
     execAsync('mpc crossfade 2');
     execAsync('swww img /home/alec/Projects/flake/wallpapers/Study.jpg --transition-type grow --transition-fps 90');
@@ -71,18 +73,19 @@ export const Media = () =>
                 hexpand
                 $={() =>
                     playlistName.subscribe(() =>
-                        app.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlist.get()]}; }`)
+                        app.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlist.get() - 1]}; }`)
                 )}
             />
             <button
                 cssClasses={['media']}
                 $type="overlay"
-                onActivate={() => playPause()}
+                onClicked={() => playPause()}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
             >
-                <Gtk.EventControllerScroll 
-                onScroll={(_, __, y) => {
-                    execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
+                <Gtk.EventControllerScroll
+                    flags={Gtk.EventControllerScrollFlags.VERTICAL} 
+                    onScroll={(_, __, y) => {
+                        execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
                 }}/>
                 <image iconName={isPlaying.as(
                     (v: boolean) => (v) ? 'media-playback-pause-symbolic' : 'media-playback-start-symbolic')

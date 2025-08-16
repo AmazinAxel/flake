@@ -12,7 +12,6 @@ export const [ notificationlist, setNotificationList] = createState(
     new Array<Notifd.Notification>()
 )
 
-
 const notifiy = () =>
 	setNotificationList([...map.values()].reverse());
 
@@ -35,7 +34,7 @@ export const notifications = () =>
 		application={app}
 
 		// This prop gives broken accounting warning but fixes allocation size
-		visible={notificationlist(n => (n.length != 0) ? true : false)}
+		visible={notificationlist.as(n => (n.length != 0) ? true : false)}
 		$={() => {
 			const notifd = Notifd.get_default();
 			notifd.connect("notified", (_, id) => {

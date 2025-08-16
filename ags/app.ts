@@ -12,11 +12,10 @@ import { exec } from "ags/process";
 import astalIO from "gi://AstalIO"
 import Astal from "gi://Astal?version=4.0"
 import Hyprland from 'gi://AstalHyprland?version=0.1';
-
 import Bar from './widgets/bar/bar';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
-import corners from './widgets/corners';
+import { cornerTop, cornerBottom } from './widgets/corners';
 import emojiPicker from './widgets/emojiPicker';
 import launcher from './widgets/launcher/launcher';
 import recordMenu from './widgets/record';
@@ -31,13 +30,13 @@ const hypr = Hyprland.get_default();
 import { monitorBrightness } from './services/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPlayer';
 
-// todo fix Any type
 const widgetMap: Map<number, any> = new Map();
 
 // Per-monitor widgets
 const widgets = (monitor: number) => [
     Bar(monitor),
-    corners(monitor)
+    cornerTop(monitor),
+    cornerBottom(monitor)
 ];
 
 app.start({
@@ -46,21 +45,21 @@ app.start({
         hypr.get_monitors().map((monitor) => widgetMap.set(monitor.id, widgets(monitor.id)));
 
         setTimeout(() => {
-            notifications();
-            //launcher();
-            //calendar();
+            calendar();
             clipboard();
-            //quickSettings();
-            //recordMenu();
-            //startClippingService();
-            //osd();
-            //powermenu();
+            quickSettings();
+            recordMenu();
+            startClippingService();
+            osd();
+            powermenu();
             emojiPicker();
             reminders();
             initMedia();
         }, 500); // Delay to fix widgets on old laptop
 
         monitorBrightness(); // Begin brightness monitor for OSD subscribbable
+        notifications();
+        launcher();
 
         // Monitor reactivity
         hypr.connect('monitor-added', (_, monitor) =>
