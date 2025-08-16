@@ -20,6 +20,7 @@
     ags = {
       enable = true;
       configDir = ../ags;
+      systemd.enable = true;
 
       extraPackages = with inputs.astal.packages.${pkgs.system}; [
         apps # App launcher
@@ -46,9 +47,6 @@
       size = 24;
       gtk.enable = true;
     };
-    
-    # For shell keybinds
-    packages = [ inputs.astal.packages.${pkgs.system}.io ];
   };
 
   # Astal clipboard management

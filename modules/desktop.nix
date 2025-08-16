@@ -3,7 +3,7 @@
 
   # Home-manager primary desktop entrance
   home-manager = {
-    backupFileExtension = "backup";
+    backupFileExtension = "backup2";
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
   };
@@ -30,6 +30,9 @@
     file-roller # Open archives in nemo
     discord # Voice & video chat app
     filezilla # FTP client
+
+    # For shell keybinds
+    inputs.astal.packages.${pkgs.system}.io
 
     # Wayland MC w/ key modifiers patch
     (prismlauncher.override {

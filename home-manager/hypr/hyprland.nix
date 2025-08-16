@@ -114,7 +114,6 @@
       exec-once = [
         "hyprlock" # Screen lock
         "fcitx5 -d" # Chinese input daemon
-        "desktop-shell" # Custom Astal shell
       ];
 
       workspace = [ # No gaps when only window in workspace
