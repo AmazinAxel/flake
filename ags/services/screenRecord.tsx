@@ -28,10 +28,10 @@ export const RecordingIndicator = () =>
 		iconName="media-record-symbolic"/>
 
 export const startClippingService = () =>
-	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${hypr.get_focused_monitor().name} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
+	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${hypr.get_monitors()[0]?.name} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
 
 export const startRec = () => {
-	execAsync("killall -SIGINT gpu-screen-recorder") // Stops screen clipping, otherwise exits
+	execAsync("pkill -SIGINT -f gpu-screen-recorder") // Stops screen clipping, otherwise exits
 
 	exec("hyprctl keyword decoration:screen_shader ''"); // Disable blue light shader
 

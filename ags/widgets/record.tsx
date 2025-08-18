@@ -15,14 +15,14 @@ export default () => <window
     cssClasses={['widgetBackground']}
     >
         <Gtk.EventControllerKey
-            onKeyPressed={(self, key) => {
+            onKeyPressed={(_, key) => {
                 switch (key) {
                     case 32: // Space - start recording
                         startRec();
                         window.hide()
                         break;
                     case 99: // C - clip & save last 30 seconds
-                        execAsync("killall -SIGUSR1 gpu-screen-recorder")
+                        execAsync("pkill -SIGUSR1 -f gpu-screen-recorder")
                         notifySend({
                             appName: 'Screen Recording',
                             title: 'Screen recording saved',

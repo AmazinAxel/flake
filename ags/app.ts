@@ -47,19 +47,17 @@ app.start({
         calendar();
         clipboard(); 
         recordMenu();
-        startClippingService();
         osd();
         powermenu();
         emojiPicker();
-        reminders();
+        quickSettings();
+        launcher();
 
         monitorBrightness();
         notifications();
-        launcher();
-
-        quickSettings();
-
+        startClippingService();
         initMedia();
+        reminders();
 
         // Monitor reactivity
         hypr.connect('monitor-added', (_, monitor) =>
