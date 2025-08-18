@@ -1,6 +1,5 @@
 import Wp from 'gi://AstalWp';
 import { createBinding, With } from "ags"
-import { Gtk } from 'ags/gtk4';
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
 import Gdk from "gi://Gdk"
