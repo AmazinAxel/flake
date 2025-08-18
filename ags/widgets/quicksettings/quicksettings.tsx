@@ -30,6 +30,7 @@ export default () =>
                 </box>
                 <DNDToggle/>
             </box>
+            <SinkSelector/>
         </box>
     </window>
 

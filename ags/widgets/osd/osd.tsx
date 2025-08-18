@@ -24,8 +24,8 @@ export default () =>
             brightness.subscribe(() =>
                 osdChange('display-brightness-symbolic', brightness.get(), self)
             );
-            volumeBind((v) =>
-                osdChange(speaker.volume_icon, v, self)
+            volumeBind.subscribe(() =>
+                osdChange(speaker.volume_icon, speaker.volume, self)
             );
         }}
     >
@@ -44,7 +44,7 @@ const osdChange = (iconType: string, value: number, osd: Gtk.Window) => {
     osd.visible = true;
 
     count++;
-    timeout(2000, () => { // 2 second hide time
+    timeout(1000, () => {
         count--;
 
         if (count === 0)
