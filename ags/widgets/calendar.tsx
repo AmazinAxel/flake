@@ -7,7 +7,6 @@ export default () =>
     name="calendar"
     anchor={BOTTOM | LEFT}
     application={app}
-    visible={false}
   >
     <Gtk.Calendar/>
   </window>

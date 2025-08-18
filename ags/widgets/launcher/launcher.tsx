@@ -22,7 +22,6 @@ export default () =>
         anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
         keymode={Astal.Keymode.ON_DEMAND}
         application={app}
-        visible={false}
         onShow={() => textBox.text = ''}
     >
         <Gtk.EventControllerKey

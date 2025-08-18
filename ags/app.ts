@@ -46,7 +46,6 @@ app.start({
 
         calendar();
         clipboard(); 
-        quickSettings();
         recordMenu();
         startClippingService();
         osd();
@@ -57,6 +56,8 @@ app.start({
         monitorBrightness();
         notifications();
         launcher();
+
+        quickSettings();
 
         initMedia();
 
@@ -119,7 +120,7 @@ const reminders = () => {
             actions: [{
                 id: 1,
                 label: 'Update & Sync',
-                command: 'foot -e fish -c sys-sync'
+                command: `foot -e fish -c 'sys-sync; echo "Press a key to exit"; read --nchars=1'`
             }]
         });
     } else if (folderSize > 100000000) { // Greater than 100MB

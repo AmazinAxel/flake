@@ -12,7 +12,6 @@ export default () =>
     keymode={Astal.Keymode.ON_DEMAND}
     anchor={TOP | BOTTOM | LEFT | RIGHT}
     application={app}
-    visible={false}
   >
     <entry
       enableEmojiCompletion

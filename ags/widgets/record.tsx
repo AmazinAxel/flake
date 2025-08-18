@@ -11,7 +11,6 @@ export default () => <window
     name="recordMenu"
     keymode={Astal.Keymode.ON_DEMAND}
     application={app}
-    visible={false}
     $={(self) => window = self}
     cssClasses={['widgetBackground']}
     >

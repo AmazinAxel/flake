@@ -1,4 +1,5 @@
 import Wp from 'gi://AstalWp';
+import app from 'ags/gtk4/app';
 import { createBinding, With } from "ags"
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
@@ -31,12 +32,12 @@ const nameSubstitute = (name: string) => {
 	} else if (name == 'K38') {
 		return 'Bluetooth Speaker';
 	};
-	
 	return name;
 };
 
 const speakersBind = createBinding(audio, 'speakers');
-const selectedSpeakerBind = createBinding(audio, 'defaultSpeaker');
+const selectedSpeakerBind = createBinding(speaker, 'description').as(v => `Select Audio Output (${nameSubstitute(v)})`)
+
 export const SinkSelector = () =>
 	<box>
 		<With value={speakersBind}>
@@ -60,17 +61,17 @@ export const SinkSelector = () =>
 				speaker.connect('notify', (source) =>
 					(source.description) && (source.isDefault) && radioAction.set_state(GLib.Variant.new_string(source.description)
 				));
-				const actionGroup = new Gio.SimpleActionGroup();
-				actionGroup.add_action(radioAction);
-			
 				const button = <menubutton
 					menuModel={menu}
-					label={selectedSpeakerBind((speaker) => `Select Audio Output (${nameSubstitute(speaker.description)})`)}
+					label={selectedSpeakerBind}
 					cursor={Gdk.Cursor.new_from_name('pointer', null)}
 					hexpand
 				/>;
-				
-				//button.set_menu('speakers', actionGroup);
+
+				const actionGroup = new Gio.SimpleActionGroup();
+				actionGroup.add_action(radioAction);
+				app.get_window('quickSettings')?.insert_action_group('speakers', actionGroup);
+
 				return button;
 			}}
 		</With>

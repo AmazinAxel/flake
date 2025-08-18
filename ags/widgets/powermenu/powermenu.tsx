@@ -25,7 +25,6 @@ export default () =>
       name="powermenu"
       $={(self) => window = self}
       application={app}
-      visible={false}
       keymode={Astal.Keymode.ON_DEMAND}
       onShow={centerCursor}
    >
