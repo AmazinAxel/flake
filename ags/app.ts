@@ -44,22 +44,21 @@ app.start({
     main() {
         hypr.get_monitors().map((monitor) => widgetMap.set(monitor.id, widgets(monitor.id)));
 
-        setTimeout(() => {
-            calendar();
-            clipboard();
-            quickSettings();
-            recordMenu();
-            startClippingService();
-            osd();
-            powermenu();
-            emojiPicker();
-            reminders();
-            initMedia();
-        }, 500); // Delay to fix widgets on old laptop
+        calendar();
+        clipboard(); 
+        quickSettings();
+        recordMenu();
+        startClippingService();
+        osd();
+        powermenu();
+        emojiPicker();
+        reminders();
 
-        monitorBrightness(); // Begin brightness monitor for OSD subscribbable
+        monitorBrightness();
         notifications();
         launcher();
+
+        initMedia();
 
         // Monitor reactivity
         hypr.connect('monitor-added', (_, monitor) =>

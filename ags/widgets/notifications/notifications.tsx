@@ -47,7 +47,7 @@ export const notifications = () =>
 			);
 		}}
 	>
-		<box orientation={Gtk.Orientation.VERTICAL}>
+		<box orientation={Gtk.Orientation.VERTICAL} widthRequest={200}>
 			<For each={notificationlist}>
 				{(item) => notificationItem(item)}
 			</For>
