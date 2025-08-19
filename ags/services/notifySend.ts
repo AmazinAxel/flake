@@ -41,7 +41,7 @@ export const notifySend = ({
         appName && '--app-name=' + escapeShellArg(appName),
         category && '--category=' + escapeShellArg(category),
         iconName && '--icon=' + escapeShellArg(iconName),
-        image && '--hint=string:internal-image-path:' + escapeShellArg(image)
+        image && '--hint=string:ags-internal-image:' + escapeShellArg(image)
     ].concat(
         actions.map(({ id, label }) => `--action=${id}=${escapeShellArg(label)}`),
     ).join(' ');
