@@ -114,7 +114,6 @@ const reminders = () => {
         notifySend({
             appName: 'Sync',
             title: 'Sync system files',
-            iconName: 'emblem-synchronizing-symbolic',
             actions: [{
                 id: 1,
                 label: 'Update & Sync',
@@ -125,7 +124,6 @@ const reminders = () => {
         notifySend({
             appName: 'System Cleanup',
             title: 'Clean Downloads folder',
-            iconName: 'system-file-manager-symbolic',
             actions: [{
                 id: 1,
                 label: 'View folder',

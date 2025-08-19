@@ -1,5 +1,3 @@
-// Stolen from https://github.com/matt1432/nixos-configs/blob/master/modules/ags/config/lib/notify.ts
-
 import { subprocess, execAsync } from 'ags/process';
 
 interface NotifyAction {
@@ -9,25 +7,21 @@ interface NotifyAction {
 }
 
 interface NotifySendProps {
-    actions?: NotifyAction[],
-    appName?: string,
-    body?: string,
-    category?: string,
-    iconName: string,
     title: string,
-    image?: string
+    body?: string,
+    appName?: string,
+    category?: string,
+    actions?: NotifyAction[]
 }
 
 const escapeShellArg = (arg: string): string => `'${arg?.replace(/'/g, '\'\\\'\'')}'`;
 
 export const notifySend = ({
-    actions = [],
-    appName,
-    body,
-    category,
-    iconName,
     title,
-    image
+    body,
+    appName,
+    category,
+    actions = []
 }: NotifySendProps) => new Promise<number>((resolve) => {
     let printedId = false;
 
@@ -39,9 +33,7 @@ export const notifySend = ({
 
         // Optional params
         appName && '--app-name=' + escapeShellArg(appName),
-        category && '--category=' + escapeShellArg(category),
-        iconName && '--icon=' + escapeShellArg(iconName),
-        image && '--hint=string:ags-internal-image:' + escapeShellArg(image)
+        category && '--category=' + escapeShellArg(category)
     ].concat(
         actions.map(({ id, label }) => `--action=${id}=${escapeShellArg(label)}`),
     ).join(' ');

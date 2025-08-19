@@ -38,11 +38,6 @@ export const notificationItem = (n: Notifd.Notification) =>
                     label={n.summary ?? ''}
                     maxWidthChars={10}
                 />
-                {n.get_hint('ags-internal-image') && <image
-                    file={n.get_hint('ags-internal-image')?.get_string()[0]}
-                    heightRequest={100}
-                    widthRequest={100}
-                />}
                 {n.body && <label
                     wrap
                     xalign={0}

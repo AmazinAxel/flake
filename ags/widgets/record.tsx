@@ -26,7 +26,6 @@ export default () => <window
                         notifySend({
                             appName: 'Screen Recording',
                             title: 'Screen recording saved',
-                            iconName: 'emblem-videos-symbolic',
                             actions: [{
                                 id: 1,
                                 label: 'Open Clips folder',
