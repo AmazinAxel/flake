@@ -22,11 +22,10 @@
     color: @blue2;
     text-shadow: 0 0 3px @blue3;
 }
-.time .date { font-family: 'WenQuanYi Zen Hei Mono'; }
+.time { font-family: 'WenQuanYi Zen Hei Mono'; }
 .date.bottom { margin-bottom: 3px; }
 .time .time {
     font-size: 1.35rem;
-    font-family: 'WenQuanYi Zen Hei Mono';
     font-weight: bold;
     letter-spacing: 2px;
     color: @blue2;
