@@ -105,7 +105,7 @@
     # .local resolution for homelab
     avahi = {
       enable = true;
-      nssmdns = true;
+      nssmdns4 = true;
     };
 
     # Sound support
