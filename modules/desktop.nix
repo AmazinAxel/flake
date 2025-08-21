@@ -102,6 +102,12 @@
     gvfs.enable = true; # For nemo trash & NAS autodiscovery support
     devmon.enable = true; # Automatically mounts/unmounts drives
 
+    # .local resolution for homelab
+    avahi = {
+      enable = true;
+      nssmdns = true;
+    };
+
     # Sound support
     pipewire = {
       enable = true;
