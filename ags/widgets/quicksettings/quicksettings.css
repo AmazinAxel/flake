@@ -3,7 +3,6 @@
     padding: 0.8rem;
 }
 
-button.dnd { -gtk-icon-size: 1.5rem; background-color: @dark3; }
 .quickSettings .active {
     background-color: @blue2;
     border: 1px solid @blue3;
