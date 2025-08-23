@@ -2,11 +2,12 @@ import Apps from 'gi://AstalApps'
 import { Astal, Gtk, Gdk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { playlistName } from '../../services/mediaPlayer';
-import { Accessor, createState, For } from 'ags';
+import { createState, For } from 'ags';
 
 const apps = new Apps.Apps()
 let textBox: Gtk.Entry;
 const [appsList, setAppsList] = createState(new Array<Apps.Application>())
+setAppsList(apps.fuzzy_query('').slice(0, 5));
 
 const search = (text: string) =>
     setAppsList(apps.fuzzy_query(text).slice(0, 5))
