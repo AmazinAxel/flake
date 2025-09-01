@@ -31,12 +31,8 @@ set isDirty (git status --porcelain)
 if test -n "$isDirty"
     echo "[Sync] System flake is dirty - not updating system"
 else
-    if test (git rev-parse HEAD) = (git rev-parse @{u})
-        echo "[Sync] No new changes in flake repository - not updating system"
-    else
-        git pull # Pull changes
-        sudo nixos-rebuild switch --flake /home/alec/Projects/flake/ # Rebuild
-    end
+    git pull
+    sudo nixos-rebuild switch --flake /home/alec/Projects/flake/
 end
 
 # Update last sync time for Astal integration
