@@ -30,9 +30,6 @@
     discord # Voice & video chat app
     filezilla # FTP client
 
-    # For shell keybinds
-    inputs.astal.packages.${pkgs.system}.io
-
     # Wayland MC w/ key modifiers patch
     (prismlauncher.override {
       glfw3-minecraft = glfw3-minecraft.overrideAttrs (prev: {

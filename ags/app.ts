@@ -69,7 +69,7 @@ app.start({
         });
     },
     requestHandler(req, res) {
-        const reqArgs = req.split(" ");
+        const reqArgs = req[0].split(" ");
         switch(reqArgs[0]) {
             case "hideNotif":
                 clearOldestNotification();
