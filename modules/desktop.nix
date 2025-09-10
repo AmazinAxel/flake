@@ -98,6 +98,7 @@
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscovery support
     devmon.enable = true; # Automatically mounts/unmounts drives
+    logind.extraConfig = "HandlePowerKey=ignore"; # Don't turn off computer on power key press
 
     # .local resolution for homelab
     avahi = {
