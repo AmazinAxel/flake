@@ -8,7 +8,6 @@
       "Super, Period, exec, ags toggle emojiPicker" # Emoji picker
       "Super, V, exec, ags toggle clipboard" # Clipboard
       "SuperShift, S, exec, ags toggle powermenu" # Power menu
-      ",XF86PowerOff, exec, ags toggle powermenu" # Power button opens power menu
       "Super, space, exec, ags toggle launcher" # App laucher
       "Super, C, exec, ags request hideNotif" # Hide oldest notification
       "Super, R, exec, ags request record" # Screen record & clipping
@@ -62,7 +61,6 @@
       # Volume/mute buttons
       ",XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ .05+"
       ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ .05-"
-      ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
 
       # Brightness buttons
       ",XF86MonBrightnessUp, exec, brightnessctl set +5%"
