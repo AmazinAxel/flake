@@ -110,7 +110,7 @@ const reminders = () => {
     const lastSync = Number(astalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));
     const folderSize = Number(exec(`fish -c "du -sb /home/alec/Downloads | awk '{print \$1}'"`));
 
-    if ((Date.now() - lastSync) > 604800000) { // Last sync was over 7 days ago
+    if ((Date.now() - lastSync) > 540000000) { // Last sync was ~7 days ago
         notifySend({
             appName: 'Sync',
             title: 'Sync system files',

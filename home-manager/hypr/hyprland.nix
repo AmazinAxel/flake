@@ -5,11 +5,11 @@
 
     settings = {
       input = {
-        # Keyboard settings
+        # Keyboard
         kb_layout = "us";
         repeat_delay = 300;
 
-        # Mouse settings
+        # Mouse
         numlock_by_default = true;
         sensitivity = -0.5;
 
@@ -39,30 +39,29 @@
         preserve_split = true;
         force_split = 2;
       };
-      debug.disable_logs = false;
 
       misc = {
-        vfr = true; # Better power usage
-        vrr = 1; # Sync to monitor refresh rate, even when not fullscreen
+        vrr = 1; # Sync to monitor refresh rate even when not fullscreened
         focus_on_activate = true;
         animate_manual_resizes = false;
         force_default_wallpaper = 0;
-        disable_autoreload = true; # Save power
+        disable_autoreload = true;
         disable_hyprland_logo = true;
         new_window_takes_over_fullscreen = 2;
         initial_workspace_tracking = 0; # Always open in current workspace
         disable_hyprland_qtutils_check = true; # Hide annoying Hypr popup
       };
       binds.scroll_event_delay = 0;
-      ecosystem.no_update_news = true;
+      ecosystem = {
+        no_update_news = true;
+        no_donation_nag = true;
+      };
 
       decoration = {
         rounding = 5;
         blur = {
           enabled = true;
           xray = true;
-          special = false;
-          new_optimizations = "on";
 
           size = 3;
           passes = 5;
@@ -84,7 +83,7 @@
         animation = [
           "windows, 1, 4, decel, popin 80%"
           "fade, 1, 2.5, decel"
-          " workspaces, 1, 4, decel, slide"
+          "workspaces, 1, 4, decel, slide"
         ];
       };
 
@@ -95,16 +94,8 @@
         (c "xdg-desktop-portal-gtk")
       ];
 
-      windowrulev2 = [
-        # Play Minecraft sounds even when not focused
-        "renderunfocused,title:(Minecraft*)(.*)$"
-
-        # No gaps when only window in workspace
-        "prop bordersize 0, floating:0, onworkspace:w[tv1]"
-        "prop rounding 0, floating:0, onworkspace:w[tv1]"
-        "prop bordersize 0, floating:0, onworkspace:f[1]"
-        "prop rounding 0, floating:0, onworkspace:f[1]"
-      ];
+      # Play Minecraft sounds even when not focused
+      windowrulev2 = [ "renderunfocused,title:(Minecraft*)(.*)$" ];
 
       env = [ # Some legacy apps still use xcursor
         "XCURSOR_THEME,Bibata-Modern-Ice"
@@ -115,17 +106,6 @@
         "hyprlock" # Screen lock
         "fcitx5 -d" # Chinese input daemon
       ];
-
-      workspace = [ # No gaps when only window in workspace
-        "w[tv1], gapsout:0, gapsin:0"
-        "f[1], gapsout:0, gapsin:0"
-      ];
     };
   };
-
-  xdg.configFile."hypr/xdph.conf".text = ''
-    screencopy {
-      allow_token_by_default = true
-    }
-  '';
 }
