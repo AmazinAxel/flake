@@ -14,6 +14,7 @@
     libsForQt5.kdenlive # Video editor
     blockbench-electron # Minecraft 3D modeling app
     godot # Game engine
+    slack # Hack club collaboration
     gimp3 # Image editor
     teams-for-linux # Unoffical Teams client
     libreoffice # Preview Word documents and Excel sheets offline
