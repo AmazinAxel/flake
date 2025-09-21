@@ -1,5 +1,9 @@
 # Alec's NixOS flake
 
+# Build this on your own system!
+
+Follow the [instructions listed on the v1.0.0 release](https://github.com/AmazinAxel/flake/releases/tag/v1.0.0) to build this on your own system!
+
 ## Features
 
 - Custom Astal shell
