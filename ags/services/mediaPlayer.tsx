@@ -27,11 +27,14 @@ export const playPause = () => {
 };
 
 export const chngPlaylist = (direction: musicAction) => {
+    let wallpaperTransitionAngle;
     if (direction == 'next') {
+        wallpaperTransitionAngle = 270;
         (playlist.get() == playlists.length)
         ? (setPlaylist(1)) // Go to first
         : (setPlaylist(Number(playlist.get()) + 1));
     } else if (direction == 'prev') {
+        wallpaperTransitionAngle = 90;
         (playlist.get() == 1)
         ? (setPlaylist(playlists.length)) // Go to last
         : (setPlaylist(Number(playlist.get()) - 1));
@@ -42,7 +45,7 @@ export const chngPlaylist = (direction: musicAction) => {
     setIsPlaying(false);
 
     setPlaylistName(playlists[Number(playlist.get()) - 1]);
-    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type=wave --transition-angle=90 --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145`);
+    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type=wave --transition-angle=${wallpaperTransitionAngle} --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145`);
 
     // Clear the current cache and add the new playlist
     exec('mpc clear');
