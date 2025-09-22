@@ -42,7 +42,7 @@ export const chngPlaylist = (direction: musicAction) => {
     setIsPlaying(false);
 
     setPlaylistName(playlists[Number(playlist.get()) - 1]);
-    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type grow --transition-fps 90`);
+    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type=wave --transition-angle=90 --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145`);
 
     // Clear the current cache and add the new playlist
     exec('mpc clear');
@@ -55,7 +55,7 @@ export const initMedia = () => {
     setPlaylistName('Study'); // Must set to invoke binds
 
     execAsync('mpc crossfade 2');
-    execAsync('swww img /home/alec/Projects/flake/wallpapers/Study.jpg --transition-type grow --transition-fps 90');
+    execAsync('swww img /home/alec/Projects/flake/wallpapers/Study.jpg --transition-type=wave --transition-angle=90 --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145');
 
     exec('mpc clear');
     exec(`mpc add ${playlistName.get()}/`);
