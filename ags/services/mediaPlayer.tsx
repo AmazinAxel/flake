@@ -80,7 +80,7 @@ export const Media = () =>
                         background-color: #${color};
                     }
                     #bar #media {
-                        border: 0.15rem shade(#${color}, 0.6) solid;
+                        border: 0.15rem shade(#${color}, 1.15) solid;
                     }
                 `)
             })
