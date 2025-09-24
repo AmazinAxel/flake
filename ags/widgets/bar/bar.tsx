@@ -19,9 +19,7 @@ export default (monitor: number) =>
     visible
   >
     <box orientation={Gtk.Orientation.VERTICAL}>
-      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
-        <Workspaces/>
-      </box>
+      <Workspaces/>
 
       <box vexpand/>
 

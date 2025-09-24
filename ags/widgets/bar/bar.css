@@ -37,8 +37,11 @@
 .time .day { font-size: 0.9rem; }
 
 /* Workspace list */
-.workspaceList {
-    min-height: 17rem; /* Combined height of workspace buttons */
+#workspaceList {
+    min-height: 18rem; /* Combined height of workspace buttons */
+}
+#workspaceList .barElement {
+    padding: 0.2rem 0;
 }
 #bar .workspaceBtn {
     background-color: @dark2;
