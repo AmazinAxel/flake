@@ -35,11 +35,11 @@ window {
 }
 
 calendar, .quickSettings {
-  border: 0;
+  border: 0.12em solid @blue2;
   border-radius: 5px;
   background-color: @dark2;
 }
-#quickSettings, #calendar { padding: 0.4rem 0.25rem; }
+#quickSettings, #calendar { padding: 5.5px 5px; }
 
 #emojiPicker entry {
   background-color: @dark3;
@@ -47,10 +47,10 @@ calendar, .quickSettings {
 }
 
 #recordMenu .header {
-    font-family: 'Hammersmith One';
-    color: @light1;
-    font-weight: 100;
-    font-size: 1.5rem;
+  font-family: 'Hammersmith One';
+  color: @light1;
+  font-weight: 100;
+  font-size: 1.5rem;
 }
 
 .button:focus, .button:hover, list row:focus, list row:hover {

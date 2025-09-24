@@ -3,6 +3,7 @@ import { Astal, Gtk, Gdk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { playlistName } from '../../services/mediaPlayer';
 import { createState, For } from 'ags';
+import { execAsync } from 'ags/process';
 
 const apps = new Apps.Apps()
 let textBox: Gtk.Entry;
@@ -39,7 +40,7 @@ export default () =>
                         primaryIconName="system-search-symbolic"
                         placeholderText="Search"
                         onActivate={() => {
-                            apps.fuzzy_query(textBox.text)?.[0].launch();
+                            launchApp(apps.fuzzy_query(textBox.text)?.[0])
                             hide();
                         }}
                         onNotifyText={({ text }) => search(text)}
@@ -56,13 +57,13 @@ export default () =>
                     <For each={appsList}>
                         {(app) => (
                             <button
-                                onClicked={() => { app.launch(); hide(); }}
+                                onClicked={() => { launchApp(app); hide(); }}
                                 cssClasses={['button']}
                             >
                                 <Gtk.EventControllerKey
                                     onKeyPressed={(_, key) => {
                                     if (key == Gdk.KEY_Return) {
-                                        app.launch();
+                                        launchApp(app)
                                         hide();
                                     }
                                 }}/>
@@ -83,3 +84,14 @@ export default () =>
             </box>
         </box>
     </window>
+
+// Launch app seperately from astal in wayland mode
+export const launchApp = (app: Apps.Application) => {
+    let exe = app.executable
+        .split(/\s+/)
+        .filter((str) => !str.startsWith('%') && !str.startsWith('@'))
+        .join(' ');
+
+    execAsync(`hyprctl dispatch exec "${exe}"`);
+    app.set_frequency(app.get_frequency() + 1);
+};
