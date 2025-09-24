@@ -68,6 +68,8 @@
 }
 
 /* Media/mpris player */
+#bar #media { margin: 0 0.3rem 0 0.5rem; }
+#bar #mediaBtn { border-radius: 0.35rem; }
 #bar #media, #bar #mediaBtn { transition-duration: 0.3s; }
-#bar #mediaBtn:hover { -gtk-icon-size: 1.25rem; }
+#bar #mediaBtn:hover { -gtk-icon-size: 1.2rem; }
 #bar #mediaBtn:active { -gtk-icon-size: 1.1rem; }
