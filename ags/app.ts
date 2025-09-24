@@ -10,12 +10,12 @@ import powermenuStyle from './widgets/powermenu/powermenu.css';
 import app from "ags/gtk4/app"
 import { exec } from "ags/process";
 import astalIO from "gi://AstalIO"
-import Astal from "gi://Astal?version=4.0"
 import Hyprland from 'gi://AstalHyprland?version=0.1';
+import GObject from 'ags/gobject';
+
 import Bar from './widgets/bar/bar';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
-import { cornerTop, cornerBottom } from './widgets/corners';
 import emojiPicker from './widgets/emojiPicker';
 import launcher from './widgets/launcher/launcher';
 import recordMenu from './widgets/record';
@@ -30,19 +30,12 @@ const hypr = Hyprland.get_default();
 import { monitorBrightness } from './services/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPlayer';
 
-const widgetMap: Map<number, any> = new Map();
-
-// Per-monitor widgets
-const widgets = (monitor: number) => [
-    Bar(monitor),
-    cornerTop(monitor),
-    cornerBottom(monitor)
-];
+const barMap: Map<number, GObject.Object> = new Map();
 
 app.start({
     css: style + lancherStyle + clipboardStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
     main() {
-        hypr.get_monitors().map((monitor) => widgetMap.set(monitor.id, widgets(monitor.id)));
+        hypr.get_monitors().map((monitor) => barMap.set(monitor.id, Bar(monitor.id)));
 
         calendar();
         clipboard(); 
@@ -61,11 +54,11 @@ app.start({
 
         // Monitor reactivity
         hypr.connect('monitor-added', (_, monitor) =>
-            widgetMap.set(monitor.id, widgets(monitor.id))
+            barMap.set(monitor.id, Bar(monitor.id))
         );
         hypr.connect('monitor-removed', (_, monitorID) => {
-            widgetMap.get(monitorID)?.forEach((w: Astal.Window) => w.destroy());
-            widgetMap.delete(monitorID);
+            barMap.get(monitorID)?.disconnect;
+            barMap.delete(monitorID);
         });
     },
     requestHandler(req, res) {

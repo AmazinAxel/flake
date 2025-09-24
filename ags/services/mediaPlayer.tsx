@@ -10,7 +10,7 @@ export const [ playlistName, setPlaylistName] = createState('');
 
 // These playlists match with the folder names in ~/Music
 const playlists =      ['Study',  'Focus',  'Synthwave', 'SynthAmbient', 'Ambient'];
-const playlistColors = ['CC7F1F', '649FEC', 'C363C7',    '8169E5',       '1A47D0']
+const playlistColors = ['d08770', '5e81ac', 'b48ead',    'ebcb8b',       '81a1c1']
 
 export const updTrack = (direction: musicAction) => {
     exec('mpc pause');
@@ -67,30 +67,31 @@ export const initMedia = () => {
 
 
 export const Media = () =>
-    <box heightRequest={35} marginBottom={1}>
-        <overlay>
-            <box
-                cssClasses={isPlaying.as((v: boolean) => v ? ['playing', 'mediaBg'] : ['mediaBg'])}
-                hexpand
-                $={() =>
-                    playlistName.subscribe(() =>
-                        app.apply_css(`#bar .mediaBg { background-color: #${playlistColors[playlist.get() - 1]}; }`)
-                )}
-            />
-            <button
-                cssClasses={['media']}
-                $type="overlay"
-                onClicked={() => playPause()}
-                cursor={Gdk.Cursor.new_from_name('pointer', null)}
-            >
-                <Gtk.EventControllerScroll
-                    flags={Gtk.EventControllerScrollFlags.VERTICAL} 
-                    onScroll={(_, __, y) => {
-                        execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
-                }}/>
-                <image iconName={isPlaying.as(
-                    (v: boolean) => (v) ? 'media-playback-pause-symbolic' : 'media-playback-start-symbolic')
-                }/>
-            </button>
-        </overlay>
-    </box>
+    <button
+        name={'mediaBtn'}
+        onClicked={playPause}
+        cursor={Gdk.Cursor.new_from_name('pointer', null)}
+        hexpand
+        $={() =>
+            playlistName.subscribe(() => {
+                const color = playlistColors[playlist.get() - 1];
+                app.apply_css(`
+                    #bar #mediaBtn {
+                        background-color: #${color};
+                    }
+                    #bar #media {
+                        border: 0.14rem #${color} solid;
+                    }
+                `)
+            })
+        }
+    >
+        <Gtk.EventControllerScroll
+            flags={Gtk.EventControllerScrollFlags.VERTICAL} 
+            onScroll={(_, __, y) => {
+                execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
+        }}/>
+        <image iconName={isPlaying.as(
+            (v: boolean) => (v) ? 'media-playback-pause-symbolic' : 'media-playback-start-symbolic')
+        }/>
+    </button>

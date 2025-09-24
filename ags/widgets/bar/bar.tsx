@@ -19,17 +19,23 @@ export default (monitor: number) =>
     visible
   >
     <box orientation={Gtk.Orientation.VERTICAL}>
-      <Workspaces/>
+      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
+        <Workspaces/>
+      </box>
 
       <box vexpand/>
 
-      <Media/>
-      <Mpris/>
+      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']} name={'media'}>
+        <Media/>
+        <Mpris/>
+      </box>
 
       <box vexpand/>
 
-      <RecordingIndicator/>
-      <Time/>
-      <Status/>
+      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
+        <RecordingIndicator/>
+        <Time/>
+        <Status/>
+      </box>
     </box>
   </window>
