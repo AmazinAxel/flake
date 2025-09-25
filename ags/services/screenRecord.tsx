@@ -52,7 +52,6 @@ export const stopRec = () => {
 	notifySend({
 		appName: 'Screen Recording',
 		title: 'Screen recording saved',
-		iconName: 'emblem-videos-symbolic',
 		actions: [
 			{
 				id: 1,

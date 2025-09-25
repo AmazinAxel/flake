@@ -33,7 +33,7 @@ const refreshItems = async () => {
                 const [id, content] = entry.split('\t');
                 return { id: id, content: content };
             })
-        ).catch(() => { return [] });
+        ).catch(() => []);
 
         list.remove_all();
 
@@ -47,7 +47,7 @@ let window: Gtk.Window;
 export default () => <window
     name="clipboard"
     keymode={Astal.Keymode.ON_DEMAND}
-    $={(self) => { refreshItems; window = self; }}
+    $={(self) => { refreshItems(); window = self; }}
     onShow={() => list.get_first_child()?.grab_focus()}
     application={app}
     >
