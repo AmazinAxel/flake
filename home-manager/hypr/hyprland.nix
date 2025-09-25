@@ -97,6 +97,9 @@
       # Play Minecraft sounds even when not focused
       windowrulev2 = [ "renderunfocused,title:(Minecraft*)(.*)$" ];
 
+      # Hide clipboard history during screenshares
+      layerrule = [ "noscreenshare,clipboard" ];
+
       env = [ # Some legacy apps still use xcursor
         "XCURSOR_THEME,Bibata-Modern-Ice"
         "XCURSOR_SIZE,24"

@@ -10,7 +10,7 @@
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [
-    libsForQt5.kdenlive # Video editor
+    kdePackages.kdenlive # Video editor
     blockbench-electron # Minecraft 3D modeling app
     gimp3 # Image editor
     teams-for-linux # Unoffical MS Teams client

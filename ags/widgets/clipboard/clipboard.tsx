@@ -46,6 +46,7 @@ const refreshItems = async () => {
 let window: Gtk.Window;
 export default () => <window
     name="clipboard"
+    namespace="clipboard" // For hyprland noscreenshare windowrule identification
     keymode={Astal.Keymode.ON_DEMAND}
     $={(self) => { refreshItems(); window = self; }}
     onShow={() => list.get_first_child()?.grab_focus()}
