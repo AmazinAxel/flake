@@ -30,7 +30,7 @@ const hypr = Hyprland.get_default();
 import { monitorBrightness } from './services/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPlayer';
 
-const barMap: Map<number, GObject.Object> = new Map();
+const barMap: Map<number, any> = new Map();
 
 app.start({
     css: style + lancherStyle + clipboardStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
@@ -57,7 +57,7 @@ app.start({
             barMap.set(monitor.id, Bar(monitor.id))
         );
         hypr.connect('monitor-removed', (_, monitorID) => {
-            barMap.get(monitorID)?.disconnect;
+            barMap.get(monitorID)?.destroy();
             barMap.delete(monitorID);
         });
     },
