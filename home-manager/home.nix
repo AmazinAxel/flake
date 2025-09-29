@@ -71,7 +71,6 @@
       extraConfig.XDG_PROJECTS_DIR = "/home/alec/Projects";
       extraConfig.XDG_CAPTURES_DIR = "/home/alec/Videos/Captures";
       extraConfig.XDG_CLIPS_DIR = "/home/alec/Videos/Clips";
-      extraConfig.XDG_MODELS_DIR = "/home/alec/Models";
     };
 
     # Swappy config
