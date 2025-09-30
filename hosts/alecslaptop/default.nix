@@ -58,6 +58,15 @@
   services = {
     flatpak.enable = true; # For running Sober
     upower.enable = true; # For displaying battery level on astal shell
+
+    # Game streaming to console
+    sunshine = {
+      enable = true;
+      autoStart = false;
+      openFirewall = true;
+      capSysAdmin = true;
+    };
+
     tlp = { # Better battery life
       enable = true;
       settings = {
