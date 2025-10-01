@@ -37,6 +37,7 @@
   programs = {
     kdeconnect.enable = true; # Device integration
     gpu-screen-recorder.enable = true; # Clipping software services
+    steam.enable = true; # Gaming
   };
 
   # Bootloader settings
