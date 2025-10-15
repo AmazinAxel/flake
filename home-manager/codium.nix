@@ -14,6 +14,7 @@
         dbaeumer.vscode-eslint # ESlint integration
         ms-vscode.live-server # Local HTTP dev server
         svelte.svelte-vscode # Svelte support
+        ms-vsliveshare.vsliveshare # Collaborative editing
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{
         name = "Sk-VSC";
         publisher = "ayhamalali";

@@ -93,5 +93,8 @@ export const launchApp = (app: Apps.Application) => {
         .join(' ');
 
     execAsync(`hyprctl dispatch exec "${exe}"`);
-    app.set_frequency(app.get_frequency() + 1);
+
+    // Get away from hc & discord addiction
+    if (!app.name.includes('discord') || !app.name.includes('slack'))
+        app.set_frequency(app.get_frequency() + 1);
 };

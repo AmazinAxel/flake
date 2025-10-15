@@ -23,7 +23,7 @@
     flashprint # Flashforge 3D printer
     thunderbird # Email client
     worldpainter # Minecraft world generator
-    jetbrains.idea-community # Jetbrains IDEA
+    #jetbrains.idea-community # Jetbrains IDEA
     maven # Java build tool
     zulu24 # JDK
     gpu-screen-recorder # Screen record & clipping tool - expose binary for use within Astal
