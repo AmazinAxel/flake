@@ -6,6 +6,7 @@
     backupFileExtension = "backup2";
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
+    useGlobalPkgs = true; # Faster eval
   };
 
   environment.systemPackages = with pkgs; [
