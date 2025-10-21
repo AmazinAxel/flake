@@ -55,6 +55,7 @@
   programs = {
     git = {
       enable = true;
+      package = pkgs.gitMinimal;
       config = {
         init.defaultBranch = "main";
         color.ui = true;

@@ -39,17 +39,6 @@
         ];
       };
 
-      # Ambernic handheld console
-      "alechandheld" = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/alechandheld/default.nix
-          home-manager.nixosModules.home-manager
-        ];
-      };
-
-
       # Desktop/compute server
       "alecpc" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
