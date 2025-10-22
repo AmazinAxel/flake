@@ -49,6 +49,7 @@
       kernelModules = [ "amdgpu" ];
       includeDefaultModules = false;
     };
+    binfmt.emulatedSystems = [ "aarch64-linux" ]; # Arch64 cross compilation support
   };
 
   hardware = { # OpenCL drivers for better hardware acceleration
