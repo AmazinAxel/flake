@@ -23,7 +23,7 @@ let file: string;
 export const RecordingIndicator = () =>
 	<image
 		visible={isRec}
-		halign={Gtk.Align.CENTER}
+		halign={Gtk.Align.END}
 		cssClasses={['recIndicator']}
 		iconName="media-record-symbolic"/>
 
