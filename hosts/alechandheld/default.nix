@@ -8,11 +8,6 @@
     emulationstation
   ];
 
-  boot.loader = {
-    grub.enable = false;
-    generic-extlinux-compatible.enable = true;
-  };
-
   services.sshd.enable = true;
 
   networking.hostName = "alecolaptop";
