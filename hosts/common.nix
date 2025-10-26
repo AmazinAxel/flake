@@ -42,6 +42,6 @@
   environment.defaultPackages = lib.mkForce [];
   programs.command-not-found.enable = false; # Don't show recommendations when a package is missing
 
-  system.stateVersion = "24.05";
+  system.stateVersion = lib.mkDefault "24.05";
 }
 

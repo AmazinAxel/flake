@@ -1,4 +1,4 @@
-{
+{ lib, ... }: {
   imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
   boot.initrd.availableKernelModules = [ "usbhid" ];
@@ -11,6 +11,7 @@
   boot.loader = {
     grub.enable = false;
     generic-extlinux-compatible.enable = true;
+    systemd-boot = lib.mkForce = false;
   };
 
   nixpkgs.hostPlatform = "aarch64-linux";
