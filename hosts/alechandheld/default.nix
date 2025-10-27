@@ -23,10 +23,31 @@
   #  options = [ "nofail" ];
   #};
 
-  boot.kernelPatches = builtins.map (p: {
-    name = builtins.elemAt (pkgs.lib.splitString "." (builtins.baseNameOf p.url)) 0;
-    patch = pkgs.fetchpatch p;
-  }) (import ./kernel-patches.nix);
+  # This device has low RAM so we can improve build times by using alecslaptop as a remote builder
+  nix = {
+    buildMachines = [{
+      hostName = "10.0.0.63";
+      system = "x86_64-linux";
+      #systems = ["x86_64-linux", "aarch64-linux"];
+      protocol = "ssh-ng";
+      maxJobs = 1;
+      speedFactor = 16;
+      supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+      mandatoryFeatures = [ ];
+    }];
+	  distributedBuilds = true;
+	  extraOptions = ''
+      builders-use-substitutes = true
+    '';
+  };
+
+  boot = {
+    kernelPackages = pkgs.linuxPackages_6_17;
+    kernelPatches = builtins.map (p: {
+      name = builtins.elemAt (pkgs.lib.splitString "." (builtins.baseNameOf p.url)) 0;
+      patch = pkgs.fetchpatch p;
+    }) (import ./kernel-patches.nix);
+  };
 
   networking = {
     wireless.iwd.enable = lib.mkForce false;
