@@ -6,7 +6,6 @@
 
   environment.systemPackages = with pkgs; [
     gitMinimal
-    pegasus-frontend
     retroarch
   ];
 
@@ -16,7 +15,7 @@
     wireless.iwd.enable = false;
     networkmanager = {
       enable = true;
-      wifi.scanRandMacAddress = false; # Fix disconnects?
+      wifi.scanRandMacAddress = false; # Fix disconnects
     };
     hostName = "alechandheld";
     firewall.enable = false;
