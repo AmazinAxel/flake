@@ -30,7 +30,10 @@
 
   networking = {
     wireless.iwd.enable = lib.mkForce false;
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      wifi.scanRandMacAddress = false; # Fix disconnects?
+    };
     hostName = "alechandheld";
     firewall.enable = false;
   };
