@@ -19,7 +19,6 @@
   hardware.deviceTree = {
     enable = false;
     dtbSource = ./dtb;
-    name = "sun50i-h700-anbernic-rg35xx-h.dtb";
   };
   hardware.enableRedistributableFirmware = true;
   nixpkgs.hostPlatform = "aarch64-linux";
