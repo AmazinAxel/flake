@@ -16,10 +16,7 @@
     systemd-boot.enable = lib.mkForce false;
   };
 
-  hardware.deviceTree = {
-    enable = false;
-    dtbSource = ./dtb;
-  };
+  hardware.deviceTree.dtbSource = ./dtb;
   hardware.enableRedistributableFirmware = true;
   nixpkgs.hostPlatform = "aarch64-linux";
   system.stateVersion = "25.05";
