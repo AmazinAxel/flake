@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   imports = [
     ./hardware-config.nix
     ../common.nix
@@ -11,5 +11,10 @@
 
   services.sshd.enable = true;
 
-  networking.hostName = "alecolaptop";
+  networking = {
+    wireless.iwd.enable = lib.mkForce false;
+    networkmanager.enable = true;
+    hostName = "alechandheld";
+    firewall.enable = false;
+  };
 }
