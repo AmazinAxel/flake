@@ -13,10 +13,6 @@
 
   services.sshd.enable = true;
 
-  #hardware.devicetree = {
-  #  enable = false;
-  #}
-
   # Additional microSD card
   #fileSystems."/othercard/" = {
   #  device = "/dev/disk/by-uuid/";

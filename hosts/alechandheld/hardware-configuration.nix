@@ -1,5 +1,4 @@
-{ lib, modulesPath, ... }: {
-  imports = [(modulesPath + "/installer/scan/not-detected.nix")];
+{ lib, ... }: {
 
   boot.initrd.availableKernelModules = [ "usbhid" ];
 
@@ -14,6 +13,9 @@
     systemd-boot.enable = lib.mkForce false;
   };
 
+  hardware.devicetree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
+
+  hardware.enableRedistributableFirmware = true;
   nixpkgs.hostPlatform = "aarch64-linux";
   system.stateVersion = "25.05";
 }
