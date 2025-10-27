@@ -1,11 +1,12 @@
 { pkgs, ... }: {
   imports = [
-    ./hardware-configuration.nix
+    ./hardware-config.nix
     ../common.nix
   ];
 
   environment.systemPackages = with pkgs; [
-    emulationstation
+    git
+    #emulationstation
   ];
 
   services.sshd.enable = true;
