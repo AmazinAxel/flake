@@ -7,7 +7,7 @@
   boot = {
     loader = {
       systemd-boot = {
-        enable = true;
+        enable = lib.mkDefault true;
         configurationLimit = 2; # Saves space in boot partition
         editor = false;
       };
@@ -19,7 +19,7 @@
   };
 
   networking.wireless.iwd = {
-    enable = true;
+    enable = lib.mkDefault true;
     settings = {
       IPv6.Enabled = true;
       Settings.AutoConnect = true;

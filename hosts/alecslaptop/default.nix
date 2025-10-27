@@ -49,7 +49,6 @@
       kernelModules = [ "amdgpu" ];
       includeDefaultModules = false;
     };
-    binfmt.emulatedSystems = [ "aarch64-linux" ]; # Arch64 cross compilation support
   };
 
   hardware = { # OpenCL drivers for better hardware acceleration
@@ -57,22 +56,9 @@
     amdgpu.opencl.enable = true;
   };
 
-  # This host is a build machine for alechandheld and alechomelab
-  users.users.builder = {
-    isSystemUser = true;
-    createHome = false;
-    uid = 500;
-    group = "builder";
-    useDefaultShell = true;
-    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4iipZezwrhmeGj4ScaYrW97iukXGz+cW44FlEaT3bd alec@alechandheld"];
-  };
-  users.groups.builder.gid = 500;
-  nix.settings.trusted-users = [ "builder" ];
-
   services = {
     flatpak.enable = true; # For running Sober
     upower.enable = true; # For displaying battery level on astal shell
-    sshd.enable = true;
 
     # Game streaming to console
     sunshine = {

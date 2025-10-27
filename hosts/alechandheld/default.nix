@@ -1,8 +1,7 @@
-{ pkgs, lib, ... }: {
+{ pkgs, ... }: {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
-    #./patches/patches.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -13,33 +12,8 @@
 
   services.sshd.enable = true;
 
-  # Additional microSD card
-  #fileSystems."/othercard/" = {
-  #  device = "/dev/disk/by-uuid/";
-  #  fsType = "exfat";
-  #  options = [ "nofail" ];
-  #};
-
-  # This device has low RAM so we can improve build times by using alecslaptop as a remote builder
-  nix = {
-    buildMachines = [{
-      hostName = "10.0.0.63";
-      system = "x86_64-linux";
-      #systems = ["x86_64-linux", "aarch64-linux"];
-      protocol = "ssh-ng";
-      maxJobs = 1;
-      speedFactor = 16;
-      supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
-      mandatoryFeatures = [ ];
-    }];
-	  distributedBuilds = true;
-	  extraOptions = ''
-      builders-use-substitutes = true
-    '';
-  };
-
   networking = {
-    wireless.iwd.enable = lib.mkForce false;
+    wireless.iwd.enable = false;
     networkmanager = {
       enable = true;
       wifi.scanRandMacAddress = false; # Fix disconnects?
@@ -48,5 +22,9 @@
     firewall.enable = false;
   };
 
-  services.journald.extraConfig = "Storage=volatile"; # Better microSD lifespan
+  # Extend microSD lifespan
+  services.journald.extraConfig = ''
+    Storage=volatile
+    RuntimeMaxUse=32M
+  '';
 }
