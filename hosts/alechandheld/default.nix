@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
+    ./patches/patches.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -39,14 +40,6 @@
 	  extraOptions = ''
       builders-use-substitutes = true
     '';
-  };
-
-  boot = {
-    kernelPackages = pkgs.linuxPackages_6_17;
-    kernelPatches = builtins.map (p: {
-      name = builtins.elemAt (pkgs.lib.splitString "." (builtins.baseNameOf p.url)) 0;
-      patch = pkgs.fetchpatch p;
-    }) (import ./kernel-patches.nix);
   };
 
   networking = {
