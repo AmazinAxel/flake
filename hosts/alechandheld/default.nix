@@ -6,7 +6,7 @@
 
   environment.systemPackages = with pkgs; [
     gitMinimal
-    #emulationstation
+    emulationstation
   ];
 
   services.sshd.enable = true;
@@ -33,6 +33,9 @@
     hostName = "alechandheld";
     firewall.enable = false;
   };
+
+  # For emulationstation
+  nixpkgs.config.permittedInsecurePackages = [ "freeimage-3.18.0-unstable-2024-04-18" ];
 
   services.journald.extraConfig = "Storage=volatile"; # Better microSD lifespan
 }
