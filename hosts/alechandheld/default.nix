@@ -1,15 +1,31 @@
 { pkgs, lib, ... }: {
   imports = [
-    ./hardware-config.nix
+    ./hardware-configuration.nix
     ../common.nix
   ];
 
   environment.systemPackages = with pkgs; [
-    git
+    gitMinimal
     #emulationstation
   ];
 
   services.sshd.enable = true;
+
+  #hardware.devicetree = {
+  #  enable = false;
+  #}
+
+  # Additional microSD card
+  #fileSystems."/othercard/" = {
+  #  device = "/dev/disk/by-uuid/";
+  #  fsType = "exfat";
+  #  options = [ "nofail" ];
+  #};
+
+  boot.kernelPatches = builtins.map (p: {
+    name = builtins.elemAt (pkgs.lib.splitString "." (builtins.baseNameOf p.url)) 0;
+    patch = pkgs.fetchpatch p;
+  }) (import ./kernel-patches.nix);
 
   networking = {
     wireless.iwd.enable = lib.mkForce false;
@@ -17,4 +33,6 @@
     hostName = "alechandheld";
     firewall.enable = false;
   };
+
+  services.journald.extraConfig = "Storage=volatile"; # Better microSD lifespan
 }
