@@ -13,7 +13,7 @@
     systemd-boot.enable = lib.mkForce false;
   };
 
-  hardware.devicetree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
+  hardware.deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
 
   hardware.enableRedistributableFirmware = true;
   nixpkgs.hostPlatform = "aarch64-linux";
