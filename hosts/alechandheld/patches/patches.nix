@@ -2,7 +2,7 @@
   boot = {
     kernelPackages = lib.mkForce pkgs.linuxPackages_6_17;
     kernelPatches = builtins.map (patch: { inherit patch; }) [
-      ./0001-v8_20250310_ryan_drm_sun4i_add_display_engine_3_3_de33_support.patch
+      #./0001-v8_20250310_ryan_drm_sun4i_add_display_engine_3_3_de33_support.patch
       ./0003-20250216_ryan_arm64_dts_allwinner_h616_add_lcd_timing_controller_and_display_engine_support.patch
       ./0007-rg35xx-add-GPU-opp.patch
       ./0008-sun20i-add-pwm-driver.patch

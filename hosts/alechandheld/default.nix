@@ -2,7 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
-    ./patches/patches.nix
+    #./patches/patches.nix
   ];
 
   environment.systemPackages = with pkgs; [
