@@ -11,15 +11,12 @@
     grub.enable = false;
     generic-extlinux-compatible = {
       enable = true;
-      #configurationLimit = 1;
+      configurationLimit = 2;
     };
     systemd-boot.enable = lib.mkForce false;
   };
 
-  hardware.deviceTree = {
-    dtbSource = ./dtb;
-    name = "sun50i-h700-anbernic-rg35xx-h.dtb";
-  };
+  hardware.deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
   hardware.enableRedistributableFirmware = true;
   nixpkgs.hostPlatform = "aarch64-linux";
   system.stateVersion = "25.05";
