@@ -5,9 +5,9 @@
   };
 
   # Additional microSD card
-  #fileSystems."/othercard/" = {
+  #fileSystems."/content/" = {
   #  device = "/dev/disk/by-uuid/";
-  #  fsType = "exfat";
+  #  fsType = "ext4";
   #  options = [ "nofail" ];
   #};
 

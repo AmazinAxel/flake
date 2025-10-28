@@ -10,20 +10,21 @@
     retroarch-joypad-autoconfig
   ];
 
-  # Retroarch requirements
-  programs.gamemode.enable = true;
-  hardware.opengl.enable = true;
-
-  services.sshd.enable = true;
+  # For running retroarch
+  services = {
+    cage = {
+      enable = true;
+      program = "${pkgs.retroarch}/bin/retroarch";
+    };
+    sshd.enable = true;
+  };
+  programs.gamemode.enable = true; # For Retroarch
 
   networking = {
     wireless.iwd.enable = false;
-    networkmanager = {
-      enable = true;
-      wifi.scanRandMacAddress = false; # Fix disconnects
-    };
+    networkmanager.enable = true;
     hostName = "alechandheld";
-    firewall.enable = false;
+    #firewall.enable = false;
   };
 
   # Extend microSD lifespan
