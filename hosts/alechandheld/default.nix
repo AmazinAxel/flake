@@ -18,7 +18,7 @@
       program = "${pkgs.retroarch}/bin/retroarch";
       extraArguments = [ "-s" ]; # Allow switching terminals
     };
-    sshd.enable = true; # Just in case
+    sshd.enable = true;
   };
   programs.gamemode.enable = true;
 
@@ -26,12 +26,9 @@
     wireless.iwd.enable = false;
     networkmanager.enable = true;
     hostName = "alechandheld";
-    #firewall.enable = false;
+    firewall.enable = false;
   };
 
-  # Extend microSD lifespan
-  services.journald.extraConfig = ''
-    Storage=volatile
-    RuntimeMaxUse=32M
-  '';
+  # Extend card lifespan
+  services.journald.extraConfig = "Storage=volatile";
 }
