@@ -10,6 +10,10 @@
     retroarch-joypad-autoconfig
   ];
 
+  # Retroarch requirements
+  programs.gamemode.enable = true;
+  hardware.opengl.enable = true;
+
   services.sshd.enable = true;
 
   networking = {
