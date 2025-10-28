@@ -5,7 +5,7 @@
   };
 
   # Additional microSD card
-  fileSystems."/mnt/content/" = {
+  fileSystems."/mnt/content" = {
     device = "/dev/disk/by-uuid/89bd4766-cb7b-46ad-aef9-13c21769d7c9";
     fsType = "ext4";
     options = [ "nofail" "noatime" "discard" ];
