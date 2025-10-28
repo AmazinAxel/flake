@@ -6,7 +6,8 @@
 
   environment.systemPackages = with pkgs; [
     gitMinimal
-    retroarch
+    retroarch-full
+    retroarch-joypad-autoconfig
   ];
 
   services.sshd.enable = true;
