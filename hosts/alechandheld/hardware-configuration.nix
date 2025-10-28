@@ -5,11 +5,11 @@
   };
 
   # Additional microSD card
-  #fileSystems."/content/" = {
-  #  device = "/dev/disk/by-uuid/";
-  #  fsType = "ext4";
-  #  options = [ "nofail" ];
-  #};
+  fileSystems."/mnt/content/" = {
+    device = "/dev/disk/by-uuid/89bd4766-cb7b-46ad-aef9-13c21769d7c9";
+    fsType = "ext4";
+    options = [ "nofail" "noatime" "discard" ];
+  };
 
   boot = {
     initrd.availableKernelModules = [ "usbhid" ];
@@ -17,7 +17,7 @@
       grub.enable = false;
       generic-extlinux-compatible = {
         enable = true;
-        configurationLimit = 1;
+        configurationLimit = 2;
       };
       systemd-boot.enable = false;
     };

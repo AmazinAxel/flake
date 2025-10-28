@@ -36,7 +36,7 @@
   };
 
   services.journald.extraConfig = "SystemMaxUse=20M";
-  fileSystems."/".options = [ "noatime" "nodiratime" "discard" ]; # Optimize SSD trim
+  fileSystems."/".options = [ "noatime" "discard" ]; # Optimize SSD trim
   documentation.enable = false;
 
   environment.defaultPackages = lib.mkForce [];

@@ -14,11 +14,13 @@
   services = {
     cage = {
       enable = true;
+      user = "alec";
       program = "${pkgs.retroarch}/bin/retroarch";
+      extraArguments = [ "-s" ]; # Allow switching terminals
     };
-    sshd.enable = true;
+    sshd.enable = true; # Just in case
   };
-  programs.gamemode.enable = true; # For Retroarch
+  programs.gamemode.enable = true;
 
   networking = {
     wireless.iwd.enable = false;
