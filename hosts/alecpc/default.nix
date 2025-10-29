@@ -47,6 +47,7 @@
       options nvidia_drm modeset=1 fbdev=1
       options nvidia NVreg_RegistryDwords="PowerMizerEnable=0x1; PerfLevelSrc=0x2222; PowerMizerLevel=0x3; PowerMizerDefault=0x3; PowerMizerDefaultAC=0x3"
     '';
+    binfmt.emulatedSystems = [ "aarch64-linux" ]; # Arch64 cross compilation support
   };
 
   hardware.nvidia = {

@@ -26,6 +26,9 @@
 
   hardware.deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
   hardware.enableRedistributableFirmware = true;
-  nixpkgs.hostPlatform = "aarch64-linux";
+  nixpkgs = {
+    buildPlatform = "x86_64-linux";
+    hostPlatform = "aarch64-linux";
+  };
   system.stateVersion = "25.05";
 }
