@@ -32,6 +32,8 @@
     firewall.enable = false;
   };
 
+  nix.settings.trusted-users = [ "alec" ]; # Remote deployment
+
   # Extend card lifespan
   services.journald.extraConfig = "Storage=volatile";
 }
