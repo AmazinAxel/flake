@@ -21,6 +21,7 @@
       };
       systemd-boot.enable = false;
     };
+    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
   };
 
   hardware.deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";

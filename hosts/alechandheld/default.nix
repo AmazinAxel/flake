@@ -6,7 +6,9 @@
 
   environment.systemPackages = with pkgs; [
     gitMinimal
-    retroarch # todo install cores
+    (retroarch.withCores (cores: with cores; [
+      
+    ]))
     retroarch-joypad-autoconfig
   ];
 
