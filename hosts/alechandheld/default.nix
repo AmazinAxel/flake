@@ -14,16 +14,14 @@
 
   # For running retroarch
   services = {
-    xserver.desktopManager.retroarch.enable = true;
-    #cage = {
-    #  enable = true;
-    #  user = "alec";
-    #  program = "${pkgs.retroarch}/bin/retroarch";
-    #  extraArguments = [ "-s" ]; # Allow switching terminals
-    #};
+    cage = {
+      enable = true;
+      user = "alec";
+      program = "${pkgs.retroarch}/bin/retroarch";
+      extraArguments = [ "-s" ]; # Allow switching terminals
+    };
     sshd.enable = true;
   };
-  #programs.gamemode.enable = true; # test
 
   networking = {
     wireless.iwd.enable = false;
