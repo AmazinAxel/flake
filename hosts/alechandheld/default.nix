@@ -32,6 +32,7 @@
     firewall.enable = false;
   };
 
+  users.users.alec.extraGroups = [ "input" "gpio" ];
   nix.settings.trusted-users = [ "alec" ]; # Remote deployment
 
   # Extend card lifespan

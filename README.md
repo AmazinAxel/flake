@@ -1,6 +1,6 @@
 # Alec's NixOS flake
 
-# Build this on your own system!
+## Build this on your own system!
 
 Follow the [instructions listed on the v1.0.0 release](https://github.com/AmazinAxel/flake/releases/tag/v1.0.0) to build this on your own system!
 
@@ -23,3 +23,5 @@ Follow the [instructions listed on the v1.0.0 release](https://github.com/Amazin
 - And so much more!
 
 This code is *very* readable and highly optimized. If you need help building this on your system, message me on the HC slack or on Discord: `@amazinaxel`
+
+Deploy from alecpc to alechandheld: `nixos-rebuild switch --flake .#alechandheld --target-host alec@10.0.0.169 --sudo --ask-sudo-password`

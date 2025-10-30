@@ -31,6 +31,7 @@
 
       # Gaming handheld
       "alechandheld" = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
         specialArgs = { inherit inputs; };
         modules = [ ./hosts/alechandheld/default.nix ];
       };
