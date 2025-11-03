@@ -2,7 +2,6 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
-    ./patches/patches.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -32,7 +31,13 @@
   };
 
   users.users.alec.extraGroups = [ "input" "gpio" ];
-  nix.settings.trusted-users = [ "alec" ]; # Remote deployment
+  nix.settings = {
+    trusted-users = [ "alec" ]; # Remote deployment
+    
+    # Prevent builds overwhelming device resources
+    max-jobs = 1;
+    cores = 1;
+  };
 
   # Extend card lifespan
   services.journald.extraConfig = "Storage=volatile";
