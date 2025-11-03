@@ -12,13 +12,8 @@
   };
 
   boot = {
-    initrd.availableKernelModules = [ "usbhid" 
-      #"sunxi_wdt"
-      #"sun50i_codec_analog"
-      #"sun8i_codec"
-      #"sun4i_i2s"
-      #"sun8i_emac"
-    ];
+    initrd.availableKernelModules = [ "usbhid" ];
+    #initrd.availableKernelModules = [ "usbhid" "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
     loader = {
       grub.enable = false;
       generic-extlinux-compatible = {
@@ -27,8 +22,8 @@
       };
       systemd-boot.enable = false;
     };
-    kernelParams = [ "input" ];
-    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
+    #kernelParams = [ "input" ];
+    #kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
   };
 
   hardware.deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";

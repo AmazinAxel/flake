@@ -19,7 +19,7 @@
       enable = true;
       user = "alec";
       program = "${pkgs.retroarch}/bin/retroarch";
-      extraArguments = [ "-s" ]; # Allow switching terminals
+      extraArguments = [ "-s" ]; # Allow TTY switching
     };
     sshd.enable = true;
   };
