@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
+    ./kernelconfig.nix
   ];
 
   environment.systemPackages = with pkgs; [
