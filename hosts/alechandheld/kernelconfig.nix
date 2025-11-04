@@ -197,7 +197,7 @@
       ARM64 = yes;
       RUSTC_SUPPORTS_ARM64 = yes;
       GCC_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS = yes;
-      64BIT = yes;
+      "64BIT" = yes;
       MMU = yes;
       ARM64_CONT_PTE_SHIFT = 4;
       ARM64_CONT_PMD_SHIFT = 4;
@@ -1706,7 +1706,7 @@
       SUNRPC = yes;
       SUNRPC_GSS = yes;
       RPCSEC_GSS_KRB5 = yes;
-      9P_FS = yes;
+      "9P_FS" = yes;
       NLS = yes;
       NLS_DEFAULT = "utf8";
       NLS_CODEPAGE_437 = yes;
