@@ -206,7 +206,7 @@
       ARCH_MMAP_RND_COMPAT_BITS_MIN = 11;
       ARCH_MMAP_RND_COMPAT_BITS_MAX = 16;
       STACKTRACE_SUPPORT = yes;
-      ILLEGAL_POINTER_VALUE = 0xdead000000000000;
+      ILLEGAL_POINTER_VALUE = "0xdead000000000000";
       LOCKDEP_SUPPORT = yes;
       GENERIC_BUG = yes;
       GENERIC_BUG_RELATIVE_POINTERS = yes;
@@ -482,7 +482,6 @@
       GENKSYMS = yes;
       ASM_MODVERSIONS = yes;
       BASIC_MODVERSIONS = yes;
-      MODPROBE_PATH = "/sbin/modprobe";
       MODULES_TREE_LOOKUP = yes;
       BLOCK = yes;
       BLOCK_LEGACY_AUTOLOAD = yes;
@@ -802,7 +801,6 @@
       FW_LOADER_PAGED_BUF = yes;
       FW_LOADER_SYSFS = yes;
       EXTRA_FIRMWARE = "rtl_bt/rtl8821cs_config.bin rtl_bt/rtl8821cs_fw.bin rtw88/rtw8821c_fw.bin";
-      EXTRA_FIRMWARE_DIR = "external-firmware";
       FW_LOADER_USER_HELPER = yes;
       FW_LOADER_COMPRESS = yes;
       FW_LOADER_COMPRESS_XZ = yes;
@@ -1976,7 +1974,7 @@
       ARCH_WANT_FRAME_POINTERS = yes;
       FRAME_POINTER = yes;
       MAGIC_SYSRQ = yes;
-      MAGIC_SYSRQ_DEFAULT_ENABLE = 0x1;
+      MAGIC_SYSRQ_DEFAULT_ENABLE = "0x1";
       MAGIC_SYSRQ_SERIAL = yes;
       MAGIC_SYSRQ_SERIAL_SEQUENCE = "";
       DEBUG_FS = yes;
