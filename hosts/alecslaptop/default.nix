@@ -12,7 +12,7 @@
   # Host-specific packages
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive # Video editor
-    blockbench-electron # Minecraft 3D modeling app
+    blockbench # Minecraft 3D modeling app
     godot # Game engine
     slack # Hack club collaboration
     gimp3 # Image editor

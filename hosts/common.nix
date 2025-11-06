@@ -32,7 +32,6 @@
     trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
   };
 
-
   time.timeZone = "America/Los_Angeles"; # Locale setting also set to en_US by default
 
   nixpkgs.config.allowUnfree = true;

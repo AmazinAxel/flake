@@ -11,7 +11,7 @@
   # Host-specific packages
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive # Video editor
-    blockbench-electron # Minecraft 3D modeling app
+    blockbench # Minecraft 3D modeling app
     gimp3 # Image editor
     teams-for-linux # Unoffical MS Teams client
     libreoffice # Preview Word documents and Excel sheets offline

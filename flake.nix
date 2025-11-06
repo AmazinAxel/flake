@@ -21,7 +21,6 @@
     nixosConfigurations = {
       # Primary laptop
       "alecslaptop" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecslaptop/default.nix
@@ -31,14 +30,13 @@
 
       # Gaming handheld
       "alechandheld" = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
+        #system = "aarch64-linux";
         specialArgs = { inherit inputs; };
         modules = [ ./hosts/alechandheld/default.nix ];
       };
 
       # Old laptop
       "alecolaptop" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecolaptop/default.nix
@@ -48,7 +46,6 @@
 
       # Desktop/compute server
       "alecpc" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecpc/default.nix

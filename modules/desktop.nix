@@ -21,7 +21,6 @@
     wl-clipboard # Astal clipboard utils
 
     # Desktop applications
-    swappy # Screenshot editor
     gthumb # Image & video viewer & lightweight editor
     gnome-text-editor # Simple text editor
     gnome-system-monitor # Task manager
@@ -30,13 +29,7 @@
     file-roller # Open archives in nemo
     discord # Voice & video chat app
     filezilla # FTP client
-
-    # Wayland MC w/ key modifiers patch
-    (prismlauncher.override {
-      glfw3-minecraft = glfw3-minecraft.overrideAttrs (prev: {
-        patches = [ ../overlays/glfw-key-modifiers.patch ];
-      });
-    })
+    prismlauncher # Minecraft client
 
     # Scripts
     (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
@@ -48,7 +41,6 @@
   # Custom fonts
   fonts.packages = with pkgs; [
     iosevka # Coding font
-    font-awesome # For Swappy
     wqy_zenhei # Chinese font
   ];
 
@@ -74,7 +66,7 @@
     enable = true;
     type = "fcitx5";
     fcitx5 = {
-      addons = with pkgs; [ fcitx5-chinese-addons fcitx5-nord ];
+      addons = with pkgs; [ qt6Packages.fcitx5-chinese-addons fcitx5-nord ];
       waylandFrontend = true;
 
       settings = {

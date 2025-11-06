@@ -11,6 +11,7 @@
     ./librewolf.nix
     ./mpd.nix
     ./starship.nix
+    ./swappy.nix
 
     inputs.ags.homeManagerModules.default
   ];
@@ -59,8 +60,7 @@
   };
 
   xdg = {
-    # Symlink all fonts
-    dataFile."fonts" = {
+    dataFile."fonts" = { # Symlink fonts
       target = "./fonts";
       source = ./fonts;
     };
@@ -72,19 +72,5 @@
       extraConfig.XDG_CAPTURES_DIR = "/home/alec/Videos/Captures";
       extraConfig.XDG_CLIPS_DIR = "/home/alec/Videos/Clips";
     };
-
-    # Swappy config
-    configFile."swappy/config".text = ''
-      [Default]
-      save_dir=$HOME/Pictures/Screenshots
-      save_filename_format=%Y%m%d-%H%M%S-edited.png
-      show_panel=false
-      line_size=10
-      text_size=20
-      text_font=Sora
-      paint_mode=brush
-      early_exit=true
-      fill_shape=false
-    '';
   };
 }
