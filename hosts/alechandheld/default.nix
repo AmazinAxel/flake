@@ -33,13 +33,7 @@
   };
 
   users.users.alec.extraGroups = [ "input" "gpio" "i2c" ];
-  nix.settings = {
-    trusted-users = [ "alec" ]; # Remote deployment
-    
-    # Prevent builds overwhelming device resources
-    max-jobs = 1;
-    cores = 1;
-  };
+  nix.settings.trusted-users = [ "alec" ]; # Remote deployment
 
   # Extend card lifespan
   services.journald.extraConfig = "Storage=volatile";
