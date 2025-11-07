@@ -22,6 +22,7 @@
       extraArguments = [ "-s" ]; # Allow TTY switching
     };
     sshd.enable = true;
+    libinput.enable = true;
   };
 
   networking = {
@@ -31,7 +32,7 @@
     firewall.enable = false;
   };
 
-  users.users.alec.extraGroups = [ "input" "gpio" ];
+  users.users.alec.extraGroups = [ "input" "gpio" "i2c" ];
   nix.settings = {
     trusted-users = [ "alec" ]; # Remote deployment
     

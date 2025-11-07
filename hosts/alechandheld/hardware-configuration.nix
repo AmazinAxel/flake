@@ -24,8 +24,14 @@
     kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
   };
 
-  hardware.deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
-  hardware.enableRedistributableFirmware = true;
+  hardware = {
+    deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
+    enableRedistributableFirmware = true;
+    
+    # For gamepad/joystick?
+    i2c.enable = true;
+    uinput.enable = true;
+  };
   nixpkgs.hostPlatform = "aarch64-linux";
   system.stateVersion = "25.05";
 }
