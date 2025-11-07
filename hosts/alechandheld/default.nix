@@ -10,7 +10,6 @@
     (retroarch.withCores (cores: with cores; [
       
     ]))
-    retroarch-joypad-autoconfig
   ];
 
   # For running retroarch
