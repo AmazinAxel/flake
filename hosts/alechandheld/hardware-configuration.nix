@@ -21,7 +21,7 @@
       };
       systemd-boot.enable = false;
     };
-    #kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
+    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
   };
 
   hardware = {
