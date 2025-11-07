@@ -4,7 +4,7 @@
     fsType = "ext4";
   };
 
-  # Additional microSD card
+  # Additional microSD card for extra games
   fileSystems."/mnt/content" = {
     device = "/dev/disk/by-uuid/89bd4766-cb7b-46ad-aef9-13c21769d7c9";
     fsType = "ext4";
@@ -12,7 +12,7 @@
   };
 
   boot = {
-    initrd.availableKernelModules = [ "usbhid" "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
+    initrd.availableKernelModules = [ "usbhid" "hid" "joydev" "evdev" ];
     loader = {
       grub.enable = false;
       generic-extlinux-compatible = {
@@ -21,7 +21,7 @@
       };
       systemd-boot.enable = false;
     };
-    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
+    #kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
   };
 
   hardware = {
