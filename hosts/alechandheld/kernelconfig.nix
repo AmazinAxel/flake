@@ -1,11 +1,10 @@
 { lib, ...}: {
   boot.kernelPatches = [{
-    name = "h700-rg35xx-h-config";
     patch = null;
-    structuredExtraConfig = with lib.kernel; {
-      JOYSTICK_ADC = yes;
-      MUX_GPIO = yes;
-      IIO_MUX = yes;
-    };
+    extraConfig = ''
+      JOYSTICK_ADC y
+      MUX_GPIO y
+      IIO_MUX y
+    '';
   }];
 }
