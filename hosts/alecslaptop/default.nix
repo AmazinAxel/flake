@@ -20,24 +20,19 @@
     libreoffice # Preview Word documents and Excel sheets offline
     gnome-sound-recorder # Voice recording app
     gnome-disk-utility # Drive repartitioning utility
-    flashprint # Flashforge 3D printer
+    flashprint # Flashforge 3D printer slicer
     thunderbird # Email client
     worldpainter # Minecraft world generator
-    #jetbrains.idea-community # Jetbrains IDEA
-    maven # Java build tool
-    zulu24 # JDK
     gpu-screen-recorder # Screen record & clipping tool - expose binary for use within Astal
 
     bun # All-in-one JS toolkit
     jre # For Minecraft - uses the latest stable Java runtime version
-    jdk23 # Java JDK version 23 for compling & running jars
     nodejs_22 # JS runtime
     steam-run # Used for running some games
   ];
   programs = {
     kdeconnect.enable = true; # Device integration
     gpu-screen-recorder.enable = true; # Clipping software services
-    steam.enable = true; # Gaming
   };
 
   # Bootloader settings
@@ -59,14 +54,6 @@
   services = {
     flatpak.enable = true; # For running Sober
     upower.enable = true; # For displaying battery level on astal shell
-
-    # Game streaming to console
-    sunshine = {
-      enable = true;
-      autoStart = false;
-      openFirewall = true;
-      capSysAdmin = true;
-    };
 
     tlp = { # Better battery life
       enable = true;

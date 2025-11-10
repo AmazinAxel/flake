@@ -36,7 +36,7 @@ const nameSubstitute = (name: string) => {
 };
 
 const speakersBind = createBinding(audio, 'speakers');
-const selectedSpeakerBind = createBinding(speaker, 'description').as(v => `Select Audio Output (${nameSubstitute(v)})`)
+const selectedSpeakerBind = createBinding(speaker, 'description').as(nameSubstitute)
 
 export const SinkSelector = () =>
 	<box>
