@@ -50,7 +50,7 @@ export const stopRec = () => {
 	setIsRec(false);
 
 	notifySend({
-		appName: 'Screen Recording',
+		appName: 'Recording',
 		title: 'Screen recording saved',
 		actions: [
 			{

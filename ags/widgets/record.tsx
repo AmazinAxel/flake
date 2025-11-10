@@ -24,8 +24,8 @@ export default () => <window
                     case 99: // C - clip & save last 30 seconds
                         execAsync("pkill -SIGUSR1 -f gpu-screen-recorder")
                         notifySend({
-                            appName: 'Screen Recording',
-                            title: 'Screen recording saved',
+                            appName: 'Clip',
+                            title: 'Clip saved',
                             actions: [{
                                 id: 1,
                                 label: 'Open Clips folder',

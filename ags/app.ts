@@ -11,7 +11,6 @@ import app from "ags/gtk4/app"
 import { exec } from "ags/process";
 import astalIO from "gi://AstalIO"
 import Hyprland from 'gi://AstalHyprland?version=0.1';
-import GObject from 'ags/gobject';
 
 import Bar from './widgets/bar/bar';
 import calendar from './widgets/calendar';
@@ -115,8 +114,8 @@ const reminders = () => {
         });
     } else if (folderSize > 100000000) { // Greater than 100MB
         notifySend({
-            appName: 'System Cleanup',
-            title: 'Clean Downloads folder',
+            appName: 'Cleanup',
+            title: 'Empty Downloads folder',
             actions: [{
                 id: 1,
                 label: 'View folder',
