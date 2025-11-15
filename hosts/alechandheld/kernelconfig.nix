@@ -1,17 +1,15 @@
 { lib, pkgs, ... }:
 
 let
-  kernel = pkgs.linuxManualConfig {
-    inherit (pkgs) stdenv lib;
-    version = "6.16.9";
-    src = pkgs.fetchurl {
-      url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.16.9.tar.xz";
-      sha256 = "13g59jvc6kvp8dzl6ysmzrpq4nh9xvy5va5avrsn6iq5ryiwij3s";
+  kernel = pkgs.linuxManualConfig rec {
+    version = "6.16";
+    src = fetchTarball {
+      url = "https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-${version}.tar.xz";
+      sha256 = "sha256:0j9a4hhlx7a1w8q3h2rhv5iz30xxai1kkrwia855r8d81kpfmmpc";
     };
     configfile = ./kernel.config;
+    allowImportFromDerivation = true;
   };
-
-  h700KernelPackage = pkgs.linuxPackagesFor kernel;
 in {
-  boot.kernelPackages = lib.mkForce h700KernelPackage;
+  boot.kernelPackages = lib.mkForce (pkgs.linuxPackagesFor kernel);
 }
