@@ -23,7 +23,7 @@ import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/quicksettings/quicksettings';
 import { notifySend } from './services/notifySend';
-import { isRec, stopRec, startClippingService } from './services/screenRecord';
+import { isRec, stopRec, startClippingService } from './widgets/record/service';
 const hypr = Hyprland.get_default();
 
 import { monitorBrightness } from './services/brightness';

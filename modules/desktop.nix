@@ -1,50 +1,50 @@
 { inputs, pkgs, ... }: {
-  imports = [ ./hyprland.nix ]; # Hyprland-specific config
 
-  # Home-manager primary desktop entrance
   home-manager = {
-    backupFileExtension = "backup2";
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
     useGlobalPkgs = true; # Faster eval
   };
 
-  environment.systemPackages = with pkgs; [
-    # Desktop services
-    libnotify # Astal internal notifications
-    mpc # CLI for Astal media player
-    cifs-utils # Needed for mounting Samba NAS drive
-    rsync # Quickly pull files from NAS drive
-    brightnessctl # Screen brightness CLI for Astal
-    adwaita-icon-theme # Icons for GTK apps
-    hyprshot # Screenshot tool
-    wl-clipboard # Astal clipboard utils
+  environment = {
+    systemPackages = with pkgs; [
+      # Desktop services
+      libnotify # Astal internal notifications
+      mpc # CLI for Astal media player
+      cifs-utils # Needed for mounting Samba NAS drive
+      rsync # Quickly pull files from NAS drive
+      brightnessctl # Screen brightness CLI for Astal
+      adwaita-icon-theme # Icons for GTK apps
+      hyprshot # Screenshot tool
+      wl-clipboard # Astal clipboard utils
 
-    # Desktop applications
-    gthumb # Image & video viewer & lightweight editor
-    gnome-text-editor # Simple text editor
-    gnome-system-monitor # Task manager
-    nemo-with-extensions # File manager
-    nemo-fileroller # Create archives in nemo
-    file-roller # Open archives in nemo
-    discord # Voice & video chat app
-    filezilla # FTP client
-    prismlauncher # Minecraft client
+      # Desktop applications
+      gthumb # Image & video viewer & lightweight editor
+      gnome-text-editor # Simple text editor
+      gnome-system-monitor # Task manager
+      nemo-with-extensions # File manager
+      nemo-fileroller # Create archives in nemo
+      file-roller # Open archives in nemo
+      discord # Voice & video chat app
+      filezilla # FTP client
+      prismlauncher # Minecraft client
 
-    # Scripts
-    (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
-    (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
-    (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
-    (writeScriptBin "screenshot" (builtins.readFile ../scripts/screenshot.fish))
-  ];
+      # Scripts
+      (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
+      (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
+      (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
+      (writeScriptBin "screenshot" (builtins.readFile ../scripts/screenshot.fish))
+    ];
+    sessionVariables.NIXOS_OZONE_WL = "1"; # Make Electron use Wayland by default
+  };
 
-  # Custom fonts
   fonts.packages = with pkgs; [
-    iosevka # Coding font
-    wqy_zenhei # Chinese font
+    iosevka # Programming
+    wqy_zenhei # Chinese
   ];
 
   programs = {
+    hyprland.enable = true; # WM
     git = {
       enable = true;
       package = pkgs.gitMinimal;
@@ -83,15 +83,15 @@
 
         addons = {
           clipboard.globalSection."TriggerKey" = ""; # Disable clipboard
-          classicui.globalSection."Theme" = "Nord-Dark"; # Enable theme
+          classicui.globalSection."Theme" = "Nord-Dark"; # Theme
         };
       };
     };
   };
 
   services = {
-    gvfs.enable = true; # For nemo trash & NAS autodiscovery support
-    devmon.enable = true; # Automatically mounts/unmounts drives
+    gvfs.enable = true; # For nemo trash & NAS autodiscov
+    devmon.enable = true; # Automatic drive mount/unmount
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
     # .local resolution for homelab
@@ -100,7 +100,7 @@
       nssmdns4 = true;
     };
 
-    # Sound support
+    # Sound
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -108,8 +108,16 @@
       pulse.enable = true;
       wireplumber.enable = true;
     };
-  };
 
-  # Bluetooth support
-  hardware.bluetooth.enable = true;
+    greetd = { # Autologin
+      enable = true;
+      settings.default_session = {
+        command = "Hyprland";
+        user = "alec";
+      };
+    };
+  };
+  security.pam.services.hyprlock = {}; # Hyprlock hm package requires this
+
+  hardware.bluetooth.enable = true; # Bluetooth
 }

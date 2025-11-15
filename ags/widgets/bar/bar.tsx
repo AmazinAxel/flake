@@ -6,7 +6,7 @@ import { Workspaces } from './modules/workspaces';
 import { Status } from './modules/statusMenu';
 import { Mpris } from './modules/mpris';
 import { Media } from '../../services/mediaPlayer';
-import { RecordingIndicator } from '../../services/screenRecord';
+import { RecordingIndicator } from '../record/service';
 const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
 
 export default (monitor: number) =>

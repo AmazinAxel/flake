@@ -30,7 +30,7 @@
       userSettings = {
         editor = {
           wordWrap = "on";
-          fontFamily = "'Iosevka'"; # Iosevka ftw
+          fontFamily = "'Iosevka'";
           fontLigatures = "'calt'"; # Iosevka ligatures
           confirmPasteNative = false;
           minimap.enabled = false;

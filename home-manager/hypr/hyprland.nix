@@ -49,7 +49,7 @@
         disable_hyprland_logo = true;
         new_window_takes_over_fullscreen = 2;
         initial_workspace_tracking = 0; # Always open in current workspace
-        disable_hyprland_qtutils_check = true; # Hide annoying Hypr popup
+        #disable_hyprland_qtutils_check = true; # Hide annoying Hypr popup
       };
       binds.scroll_event_delay = 0;
       ecosystem = {
@@ -98,7 +98,7 @@
       windowrulev2 = [ "renderunfocused, title:(Minecraft*)(.*)$" ];
 
       # Hide clipboard history during screenshares
-      #layerrule = [ "noscreenshare,clipboard" ];
+      layerrule = [ "noscreenshare,clipboard" ];
 
       env = [ # Some legacy apps still use xcursor
         "XCURSOR_THEME, Bibata-Modern-Ice"

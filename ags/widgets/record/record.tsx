@@ -52,3 +52,10 @@ export default () => <window
             <label label={recQuality((q) => "Recording quality: " + q)}/>
         </box>
     </window>
+
+export const RecordingIndicator = () =>
+    <image
+        visible={isRec}
+        halign={Gtk.Align.END}
+        cssClasses={['recIndicator']}
+        iconName="media-record-symbolic"/>

@@ -25,11 +25,11 @@
 
       extraPackages = with inputs.astal.packages.${pkgs.system}; [
         apps # App launcher
-        battery # For laptop only - not used on desktop
-        bluetooth # Bluez integration
-        hyprland # Workspace integration
+        battery # Laptop battery
+        bluetooth # Bluez
+        hyprland # For workspaces
         mpris # Media controls
-        notifd # Desktop notification integration
+        notifd # Desktop notifications
         wireplumber # Used by pipewire
       ];
     };
@@ -41,7 +41,7 @@
     username = "alec";
     homeDirectory = "/home/alec";
 
-    # Glboal cursor system
+    # Global cursor
     pointerCursor = {
       name = "Bibata-Modern-Ice";
       package = pkgs.bibata-cursors;
@@ -55,7 +55,7 @@
     swww.enable = true; # Auto-start wallpaper manager on boot
     cliphist = {
       enable = true;
-      extraOptions = [ "-preview-width" "200" "-max-items" "20" "-max-dedupe-search" "20" ];
+      extraOptions = [ "-preview-width" "200" "-max-items" "20" "-max-dedupe-search" "5" ];
     };
   };
 
@@ -66,11 +66,13 @@
     };
 
     userDirs = {
-      enable = true; # Allows home-manager to manage & create user dirs
+      enable = true;
       createDirectories = true; # Auto-creates all directories
-      extraConfig.XDG_PROJECTS_DIR = "/home/alec/Projects";
-      extraConfig.XDG_CAPTURES_DIR = "/home/alec/Videos/Captures";
-      extraConfig.XDG_CLIPS_DIR = "/home/alec/Videos/Clips";
+      extraConfig = {
+        XDG_PROJECTS_DIR = "/home/alec/Projects";
+        XDG_CAPTURES_DIR = "/home/alec/Videos/Captures";
+        XDG_CLIPS_DIR = "/home/alec/Videos/Clips";
+      };
     };
   };
 }

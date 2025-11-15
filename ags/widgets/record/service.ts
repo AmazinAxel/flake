@@ -6,7 +6,7 @@ import AstalIO from 'gi://AstalIO';
 import GLib from 'gi://GLib';
 import Hyprland from 'gi://AstalHyprland';
 
-import { notifySend } from './notifySend';
+import { notifySend } from '../../services/notifySend';
 
 const hypr = Hyprland.get_default();
 const captureDir = '/home/alec/Videos/Captures';
@@ -20,12 +20,6 @@ export const [ recQuality, setRecQuality] = createState('ultra');
 let rec: AstalIO.Process | null = null;
 let file: string;
 
-export const RecordingIndicator = () =>
-	<image
-		visible={isRec}
-		halign={Gtk.Align.END}
-		cssClasses={['recIndicator']}
-		iconName="media-record-symbolic"/>
 
 export const startClippingService = () =>
 	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${hypr.get_monitors()[0]?.name} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
