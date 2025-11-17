@@ -17,7 +17,7 @@ import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher from './widgets/launcher/launcher';
-import recordMenu from './widgets/record';
+import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';

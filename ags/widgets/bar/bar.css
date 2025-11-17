@@ -57,9 +57,6 @@
 }
 #bar .workspaceBtn.occupied { background-color: @dark4; min-height: 1.4rem; }
 
-/* Status menu misc */
-.btConnected { color: @blue3; -gtk-icon-shadow: 0 0 2px @blue3; }
-
 /* Recording indicator */
 .recIndicator {
     color: #bf616a;

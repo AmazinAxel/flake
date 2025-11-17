@@ -11,11 +11,9 @@ const bluetooth = Bluetooth.get_default()
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 const battery = Battery.get_default();
 
-const btConnectedBind = createBinding(bluetooth, 'isConnected');
 const btIsPoweredBind = createBinding(bluetooth, 'isPowered');
 const BluetoothIcon = () =>
   <image
-    cssClasses={btConnectedBind((isConn) => (isConn) ? ['btConnected'] : [''])}
     iconName='bluetooth-active-symbolic'
     visible={btIsPoweredBind}
   />

@@ -13,13 +13,12 @@ const captureDir = '/home/alec/Videos/Captures';
 
 const now = () => GLib.DateTime.new_now_local().format('%Y-%m-%d_%H-%M-%S');
 
-export const [ isRec, setIsRec] = createState(false);
-export const [ recMic, setRecMic] = createState(false);
-export const [ recQuality, setRecQuality] = createState('ultra');
+export const [ isRec, setIsRec ] = createState(false);
+export const [ recMic, setRecMic ] = createState(false);
+export const [ recQuality, setRecQuality ] = createState('ultra');
 
 let rec: AstalIO.Process | null = null;
 let file: string;
-
 
 export const startClippingService = () =>
 	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${hypr.get_monitors()[0]?.name} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
