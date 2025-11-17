@@ -33,6 +33,7 @@
   programs = {
     kdeconnect.enable = true; # Device integration
     gpu-screen-recorder.enable = true; # Clipping software services
+    nix-ld.enable = true; # For dynamic executables
   };
 
   # Bootloader settings

@@ -19,7 +19,7 @@
       wl-clipboard # Astal clipboard utils
 
       # Desktop applications
-      gthumb # Image & video viewer & lightweight editor
+      gthumb # Image & video viewer & editor
       gnome-text-editor # Simple text editor
       gnome-system-monitor # Task manager
       nemo-with-extensions # File manager
@@ -27,7 +27,7 @@
       file-roller # Open archives in nemo
       discord # Voice & video chat app
       filezilla # FTP client
-      prismlauncher # Minecraft client
+      prismlauncher # Minecraft launcher
 
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
@@ -35,7 +35,7 @@
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
       (writeScriptBin "screenshot" (builtins.readFile ../scripts/screenshot.fish))
     ];
-    sessionVariables.NIXOS_OZONE_WL = "1"; # Make Electron use Wayland by default
+    sessionVariables.NIXOS_OZONE_WL = "1"; # For Electron
   };
 
   fonts.packages = with pkgs; [
@@ -58,7 +58,6 @@
         push.autoSetupRemote = true;
       };
     };
-    nix-ld.enable = true; # For dynamic executables
   };
 
   # Chinese input support
@@ -119,5 +118,9 @@
   };
   security.pam.services.hyprlock = {}; # Hyprlock hm package requires this
 
-  hardware.bluetooth.enable = true; # Bluetooth
+  # Bluetooth
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = false; # Don't start bluetooth until its needed
+  };
 }
