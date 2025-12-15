@@ -25,10 +25,10 @@ jobs:
         with:
           pr-title: "chore: update flake lock"
         env:
-          GITHUB_TOKEN: ${{ secrets.AUTOMERGE_PAT }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Merge PR
         if: ${{ steps.update.outputs.pull-request-number != '' }}
         run: gh pr merge --auto "${{ steps.update.outputs.pull-request-number }}" --rebase
         env:
-          GITHUB_TOKEN: ${{ secrets.AUTOMERGE_PAT }}
+          GH_TOKEN: ${{ github.token }}
