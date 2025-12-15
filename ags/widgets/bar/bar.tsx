@@ -23,7 +23,7 @@ export default (monitor: number) =>
 
       <box vexpand/>
 
-      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']} name={'media'}>
+      <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} cssClasses={['barElement']} name={'media'}>
         <Media/>
         <Mpris/>
       </box>

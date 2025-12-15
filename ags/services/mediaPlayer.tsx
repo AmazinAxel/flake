@@ -71,7 +71,6 @@ export const Media = () =>
         name={'mediaBtn'}
         onClicked={playPause}
         cursor={Gdk.Cursor.new_from_name('pointer', null)}
-        hexpand
         $={() =>
             playlistName.subscribe(() => {
                 const color = playlistColors[playlist.get() - 1];
