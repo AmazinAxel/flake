@@ -4,7 +4,7 @@
     ./hypr/keybinds.nix
     ./hypr/hyprlock.nix
 
-    ./codium.nix
+    ./vscode.nix
     ./fish.nix
     ./foot.nix
     ./gtk.nix

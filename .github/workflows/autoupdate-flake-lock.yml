@@ -2,7 +2,7 @@ name: Update flake.lock
 
 on:
   schedule:
-    - cron: '0 9 * * 5'  # Every Friday at 2AM Pacific Time (9AM UTC)
+    - cron: '0 9 * * 5' # Every Friday at 2AM PT
   workflow_dispatch:
 
 jobs:

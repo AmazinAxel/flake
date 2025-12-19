@@ -1,13 +1,11 @@
 { pkgs, ... }: {
   programs.vscode = {
     enable = true;
-    package = pkgs.vscodium;
     profiles.default = {
       extensions = with pkgs.vscode-extensions; [
         arcticicestudio.nord-visual-studio-code # Nord theme
         jnoortheen.nix-ide # Nix syntax highlighting
         mechatroner.rainbow-csv # CSV syntax highlighting
-        ms-python.python # Python support
         davidanson.vscode-markdownlint # Markdown lint & spellcheck
         yzhang.markdown-all-in-one # Markdown ToC, keybinds, preview support
         github.vscode-github-actions # Github Actions highlighting
@@ -47,7 +45,7 @@
         };
         workbench = {
           startupEditor = "fish";
-          colorTheme = "Nord"; # Enable theme - requires VSCodium restart
+          colorTheme = "Nord"; # Enable theme - requires VSCode restart
         };
         terminal.integrated = {
           defaultProfile.linux = "fish";

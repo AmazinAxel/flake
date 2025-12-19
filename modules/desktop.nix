@@ -51,7 +51,7 @@
       config = {
         init.defaultBranch = "main";
         color.ui = true;
-        core.editor = "codium";
+        core.editor = "code";
         credential.helper = "store";
         github.user = "AmazinAxel"; # Github
         user.name = "AmazinAxel"; # Git
