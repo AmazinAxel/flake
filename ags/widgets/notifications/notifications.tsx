@@ -5,7 +5,7 @@ import { notificationItem } from './notificationItem';
 import { createState, For } from 'ags';
 
 const { TOP, RIGHT } = Astal.WindowAnchor;
-export const [ DND, setDND] = createState(false);
+export const [ DND, setDND ] = createState(false);
 
 const map: Map<number, Notifd.Notification> = new Map();
 export const [ notificationlist, setNotificationList] = createState(
@@ -16,7 +16,7 @@ const notifiy = () =>
 	setNotificationList([...map.values()].reverse());
 
 const setKey = (key: number, value: Notifd.Notification) => {
-	if (!DND.get()) {
+	if (!DND.peek()) {
 		map.set(key, value);
 		notifiy();
 	}
@@ -38,7 +38,7 @@ export const notifications = () =>
 		$={() => {
 			const notifd = Notifd.get_default();
 			notifd.connect("notified", (_, id) => {
-				const notif = notifd.get_notification(id);
+				const notif = notifd.get_notification(id)!;
 				if (!notif.body.startsWith('Failed to connect to server')) // Hide annoying message
 					setKey(id, notif)
 			});

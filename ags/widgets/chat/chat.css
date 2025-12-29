@@ -1,0 +1,38 @@
+#chat {
+    background-color: @theme_bg_color;
+    margin: 0.25rem 0rem 0.5rem 0.5rem;
+    border-radius: 0.5rem 0 0 0.5rem;
+    padding: 0.5rem;
+    border: 0.2rem solid @blue2;
+}
+
+#chat .header {
+    font-size: 1.5rem;
+    color: @light3;
+    font-family: 'Hammersmith One';
+    padding-bottom: 0.5rem;
+}
+
+#chat .messageArea {
+    color: @dark3;
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 1rem 0 0.5rem 0;
+}
+#chat .messageArea entry { margin-right: 0.5rem; }
+
+#chat .content {
+    margin-top: 0;
+    padding: 0.7rem;
+}
+
+.message { padding: 1rem; }
+.message.user {
+    background-color: @dark2;
+    margin: 0.5rem 2rem 0.5rem 0rem;
+    border-radius: 0.5rem 0.5rem 0.5rem 0;
+}
+.message.bot {
+    background-color: @dark3;
+    margin: 0.5rem 0rem 0.5rem 2rem;
+    border-radius: 0.5rem 0.5rem 0 0.5rem;
+}

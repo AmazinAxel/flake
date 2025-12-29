@@ -1,5 +1,3 @@
-
-import { Gtk } from 'ags/gtk4';
 import { createState } from 'ags';
 import { exec, execAsync } from 'ags/process';
 import AstalIO from 'gi://AstalIO';
@@ -30,9 +28,9 @@ export const startRec = () => {
 
 	file = `${captureDir}/${now()}.mp4`;
 	const monitor = hypr.get_focused_monitor().name;
-	const audio = (recMic.get() == true) ? "default_output|default_input" : "default_output";
+	const audio = (recMic.peek() == true) ? "default_output|default_input" : "default_output";
 
-	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.get()} -w ${monitor} -o ${file}`);
+	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.peek()} -w ${monitor} -o ${file}`);
 
 	setIsRec(true);
 };

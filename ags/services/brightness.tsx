@@ -6,7 +6,7 @@ const get = (args: string) => Number(exec('brightnessctl ' + args));
 const screen = exec('bash -c "ls -w1 /sys/class/backlight | head -1"');
 
 const screenMax = get("max");
-export const [brightness, setBrightnessValue] = createState(get("get") / (screenMax || 1)) 
+export const [ brightness, setBrightnessValue ] = createState(get("get") / (screenMax || 1)) 
 
 const setBrightness = (percent: number) => {
     if (percent < 0)

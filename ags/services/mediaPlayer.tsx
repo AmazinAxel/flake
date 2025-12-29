@@ -23,33 +23,33 @@ export const updTrack = (direction: musicAction) => {
 
 export const playPause = () => {
     execAsync('mpc toggle');
-    setIsPlaying(!isPlaying.get());
+    setIsPlaying(!isPlaying.peek());
 };
 
 export const chngPlaylist = (direction: musicAction) => {
     let wallpaperTransitionAngle;
     if (direction == 'next') {
         wallpaperTransitionAngle = 270;
-        (playlist.get() == playlists.length)
+        (playlist.peek() == playlists.length)
         ? (setPlaylist(1)) // Go to first
-        : (setPlaylist(Number(playlist.get()) + 1));
+        : (setPlaylist(Number(playlist.peek()) + 1));
     } else if (direction == 'prev') {
         wallpaperTransitionAngle = 90;
-        (playlist.get() == 1)
+        (playlist.peek() == 1)
         ? (setPlaylist(playlists.length)) // Go to last
-        : (setPlaylist(Number(playlist.get()) - 1));
+        : (setPlaylist(Number(playlist.peek()) - 1));
     }
 
     // Stop playing music
     exec('mpc pause');
     setIsPlaying(false);
 
-    setPlaylistName(playlists[Number(playlist.get()) - 1]);
-    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg --transition-type=wave --transition-angle=${wallpaperTransitionAngle} --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145`);
+    setPlaylistName(playlists[Number(playlist.peek()) - 1]);
+    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg --transition-type=wave --transition-angle=${wallpaperTransitionAngle} --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145`);
 
     // Clear the current cache and add the new playlist
     exec('mpc clear');
-    exec(`mpc add ${playlistName.get()}/`);
+    exec(`mpc add ${playlistName.peek()}/`);
     exec('mpc shuffle');
     playPause(); // Start playing
 };
@@ -61,7 +61,7 @@ export const initMedia = () => {
     execAsync('swww img /home/alec/Projects/flake/wallpapers/Study.jpg --transition-type=wave --transition-angle=90 --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145');
 
     exec('mpc clear');
-    exec(`mpc add ${playlistName.get()}/`);
+    exec(`mpc add ${playlistName.peek()}/`);
     execAsync('mpc shuffle');
 };
 
@@ -73,7 +73,7 @@ export const Media = () =>
         cursor={Gdk.Cursor.new_from_name('pointer', null)}
         $={() =>
             playlistName.subscribe(() => {
-                const color = playlistColors[playlist.get() - 1];
+                const color = playlistColors[playlist.peek() - 1];
                 app.apply_css(`
                     #bar #mediaBtn {
                         background-color: #${color};

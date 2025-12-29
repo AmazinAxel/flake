@@ -16,7 +16,7 @@ const search = (text: string) =>
 const hide = () => app.toggle_window("launcher");
 
 // Update launcher background to wallpaper
-playlistName.subscribe(() => app.apply_css(`.searchBg { background-image: url("file:///home/alec/Projects/flake/wallpapers/${playlistName.get()}.jpg"); }`))
+playlistName.subscribe(() => app.apply_css(`.searchBg { background-image: url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
 
 export default () =>
     <window

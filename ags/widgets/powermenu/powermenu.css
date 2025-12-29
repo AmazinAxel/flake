@@ -4,7 +4,7 @@
     margin: 0.5rem;
     padding: 1rem;
     border-radius: 0.5rem;
-    color: @white3;
+    color: @light1;
 }
 
 #powermenu .sleep, #powermenu .reboot {

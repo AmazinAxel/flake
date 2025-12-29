@@ -1,6 +1,7 @@
 import style from './style.css';
 import lancherStyle from './widgets/launcher/launcher.css';
 import clipboardStyle from './widgets/clipboard/clipboard.css';
+import chatStyle from './widgets/chat/chat.css';
 import barStyle from './widgets/bar/bar.css';
 import notificationStyle from './widgets/notifications/notifications.css';
 import osdStyle from './widgets/osd/osd.css';
@@ -13,6 +14,7 @@ import astalIO from "gi://AstalIO"
 import Hyprland from 'gi://AstalHyprland?version=0.1';
 
 import Bar from './widgets/bar/bar';
+import chat from './widgets/chat/osd';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
@@ -32,18 +34,19 @@ import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPl
 const barMap: Map<number, any> = new Map();
 
 app.start({
-    css: style + lancherStyle + clipboardStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
+    css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
     main() {
         hypr.get_monitors().map((monitor) => barMap.set(monitor.id, Bar(monitor.id)));
 
+        chat();
         calendar();
-        clipboard(); 
+        clipboard();
+        emojiPicker();
+        launcher();
         recordMenu();
         osd();
         powermenu();
-        emojiPicker();
         quickSettings();
-        launcher();
 
         monitorBrightness();
         notifications();
@@ -67,7 +70,7 @@ app.start({
                 clearOldestNotification();
                 break;
             case "record":
-                (isRec.get() == true)
+                (isRec.peek() == true)
                     ? stopRec()
                     : app.toggle_window("recordMenu");
                 break;
@@ -91,7 +94,7 @@ app.start({
                 };
                 break;
             case "toggleDND":
-                setDND(!DND.get())
+                setDND(!DND.peek())
                 break;
         };
         res("Request handled successfully");

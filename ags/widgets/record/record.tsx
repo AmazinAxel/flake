@@ -35,10 +35,10 @@ export default () => <window
                         window.hide()
                         break;
                     case 114: // R - toggle microphone input
-                        setRecMic(!recMic.get())
+                        setRecMic(!recMic.peek())
                         break;
                     case 113: // Q - toggle quality
-                        (recQuality.get() == 'medium') ?
+                        (recQuality.peek() == 'medium') ?
                             setRecQuality('ultra') : setRecQuality('medium');
                         break;
                     default:

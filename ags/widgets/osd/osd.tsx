@@ -8,8 +8,8 @@ import { brightness } from '../../services/brightness';
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 let dontShow = true;
 let count = 0;
-export const [ icon, setIcon] = createState('');
-export const [ val, setVal] = createState(0);
+export const [ icon, setIcon ] = createState('');
+export const [ val, setVal ] = createState(0);
 const volumeBind = createBinding(speaker, 'volume')
 
 timeout(3000, () => dontShow = false);
@@ -21,7 +21,7 @@ export default () =>
         application={app}
         $={(self) => {
             brightness.subscribe(() =>
-                osdChange('display-brightness-symbolic', brightness.get(), self)
+                osdChange('display-brightness-symbolic', brightness.peek(), self)
             );
             volumeBind.subscribe(() =>
                 osdChange(speaker.volume_icon, speaker.volume, self)

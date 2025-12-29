@@ -47,6 +47,7 @@
           startupEditor = "fish";
           colorTheme = "Nord"; # Enable theme - requires VSCode restart
         };
+        chat.disableAIFeatures = true;
         terminal.integrated = {
           defaultProfile.linux = "fish";
           profiles.linux.fish = {
