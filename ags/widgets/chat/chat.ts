@@ -1,19 +1,14 @@
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import Soup from "gi://Soup?version=3.0";
-import AstalIO from "gi://AstalIO";
 import { createState, Accessor } from "ags";
-
-AstalIO.write_file(`/tmp/aiHistory.json`, "[ ]");
+import { chatContent, setChatContent } from "./osd";
+import ChatMessage from "./modules/chat-message";
+import { readFile } from "ags/file";
 
 export enum Role {
   USER = "user",
-  BOT = "bot"
-}
-
-export interface ServiceMessage {
-  role: Role;
-  content: string;
+  ASSISTANT = "assistant"
 }
 
 interface GPTStreamChunk {
@@ -32,7 +27,6 @@ interface GPTStreamChunk {
 }
 
 export type MessageState = {
-  id: number;
   role: Role;
   content: Accessor<string>;
   setContent: (v: string | ((prev: string) => string)) => void;
@@ -44,37 +38,21 @@ export type MessageState = {
   setRawData: (v: string) => void;
 };
 
-const [messages, setMessages] = createState<MessageState[]>([]);
-const ENV_KEY = "" //GLib.getenv("OPENAI_API_KEY");
-let _temperature = 0.3;
-
-const listeners = new Map<string, ((...args: any[]) => void)[]>();
-const emit = (event: string, ...args: any[]) => {
-  const l = listeners.get(event) || [];
-  l.forEach((cb) => cb(...args));
-};
-export const connect = (event: string, cb: (...args: any[]) => void) => {
-  if (!listeners.has(event)) listeners.set(event, []);
-  listeners.get(event)!.push(cb);
-  return () => {
-    const arr = listeners.get(event) || [];
-    listeners.set(event, arr.filter((c) => c !== cb));
-  };
-};
+export const [ messages, setMessages ] = createState<MessageState[]>([]);
+const ENV_KEY = readFile('/home/alec/GroqAIKey').trim();
+console.log(ENV_KEY, typeof ENV_KEY)
+const temperature = 0.3; // Lower = more deterministic
 
 const newMessage = (role: Role, initialContent: string, thinking = true, done = false) => {
-  const id = messages.peek().length;
-  const [content, setContent] = createState(initialContent);
-  const [thinkingState, setThinking] = createState(thinking);
-  const [doneState, setDone] = createState(done);
-  const [rawData, setRawData] = createState("");
+  const [ content, setContent ] = createState(initialContent);
+  const [ thinkingState, setThinking ] = createState(thinking);
+  const [ doneState, setDone ] = createState(done);
+  const [ rawData, setRawData ] = createState("");
+
   const msg: MessageState = {
-    id,
     role,
     content,
-    setContent: (v: string | ((prev: string) => string)) => {
-      setContent(typeof v === "function" ? v(content.peek()) : v);
-    },
+    setContent: (v) => setContent(typeof v === "function" ? v(content.peek()) : v),
     thinking: thinkingState,
     setThinking,
     done: doneState,
@@ -82,36 +60,10 @@ const newMessage = (role: Role, initialContent: string, thinking = true, done = 
     rawData,
     setRawData,
   };
+
   setMessages([...messages.peek(), msg]);
-  emit("new-msg", id);
+  setChatContent([...chatContent.peek(), ChatMessage(role, msg)]);
   return msg;
-};
-
-export const getMessages = () => messages; // Accessor
-export const getMessage = (id: number) => messages.peek()[id];
-
-export const saveHistory = () => {
-  const toSave: ServiceMessage[] = messages.peek().map((m) => ({
-    role: m.role,
-    content: m.content.peek(),
-  }));
-  AstalIO.write_file("/tmp/aiHistory.json", JSON.stringify(toSave));
-};
-
-export const appendHistory = () => {
-  try {
-    const readfile = AstalIO.read_file("/tmp/aiHistory.json");
-    const historyMessages: ServiceMessage[] = JSON.parse(readfile || "[]");
-    historyMessages.forEach((h) => newMessage(h.role, h.content, false, false));
-  } catch (e) {
-    console.log("Failed to load history", { err: e });
-  }
-};
-
-export const clear = () => {
-  saveHistory();
-  setMessages([]);
-  emit("clear");
 };
 
 const decoder = new TextDecoder();
@@ -141,7 +93,6 @@ export const readResponse = (stream: Gio.DataInputStream, aiMsg: MessageState) =
               if (data === "[DONE]") {
                 aiMsg.setDone(true);
                 aiMsg.setThinking(false);
-                emit("finished", aiMsg.id);
                 return;
               }
               try {
@@ -167,37 +118,31 @@ export const readResponse = (stream: Gio.DataInputStream, aiMsg: MessageState) =
   readNextLine();
 };
 
-export const isKeySet = () => ENV_KEY.length > 0;
-
-export const addMessage = (role: Role, content: string) => {
-  return newMessage(role, content, role === Role.BOT, role === Role.USER);
-};
-
-export const send = (msg: string) => {
-  addMessage(Role.USER, msg);
-
-  const aiMsg = newMessage(Role.BOT, "Thinking...", true, false);
+export const sendMessage = (msg: string) => {
+  newMessage(Role.USER, msg);
 
   const body = {
-    model: "GPT-4",
-    messages: messages
-      .peek()
-      .map((m) => ({ role: m.role.toLowerCase(), content: m.content.peek() })),
-    temperature: _temperature,
-    max_tokens: 1024,
-    stream: true,
+    model: "openai/gpt-oss-120b",
+    messages: messages.peek()
+      .map((m) => ({ role: m.role, content: m.content.peek() })),
+    temperature,
+    citation_options: 'disabled',
+    include_reasoning: true,
+    max_completion_tokens: 2048, // 1024
+    stream: true
   };
 
-  const currentKey = ENV_KEY || "";
+  const aiResponseMessage = newMessage(Role.ASSISTANT, "", true, false);
 
   const session = new Soup.Session();
   const message = new Soup.Message({
     method: "POST",
-    uri: GLib.Uri.parse("https://api.openai.com/v1/chat/completions", GLib.UriFlags.NONE),
+    uri: GLib.Uri.parse("https://api.groq.com/openai/v1/chat/completions", GLib.UriFlags.NONE),
   });
 
+  message.request_headers.append("Authorization", `Bearer ${ENV_KEY}`);
   message.request_headers.append("Content-Type", "application/json");
-  message.request_headers.append("Authorization", `Bearer ${currentKey}`);
+
   message.set_request_body_from_bytes(
     "application/json",
     new GLib.Bytes(JSON.stringify(body) as unknown as Uint8Array),
@@ -206,41 +151,24 @@ export const send = (msg: string) => {
   session.send_async(message, GLib.PRIORITY_DEFAULT, null, (_, result) => {
     try {
       const stream = session.send_finish(result);
+
       if (message.status_code !== 200) {
         const bytes = stream.read_bytes(8192, null);
-        const errorText = bytes ? new TextDecoder().decode(bytes.toArray()) : "Unknown error";
-        aiMsg.setDone(true);
-        aiMsg.setThinking(false);
-        aiMsg.setContent(`API Error (${message.status_code}): ${message.reason_phrase}\n${errorText}`);
-        emit("finished", aiMsg.id);
+        const errorText = bytes ? decoder.decode(bytes.toArray()) : "Unknown error";
+        aiResponseMessage.setDone(true);
+        aiResponseMessage.setThinking(false);
+        aiResponseMessage.setContent(`API Error (${message.status_code}): ${message.reason_phrase}\n${errorText}`);
         return;
       }
 
       readResponse(
         new Gio.DataInputStream({ close_base_stream: true, base_stream: stream }),
-        aiMsg,
+        aiResponseMessage,
       );
     } catch (err) {
-      aiMsg.setDone(true);
-      aiMsg.setThinking(false);
-      aiMsg.setContent(`Failed to connect to OpenAI API: ${err}`);
-      emit("finished", aiMsg.id);
+      aiResponseMessage.setDone(true);
+      aiResponseMessage.setThinking(false);
+      aiResponseMessage.setContent(`Failed to connect to API: ${err}`);
     }
   });
-};
-
-export const init = () => {
-  appendHistory();
-  emit("initialized");
-};
-
-export default {
-  messages, // Accessor
-  getMessages,
-  getMessage,
-  addMessage,
-  send,
-  clear,
-  connect,
-  init
 };

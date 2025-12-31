@@ -265,7 +265,7 @@ const md2pango = (content: string) => {
   return formatted;
 };
 
-export const ChatMessageContent = (message: Accessor<string>) => {
+export default (message: Accessor<string>) => {
   const renderContent = () => {
     const safeContentStr = String(message || '');
 
@@ -342,7 +342,7 @@ export const ChatMessageContent = (message: Accessor<string>) => {
     });
   };
 
-  return <label label={message} useMarkup wrap selectable/> /*{message.as((text) => {
+  return {message.as((text) => {
         const blocks = parseContent(text);
 
         return blocks.map((block, index) => {
@@ -393,7 +393,6 @@ export const ChatMessageContent = (message: Accessor<string>) => {
             }
           }
         });
-      }*/
+      })
+    }
 };
-
-export default ChatMessageContent;

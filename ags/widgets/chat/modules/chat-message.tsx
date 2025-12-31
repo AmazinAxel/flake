@@ -1,27 +1,11 @@
 import { Gtk } from "ags/gtk4";
-import GLib from "gi://GLib";
 import ChatMessageContent from "./chat-message-content";
-import { createState, State } from "ags";
+import { MessageState, Role } from "../chat";
 
-
-const ChatMessageLoadingSkeleton = () => (
-  <box
-    orientation={Gtk.Orientation.VERTICAL}
-    cssName="spacing-v-5"
-    children={Array.from({ length: 3 }, () => <box cssName={`aiSkeleton`}/> )}
-  />
-);
-
-export const ChatMessage = (role: string, message: string): Gtk.Box => {
-  const isUser = role === "user";
-
-  const [ displayMessage, setDisplayMessage ] = createState(message);
+export default (role: Role, message: MessageState): Gtk.Box => {
+  const isUser = (role == Role.USER);
 
   return <box orientation={Gtk.Orientation.VERTICAL} halign={isUser ? Gtk.Align.START : Gtk.Align.END} hexpand cssClasses={[(isUser ? 'user' : 'bot'), 'message']}>
-    <ChatMessageLoadingSkeleton/>
-    {ChatMessageContent(displayMessage)}
-    <label label={message}/>
+    {ChatMessageContent(message)}
   </box>
 };
-
-export default ChatMessage;

@@ -32,6 +32,7 @@
         notifd # Desktop notifications
         wireplumber # Used by pipewire
         pkgs.gtksourceview5 # Chat code syntax highlighting
+        pkgs.glib-networking # AI chat
       ];
     };
   };

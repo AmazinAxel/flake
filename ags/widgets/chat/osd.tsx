@@ -1,53 +1,19 @@
 import app from "ags/gtk4/app"
 import { Astal, Gtk, Gdk } from "ags/gtk4"
 const { TOP, BOTTOM, RIGHT } = Astal.WindowAnchor;
-import ChatMessage from "./modules/chat-message";
-import { createState, For, State } from "ags";
+import { createState, For } from "ags";
 
-import gptService from "./chat";
+import { sendMessage } from "./chat";
 
-const [input, setInput] = createState("")
+const [ input, setInput ] = createState("")
 
-const [chatContent, setChatContent] = createState<[number, Gtk.Widget][]>([]);
-
-gptService.connect("new-msg", (source: any, id: number) => {
-  console.log("GPT service new message", { messageId: id });
-  setChatContent([
-    ...chatContent.peek(),
-    [id,
-    ChatMessage('user', 'e')]
-  ]);
-});
-
-const appendChatContent = (newContent: Gtk.Widget) => {
-  console.log("Appending chat content");
-  const maxKey = Math.max(...chatContent.peek().map(([k]) => k));
-  console.log("Chat content", { lastKey: maxKey });
-  setChatContent([
-    ...chatContent.peek(),
-    [maxKey + 1, newContent]
-  ]);
-
-  console.log("Chat content updated", { size: chatContent.peek().length });
-};
-
-const clearChat = () => {
-  setChatContent([]);
-};
-
-const sendMessage = (message: string) => {
-  const trimmedMessage = message.trim();
-  console.log("Sending message", { message: trimmedMessage });
-  setInput("");
-  gptService.send(trimmedMessage);
-};
+export const [ chatContent, setChatContent ] = createState(
+  new Array<Gtk.Widget>()
+)
 
 const sendMessageReturn = () => {
   sendMessage(input.peek());
-};
-
-const sendMessageClick = () => {
-  sendMessage(input.peek());
+  setInput("");
 };
 
 // Allow for newlines
@@ -73,7 +39,7 @@ export default () =>
     <box orientation={Gtk.Orientation.VERTICAL} vexpand>
       <box cssClasses={["header"]}>
         <label label="Chat Agent"/>
-        <button onClicked={clearChat} hexpand halign={Gtk.Align.END}>
+        <button onClicked={() => setChatContent([])} hexpand halign={Gtk.Align.END}>
           <image iconName="user-trash-symbolic"/>
         </button>
       </box>
@@ -85,16 +51,18 @@ export default () =>
       >
         <box orientation={Gtk.Orientation.VERTICAL} vexpand hexpand>
           <For each={chatContent}>
-            {([_, widget]) => widget}
+            {(w) => w}
           </For>
         </box>
       </Gtk.ScrolledWindow>
       <box cssClasses={["messageArea"]}>
         <entry
           placeholderText="Type here"
+          text={input}
+          onNotifyText={(self) => setInput(self.text)}
           hexpand
           onActivate={(self) => {
-            if (self.text.length > 0) 
+            if (self.text.length > 0)
               sendMessageReturn?.();
           }}
           $={(self) => {
@@ -105,7 +73,7 @@ export default () =>
             self.add_controller(keyController);
           }}
         />
-        <button onClicked={sendMessageClick}>
+        <button onClicked={sendMessageReturn}>
           <image iconName="mail-reply-sender-symbolic"/>
         </button>
       </box>
