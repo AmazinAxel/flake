@@ -2,8 +2,6 @@ import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import Soup from "gi://Soup?version=3.0";
 import { createState, Accessor } from "ags";
-import { chatContent, setChatContent } from "./osd";
-import ChatMessage from "./modules/chat-message";
 import { readFile } from "ags/file";
 
 export enum Role {
@@ -40,7 +38,6 @@ export type MessageState = {
 
 export const [ messages, setMessages ] = createState<MessageState[]>([]);
 const ENV_KEY = readFile('/home/alec/GroqAIKey').trim();
-console.log(ENV_KEY, typeof ENV_KEY)
 const temperature = 0.3; // Lower = more deterministic
 
 const newMessage = (role: Role, initialContent: string, thinking = true, done = false) => {
@@ -62,7 +59,6 @@ const newMessage = (role: Role, initialContent: string, thinking = true, done = 
   };
 
   setMessages([...messages.peek(), msg]);
-  setChatContent([...chatContent.peek(), ChatMessage(role, msg)]);
   return msg;
 };
 
@@ -119,6 +115,9 @@ export const readResponse = (stream: Gio.DataInputStream, aiMsg: MessageState) =
 };
 
 export const sendMessage = (msg: string) => {
+  if (msg === '')
+    return
+
   newMessage(Role.USER, msg);
 
   const body = {

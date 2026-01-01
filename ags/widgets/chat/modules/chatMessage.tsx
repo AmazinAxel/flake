@@ -1,9 +1,7 @@
-// Code from https://github.com/unfaiyted/faiyt-ags/blob/c99ee693144fc1a7f11cbaf2edf1cbf7f69b84bc/src/widget/sidebar/modules/ai/components/chat-message-content.tsx
-
 import { Gtk } from "ags/gtk4";
-import { ChatCodeBlock } from "./chat-code-block";
-//import { Binding, Variable, bind } from "ags";
-import { createBinding, Accessor, createState, State } from "ags";
+import { ChatCodeBlock } from "./chatCodeBlock";
+import { Accessor, With } from "ags";
+import { MessageState, Role } from "../chat";
 
 interface ContentBlock {
   type: 'text' | 'code';
@@ -156,6 +154,13 @@ const processTextContent = (text: string, blocks: ContentBlock[]) => {
         i = j;
         continue;
       }
+
+      // If a line starts a list and currentBlock has content, break it
+      if (/^\s*[-*] /.test(trimmedLine) && currentBlock.trim()) {
+        blocks.push({ type: 'text', content: currentBlock.trim() });
+        currentBlock = '';
+      }
+
       
       // Regular line - accumulate it
       if (currentBlock) {
@@ -265,134 +270,86 @@ const md2pango = (content: string) => {
   return formatted;
 };
 
-export default (message: Accessor<string>) => {
-  const renderContent = () => {
-    const safeContentStr = String(message || '');
-
-    const blocks = parseContent(safeContentStr);
-
-    return blocks.map((block, index) => {
-      /*if (block.type === 'code' && block.lang) {
-        // Debug log
-        console.log("Rendering code block", {
-          index,
-          lang: block.lang,
-          contentType: typeof block.content,
-          contentLength: block.content?.length || 0
-        });
-
+const format = (blocks: ContentBlock[]) =>
+  <box orientation={Gtk.Orientation.VERTICAL} spacing={6}>
+    {blocks.map((block) => {
+      if (block.type === "code" && block.lang) {
         return ChatCodeBlock({
           content: block.content,
           lang: block.lang
         });
-      } else {*/
-        const formatted = md2pango(block.content);
+      }
 
-        // Check if this is a table (more accurate detection)
-        const lines = block.content.split('\n').filter(l => l.trim());
-        const isTable = lines.length >= 2 && 
-          lines[0].includes('|') && 
-          lines[1].includes('---') && 
-          lines[1].includes('|');
-        
-        // Check if this is a horizontal rule
-        const isHorizontalRule = /^(---|\*\*\*|___)\s*$/.test(block.content.trim());
+      const formatted = md2pango(block.content);
 
-        if (isTable) {
-          // For tables, use monospace font
-          return (
-            <label
-              halign={Gtk.Align.FILL}
-              cssName="sidebar-chat-table"
-              useMarkup={false}
-              xalign={0}
-              wrap={true}
-              selectable={true}
-              label={block.content}
-            />
-          );
-        } else if (isHorizontalRule) {
-          // For horizontal rules, use the formatted version
-          const formatted = md2pango(block.content);
-          return (
-            <label
-              halign={Gtk.Align.FILL}
-              cssName="sidebar-chat-hr"
-              useMarkup={true}
-              xalign={0}
-              wrap={false}
-              selectable={false}
-              label={formatted}
-            />
-          );
-        }
+      const lines = block.content.split("\n").filter(l => l.trim());
+      const isTable =
+        lines.length >= 2 &&
+        lines[0].includes("|") &&
+        lines[1].includes("---") &&
+        lines[1].includes("|");
 
+      const isHorizontalRule =
+        /^(---|\*\*\*|___)\s*$/.test(block.content.trim());
+
+      if (isTable) {
         return (
           <label
             halign={Gtk.Align.FILL}
-            cssName={`sidebar-chat-txt`}
+            cssName="sidebar-chat-table"
+            useMarkup={false}
+            xalign={0}
+            wrap={false}
+            selectable={true}
+            label={block.content}
+          />
+        );
+      }
+
+      if (isHorizontalRule) {
+        return (
+          <label
+            halign={Gtk.Align.FILL}
+            cssName="sidebar-chat-hr"
             useMarkup={true}
             xalign={0}
-            wrap={true}
-            selectable={true}
+            wrap={false}
+            selectable={false}
             label={formatted}
           />
         );
-      //}
-    });
-  };
+      }
 
-  return {message.as((text) => {
-        const blocks = parseContent(text);
+      return (
+        <label
+          halign={Gtk.Align.FILL}
+          cssName="sidebar-chat-txt"
+          useMarkup={true}
+          xalign={0}
+          wrap={true}
+          selectable={true}
+          label={formatted}
+        />
+      );
+    })}
+  </box>;
 
-        return blocks.map((block, index) => {
-          if (block.type === 'code' && block.lang) {
-            return ChatCodeBlock({
-              content: block.content,
-              lang: block.lang
-            });
-          } else {
-            const formatted = md2pango(block.content);
+export default ({ role, message }: { role: Role; message: MessageState }) => {
+  const isUser = role === Role.USER;
 
-            // Check if this is a table (more accurate detection)
-            const lines = block.content.split('\n').filter(l => l.trim());
-            const isTable = lines.length >= 2 && 
-              lines[0].includes('|') && 
-              lines[1].includes('---') && 
-              lines[1].includes('|');
-            
-            // Check if this is a horizontal rule
-            const isHorizontalRule = /^(---|\*\*\*|___)\s*$/.test(block.content.trim());
-
-            if (isTable) {
-              return (
-                <label
-                  halign={Gtk.Align.FILL}
-                  cssName="sidebar-chat-table"
-                  useMarkup={false}
-                  xalign={0}
-                  wrap={true}
-                  selectable={true}
-                  label={block.content}
-                />
-              );
-            } else if (isHorizontalRule) {
-              // For horizontal rules, use the formatted version
-              const formatted = md2pango(block.content);
-              return (
-                <label
-                  halign={Gtk.Align.FILL}
-                  cssName="sidebar-chat-hr"
-                  useMarkup={true}
-                  xalign={0}
-                  wrap={false}
-                  selectable={false}
-                  label={formatted}
-                />
-              );
-            }
-          }
-        });
-      })
-    }
-};
+  return (
+    <box
+      orientation={Gtk.Orientation.VERTICAL}
+      halign={isUser ? Gtk.Align.START : Gtk.Align.END}
+      hexpand
+      cssClasses={[(isUser ? "user" : "bot"), "message"]}
+    >
+      <With value={message.content}>
+        {(content) => {
+          const blocks = parseContent(content);
+          return <box>{format(blocks)}</box>;
+        }}
+      </With>
+    </box>
+  );
+}

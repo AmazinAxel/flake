@@ -1,31 +1,45 @@
 import app from "ags/gtk4/app"
-import { Astal, Gtk, Gdk } from "ags/gtk4"
+import { Astal, Gdk, Gtk } from "ags/gtk4"
 const { TOP, BOTTOM, RIGHT } = Astal.WindowAnchor;
 import { createState, For } from "ags";
+import { sendMessage, setMessages } from "./chat";
+import ChatMessageList from "./modules/chatMessageList";
+let inputBuffer = new Gtk.TextBuffer;
 
-import { sendMessage } from "./chat";
+export const [ chatContent, setChatContent ] = createState(new Array<Gtk.Widget>())
 
-const [ input, setInput ] = createState("")
+const clearChat = () => {
+  setChatContent([])
+  setMessages([])
+}
 
-export const [ chatContent, setChatContent ] = createState(
-  new Array<Gtk.Widget>()
-)
+const toggleSize = () => app.get_window('chat')?.set_default_size(700, -1)
 
 const sendMessageReturn = () => {
-  sendMessage(input.peek());
-  setInput("");
+  const start = inputBuffer.get_start_iter();
+  const end = inputBuffer.get_end_iter();
+
+  sendMessage(inputBuffer.get_text(start, end, true));
+  inputBuffer.delete(start, end);
 };
 
-// Allow for newlines
-const handleKeyPress = (self: Gtk.Entry, keyval: number) => {
-  if (keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter) {
-    if (self.get_text().trim().length > 0)
-      sendMessageReturn?.();
-    return true;
+// Allow newlines
+const handleKeyPress = (keyval: number, state: Gdk.ModifierType) => {
+  const shiftHeld = (state & Gdk.ModifierType.SHIFT_MASK) !== 0;
+
+  const isEnter = keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter;
+
+  if (isEnter && !shiftHeld) {
+    sendMessageReturn();
+    return true; // block newline
   }
+
+  if (isEnter && shiftHeld) {
+    return false; // let GTK insert newline
+  }
+
   return false;
 };
-
 
 export default () =>
   <window
@@ -38,8 +52,12 @@ export default () =>
   >
     <box orientation={Gtk.Orientation.VERTICAL} vexpand>
       <box cssClasses={["header"]}>
-        <label label="Chat Agent"/>
-        <button onClicked={() => setChatContent([])} hexpand halign={Gtk.Align.END}>
+        <button onClicked={() => toggleSize()}>
+          <image iconName="view-fullscreen-symbolic"/>
+        </button>
+
+        <label label="Chat Agent" hexpand halign={Gtk.Align.CENTER}/>
+        <button onClicked={() => clearChat()} halign={Gtk.Align.END}>
           <image iconName="user-trash-symbolic"/>
         </button>
       </box>
@@ -49,33 +67,17 @@ export default () =>
         hscrollbar_policy={Gtk.PolicyType.NEVER}
         vexpand
       >
-        <box orientation={Gtk.Orientation.VERTICAL} vexpand hexpand>
-          <For each={chatContent}>
-            {(w) => w}
-          </For>
-        </box>
+        <ChatMessageList/>
       </Gtk.ScrolledWindow>
-      <box cssClasses={["messageArea"]}>
-        <entry
-          placeholderText="Type here"
-          text={input}
-          onNotifyText={(self) => setInput(self.text)}
-          hexpand
-          onActivate={(self) => {
-            if (self.text.length > 0)
-              sendMessageReturn?.();
-          }}
-          $={(self) => {
-            self.grab_focus();
-
-            const keyController = new Gtk.EventControllerKey();
-            keyController.connect("key-pressed", (_, keyval, __, ___) => handleKeyPress(self, keyval));
-            self.add_controller(keyController);
-          }}
-        />
-        <button onClicked={sendMessageReturn}>
-          <image iconName="mail-reply-sender-symbolic"/>
-        </button>
-      </box>
+      <Gtk.TextView
+        hexpand
+        buffer={inputBuffer}
+        $={(self) => {
+          self.grab_focus();
+          const key = new Gtk.EventControllerKey();
+          self.add_controller(key);
+          key.connect("key-pressed", (_, keyval, __, state) => handleKeyPress(keyval, state))
+        }}
+      />
     </box>
   </window>

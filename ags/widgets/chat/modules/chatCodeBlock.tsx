@@ -5,6 +5,7 @@ function substituteLang(str: string) {
   const subs = [
     { from: "javascript", to: "js" },
     { from: "typescript", to: "js" },
+    { from: "ts", to: "js" },
     { from: "bash", to: "sh" },
     { from: "shell", to: "sh" },
     { from: "json", to: "json" },

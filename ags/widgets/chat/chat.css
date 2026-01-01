@@ -13,12 +13,13 @@
     padding-bottom: 0.5rem;
 }
 
-#chat .messageArea {
-    color: @dark3;
-    border-radius: 0.5rem 0.5rem 0 0;
-    padding: 1rem 0 0.5rem 0;
+#chat entry {
+    background-color: @dark3;
 }
-#chat .messageArea entry { margin-right: 0.5rem; }
+.sidebar-chat-table {
+  font-family: monospace;
+}
+
 
 #chat .content {
     margin-top: 0;
