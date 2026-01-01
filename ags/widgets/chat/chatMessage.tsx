@@ -1,7 +1,7 @@
 import { Gtk } from "ags/gtk4";
-import { ChatCodeBlock } from "./chatCodeBlock";
+import ChatCodeBlock from "./chatCodeBlock";
 import { Accessor, With } from "ags";
-import { MessageState, Role } from "../chat";
+import { MessageState, Role } from "./chat";
 
 interface ContentBlock {
   type: 'text' | 'code';
@@ -254,30 +254,56 @@ const md2pango = (content: string) => {
     return `${spaces}<span foreground="#f6c177">${num}.</span> ${text}`;
   });
 
-  // Emphasis markers
-  formatted = formatted.replace(/^(!|⚠️|ℹ️|✅|❌) (.*?)$/gm, (match, marker, text) => {
-    const markerColors: Record<string, string> = {
-      '!': '#eb6f92',
-      '⚠️': '#f6c177',
-      'ℹ️': '#31748f',
-      '✅': '#9ccfd8',
-      '❌': '#eb6f92'
-    };
-    const color = markerColors[marker] || '#c4a7e7';
-    return `<span foreground="${color}">${marker}</span> ${text}`;
+};
+
+const renderTable = (raw: string) => {
+  const lines = raw
+    .split("\n")
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
+
+  const header = lines[0].split("|").map(s => s.trim());
+  const rows = lines.slice(2).map(r => r.split("|").map(s => s.trim()));
+
+  const grid = new Gtk.Grid({
+    columnSpacing: 12,
+    rowSpacing: 6,
+    halign: Gtk.Align.FILL,
+    valign: Gtk.Align.START,
   });
 
-  return formatted;
+  // Header row
+  header.forEach((cell, col) => {
+    const lbl = new Gtk.Label({
+      label: cell,
+      useMarkup: true,
+      xalign: 0,
+      cssClasses: ["chatTableHeader"],
+    });
+    grid.attach(lbl, col, 0, 1, 1);
+  });
+
+  // Body rows
+  rows.forEach((cols, rowIndex) => {
+    cols.forEach((cell, colIndex) => {
+      const lbl = new Gtk.Label({
+        label: cell,
+        useMarkup: true,
+        xalign: 0,
+        wrap: true
+      });
+      grid.attach(lbl, colIndex, rowIndex + 1, 1, 1);
+    });
+  });
+
+  return grid;
 };
 
 const format = (blocks: ContentBlock[]) =>
-  <box orientation={Gtk.Orientation.VERTICAL} spacing={6}>
+  <box orientation={Gtk.Orientation.VERTICAL} spacing={6} baselinePosition={Gtk.BaselinePosition.TOP}>
     {blocks.map((block) => {
       if (block.type === "code" && block.lang) {
-        return ChatCodeBlock({
-          content: block.content,
-          lang: block.lang
-        });
+        return ChatCodeBlock(block.content, block.lang);
       }
 
       const formatted = md2pango(block.content);
@@ -292,30 +318,20 @@ const format = (blocks: ContentBlock[]) =>
       const isHorizontalRule =
         /^(---|\*\*\*|___)\s*$/.test(block.content.trim());
 
-      if (isTable) {
-        return (
-          <label
-            halign={Gtk.Align.FILL}
-            cssName="sidebar-chat-table"
-            useMarkup={false}
-            xalign={0}
-            wrap={false}
-            selectable={true}
-            label={block.content}
-          />
-        );
-      }
+      if (isTable)
+        return renderTable(block.content);
 
       if (isHorizontalRule) {
         return (
           <label
             halign={Gtk.Align.FILL}
-            cssName="sidebar-chat-hr"
             useMarkup={true}
             xalign={0}
             wrap={false}
             selectable={false}
             label={formatted}
+            valign={Gtk.Align.START}
+            vexpand={false}
           />
         );
       }
@@ -323,12 +339,13 @@ const format = (blocks: ContentBlock[]) =>
       return (
         <label
           halign={Gtk.Align.FILL}
-          cssName="sidebar-chat-txt"
           useMarkup={true}
           xalign={0}
           wrap={true}
           selectable={true}
           label={formatted}
+          valign={Gtk.Align.START}
+          vexpand={false}
         />
       );
     })}
@@ -341,11 +358,13 @@ export default ({ role, message }: { role: Role; message: MessageState }) => {
     <box
       orientation={Gtk.Orientation.VERTICAL}
       halign={isUser ? Gtk.Align.START : Gtk.Align.END}
-      hexpand
       cssClasses={[(isUser ? "user" : "bot"), "message"]}
     >
       <With value={message.content}>
         {(content) => {
+          if (!message.done.peek())
+            return <label label={content} wrap selectable/>;
+
           const blocks = parseContent(content);
           return <box>{format(blocks)}</box>;
         }}

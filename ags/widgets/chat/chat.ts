@@ -89,6 +89,7 @@ export const readResponse = (stream: Gio.DataInputStream, aiMsg: MessageState) =
               if (data === "[DONE]") {
                 aiMsg.setDone(true);
                 aiMsg.setThinking(false);
+                aiMsg.setContent((self) => self + ' '); // Update content once more to apply formatting
                 return;
               }
               try {
