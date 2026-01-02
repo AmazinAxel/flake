@@ -23,28 +23,23 @@ const clearChat = () => {
   app.get_window('chat')?.set_default_size(width.peek(), -1)
 }
 
-const sendMessageReturn = () => {
-  const start = inputBuffer.get_start_iter();
-  const end = inputBuffer.get_end_iter();
-
-  sendMessage(inputBuffer.get_text(start, end, true));
-  inputBuffer.delete(start, end);
-};
-
-// Allow newlines
+// Check for enter key but allow newlines
 const handleKeyPress = (keyval: number, state: Gdk.ModifierType) => {
   const shiftHeld = (state & Gdk.ModifierType.SHIFT_MASK) !== 0;
 
   const isEnter = keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter;
 
   if (isEnter && !shiftHeld) {
-    sendMessageReturn();
+    const start = inputBuffer.get_start_iter();
+    const end = inputBuffer.get_end_iter();
+
+    sendMessage(inputBuffer.get_text(start, end, true));
+    inputBuffer.delete(start, end);
     return true; // block newline
   }
 
-  if (isEnter && shiftHeld) {
+  if (isEnter && shiftHeld)
     return false; // let GTK insert newline
-  }
 
   return false;
 };
@@ -77,7 +72,7 @@ export default () =>
       >
         <box orientation={Gtk.Orientation.VERTICAL} vexpand hexpand>
           <For each={messages}>
-            {(msg) => <ChatMessage role={msg.role} message={msg} />}
+            {(msg) => <ChatMessage role={msg.role} message={msg}/>}
           </For>
         </box>
       </Gtk.ScrolledWindow>
@@ -86,7 +81,11 @@ export default () =>
         buffer={inputBuffer}
         cssClasses={['input']}
         $={(self) => {
-          self.grab_focus();
+          app.connect("window-toggled", () =>
+            (app.get_window("launcher")?.visible == true)
+              && self.grab_focus()
+          );
+
           const key = new Gtk.EventControllerKey();
           self.add_controller(key);
           key.connect("key-pressed", (_, keyval, __, state) => handleKeyPress(keyval, state))

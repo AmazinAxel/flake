@@ -12,7 +12,8 @@ function substituteLang(str: string) {
     { from: "python", to: "python3" }
   ];
   for (const { from, to } of subs) {
-    if (from === str) return to;
+    if (from === str)
+      return to;
   }
   return str;
 }
@@ -41,8 +42,7 @@ export const HighlightedCode = (content: string, lang: string) => {
   if (displayLang)
     buffer.set_language(displayLang);
 
-  const schemeManager = GtkSource.StyleSchemeManager.get_default();
-  let scheme = schemeManager.get_scheme('Adwaita-dark');
+  const scheme = GtkSource.StyleSchemeManager.get_default().get_scheme('Adwaita-dark');
   buffer.set_style_scheme(scheme);
 
   buffer.set_text(contentStr, -1);
