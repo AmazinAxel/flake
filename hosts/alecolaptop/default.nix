@@ -19,6 +19,7 @@
     python3 # Required for Arduino IDE
     jre # For Minecraft - uses the latest stable Java runtime version
     bun # All-in-one JS toolkit
+    qpwgraph # Audio output visualizer
   ];
 
   # Bootloader settings (w/ AMD GPU support)
