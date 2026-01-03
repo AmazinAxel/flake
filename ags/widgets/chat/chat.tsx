@@ -2,7 +2,7 @@ import app from "ags/gtk4/app"
 import { Astal, Gdk, Gtk } from "ags/gtk4"
 const { TOP, BOTTOM, RIGHT } = Astal.WindowAnchor;
 import { createState, For } from "ags";
-import { messages, sendMessage, setMessages } from "./chat";
+import { messages, sendMessage, setMessages } from "./chatService";
 import ChatMessage from "./chatMessage";
 let inputBuffer = new Gtk.TextBuffer;
 

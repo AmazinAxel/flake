@@ -1,7 +1,7 @@
 import { Gtk } from "ags/gtk4";
 import ChatCodeBlock from "./chatCodeBlock";
 import { Accessor, With } from "ags";
-import { MessageState, Role } from "./chat";
+import { MessageState, Role } from "./chatService";
 
 interface ContentBlock {
   type: 'text' | 'code';
@@ -197,7 +197,7 @@ const md2pango = (content: string) => {
 
   // Blockquotes
   formatted = formatted.replace(/^> (.*?)$/gm, '<span foreground="#6e6a86">│ </span><i>$1</i>');
-  formatted = formatted.replace(/^>>(.*?)$/gm, '<span foreground="#6e6a86">││</span><i>$1</i>');
+  formatted = formatted.replace(/^>>(.*?)$/gm, '<span foreground="#6e6a86">│ </span><i>$1</i>');
 
   // Links - must be processed before other inline formatting
   formatted = formatted.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<span foreground="#c4a7e7" underline="single">$1</span>');
@@ -253,7 +253,6 @@ const md2pango = (content: string) => {
     const spaces = '  '.repeat(level);
     return `${spaces}<span foreground="#f6c177">${num}.</span> ${text}`;
   });
-
 };
 
 const renderTable = (raw: string) => {
@@ -300,11 +299,10 @@ const renderTable = (raw: string) => {
 };
 
 const format = (blocks: ContentBlock[]) =>
-  <box orientation={Gtk.Orientation.VERTICAL} spacing={6} baselinePosition={Gtk.BaselinePosition.TOP}>
+  <box orientation={Gtk.Orientation.VERTICAL} spacing={6}>
     {blocks.map((block) => {
-      if (block.type === "code" && block.lang) {
+      if (block.type === "code" && block.lang)
         return ChatCodeBlock(block.content, block.lang);
-      }
 
       const formatted = md2pango(block.content);
 
@@ -315,37 +313,28 @@ const format = (blocks: ContentBlock[]) =>
         lines[1].includes("---") &&
         lines[1].includes("|");
 
-      const isHorizontalRule =
-        /^(---|\*\*\*|___)\s*$/.test(block.content.trim());
-
       if (isTable)
         return renderTable(block.content);
 
-      if (isHorizontalRule) {
+      // Horizontal rules
+      if (/^(---|\*\*\*|___)\s*$/.test(block.content.trim())) {
         return (
           <label
             halign={Gtk.Align.FILL}
-            useMarkup={true}
+            useMarkup
             xalign={0}
-            wrap={false}
-            selectable={false}
             label={formatted}
             valign={Gtk.Align.START}
-            vexpand={false}
           />
         );
       }
 
       return (
         <label
-          halign={Gtk.Align.FILL}
-          useMarkup={true}
-          xalign={0}
-          wrap={true}
-          selectable={true}
+          useMarkup
+          wrap
+          selectable
           label={formatted}
-          valign={Gtk.Align.START}
-          vexpand={false}
         />
       );
     })}
@@ -362,11 +351,10 @@ export default ({ role, message }: { role: Role; message: MessageState }) => {
     >
       <With value={message.content}>
         {(content) => {
-          if (!message.done.peek())
+          //if (!message.done.peek())
             return <label label={content} wrap selectable/>;
 
-          const blocks = parseContent(content);
-          return <box>{format(blocks)}</box>;
+          return format(parseContent(content));
         }}
       </With>
     </box>

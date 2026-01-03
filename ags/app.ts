@@ -14,7 +14,7 @@ import astalIO from "gi://AstalIO"
 import Hyprland from 'gi://AstalHyprland?version=0.1';
 
 import Bar from './widgets/bar/bar';
-import chat from './widgets/chat/osd';
+import chat from './widgets/chat/chat';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
@@ -50,7 +50,6 @@ app.start({
 
         monitorBrightness();
         notifications();
-        startClippingService();
         initMedia();
         reminders();
 
@@ -62,6 +61,8 @@ app.start({
             barMap.get(monitorID)?.destroy();
             barMap.delete(monitorID);
         });
+
+        startClippingService(); // Run last so any errors wont impact start
     },
     requestHandler(req, res) {
         const reqArgs = req[0].split(" ");

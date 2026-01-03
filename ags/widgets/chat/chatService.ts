@@ -6,7 +6,8 @@ import { readFile } from "ags/file";
 
 export enum Role {
   USER = "user",
-  ASSISTANT = "assistant"
+  ASSISTANT = "assistant",
+  SYSTEM = "system"
 }
 
 interface GPTStreamChunk {
@@ -23,7 +24,6 @@ interface GPTStreamChunk {
     finish_reason: string | null;
   }>;
 }
-
 export type MessageState = {
   role: Role;
   content: Accessor<string>;
@@ -32,19 +32,33 @@ export type MessageState = {
   setThinking: (v: boolean) => void;
   done: Accessor<boolean>;
   setDone: (v: boolean) => void;
-  rawData: Accessor<string>;
-  setRawData: (v: string) => void;
 };
 
 export const [ messages, setMessages ] = createState<MessageState[]>([]);
+
 const ENV_KEY = readFile('/home/alec/GroqAIKey').trim();
-const temperature = 0.3; // Lower = more deterministic
+const temperature = 0.3;
+
+const [ content, setContent ] = createState("Respond to all messages using HTML rather than markdown.");
+const [ thinking, setThinking ] = createState(false);
+const [ done, setDone ] = createState(false);
+
+const instructions: MessageState = {
+  role: Role.SYSTEM,
+  content,
+  setContent: (v) => setContent(typeof v === "function" ? v(content.peek()) : v),
+  thinking,
+  setThinking,
+  done,
+  setDone,
+};
+
+setMessages([instructions]);
 
 const newMessage = (role: Role, initialContent: string, thinking = true, done = false) => {
   const [ content, setContent ] = createState(initialContent);
   const [ thinkingState, setThinking ] = createState(thinking);
   const [ doneState, setDone ] = createState(done);
-  const [ rawData, setRawData ] = createState("");
 
   const msg: MessageState = {
     role,
@@ -54,8 +68,6 @@ const newMessage = (role: Role, initialContent: string, thinking = true, done = 
     setThinking,
     done: doneState,
     setDone,
-    rawData,
-    setRawData,
   };
 
   setMessages([...messages.peek(), msg]);
@@ -127,7 +139,6 @@ export const sendMessage = (msg: string) => {
       .map((m) => ({ role: m.role, content: m.content.peek() })),
     temperature,
     citation_options: 'disabled',
-    include_reasoning: true,
     max_completion_tokens: 2048, // 1024
     stream: true
   };
@@ -166,9 +177,10 @@ export const sendMessage = (msg: string) => {
         aiResponseMessage,
       );
     } catch (err) {
-      aiResponseMessage.setDone(true);
-      aiResponseMessage.setThinking(false);
+//      aiResponseMessage.setDone(true);
+//      aiResponseMessage.setThinking(false);
       aiResponseMessage.setContent(`Failed to connect to API: ${err}`);
+      console.log(`Failed to connect to API: ${err}`)
     }
   });
 };

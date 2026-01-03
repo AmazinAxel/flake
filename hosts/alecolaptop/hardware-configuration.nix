@@ -19,3 +19,4 @@
     cpu.amd.updateMicrocode = true;
   };
 }
+
