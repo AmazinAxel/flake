@@ -31,6 +31,8 @@ const nameSubstitute = (name: string) => {
 		return "Monitor"; // Monitor has a speaker
 	} else if (name == 'K38') {
 		return 'Bluetooth Speaker';
+	} else if (name == 'S80A') {
+		return 'Bluetooth Earbuds';
 	};
 	return name;
 };

@@ -19,7 +19,8 @@
     python3 # Required for Arduino IDE
     jre # For Minecraft - uses the latest stable Java runtime version
     bun # All-in-one JS toolkit
-    qpwgraph # Audio output visualizer
+    #paprefs # Audio settings
+    pavucontrol # Audio output settings
   ];
 
   # Bootloader settings (w/ AMD GPU support)
@@ -30,6 +31,7 @@
 
   services = {
     upower.enable = true; # For displaying battery level on astal shell
+    #fwupd.enable = true; # Acer firmware management
     tlp = { # Better battery life
       enable = true;
       settings = {
