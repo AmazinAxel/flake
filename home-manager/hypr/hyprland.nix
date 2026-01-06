@@ -47,9 +47,7 @@
         force_default_wallpaper = 0;
         disable_autoreload = true;
         disable_hyprland_logo = true;
-        new_window_takes_over_fullscreen = 2;
         initial_workspace_tracking = 0; # Always open in current workspace
-        #disable_hyprland_qtutils_check = true; # Hide annoying Hypr popup
       };
       binds.scroll_event_delay = 0;
       ecosystem = {
@@ -87,18 +85,18 @@
         ];
       };
 
-      windowrule = let
-        c = class: "float, class:^(${class})$";
-        t = title: "float, title:^(${title})(.*)$";
-      in [
-        (c "xdg-desktop-portal-gtk")
-      ];
+      #windowrule = {
+      #  name = "windowrule-1";
+      #  float = true;
+      #  match.class = "xdg-desktop-portal-gtk";
+      #};
+      # windowrule = float on, match:class ^(xdg-desktop-portal-gtk)$
 
       # Play Minecraft sounds even when not focused
-      windowrulev2 = [ "renderunfocused, title:(Minecraft*)(.*)$" ];
+      windowrule = [ "render_unfocused on, match:title (Minecraft*)(.*)$" ];
 
       # Hide clipboard history during screenshares
-      layerrule = [ "noscreenshare,clipboard" ];
+      layerrule = [ "no_screen_share on, match:namespace clipboard" ];
 
       env = [ # Some legacy apps still use xcursor
         "XCURSOR_THEME, Bibata-Modern-Ice"
