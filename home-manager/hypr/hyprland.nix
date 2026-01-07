@@ -85,13 +85,6 @@
         ];
       };
 
-      #windowrule = {
-      #  name = "windowrule-1";
-      #  float = true;
-      #  match.class = "xdg-desktop-portal-gtk";
-      #};
-      # windowrule = float on, match:class ^(xdg-desktop-portal-gtk)$
-
       # Play Minecraft sounds even when not focused
       windowrule = [ "render_unfocused on, match:title (Minecraft*)(.*)$" ];
 
