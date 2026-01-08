@@ -31,7 +31,6 @@
 
   services = {
     upower.enable = true; # For displaying battery level on astal shell
-    #fwupd.enable = true; # Acer firmware management
     tlp = { # Better battery life
       enable = true;
       settings = {

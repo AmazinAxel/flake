@@ -2,7 +2,6 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
-    ./kernelconfig.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -28,7 +27,6 @@
     wireless.iwd.enable = false;
     networkmanager.enable = true;
     hostName = "alechandheld";
-    firewall.enable = false;
   };
 
   users.users.alec.extraGroups = [ "input" "gpio" "i2c" ];

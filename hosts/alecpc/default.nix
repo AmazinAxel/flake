@@ -30,7 +30,6 @@
 
   services = {
     flatpak.enable = true; # For running Sober
-    fwupd.enable = true; # Firmware management
     xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
   };
 

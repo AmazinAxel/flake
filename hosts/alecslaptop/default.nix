@@ -57,7 +57,6 @@
   services = {
     flatpak.enable = true; # For running Sober
     upower.enable = true; # For displaying battery level on astal shell
-    fwupd.enable = true; # HP firmware management
 
     tlp = { # Better battery life
       enable = true;
