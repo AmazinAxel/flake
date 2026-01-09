@@ -11,41 +11,41 @@ import powermenuStyle from './widgets/powermenu/powermenu.css';
 import app from "ags/gtk4/app"
 import { exec } from "ags/process";
 import astalIO from "gi://AstalIO"
-import Hyprland from 'gi://AstalHyprland?version=0.1';
+//import Hyprland from 'gi://AstalHyprland?version=0.1';
 
-import Bar from './widgets/bar/bar';
+//import Bar from './widgets/bar/bar';
 import chat from './widgets/chat/chat';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher from './widgets/launcher/launcher';
-import recordMenu from './widgets/record/record';
+//import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
-import powermenu from './widgets/powermenu/powermenu';
+//import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/quicksettings/quicksettings';
 import { notifySend } from './services/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
-const hypr = Hyprland.get_default();
+//const hypr = Hyprland.get_default();
 
 import { monitorBrightness } from './services/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPlayer';
 
-const barMap: Map<number, any> = new Map();
+//const barMap: Map<number, any> = new Map();
 
 app.start({
     css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
     main() {
-        hypr.get_monitors().map((monitor) => barMap.set(monitor.id, Bar(monitor.id)));
+        //hypr.get_monitors().map((monitor) => barMap.set(monitor.id, Bar(monitor.id)));
 
         chat();
         calendar();
         clipboard();
         emojiPicker();
         launcher();
-        recordMenu();
+        //recordMenu();
         osd();
-        powermenu();
+        //powermenu();
         quickSettings();
 
         monitorBrightness();
@@ -54,13 +54,13 @@ app.start({
         reminders();
 
         // Monitor reactivity
-        hypr.connect('monitor-added', (_, monitor) =>
+        /*hypr.connect('monitor-added', (_, monitor) =>
             barMap.set(monitor.id, Bar(monitor.id))
         );
         hypr.connect('monitor-removed', (_, monitorID) => {
             barMap.get(monitorID)?.destroy();
             barMap.delete(monitorID);
-        });
+        });*/
 
         startClippingService(); // Run last so any errors wont impact start
     },

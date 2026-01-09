@@ -1,5 +1,7 @@
 { inputs, pkgs, ... }: {
 
+  imports = [ ./niri.nix ];
+
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
@@ -17,6 +19,8 @@
       adwaita-icon-theme # Icons for GTK apps
       hyprshot # Screenshot tool
       wl-clipboard # Astal clipboard utils
+      gammastep # Blue light filter
+      swaybg # Lightweight wallpaper switcher
 
       # Desktop applications
       gthumb # Image & video viewer & editor
@@ -45,6 +49,11 @@
 
   programs = {
     hyprland.enable = true; # WM
+    niri = {
+      enable = true;
+      useNautilus = false;
+    };
+
     git = {
       enable = true;
       package = pkgs.gitMinimal;
@@ -111,7 +120,7 @@
     greetd = { # Autologin
       enable = true;
       settings.default_session = {
-        command = "start-hyprland";
+        command = "niri";
         user = "alec";
       };
     };
