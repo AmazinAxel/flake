@@ -12,7 +12,7 @@
   };
 
   boot = {
-    initrd.availableKernelModules = [ "usbhid" "hid" "joydev" "evdev" ];
+    initrd.availableKernelModules = [ "usbhid" "hid" "joydev" "evdev" "uinput" ];
     loader = {
       systemd-boot.enable = false;
       generic-extlinux-compatible = {
@@ -20,7 +20,7 @@
         configurationLimit = 2;
       };
     };
-    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" ];
+    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" "uinput" ];
   };
 
   hardware = {
