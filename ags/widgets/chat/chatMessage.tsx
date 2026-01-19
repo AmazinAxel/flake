@@ -352,7 +352,7 @@ export default ({ role, message }: { role: Role; message: MessageState }) => {
       <With value={message.content}>
         {(content) => {
           //if (!message.done.peek())
-            return <label label={content} wrap selectable/>;
+            return <label label={content} wrap selectable useMarkup/>;
 
           return format(parseContent(content));
         }}

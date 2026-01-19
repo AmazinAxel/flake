@@ -28,6 +28,7 @@
     kernelModules = [ "amdgpu" ];
     includeDefaultModules = false;
   };
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   services = {
     upower.enable = true; # For displaying battery level on astal shell

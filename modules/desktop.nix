@@ -37,7 +37,6 @@
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
-      (writeScriptBin "screenshot" (builtins.readFile ../scripts/screenshot.fish))
     ];
     sessionVariables.NIXOS_OZONE_WL = "1"; # For Electron
   };
@@ -120,7 +119,7 @@
     greetd = { # Autologin
       enable = true;
       settings.default_session = {
-        command = "niri";
+        command = "niri-session";
         user = "alec";
       };
     };

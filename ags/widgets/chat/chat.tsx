@@ -59,7 +59,7 @@ export default () =>
           <image iconName={expandIcon}/>
         </button>
 
-        <label label="Chat Agent" hexpand halign={Gtk.Align.CENTER}/>
+        <label label="Chat" hexpand halign={Gtk.Align.CENTER}/>
         <button onClicked={() => clearChat()} halign={Gtk.Align.END}>
           <image iconName="user-trash-symbolic"/>
         </button>

@@ -36,10 +36,10 @@ export type MessageState = {
 
 export const [ messages, setMessages ] = createState<MessageState[]>([]);
 
-const ENV_KEY = readFile('/home/alec/GroqAIKey').trim();
+const ENV_KEY = readFile('/home/alec/HackAIKey').trim();
 const temperature = 0.3;
 
-const [ content, setContent ] = createState("Respond to all messages using HTML rather than markdown.");
+const [ content, setContent ] = createState("Respond using colorless GTK Pango inline tags instead of markdown.");
 const [ thinking, setThinking ] = createState(false);
 const [ done, setDone ] = createState(false);
 
@@ -134,12 +134,12 @@ export const sendMessage = (msg: string) => {
   newMessage(Role.USER, msg);
 
   const body = {
-    model: "openai/gpt-oss-120b",
+    model: "qwen/qwen3-32b", // moonshotai/kimi-k2-thinking gpt-oss-120b google/gemini-3-pro-preview
     messages: messages.peek()
       .map((m) => ({ role: m.role, content: m.content.peek() })),
     temperature,
-    citation_options: 'disabled',
-    max_completion_tokens: 2048, // 1024
+    //citation_options: 'disabled',
+    //max_completion_tokens: 2048, // 1024
     stream: true
   };
 
@@ -148,7 +148,7 @@ export const sendMessage = (msg: string) => {
   const session = new Soup.Session();
   const message = new Soup.Message({
     method: "POST",
-    uri: GLib.Uri.parse("https://api.groq.com/openai/v1/chat/completions", GLib.UriFlags.NONE),
+    uri: GLib.Uri.parse("https://ai.hackclub.com/proxy/v1/chat/completions", GLib.UriFlags.NONE),
   });
 
   message.request_headers.append("Authorization", `Bearer ${ENV_KEY}`);

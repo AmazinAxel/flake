@@ -1,21 +1,21 @@
 {
+  programs.xwayland.enable = true;
   environment.etc."niri/config.kdl".text = ''
     input {
       // disable-power-key-handling todo
       warp-mouse-to-focus
-      focus-follows-mouse max-scroll-amount="0%" // only focus follow when it wont scroll
+      focus-follows-mouse
       workspace-auto-back-and-forth
       keyboard {
-        repeat-delay 600
-        repeat-rate 25
+        repeat-delay 300
+        repeat-rate 20
       }
 
       touchpad {
         tap
         dwt // disable touchpad while typing
         drag true // tap & drag
-        drag-lock
-        natural-scroll
+        //drag-lock
         // accel-speed 0.2
         // accel-profile "flat" // enable if feels weird
         // scroll-factor 1.0
@@ -27,7 +27,6 @@
       }
 
       mouse {
-        natural-scroll
         // accel-speed 0.2
         // accel-profile "flat"
         // scroll-factor 1.0
@@ -52,34 +51,25 @@
     }
 
     layout {
-      gaps 8 // Window gaps
+      gaps 4 // Window gaps
 
       default-column-width { proportion 0.5; }
 
       focus-ring {
         off
-        width 4
-        active-color "#5e81ac"
-        inactive-color "#4c566a"
+      }
+      tab-indicator {
+        off
+      }
+      insert-hint {
+        color "#5e81ac"
       }
 
       border {
-        width 4
+        width 2
         active-color "#5e81ac"
         inactive-color "#4c566a"
         urgent-color "#bf616a"
-      }
-
-      // Struts shrink the area occupied by windows, similarly to layer-shell panels.
-      // You can think of them as a kind of outer gaps. They are set in logical pixels.
-      // Left and right struts will cause the next window to the side to always be visible.
-      // Top and bottom struts will simply add outer gaps in addition to the area occupied by
-      // layer-shell panels and regular gaps.
-      struts {
-        // left 64
-        // right 64
-        // top 64
-        // bottom 64
       }
     }
 
@@ -95,6 +85,12 @@
 
     animations {
 
+    }
+    gestures {
+    
+      hot-corners {
+        off
+      }
     }
 
     /-window-rule {
@@ -230,8 +226,10 @@
       //Mod+Ctrl+R { reset-window-height; }
       //Mod+F { maximize-column; }
 
-      Mod+Shift+F { maximize-window-to-edges; } // switch-focus-between-floating-and-tiling;
+      Mod+Shift+F { maximize-window-to-edges; }
+      Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
       F11 { fullscreen-window; }
+      
 
       // Expand the focused column to space not taken up by other fully visible columns.
       // Makes the column "fill the rest of the space".

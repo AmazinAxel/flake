@@ -40,7 +40,7 @@ export default () =>
                         primaryIconName="system-search-symbolic"
                         placeholderText="Search"
                         onActivate={() => {
-                            launchApp(apps.fuzzy_query(textBox.text)?.[0])
+                            apps.fuzzy_query(textBox.text)?.[0].launch()
                             hide();
                         }}
                         onNotifyText={({ text }) => search(text)}
@@ -57,13 +57,13 @@ export default () =>
                     <For each={appsList}>
                         {(app) => (
                             <button
-                                onClicked={() => { launchApp(app); hide(); }}
+                                onClicked={() => { app.launch(); hide(); }}
                                 cssClasses={['button']}
                             >
                                 <Gtk.EventControllerKey
                                     onKeyPressed={(_, key) => {
                                     if (key == Gdk.KEY_Return) {
-                                        launchApp(app)
+                                        app.launch()
                                         hide();
                                     }
                                 }}/>
@@ -86,7 +86,7 @@ export default () =>
     </window>
 
 // Launch app seperately from astal in wayland mode
-export const launchApp = (app: Apps.Application) => {
+const launchApp = (app: Apps.Application) => {
     let exe = app.executable
         .split(/\s+/)
         .filter((str) => !str.startsWith('%') && !str.startsWith('@'))

@@ -2,11 +2,12 @@ import { createPoll } from 'ags/time';
 import GLib from 'gi://GLib';
 import { Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
-const curr = GLib.DateTime.new_now_local();
-const month = curr.format('%m')!;
-const day = curr.format('%d')!;
-const dayName = curr.format('%a')!;
-const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'))
+
+const getDateTime = () => GLib.DateTime.new_now_local();
+const month = createPoll('', 3600000, () => getDateTime().format("%m")!);
+const day = createPoll('', 3600000, () => getDateTime().format("%d")!);
+const dayName = createPoll('', 3600000, () => getDateTime().format("%a")!);
+const time = createPoll('', 1000, () => getDateTime().format('%H\n%M'))
 
 export const Time = () =>
   <button
