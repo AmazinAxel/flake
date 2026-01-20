@@ -73,7 +73,8 @@
     }
 
     spawn-at-startup "hyprlock"
-    spawn-at-startup "fcitx5" "-d" 
+    spawn-at-startup "fcitx5" "-d"
+    spawn-at-startup "gammastep" "-O" "3000"
 
     hotkey-overlay {
       skip-at-startup

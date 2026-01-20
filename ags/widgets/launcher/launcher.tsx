@@ -94,7 +94,7 @@ const launchApp = (app: Apps.Application) => {
 
     execAsync(`hyprctl dispatch exec "${exe}"`);
 
-    // Get away from hc & discord addiction
-    if (!app.name.includes('discord') || !app.name.includes('slack'))
+    // Get away from social media addiction
+    if (!app.name.includes('discord') && !app.name.includes('slack'))
         app.set_frequency(app.get_frequency() + 1);
 };

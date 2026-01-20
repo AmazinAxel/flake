@@ -1,9 +1,5 @@
 { inputs, pkgs, ... }: {
   imports = [
-    ./hypr/hyprland.nix
-    ./hypr/keybinds.nix
-    ./hypr/hyprlock.nix
-
     ./vscode.nix
     ./fish.nix
     ./foot.nix
@@ -27,7 +23,6 @@
         apps # App launcher
         battery # Laptop battery
         bluetooth # Bluez
-        hyprland # For workspaces
         mpris # Media controls
         notifd # Desktop notifications
         wireplumber # Used by pipewire
@@ -53,12 +48,9 @@
   };
 
   # Astal clipboard management
-  services = {
-    swww.enable = true; # Auto-start wallpaper manager on boot
-    cliphist = {
-      enable = true;
-      extraOptions = [ "-preview-width" "200" "-max-items" "20" "-max-dedupe-search" "5" ];
-    };
+  services.cliphist = {
+    enable = true;
+    extraOptions = [ "-preview-width" "200" "-max-items" "20" "-max-dedupe-search" "5" ];
   };
 
   xdg = {

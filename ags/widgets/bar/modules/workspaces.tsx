@@ -15,7 +15,7 @@ eventStream.subscribe(() => {
     recentEvent["WorkspaceActiveWindowChanged"] ||
     recentEvent["WorkspaceUrgencyChanged"]
   ) {
-    workspaceJSON = JSON.parse(exec(["niri", "msg", "-j", "workspaces"]));
+    workspaceJSON = JSON.parse(exec(['niri', 'msg', '-j', 'workspaces']));
   } else {
     return;
   };
@@ -32,7 +32,9 @@ export const Workspaces = () =>
   >
     <Gtk.EventControllerScroll
       flags={Gtk.EventControllerScrollFlags.VERTICAL}
-      onScroll={(_, __, y) => { console.log(['niri', 'msg', 'action', ('move-workspace-' + (y < 0) ? 'up' : 'down')]) }}
+      onScroll={(_, __, y) => { console.log(['niri', 'msg', 'action', ('move-workspace-' + (y < 0) ? 'up' : 'down')]) }} // todo fix
+      // todo implement pam auth for ags greet
+      // then install latest on alecpc and set up nvidia/multi monitor
     />
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
       <For each={workspaces}>

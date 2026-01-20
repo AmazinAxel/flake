@@ -11,6 +11,7 @@
   environment = {
     systemPackages = with pkgs; [
       # Desktop services
+      wbg # Wallpaper app
       libnotify # Astal internal notifications
       mpc # CLI for Astal media player
       cifs-utils # Needed for mounting Samba NAS drive
@@ -20,7 +21,6 @@
       hyprshot # Screenshot tool
       wl-clipboard # Astal clipboard utils
       gammastep # Blue light filter
-      swaybg # Lightweight wallpaper switcher
       gpu-screen-recorder # Screen clipping & record tool
 
       # Desktop applications

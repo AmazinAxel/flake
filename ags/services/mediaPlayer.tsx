@@ -27,25 +27,22 @@ export const playPause = () => {
 };
 
 export const chngPlaylist = (direction: musicAction) => {
-    let wallpaperTransitionAngle;
     if (direction == 'next') {
-        wallpaperTransitionAngle = 270;
         (playlist.peek() == playlists.length)
         ? (setPlaylist(1)) // Go to first
         : (setPlaylist(Number(playlist.peek()) + 1));
     } else if (direction == 'prev') {
-        wallpaperTransitionAngle = 90;
         (playlist.peek() == 1)
         ? (setPlaylist(playlists.length)) // Go to last
         : (setPlaylist(Number(playlist.peek()) - 1));
-    }
+    };
 
     // Stop playing music
     exec('mpc pause');
     setIsPlaying(false);
 
     setPlaylistName(playlists[Number(playlist.peek()) - 1]);
-    execAsync(`swww img /home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg --transition-type=wave --transition-angle=${wallpaperTransitionAngle} --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145`);
+    execAsync(`wbg /home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg`);
 
     // Clear the current cache and add the new playlist
     exec('mpc clear');
@@ -58,7 +55,7 @@ export const initMedia = () => {
     setPlaylistName('Study'); // Must set to invoke binds
 
     execAsync('mpc crossfade 2');
-    execAsync('swww img /home/alec/Projects/flake/wallpapers/Study.jpg --transition-type=wave --transition-angle=90 --transition-wave=100,100 --filter=Nearest --transition-duration=1 --transition-fps=145');
+    execAsync('wbg /home/alec/Projects/flake/wallpapers/Study.jpg');
 
     exec('mpc clear');
     exec(`mpc add ${playlistName.peek()}/`);

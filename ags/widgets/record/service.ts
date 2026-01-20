@@ -2,11 +2,8 @@ import { createState } from 'ags';
 import { exec, execAsync } from 'ags/process';
 import AstalIO from 'gi://AstalIO';
 import GLib from 'gi://GLib';
-//import Hyprland from 'gi://AstalHyprland';
 
 import { notifySend } from '../../services/notifySend';
-
-//const hypr = Hyprland.get_default();
 const captureDir = '/home/alec/Videos/Captures';
 
 const now = () => GLib.DateTime.new_now_local().format('%Y-%m-%d_%H-%M-%S');
@@ -17,18 +14,19 @@ export const [ recQuality, setRecQuality ] = createState('ultra');
 
 let rec: AstalIO.Process | null = null;
 let file: string;
-// todo ${hypr.get_monitors()[0]?.name}
+
+const getFocusedMonitor = () => JSON.parse(exec(['niri', 'msg', '-j', 'focused-output'])).name;
+
 export const startClippingService = () =>
-	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w e-DP1 -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
+	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${getFocusedMonitor()} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
 
 export const startRec = () => {
 	execAsync("pkill -SIGINT -f gpu-screen-recorder") // Stops screen clipping, otherwise exits
 
 	file = `${captureDir}/${now()}.mp4`;
-	const monitor = "e-DP1";
 	const audio = (recMic.peek() == true) ? "default_output|default_input" : "default_output";
 
-	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.peek()} -w ${monitor} -o ${file}`);
+	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.peek()} -w ${getFocusedMonitor()} -o ${file}`);
 
 	setIsRec(true);
 };
