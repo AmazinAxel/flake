@@ -19,7 +19,7 @@
       configDir = ../ags;
       systemd.enable = true;
 
-      extraPackages = with inputs.astal.packages.${pkgs.system}; [
+      extraPackages = with inputs.astal.packages.x86_64-linux; [
         apps # App launcher
         battery # Laptop battery
         bluetooth # Bluez

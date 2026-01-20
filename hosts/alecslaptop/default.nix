@@ -4,6 +4,7 @@
     ../common.nix
     ../../modules/desktop.nix
     ../../modules/printing.nix
+    ../../modules/laptop.nix
   ];
 
   networking.hostName = "alecslaptop"; # Hostname

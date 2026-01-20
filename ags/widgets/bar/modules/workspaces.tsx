@@ -1,6 +1,7 @@
 import { Gtk } from 'ags/gtk4';
 import { createState, For } from "ags"
 import { createSubprocess, exec } from 'ags/process';
+import Niri from "gi://AstalNiri"
 
 export const [ workspaces, setWorkspaces ] = createState([]);
 

@@ -3,6 +3,7 @@
     ./hardware-configuration.nix
     ../common.nix
     ../../modules/desktop.nix
+    ../../modules/laptop.nix
   ];
 
   networking.hostName = "alecolaptop";
