@@ -21,6 +21,7 @@
       wl-clipboard # Astal clipboard utils
       gammastep # Blue light filter
       swaybg # Lightweight wallpaper switcher
+      gpu-screen-recorder # Screen clipping & record tool
 
       # Desktop applications
       gthumb # Image & video viewer & editor
@@ -47,11 +48,11 @@
   ];
 
   programs = {
-    hyprland.enable = true; # WM
     niri = {
       enable = true;
       useNautilus = false;
     };
+    gpu-screen-recorder.enable = true; # Clipping & recording software
 
     git = {
       enable = true;
@@ -99,7 +100,6 @@
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
-    logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
     # .local resolution for homelab
     avahi = {

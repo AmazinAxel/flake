@@ -23,7 +23,6 @@
     flashprint # Flashforge 3D printer slicer
     thunderbird # Email client
     worldpainter # Minecraft world generator
-    gpu-screen-recorder # Screen record & clipping tool - expose binary for use within Astal
 
     bun # All-in-one JS toolkit
     jre # For Minecraft - uses the latest stable Java runtime version
@@ -33,7 +32,6 @@
   programs = {
     steam.enable = true; # Gaming
     kdeconnect.enable = true; # Device integration
-    gpu-screen-recorder.enable = true; # Clipping software services
     nix-ld.enable = true; # For dynamic executables
   };
 

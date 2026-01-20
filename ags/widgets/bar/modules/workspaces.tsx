@@ -1,9 +1,29 @@
-import AstalHyprland from 'gi://AstalHyprland';
 import { Gtk } from 'ags/gtk4';
-import { createBinding } from "ags"
+import { createState, For } from "ags"
+import { createSubprocess, exec } from 'ags/process';
 
-const hyprland = AstalHyprland.get_default();
-const focusedWorkspaceBind = createBinding(hyprland, 'focusedWorkspace');
+export const [ workspaces, setWorkspaces ] = createState([]);
+
+const eventStream = createSubprocess('', ['niri', 'msg', '-j', 'event-stream']);
+eventStream.subscribe(() => {
+  const recentEvent = JSON.parse(eventStream.peek());
+  let workspaceJSON;
+  if (recentEvent["WorkspacesChanged"]) {
+    workspaceJSON = recentEvent["WorkspacesChanged"]["workspaces"];
+  } else if (
+    recentEvent["WorkspaceActivated"] ||
+    recentEvent["WorkspaceActiveWindowChanged"] ||
+    recentEvent["WorkspaceUrgencyChanged"]
+  ) {
+    workspaceJSON = JSON.parse(exec(["niri", "msg", "-j", "workspaces"]));
+  } else {
+    return;
+  };
+  setWorkspaces(workspaceJSON.slice().sort(
+    (a: { id: number }, b: { id: number }) => a.id - b.id) // sort workspaces by id
+    .slice(0, Math.min((workspaceJSON.length - 1), 8)) // dont show more than 8 workspaces
+  );
+});
 
 export const Workspaces = () =>
   <box
@@ -12,25 +32,17 @@ export const Workspaces = () =>
   >
     <Gtk.EventControllerScroll
       flags={Gtk.EventControllerScrollFlags.VERTICAL}
-      onScroll={(_, __, y) => hyprland.dispatch('workspace', (y > 0) ? '+1' : '-1')}/>
-      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
-        {[...Array(9).keys()].map((id) => id + 1).map((id) =>
-          <box cssClasses={focusedWorkspaceBind((focused) => {
-            const workspace = hyprland.workspaces.find((w) => w.id == id);
+      onScroll={(_, __, y) => { console.log(['niri', 'msg', 'action', ('move-workspace-' + (y < 0) ? 'up' : 'down')]) }}
+    />
+    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
+      <For each={workspaces}>
+        {(workspace) => {
+          const classes = (workspace["is_active"]) // is_focused is_urgent ouptut
+            ? ['workspaceBtn', 'active']
+            : ['workspaceBtn'];
 
-            // Empty workspace or monitor was reconnected
-            if (!workspace || !focused)
-              return ['workspaceBtn'];
-
-            const isOccupied = workspace.get_clients().length > 0;
-            const active = focused.id == id;
-
-            return (active)
-              ? ['workspaceBtn', 'active']
-              : isOccupied ? ['workspaceBtn', 'occupied']
-              : ['workspaceBtn']
-            })
-          }/>
-        )}
+          return <box cssClasses={classes}/>
+        }}
+      </For>
     </box>
   </box>

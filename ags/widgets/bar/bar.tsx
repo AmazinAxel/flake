@@ -1,7 +1,7 @@
 import app from "ags/gtk4/app"
 import { Astal, Gtk } from "ags/gtk4"
 import { Time } from './modules/time';
-//import { Workspaces } from './modules/workspaces';
+import { Workspaces } from './modules/workspaces';
 import { Status } from './modules/statusMenu';
 import { Mpris } from './modules/mpris';
 import { Media } from '../../services/mediaPlayer';
@@ -23,7 +23,7 @@ export default () =>
         visible
       >
         <box orientation={Gtk.Orientation.VERTICAL}>
-          {/* <Workspaces/> */}
+          <Workspaces/>
 
           <box vexpand/>
 

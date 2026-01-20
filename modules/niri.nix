@@ -2,7 +2,6 @@
   programs.xwayland.enable = true;
   environment.etc."niri/config.kdl".text = ''
     input {
-      // disable-power-key-handling todo
       warp-mouse-to-focus
       focus-follows-mouse
       workspace-auto-back-and-forth
