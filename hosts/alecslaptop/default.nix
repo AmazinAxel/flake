@@ -24,6 +24,7 @@
     flashprint # Flashforge 3D printer slicer
     thunderbird # Email client
     worldpainter # Minecraft world generator
+    chromium # Honorlock supported browser
 
     bun # All-in-one JS toolkit
     jre # For Minecraft - uses the latest stable Java runtime version

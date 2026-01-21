@@ -75,7 +75,7 @@
     spawn-at-startup "hyprlock"
     spawn-at-startup "fcitx5" "-d"
     spawn-at-startup "gammastep" "-O" "3000"
-    spawn-at-startup "batsignal" "-w" "20" "-c" "5" "-d" "0" "-p" "Low battery"
+    spawn-at-startup "batsignal" "-w" "20" "-c" "5" "-d" "0" "-a" "Low battery"
 
     hotkey-overlay {
       skip-at-startup
