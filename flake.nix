@@ -33,12 +33,6 @@
         ];
       };
 
-      # Gaming handheld (aarch64)
-      "alechandheld" = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [ ./hosts/alechandheld/default.nix ];
-      };
-
       # Old laptop
       "alecolaptop" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -46,6 +40,12 @@
           ./hosts/alecolaptop/default.nix
           home-manager.nixosModules.home-manager
         ];
+      };
+
+      # Gaming handheld (aarch64)
+      "alechandheld" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [ ./hosts/alechandheld/default.nix ];
       };
 
       # Desktop/compute server
