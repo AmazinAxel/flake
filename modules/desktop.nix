@@ -48,10 +48,6 @@
   ];
 
   programs = {
-    niri = {
-      enable = true;
-      useNautilus = false;
-    };
     gpu-screen-recorder.enable = true; # Clipping & recording software
 
     git = {

@@ -9,7 +9,6 @@
           top-right = 5.0;
         };
         clip-to-geometry = true;
-        open-focused = false; # Don't give app focus on start
       }
       {
         matches = [
