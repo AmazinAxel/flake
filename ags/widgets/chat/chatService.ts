@@ -39,7 +39,7 @@ export const [ messages, setMessages ] = createState<MessageState[]>([]);
 const ENV_KEY = readFile('/home/alec/HackAIKey').trim();
 const temperature = 0.3;
 
-const [ content, setContent ] = createState("Respond using colorless GTK Pango inline tags instead of markdown.");
+const [ content, setContent ] = createState("Respond to all messages using colorless GTK Pango inline tags instead of markdown. Be as concise as possible.");
 const [ thinking, setThinking ] = createState(false);
 const [ done, setDone ] = createState(false);
 
