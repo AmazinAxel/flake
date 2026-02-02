@@ -1,9 +1,10 @@
 import { Gtk } from 'ags/gtk4';
 import { createState, For } from "ags"
 import { createSubprocess, exec } from 'ags/process';
-import Niri from "gi://AstalNiri"
 
-export const [ workspaces, setWorkspaces ] = createState([]);
+export const [ workspaces, setWorkspaces ] = createState(
+  [{ "id": 1, "is_active": true }]
+);
 
 const eventStream = createSubprocess('', ['niri', 'msg', '-j', 'event-stream']);
 eventStream.subscribe(() => {

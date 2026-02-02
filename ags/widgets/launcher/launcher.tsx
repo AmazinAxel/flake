@@ -40,7 +40,7 @@ export default () =>
                         primaryIconName="system-search-symbolic"
                         placeholderText="Search"
                         onActivate={() => {
-                            apps.fuzzy_query(textBox.text)?.[0].launch()
+                            launchApp(apps.fuzzy_query(textBox.text)?.[0])
                             hide();
                         }}
                         onNotifyText={({ text }) => search(text)}
@@ -57,13 +57,13 @@ export default () =>
                     <For each={appsList}>
                         {(app) => (
                             <button
-                                onClicked={() => { app.launch(); hide(); }}
+                                onClicked={() => { launchApp(app); hide(); }}
                                 cssClasses={['button']}
                             >
                                 <Gtk.EventControllerKey
                                     onKeyPressed={(_, key) => {
                                     if (key == Gdk.KEY_Return) {
-                                        app.launch()
+                                        launchApp(app)
                                         hide();
                                     }
                                 }}/>
@@ -92,7 +92,7 @@ const launchApp = (app: Apps.Application) => {
         .filter((str) => !str.startsWith('%') && !str.startsWith('@'))
         .join(' ');
 
-    execAsync(`hyprctl dispatch exec "${exe}"`);
+    execAsync(`sh -c '${exe} &'`);
 
     // Get away from social media addiction
     if (!app.name.includes('discord') && !app.name.includes('slack'))

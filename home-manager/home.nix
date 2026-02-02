@@ -1,5 +1,8 @@
 { inputs, pkgs, ... }: {
   imports = [
+    ./niri/niri.nix
+    ./niri/keybinds.nix
+
     ./vscode.nix
     ./fish.nix
     ./foot.nix
@@ -10,6 +13,7 @@
     ./swappy.nix
 
     inputs.ags.homeManagerModules.default
+    inputs.niri.homeModules.niri
   ];
 
   programs = {

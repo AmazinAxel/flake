@@ -1,12 +1,12 @@
 { inputs, pkgs, ... }: {
 
-  imports = [ ./niri.nix ];
-
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
     useGlobalPkgs = true; # Faster eval
   };
+
+  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
 
   environment = {
     systemPackages = with pkgs; [
@@ -32,6 +32,7 @@
       discord # Voice & video chat app
       filezilla # FTP client
       prismlauncher # Minecraft launcher
+      
 
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
@@ -99,6 +100,7 @@
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
+    logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
     # .local resolution for homelab
     avahi = {
