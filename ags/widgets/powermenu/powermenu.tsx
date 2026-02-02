@@ -16,14 +16,14 @@ export default () =>
          window.hide();
          switch (key) {
             case 115: // S - sleep
-               execAsync('hyprlock');
+               // todo lock
                execAsync('systemctl suspend');
                break;
             case 113: // Q - power off
                execAsync('systemctl poweroff')
                break;
             case 108: // L - lock
-               execAsync('hyprlock');
+               // todo lock
                break;
             case 114: // R - reboot
                execAsync('systemctl reboot');

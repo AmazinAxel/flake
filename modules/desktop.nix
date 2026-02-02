@@ -126,7 +126,6 @@
       };
     };
   };
-  security.pam.services.hyprlock = {}; # Hyprlock hm package requires this
 
   # Bluetooth
   hardware.bluetooth = {
