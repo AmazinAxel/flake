@@ -2,26 +2,26 @@ import app from "ags/gtk4/app"
 import { Astal, Gdk, Gtk } from "ags/gtk4"
 const { TOP, BOTTOM, RIGHT } = Astal.WindowAnchor;
 import { createState, For } from "ags";
-import { messages, sendMessage, setMessages } from "./chatService";
+import { instructions, messages, sendMessage, setMessages } from "./chatService";
 import ChatMessage from "./chatMessage";
 let inputBuffer = new Gtk.TextBuffer;
 
-export const [ chatContent, setChatContent ] = createState(new Array<Gtk.Widget>())
+export const [ chatContent, setChatContent ] = createState(new Array<Gtk.Widget>());
 
-const [ width, setWidth ] = createState(450)
-const [ expandIcon, setExpandIcon ] = createState("view-fullscreen-symbolic")
+const [ width, setWidth ] = createState(450);
+const [ expandIcon, setExpandIcon ] = createState("view-fullscreen-symbolic");
 
 const toggleSize = () => {
   setWidth((width.peek() == 450) ? 700 : 450)
   setExpandIcon((width.peek() == 450) ? 'view-fullscreen-symbolic' : 'view-restore-symbolic')
   app.get_window('chat')?.set_default_size(width.peek(), -1)
-}
+};
 
 const clearChat = () => {
   setChatContent([])
-  setMessages([])
+  setMessages([instructions]);
   app.get_window('chat')?.set_default_size(width.peek(), -1)
-}
+};
 
 // Check for enter key but allow newlines
 const handleKeyPress = (keyval: number, state: Gdk.ModifierType) => {
@@ -51,6 +51,7 @@ export default () =>
     keymode={Astal.Keymode.ON_DEMAND}
     anchor={TOP | BOTTOM | RIGHT}
     application={app}
+    layer={Astal.Layer.OVERLAY}
     widthRequest={width}
   >
     <box orientation={Gtk.Orientation.VERTICAL} vexpand>

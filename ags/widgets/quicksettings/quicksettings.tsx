@@ -9,6 +9,7 @@ export default () =>
         name="quickSettings"
         anchor={BOTTOM | LEFT}
         application={app}
+        layer={Astal.Layer.OVERLAY}
     >
         <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
             <box marginBottom={5}>

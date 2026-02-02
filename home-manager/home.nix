@@ -1,7 +1,8 @@
 { inputs, pkgs, ... }: {
   imports = [
-    ./niri/niri.nix
     ./niri/keybinds.nix
+    ./niri/niri.nix
+    ./niri/rules.nix
 
     ./vscode.nix
     ./fish.nix

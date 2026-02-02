@@ -51,6 +51,7 @@ export default () => <window
     $={(self) => { refreshItems(); window = self; }}
     onShow={() => list.get_first_child()?.grab_focus()}
     application={app}
+    layer={Astal.Layer.OVERLAY}
     >
         <Gtk.EventControllerKey
             onKeyPressed={(_, key) => {

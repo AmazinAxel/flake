@@ -11,6 +11,7 @@ export default () => <window
     name="recordMenu"
     keymode={Astal.Keymode.ON_DEMAND}
     application={app}
+    layer={Astal.Layer.OVERLAY}
     $={(self) => window = self}
     cssClasses={['widgetBackground']}
     >

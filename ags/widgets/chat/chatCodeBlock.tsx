@@ -14,9 +14,9 @@ function substituteLang(str: string) {
   for (const { from, to } of subs) {
     if (from === str)
       return to;
-  }
+  };
   return str;
-}
+};
 
 export const HighlightedCode = (content: string, lang: string) => {
   const contentStr = typeof content === 'string' ? content : String(content || '');

@@ -343,6 +343,10 @@ const format = (blocks: ContentBlock[]) =>
 export default ({ role, message }: { role: Role; message: MessageState }) => {
   const isUser = role === Role.USER;
 
+  // Don't show instructional message
+  if (role == Role.SYSTEM)
+    return <box></box>;
+
   return (
     <box
       orientation={Gtk.Orientation.VERTICAL}

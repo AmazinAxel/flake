@@ -59,10 +59,10 @@
 
     # Brightness
     "XF86MonBrightnessUp".action.spawn =
-      [ "brightnessctl" "set" "+5%" ];
+      [ "brightnessctl" "set" "+15%" ];
 
     "XF86MonBrightnessDown".action.spawn =
-      [ "brightnessctl" "set" "5%-" ];
+      [ "brightnessctl" "set" "15%-" ];
 
     # Overview / close
     "Mod+O".repeat = false;
@@ -133,14 +133,14 @@
     "Alt+Tab".action.focus-workspace-previous = { };
 
     # Fullscreen / floating
-    #"Mod+Shift+F".action.maximize-window-to-edges = { };
+    "Mod+Shift+F".action.maximize-column = { };
     "Mod+Ctrl+Shift+F".action.toggle-windowed-fullscreen = { };
     "F11".action.fullscreen-window = { };
 
     "Mod+F".action.toggle-window-floating = { };
 
     # Screenshot
-    "Print".action.screenshot = { };
+    "Print".action.screenshot = { show-pointer = false; };
 
     # Keyboard inhibit
     "Mod+Escape".allow-inhibiting = false;

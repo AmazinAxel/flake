@@ -7,6 +7,7 @@ export default () =>
     name="calendar"
     anchor={BOTTOM | LEFT}
     application={app}
+    layer={Astal.Layer.OVERLAY}
   >
     <Gtk.Calendar/>
   </window>

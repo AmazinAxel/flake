@@ -20,6 +20,7 @@ export default () =>
         anchor={TOP | BOTTOM | LEFT}
         $={(self) => onCleanup(() => self.destroy())}
         application={app}
+        layer={Astal.Layer.OVERLAY}
         visible
       >
         <box orientation={Gtk.Orientation.VERTICAL}>

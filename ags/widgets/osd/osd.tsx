@@ -19,6 +19,7 @@ export default () =>
         name="osd"
         anchor={Astal.WindowAnchor.BOTTOM}
         application={app}
+        layer={Astal.Layer.OVERLAY}
         $={(self) => {
             brightness.subscribe(() =>
                 osdChange('display-brightness-symbolic', brightness.peek(), self)

@@ -38,9 +38,11 @@
 
       focus-ring.enable = false;
       tab-indicator.enable = false;
+      shadow.enable = false;
       insert-hint.display.color = "#5e81ac";
 
       border = {
+        enable = true;
         width = 2;
         active.color = "#5e81ac";
         inactive.color = "#4c566a";
@@ -49,10 +51,10 @@
     };
 
     spawn-at-startup = [
-      { argv = ["hyprlock"]; }
-      { argv = ["fcitx5" "-d"]; }
-      { argv = ["gammastep" "-O" "3000"]; }
-      { argv = ["batsignal" "-w" "20" "-c" "5" "-d" "0" "-a" "Low battery"]; }
+      { argv = [ "hyprlock" ]; }
+      { argv = [ "fcitx5" "-d" ]; }
+      { argv = [ "gammastep" "-O" "3000" ]; }
+      { argv = [ "batsignal" "-w" "20" "-c" "5" "-d" "0" "-a" "Low battery" ]; }
     ];
 
     hotkey-overlay = {
@@ -67,14 +69,6 @@
     #};
 
     gestures.hot-corners.enable = false;
-
-    window-rules = [{
-      matches = [
-        { app-id = ''^org\.keepassxc\.KeePassXC$''; }
-        { app-id = ''^org\.gnome\.World\.Secrets$''; }
-      ];
-      block-out-from = "screen-capture";
-    }];
   };
 }
 

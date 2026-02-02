@@ -8,6 +8,7 @@ export default () =>
       name="powermenu"
       $={(self) => window = self}
       application={app}
+      layer={Astal.Layer.OVERLAY}
       keymode={Astal.Keymode.ON_DEMAND}
    >
       <Gtk.EventControllerKey

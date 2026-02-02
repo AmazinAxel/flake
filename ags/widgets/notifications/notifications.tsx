@@ -32,6 +32,7 @@ export const notifications = () =>
 		name="notifications"
 		anchor={TOP | RIGHT}
 		application={app}
+		layer={Astal.Layer.OVERLAY}
 
 		// This prop gives broken accounting warning but fixes allocation size
 		visible={notificationlist.as(n => (n.length != 0) ? true : false)}

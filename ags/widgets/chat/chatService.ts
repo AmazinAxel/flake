@@ -43,7 +43,7 @@ const [ content, setContent ] = createState("Respond using colorless GTK Pango i
 const [ thinking, setThinking ] = createState(false);
 const [ done, setDone ] = createState(false);
 
-const instructions: MessageState = {
+export const instructions: MessageState = {
   role: Role.SYSTEM,
   content,
   setContent: (v) => setContent(typeof v === "function" ? v(content.peek()) : v),
@@ -134,11 +134,10 @@ export const sendMessage = (msg: string) => {
   newMessage(Role.USER, msg);
 
   const body = {
-    model: "qwen/qwen3-32b", // moonshotai/kimi-k2-thinking gpt-oss-120b google/gemini-3-pro-preview
+    model: "qwen/qwen3-32b",
     messages: messages.peek()
       .map((m) => ({ role: m.role, content: m.content.peek() })),
     temperature,
-    //citation_options: 'disabled',
     //max_completion_tokens: 2048, // 1024
     stream: true
   };
