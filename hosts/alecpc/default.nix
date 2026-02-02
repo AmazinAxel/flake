@@ -21,10 +21,11 @@
 
     bun # All-in-one JS toolkit
     jre # For Minecraft - uses the latest stable Java runtime version
-    jdk23 # Java JDK version 23 for compling & running jars
+    jdk25_headless # Java JDK version 23 for compling & running jars
     nodejs_22 # JS runtime
     steam-run # Used for running some games
   ];
+  programs.kdeconnect.enable = true;
 
   services = {
     flatpak.enable = true; # For running Sober
@@ -35,7 +36,7 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
-    extraPackages = with pkgs; [ nvidia-vaapi-driver vaapiVdpau libvdpau-va-gl ];
+    extraPackages = with pkgs; [ nvidia-vaapi-driver libva-vdpau-driver libvdpau-va-gl ];
   };
 
   boot = {
