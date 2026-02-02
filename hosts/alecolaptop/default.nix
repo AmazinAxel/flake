@@ -7,7 +7,7 @@
   ];
 
   networking.hostName = "alecolaptop";
-  home-manager.users.alec.imports = [ ./hm.nix ];
+  #home-manager.users.alec.imports = [ ./hm.nix ];
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [
@@ -25,11 +25,13 @@
   ];
 
   # Bootloader settings (w/ AMD GPU support)
-  boot.initrd = {
-    kernelModules = [ "amdgpu" ];
-    includeDefaultModules = false;
+  boot = {
+    initrd = {
+      kernelModules = [ "amdgpu" ];
+      includeDefaultModules = false;
+    };
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   services = {
     upower.enable = true; # For displaying battery level on astal shell
