@@ -54,7 +54,7 @@
 
       spawn-at-startup = [
         { argv = [ "fcitx5" "-d" ]; }
-        { argv = [ "gammastep" "-O" "4500" ]; }
+        { argv = [ "gammastep" "-O" "3500" ]; }
         { argv = [ "batsignal" "-w" "20" "-c" "5" "-d" "0" "-a" "Low battery" ]; }
       ];
 
