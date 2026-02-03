@@ -1,7 +1,6 @@
 {
   programs.niri = {
     enable = true;
-    #useNautilus = false;
     settings = {
       input = {
         focus-follows-mouse.enable = true;
