@@ -11,7 +11,7 @@ sudo mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
 
 # Sync music directory from share 
 echo "[Sync] Pulling music from NAS"
-rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
+sudo rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
 mpc update > /dev/null
 sudo umount $mntPoint
 

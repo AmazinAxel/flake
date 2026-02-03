@@ -3,7 +3,7 @@ import { createState, For } from "ags"
 import { createSubprocess, exec } from 'ags/process';
 
 export const [ workspaces, setWorkspaces ] = createState(
-  [{ "id": 1, "is_active": true }]
+  [{ "idx": 1, "is_active": true }]
 );
 
 const eventStream = createSubprocess('', ['niri', 'msg', '-j', 'event-stream']);
@@ -22,7 +22,7 @@ eventStream.subscribe(() => {
     return;
   };
   setWorkspaces(workspaceJSON.slice().sort(
-    (a: { id: number }, b: { id: number }) => a.id - b.id) // sort workspaces by id
+    (a: { idx: number }, b: { idx: number }) => a.idx - b.idx) // sort workspaces by id
     .slice(0, Math.min((workspaceJSON.length - 1), 8)) // dont show more than 8 workspaces
   );
 });
@@ -34,9 +34,7 @@ export const Workspaces = () =>
   >
     <Gtk.EventControllerScroll
       flags={Gtk.EventControllerScrollFlags.VERTICAL}
-      onScroll={(_, __, y) => { console.log(['niri', 'msg', 'action', ('move-workspace-' + (y < 0) ? 'up' : 'down')]) }} // todo fix
-      // todo implement pam auth for ags greet
-      // then install latest on alecpc and set up nvidia/multi monitor
+      onScroll={(_, __, y) => { exec(['niri', 'msg', 'action', 'focus-workspace-' + ((y < 0) ? 'up' : 'down')]) }}
     />
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
       <For each={workspaces}>

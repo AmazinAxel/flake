@@ -1,4 +1,4 @@
-import { BrightnessSlider } from '../../services/brightness';
+import { BrightnessSlider } from '../../lib/brightness';
 import { VolumeSlider, SinkSelector } from './sound';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'

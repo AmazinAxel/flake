@@ -3,7 +3,7 @@ import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import Astal from "gi://Astal?version=4.0"
 
-import { notifySend } from '../../services/notifySend'; 
+import { notifySend } from '../../lib/notifySend'; 
 import { recMic, setRecMic, recQuality, startRec, setRecQuality, isRec } from './service';
 
 let window: Gtk.Window;

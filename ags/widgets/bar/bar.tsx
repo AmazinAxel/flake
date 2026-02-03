@@ -4,7 +4,7 @@ import { Time } from './modules/time';
 import { Workspaces } from './modules/workspaces';
 import { Status } from './modules/statusMenu';
 import { Mpris } from './modules/mpris';
-import { Media } from '../../services/mediaPlayer';
+import { Media } from '../../lib/mediaPlayer';
 import { RecordingIndicator } from '../record/record';
 import { createBinding, For, onCleanup, This } from "ags";
 const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
@@ -20,7 +20,7 @@ export default () =>
         anchor={TOP | BOTTOM | LEFT}
         $={(self) => onCleanup(() => self.destroy())}
         application={app}
-        visible
+        visible={barVisibility}
       >
         <box orientation={Gtk.Orientation.VERTICAL}>
           <Workspaces/>
@@ -31,8 +31,6 @@ export default () =>
             <Media/>
             <Mpris/>
           </box>
-
-          <box vexpand/>
 
           <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
             <RecordingIndicator/>

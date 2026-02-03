@@ -4,6 +4,8 @@ import Soup from "gi://Soup?version=3.0";
 import { createState, Accessor } from "ags";
 import { readFile } from "ags/file";
 
+// todo switch to ags fetch
+
 export enum Role {
   USER = "user",
   ASSISTANT = "assistant",

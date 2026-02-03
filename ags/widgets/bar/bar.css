@@ -13,7 +13,7 @@
 
 .statusMenu { padding: 0.5rem 0 0.5rem 0; }
 .statusMenu image {
-    -gtk-icon-size: 0.9rem;
+    -gtk-icon-size: 0.8rem;
     -gtk-icon-shadow: 0 0 12px @light3;
     color: @light3;
 }
@@ -28,7 +28,7 @@
 .time { font-family: 'WenQuanYi Zen Hei Mono'; }
 .date.bottom { margin-bottom: 3px; }
 .time .time {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     font-weight: bold;
     letter-spacing: 2px;
     color: @blue2;

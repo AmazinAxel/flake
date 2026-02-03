@@ -1,48 +1,16 @@
-.launcher {
-    margin: 1rem;
-    line-height: 1.2rem;
-}
-
-.searchBg { /* Search bar */
-    padding: 3rem 3rem 3rem 0;
-    background-position: center;
-    background-size: cover;
-    border-radius: 0.4rem;
-    filter: blur(3px);
-    min-height: 2rem;
-    transition-duration: 0.5s;
-}
-
-.launcher entry:focus ~ .searchBg {
-    background: black;
-    border: 5px solid black;
-}
-
-.launcher entry {
-    background: transparent;
-    color: @light3;
-    outline: none;
-    padding-left: 2rem;
-    outline-offset: -3px;
-    outline: 2px solid #ffffff1c;
-    font-family: 'Hammersmith One';
-    font-size: 1.3rem;
-}
-
-.launcher overlay { padding-bottom: 1rem; }
-
-.launcher button {
+#launcher button {
     padding: 0.5rem;
     border: 1px solid @dark4;
 }
+#launcher button:focus, #launcher button:hover { border: 1px solid @blue1; }
 
-.launcher button image {
+#launcher button image {
     -gtk-icon-size: 2rem;
     margin-right: 0.5rem;
 }
 
-.launcher button label.name {
+#launcher button label.name {
     color: @light3;
     font-weight: bold;
 }
-.launcher button label.description { color: @light3; }
+#launcher button label.description { color: @light3; }

@@ -23,11 +23,11 @@ import { notifications, clearOldestNotification, DND, setDND } from './widgets/n
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/quicksettings/quicksettings';
-import { notifySend } from './services/notifySend';
+import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
-import { monitorBrightness } from './services/brightness';
-import { initMedia, updTrack, playPause, chngPlaylist } from './services/mediaPlayer';
+import { monitorBrightness } from './lib/brightness';
+import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
 
 
 app.start({

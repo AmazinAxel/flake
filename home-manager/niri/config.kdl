@@ -14,6 +14,8 @@ input {
   }
 
   mouse {
+    accel-speed 0.1
+    accel-profile "flat"
   }
 
   trackpoint {
@@ -65,7 +67,7 @@ layout {
 }
 
 spawn-at-startup "fcitx5" "-d"
-spawn-at-startup "gammastep" "-O" "3000"
+spawn-at-startup "gammastep" "-O" "2500"
 spawn-at-startup "batsignal" "-w" "20" "-c" "5" "-d" "0" "-a" "Low battery"
 
 hotkey-overlay {
@@ -81,16 +83,22 @@ gestures {
   }
 }
 
+clipboard {
+  disable-primary
+}
+
 // Rules
 window-rule {
   geometry-corner-radius 5
   clip-to-geometry true
   open-focused true
+  open-maximized-to-edges false
 }
 
 window-rule {
   match app-id=r#"^librewolf$"#
   match app-id=r#"^code$"#
+  match app-id=r#"^slack$"#
   open-maximized true
 }
 

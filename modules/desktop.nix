@@ -9,7 +9,7 @@
   environment = {
     systemPackages = with pkgs; [
       # Desktop services
-      wbg # Wallpaper app
+      swaybg # Wallpaper app
       libnotify # Astal internal notifications
       mpc # CLI for Astal media player
       cifs-utils # Needed for mounting Samba NAS drive
@@ -46,7 +46,10 @@
   ];
 
   programs = {
-    niri.enable = true;
+    niri = {
+      enable = true;
+      useNautilus = false;
+    };
     gpu-screen-recorder.enable = true; # Clipping & recording software
 
     git = {

@@ -5,6 +5,7 @@ import app from 'ags/gtk4/app'
 import Gio from 'gi://Gio'
 import GLib from 'gi://GLib';
 import { ClipboardItem } from './clipboardItem';
+import BackgroundSection from '../../lib/backgroundSection';
 
 const list = new Gtk.ListBox;
 
@@ -81,12 +82,15 @@ export default () => <window
                     window.hide()
             };
         }}/>
-        <Gtk.ScrolledWindow
-            hscrollbarPolicy={Gtk.PolicyType.NEVER}
-            vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
-            heightRequest={500}
-            widthRequest={400}
-        >
-            {list}
-        </Gtk.ScrolledWindow>
+        <BackgroundSection
+            header={<label $type="overlay" label="Clipboard"/>}
+            content={<Gtk.ScrolledWindow
+                hscrollbarPolicy={Gtk.PolicyType.NEVER}
+                vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
+                heightRequest={500}
+                widthRequest={400}
+            >
+                {list}
+            </Gtk.ScrolledWindow>}
+        />
     </window>

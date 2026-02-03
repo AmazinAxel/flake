@@ -1,7 +1,6 @@
 import Apps from 'gi://AstalApps'
 import { Astal, Gtk, Gdk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
-import { playlistName } from '../../services/mediaPlayer';
 import { createState, For } from 'ags';
 import { execAsync } from 'ags/process';
 
@@ -15,8 +14,7 @@ const search = (text: string) =>
 
 const hide = () => app.toggle_window("launcher");
 
-// Update launcher background to wallpaper
-playlistName.subscribe(() => app.apply_css(`.searchBg { background-image: url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
+import BackgroundSection from "../../lib/backgroundSection";
 
 export default () =>
     <window
@@ -29,61 +27,58 @@ export default () =>
     >
         <Gtk.EventControllerKey
             onKeyPressed={(_, key) =>
-            (key == 65307) // Gdk.KEY_Escape
-               && hide()
-        }/>
-        <box heightRequest={700}>
-            <box widthRequest={500} cssClasses={['launcher', 'widgetBackground']} orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.START}>
-                <overlay>
-                    <box cssClasses={['searchBg']}/>
-                    <entry
-                        $type='overlay'
-                        primaryIconName="system-search-symbolic"
-                        placeholderText="Search"
-                        onActivate={() => {
-                            launchApp(apps.fuzzy_query(textBox.text)?.[0])
-                            hide();
-                        }}
-                        onNotifyText={({ text }) => search(text)}
-                        $={self => {
-                            textBox = self;
-                            app.connect("window-toggled", () =>
-                                (app.get_window("launcher")?.visible == true)
-                                    && self.grab_focus()
-                            );
-                        }}
-                    />
-                </overlay>
-                <box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
-                    <For each={appsList}>
-                        {(app) => (
-                            <button
-                                onClicked={() => { launchApp(app); hide(); }}
-                                cssClasses={['button']}
-                            >
-                                <Gtk.EventControllerKey
-                                    onKeyPressed={(_, key) => {
+                key == 65307 && hide()
+            }
+        />
+
+        <BackgroundSection
+            header={<entry
+                $type="overlay"
+                primaryIconName="system-search-symbolic"
+                placeholderText="Search"
+                onActivate={() => {
+                    launchApp(apps.fuzzy_query(textBox.text)?.[0]);
+                    hide();
+                }}
+                onNotifyText={({ text }) => search(text)}
+                $={self => {
+                    textBox = self;
+                    app.connect("window-toggled", () =>
+                        app.get_window("launcher")?.visible && self.grab_focus()
+                    );
+                }}
+            />}
+
+            content={<box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
+                <For each={appsList}>
+                    {(app) => (
+                        <button
+                            onClicked={() => { launchApp(app); hide(); }}
+                            cssClasses={["button"]}
+                        >
+                            <Gtk.EventControllerKey
+                                onKeyPressed={(_, key) => {
                                     if (key == Gdk.KEY_Return) {
-                                        launchApp(app)
+                                        launchApp(app);
                                         hide();
                                     }
-                                }}/>
-                                <box>
-                                    <image iconName={app.iconName}/>
-                                    <box valign={Gtk.Align.CENTER}>
-                                        <label
-                                            cssClasses={['name']}
-                                            xalign={0}
-                                            label={app.name}
-                                        />
-                                    </box>
+                                }}
+                            />
+                            <box>
+                                <image iconName={app.iconName} />
+                                <box valign={Gtk.Align.CENTER}>
+                                    <label
+                                        cssClasses={["name"]}
+                                        xalign={0}
+                                        label={app.name}
+                                    />
                                 </box>
-                            </button>
-                        )}
-                    </For>
-                </box>
-            </box>
-        </box>
+                            </box>
+                        </button>
+                    )}
+                </For>
+            </box>}
+        />
     </window>
 
 // Launch app seperately from astal in wayland mode
@@ -96,6 +91,6 @@ const launchApp = (app: Apps.Application) => {
     execAsync(`sh -c '${exe} &'`);
 
     // Get away from social media addiction
-    if (!app.name.includes('discord') && !app.name.includes('slack'))
+    if (!app.name.includes('vesktop') && !app.name.includes('slack'))
         app.set_frequency(app.get_frequency() + 1);
 };

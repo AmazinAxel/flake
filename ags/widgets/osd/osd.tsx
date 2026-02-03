@@ -3,7 +3,7 @@ import { timeout } from 'ags/time';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import Wp from 'gi://AstalWp';
-import { brightness } from '../../services/brightness';
+import { brightness } from '../../lib/brightness';
 
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 let dontShow = true;

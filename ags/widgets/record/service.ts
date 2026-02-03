@@ -3,7 +3,7 @@ import { exec, execAsync } from 'ags/process';
 import AstalIO from 'gi://AstalIO';
 import GLib from 'gi://GLib';
 
-import { notifySend } from '../../services/notifySend';
+import { notifySend } from '../../lib/notifySend';
 const captureDir = '/home/alec/Videos/Captures';
 
 const now = () => GLib.DateTime.new_now_local().format('%Y-%m-%d_%H-%M-%S');
