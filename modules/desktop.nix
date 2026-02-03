@@ -6,8 +6,6 @@
     useGlobalPkgs = true; # Faster eval
   };
 
-  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
-
   environment = {
     systemPackages = with pkgs; [
       # Desktop services
@@ -48,6 +46,7 @@
   ];
 
   programs = {
+    niri.enable = true;
     gpu-screen-recorder.enable = true; # Clipping & recording software
 
     git = {

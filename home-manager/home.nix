@@ -1,8 +1,8 @@
 { inputs, pkgs, ... }: {
   imports = [
-    ./niri/keybinds.nix
-    ./niri/niri.nix
-    ./niri/rules.nix
+    #./niri/keybinds.nix
+    #./niri/niri.nix
+    #./niri/rules.nix
 
     ./vscode.nix
     ./fish.nix
@@ -14,7 +14,7 @@
     ./swappy.nix
 
     inputs.ags.homeManagerModules.default
-    inputs.niri.homeModules.niri
+    #inputs.niri.homeModules.niri
   ];
 
   programs = {
@@ -59,6 +59,9 @@
   };
 
   xdg = {
+    # Niri config until hm niri/kdl config merged upstream
+    configFile."niri/config.kdl".source = ./niri/config.kdl;
+
     dataFile."fonts" = { # Symlink fonts
       target = "./fonts";
       source = ./fonts;

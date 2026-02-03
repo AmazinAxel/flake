@@ -15,11 +15,6 @@
       url = "github:aylur/astal";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    niri = { # Niri flake until hm module merged upstream
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { home-manager, nixpkgs, ... }@inputs: {
