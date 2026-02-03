@@ -19,6 +19,7 @@
       wl-clipboard # Astal clipboard utils
       gammastep # Blue light filter
       gpu-screen-recorder # Screen clipping & record tool
+      xwayland-satellite # xwayland support
 
       # Desktop applications
       gthumb # Image & video viewer & editor

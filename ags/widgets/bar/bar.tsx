@@ -20,7 +20,7 @@ export default () =>
         anchor={TOP | BOTTOM | LEFT}
         $={(self) => onCleanup(() => self.destroy())}
         application={app}
-        visible={barVisibility}
+        visible//={barVisibility}
       >
         <box orientation={Gtk.Orientation.VERTICAL}>
           <Workspaces/>
