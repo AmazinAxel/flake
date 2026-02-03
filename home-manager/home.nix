@@ -62,6 +62,8 @@
     # Niri config until hm niri/kdl config merged upstream
     configFile."niri/config.kdl".source = ./niri/config.kdl;
 
+    portal.config.niri."org.freedesktop.impl.portal.FileChooser" = "gtk";
+
     dataFile."fonts" = { # Symlink fonts
       target = "./fonts";
       source = ./fonts;

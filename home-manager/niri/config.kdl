@@ -85,6 +85,7 @@ gestures {
 window-rule {
   geometry-corner-radius 5
   clip-to-geometry true
+  open-focused true
 }
 
 window-rule {
