@@ -73,9 +73,9 @@
       enable = true;
       createDirectories = true; # Auto-creates all directories
       extraConfig = {
-        XDG_PROJECTS_DIR = "/home/alec/Projects";
-        XDG_CAPTURES_DIR = "/home/alec/Videos/Captures";
-        XDG_CLIPS_DIR = "/home/alec/Videos/Clips";
+        PROJECTS = "/home/alec/Projects";
+        CAPTURES = "/home/alec/Videos/Captures";
+        CLIPS = "/home/alec/Videos/Clips";
       };
     };
   };

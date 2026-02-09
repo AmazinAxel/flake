@@ -28,7 +28,7 @@
       nemo-with-extensions # File manager
       nemo-fileroller # Create archives in nemo
       file-roller # Open archives in nemo
-      vesktop # Voice & video chat app
+      discord # Voice & video chat app
       slack # Hack Club
       filezilla # FTP client
       prismlauncher # Minecraft launcher
