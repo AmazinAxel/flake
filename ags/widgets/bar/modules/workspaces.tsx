@@ -3,7 +3,7 @@ import { createState, For } from "ags"
 import { createSubprocess, exec } from 'ags/process';
 
 export const [ workspaces, setWorkspaces ] = createState(
-  [{ "idx": 1, "is_active": true }]
+  [{ "idx": 1, "is_focused": true }]
 );
 
 const eventStream = createSubprocess('', ['niri', 'msg', '-j', 'event-stream']);
@@ -18,12 +18,11 @@ eventStream.subscribe(() => {
     recentEvent["WorkspaceUrgencyChanged"]
   ) {
     workspaceJSON = JSON.parse(exec(['niri', 'msg', '-j', 'workspaces']));
-  } else {
-    return;
-  };
+  } else return;
   setWorkspaces(workspaceJSON.slice().sort(
-    (a: { idx: number }, b: { idx: number }) => a.idx - b.idx) // sort workspaces by id
-    .slice(0, Math.min((workspaceJSON.length - 1), 8)) // dont show more than 8 workspaces
+    (a: { output: string, idx: number }, b: { output: string, idx: number }) =>
+      a.output.localeCompare(b.output) || a.idx - b.idx) // Sort by monitor name then by id
+    .slice(0, Math.min((workspaceJSON.length - 1), 8)) // Dont show more than 8 workspaces
   );
 });
 
@@ -39,7 +38,7 @@ export const Workspaces = () =>
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
       <For each={workspaces}>
         {(workspace) => {
-          const classes = (workspace["is_active"]) // is_focused is_urgent ouptut
+          const classes = (workspace["is_focused"])
             ? ['workspaceBtn', 'active']
             : ['workspaceBtn'];
 

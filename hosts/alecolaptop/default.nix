@@ -22,8 +22,6 @@
     bun # All-in-one JS toolkit
     chromium # Honorlock supported browser
     qpwgraph # Audio output visualizer
-
-    claude-code
   ];
 
   # Bootloader settings (w/ AMD GPU support)

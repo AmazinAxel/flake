@@ -32,6 +32,7 @@
       slack # Hack Club
       filezilla # FTP client
       prismlauncher # Minecraft launcher
+      claude-code
 
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
