@@ -132,4 +132,6 @@
     enable = true;
     powerOnBoot = false; # Don't start bluetooth until its needed
   };
+
+  security.pam.services.astal-auth = {}; # For astal lockscreen to work
 }

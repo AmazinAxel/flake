@@ -16,14 +16,14 @@ export default () =>
          window.hide();
          switch (key) {
             case 115: // S - sleep
-               // todo lock
+               app.get_window('lockscreen')?.show();
                execAsync('systemctl suspend');
                break;
             case 113: // Q - power off
                execAsync('systemctl poweroff')
                break;
             case 108: // L - lock
-               // todo lock
+               app.get_window('lockscreen')?.show();
                break;
             case 114: // R - reboot
                execAsync('systemctl reboot');

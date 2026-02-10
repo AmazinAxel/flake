@@ -1,0 +1,18 @@
+#lockscreen {
+    background-color: rgba(46, 52, 64, 0.95);
+    /* todo blur instead */
+}
+
+#lockscreen label { /* Time */
+    font-size: 5rem;
+    color: @blue3;
+    padding: 1rem;
+}
+
+#lockscreen entry {
+    background: @dark3;
+    color: @light1;
+    border-radius: 0.4rem;
+    outline: 2px solid @blue3;
+    outline-offset: -2px;
+}

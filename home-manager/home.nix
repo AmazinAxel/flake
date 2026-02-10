@@ -26,6 +26,7 @@
 
       extraPackages = with inputs.astal.packages.x86_64-linux; [
         apps # App launcher
+        auth # Lockscreen
         battery # Laptop battery
         bluetooth # Bluez
         mpris # Media controls

@@ -7,6 +7,7 @@ import notificationStyle from './widgets/notifications/notifications.css';
 import osdStyle from './widgets/osd/osd.css';
 import quicksettingsStyle from './widgets/quicksettings/quicksettings.css';
 import powermenuStyle from './widgets/powermenu/powermenu.css';
+import lockscreenStyle from './widgets/lockscreen/lockscreen.css';
 
 import app from "ags/gtk4/app"
 import { exec } from "ags/process";
@@ -23,6 +24,7 @@ import { notifications, clearOldestNotification, DND, setDND } from './widgets/n
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/quicksettings/quicksettings';
+import lockscreen from './widgets/lockscreen/lockscreen';
 import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
@@ -31,7 +33,7 @@ import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer'
 
 
 app.start({
-    css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle,
+    css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle + lockscreenStyle,
     main() {
         bar()
         chat();
@@ -43,6 +45,7 @@ app.start({
         osd();
         powermenu();
         quickSettings();
+        lockscreen();
 
         monitorBrightness();
         notifications();
