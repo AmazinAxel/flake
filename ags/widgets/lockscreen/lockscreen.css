@@ -1,14 +1,24 @@
-#lockscreen {
-    background-color: rgba(46, 52, 64, 0.95);
-    /* todo blur instead */
-}
-
 #lockscreen label { /* Time */
     font-size: 10rem;
-    color: @blue3;
+    color: @blue2;
+    text-shadow: 0 0 2rem @blue2;
     font-family: 'Liberation Mono';
+    border-radius: 0.5rem;
+    outline: 3px solid #ffffff1c;
+    padding: 10px 21px 0 20px;
+    transition-duration: 0.1s;
 }
 
-#lockscreen entry {
-    opacity: 0;
+#lockscreen label.timeout {
+    color: @red;
+    text-shadow: 0 0 1rem @red;
+}
+
+#lockscreen entry { /* Also a background */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("file:///home/alec/Projects/flake/wallpapers/Study.jpg");
+    background-position: center;
+    background-size: cover;
+    border: none;
+    outline: none;
+    border-radius: 0;
 }

@@ -83,7 +83,6 @@ calendar, .quickSettings {
 #launcher entry, .backgroundSection .header label {
     background: transparent;
     color: @light3;
-    outline: none;
     padding-left: 2rem;
     outline-offset: -3px;
     outline: 2px solid #ffffff1c;

@@ -3,22 +3,29 @@ import app from 'ags/gtk4/app';
 import Auth from 'gi://AstalAuth';
 import { createPoll } from 'ags/time';
 import GLib from 'gi://GLib';
+import { createState } from 'ags';
 
-const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'))
+const [ isAuthenticating, setIsAuthenticating ] = createState(false);
+const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'));
 
-const authenticate = (entry: Gtk.Entry) => {
+const checkLogin = (entry: Gtk.Entry) => {
     const password = entry.get_text();
     entry.set_text('');
     entry.set_sensitive(false);
+    setIsAuthenticating(true);
 
     Auth.Pam.authenticate(password, (_, task) => {
         try {
             Auth.Pam.authenticate_finish(task);
             app.get_window('lockscreen')?.hide();
-        } catch (e) {
-            entry.set_sensitive(true);
-            entry.grab_focus();
-        }
+        } catch { // Wrong password
+            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                entry.grab_focus(); // Refocus
+                return GLib.SOURCE_REMOVE;
+            });
+        };
+        entry.set_sensitive(true);
+        setIsAuthenticating(false);
     });
 };
 
@@ -31,17 +38,27 @@ export default () =>
         keymode={Astal.Keymode.EXCLUSIVE}
         anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
     >
-        <box halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL}>
-            <label label={time((time) => time!.toString())} />
+        <overlay>
+            <label
+                halign={Gtk.Align.CENTER}
+                valign={Gtk.Align.CENTER}
+                label={time((time) => time!.toString())}
+                css_classes={isAuthenticating((v) => v ? ['timeout'] : [])}
+                canTarget={false}
+                $type="overlay"
+            />
             <entry
+                hexpand
+                vexpand
                 visibility={false}
-                invisibleChar={0} // No character
-                onActivate={(self) => authenticate(self)}
+                invisibleChar={0}
+                css_classes={isAuthenticating((v) => v ? ['timeout'] : [])}
+                onActivate={checkLogin}
                 $={(self) => {
                     app.connect('window-toggled', (_, window) =>
                         (window.name === 'lockscreen' && window.visible)
                         && self.grab_focus()
-                )}}
+                    )}}
             />
-        </box>
+        </overlay>
     </window>

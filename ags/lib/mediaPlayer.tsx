@@ -4,9 +4,9 @@ import { exec, execAsync } from 'ags/process';
 import { createState } from 'ags';
 
 export type musicAction = 'next' | 'prev';
-export const [ isPlaying, setIsPlaying] = createState(false);
-export const [ playlist, setPlaylist] = createState(1);
-export const [ playlistName, setPlaylistName] = createState('');
+export const [ isPlaying, setIsPlaying ] = createState(false);
+export const [ playlist, setPlaylist ] = createState(1);
+export const [ playlistName, setPlaylistName ] = createState('');
 
 // These playlists match with the folder names in ~/Music
 const playlists =      ['Study',  'Focus',  'Synthwave', 'SynthAmbient', 'Ambient'];
