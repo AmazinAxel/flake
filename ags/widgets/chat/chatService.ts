@@ -1,3 +1,4 @@
+// originally from https://github.com/unfaiyted/faiyt-ags/blob/c99ee693144fc1a7f11cbaf2edf1cbf7f69b84bc/src/services/gpt.ts
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import Soup from "gi://Soup?version=3.0";

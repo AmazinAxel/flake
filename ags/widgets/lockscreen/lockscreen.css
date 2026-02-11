@@ -4,15 +4,11 @@
 }
 
 #lockscreen label { /* Time */
-    font-size: 5rem;
+    font-size: 10rem;
     color: @blue3;
-    padding: 1rem;
+    font-family: 'Liberation Mono';
 }
 
 #lockscreen entry {
-    background: @dark3;
-    color: @light1;
-    border-radius: 0.4rem;
-    outline: 2px solid @blue3;
-    outline-offset: -2px;
+    opacity: 0;
 }

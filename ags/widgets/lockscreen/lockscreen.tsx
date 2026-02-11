@@ -30,7 +30,6 @@ export default () =>
         exclusivity={Astal.Exclusivity.IGNORE}
         keymode={Astal.Keymode.EXCLUSIVE}
         anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
-        visible={false} // todo remove after finishing
     >
         <box halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL}>
             <label label={time((time) => time!.toString())} />
