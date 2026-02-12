@@ -52,7 +52,6 @@ export default () =>
                 vexpand
                 visibility={false}
                 invisibleChar={0}
-                css_classes={isAuthenticating((v) => v ? ['timeout'] : [])}
                 onActivate={checkLogin}
                 $={(self) => {
                     app.connect('window-toggled', (_, window) =>

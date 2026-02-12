@@ -16,6 +16,7 @@
       rsync # Quickly pull files from NAS drive
       brightnessctl # Screen brightness CLI for Astal
       adwaita-icon-theme # Icons for GTK apps
+      waycorner # Hotcorners
       wl-clipboard # Astal clipboard utils
       gammastep # Blue light filter
       gpu-screen-recorder # Screen clipping & record tool

@@ -51,7 +51,7 @@ export default () => <window
         <BackgroundSection
             header={<label $type="overlay" label="Record & Clipping"/>}
             content={
-                <box orientation={Gtk.Orientation.VERTICAL}>
+                <box halign={Gtk.Align.CENTER}>
                     <image iconName={recMic((m) => (m) ? 'audio-input-microphone-symbolic' : 'microphone-disabled-symbolic')}/>
                     <label label={recQuality((q) => q + ' quality')}/>
                 </box>

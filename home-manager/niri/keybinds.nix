@@ -1,74 +1,31 @@
 {
   programs.niri.settings.binds = {
-    # Terminal / Browser
-    "Mod+Return".repeat = false;
     "Mod+Return".action.spawn = "foot";
-
-    "Mod+E".repeat = false;
+    "Mod+Z".action.spawn = [ "ags" "toggle" "bar" ];
+    "Mod+X".action.spawn = [ "ags" "toggle" "quickSettings" ];
     "Mod+E".action.spawn = "librewolf";
-
-    "Mod+Space".repeat = false;
     "Mod+Space".action.spawn = [ "ags" "toggle" "launcher" ];
-
-    "Mod+A".repeat = false;
     "Mod+A".action.spawn = [ "ags" "toggle" "chat" ];
-
-    "Mod+V".repeat = false;
     "Mod+V".action.spawn = [ "ags" "toggle" "clipboard" ];
-
-    "Mod+Period".repeat = false;
     "Mod+Period".action.spawn = [ "ags" "toggle" "emojiPicker" ];
-
-    "Mod+Shift+S".repeat = false;
     "Mod+Shift+S".action.spawn = [ "ags" "toggle" "powermenu" ];
 
-    # AGS requests
-    "Mod+C".repeat = false;
     "Mod+C".action.spawn = [ "ags" "request" "hideNotif" ];
-
-    "Mod+R".repeat = false;
     "Mod+R".action.spawn = [ "ags" "request" "record" ];
-
-    "Mod+Control+R".repeat = false;
     "Mod+Control+R".action.spawn = [ "ags" "request" "record" ];
-
-    "Mod+Shift+D".repeat = false;
     "Mod+Shift+D".action.spawn = [ "ags" "request" "toggleDND" ];
-
-    "Mod+Control+Period".repeat = false;
     "Mod+Control+Period".action.spawn = [ "ags" "request" "media next" ];
-
-    "Mod+Control+Comma".repeat = false;
     "Mod+Control+Comma".action.spawn = [ "ags" "request" "media prev" ];
-
-    "Mod+Shift+Period".repeat = false;
     "Mod+Shift+Period".action.spawn = [ "ags" "request" "media nextPlaylist" ];
-
-    "Mod+Shift+Comma".repeat = false;
     "Mod+Shift+Comma".action.spawn = [ "ags" "request" "media prevPlaylist" ];
-
-    "Mod+Slash".repeat = false;
     "Mod+Slash".action.spawn = [ "ags" "request" "media toggle" ];
 
-    # Volume
-    "XF86AudioRaiseVolume".action.spawn =
-      [ "wpctl" "set-volume" "@DEFAULT_SINK@" ".05+" ];
+    "XF86AudioRaiseVolume".action.spawn = [ "wpctl" "set-volume" "@DEFAULT_SINK@" ".05+" ];
+    "XF86AudioLowerVolume".action.spawn = [ "wpctl" "set-volume" "@DEFAULT_SINK@" ".05-" ];
+    "XF86MonBrightnessUp".action.spawn = [ "brightnessctl" "set" "+15%" ];
+    "XF86MonBrightnessDown".action.spawn = [ "brightnessctl" "set" "15%-" ];
 
-    "XF86AudioLowerVolume".action.spawn =
-      [ "wpctl" "set-volume" "@DEFAULT_SINK@" ".05-" ];
-
-    # Brightness
-    "XF86MonBrightnessUp".action.spawn =
-      [ "brightnessctl" "set" "+15%" ];
-
-    "XF86MonBrightnessDown".action.spawn =
-      [ "brightnessctl" "set" "15%-" ];
-
-    # Overview / close
-    "Mod+O".repeat = false;
     "Mod+O".action.toggle-overview = { };
-
-    "Mod+Q".repeat = false;
     "Mod+Q".action.close-window = { };
 
     # Focus movement
@@ -77,7 +34,7 @@
     "Mod+Up".action.focus-window-up = { };
     "Mod+Right".action.focus-column-right = { };
 
-    # Move windows/columns
+    # Move windows
     "Mod+Ctrl+Left".action.move-column-left = { };
     "Mod+Ctrl+Down".action.move-window-down = { };
     "Mod+Ctrl+Up".action.move-window-up = { };

@@ -25,9 +25,9 @@ end
 
 
 echo -e "$blue  ▗▄   $cyan▗▄ ▄▖     $white┌───────────────────────────────┐";
-echo -e "$blue ▄▄🬸█▄▄▄$cyan🬸█▛ $blue▃     $cyan alec$white@$blue$(hostname)"
+echo -e "$blue ▄▄🬸█▄▄▄$cyan🬸█▛ $blue▃";
 echo -e "$cyan   ▟▛    ▜$blue▃▟🬕     $cyan CPU:$white $cpu%";
 echo -e "$cyan🬋🬋🬫█      $blue█🬛🬋🬋    $cyan Disk:$white $disk";
 echo -e "$cyan 🬷▛🮃$blue▙    ▟▛       $cyan Memory:$white $memory";
-echo -e "$cyan 🮃$blue ▟█🬴$cyan▀▀▀█🬴▀▀     $cyan Uptime:$white $hours"$minutes"min";
+echo -e "$cyan 🮃$blue ▟█🬴$cyan▀▀▀█🬴▀▀";
 echo -e "$blue  ▝▀ ▀▘   $cyan▀▘     $white└───────────────────────────────┘";

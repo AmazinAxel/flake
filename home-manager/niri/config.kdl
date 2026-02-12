@@ -116,6 +116,14 @@ binds {
     spawn "librewolf"
   }
 
+  Mod+Z repeat=false {
+    spawn "ags" "toggle" "bar"
+  }
+
+  Mod+X repeat=false {
+    spawn "ags" "toggle" "quickSettings"
+  }
+
   Mod+Space repeat=false {
     spawn "ags" "toggle" "launcher"
   }

@@ -15,7 +15,7 @@ sudo rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
 mpc update > /dev/null
 sudo umount $mntPoint
 
-## Update system
+## Rebuild with latest flake
 cd /home/alec/Projects/flake/
 set isDirty (git status --porcelain)
 
