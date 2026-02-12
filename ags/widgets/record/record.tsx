@@ -2,6 +2,7 @@ import { execAsync } from "ags/process";
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import Astal from "gi://Astal"
+import BackgroundSection from "../../lib/backgroundSection";
 
 import { notifySend } from '../../lib/notifySend'; 
 import { recMic, setRecMic, recQuality, startRec, setRecQuality, isRec } from './service';
@@ -39,19 +40,22 @@ export default () => <window
                         setRecMic(!recMic.peek())
                         break;
                     case 113: // Q - toggle quality
-                        (recQuality.peek() == 'medium') ?
-                            setRecQuality('ultra') : setRecQuality('medium');
+                        (recQuality.peek() == 'Medium') ?
+                            setRecQuality('Ultra') : setRecQuality('Medium');
                         break;
                     default:
                         window.hide()
                 };
             }}/>
 
-        <box orientation={Gtk.Orientation.VERTICAL}>
-            <label label="Record & Clipping" cssClasses={['header']}/>
-            <label label={recMic((m) => (m) ? "Recording microphone input" : "Not recording microphone input")}/>
-            <label label={recQuality((q) => "Recording quality: " + q)}/>
-        </box>
+        <BackgroundSection
+            header={<label $type="overlay" label="Record & Clipping"/>}
+            content={
+                <box orientation={Gtk.Orientation.VERTICAL}>
+                    <image iconName={recMic((m) => (m) ? 'audio-input-microphone-symbolic' : 'microphone-disabled-symbolic')}/>
+                    <label label={recQuality((q) => q + ' quality')}/>
+                </box>
+            }/>
     </window>
 
 export const RecordingIndicator = () =>

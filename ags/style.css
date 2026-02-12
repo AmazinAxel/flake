@@ -46,13 +46,6 @@ calendar, .quickSettings {
   border-radius: 7px 7px 0 0;
 }
 
-#recordMenu .header, .backgroundSection .header {
-  font-family: 'Hammersmith One';
-  color: @light1;
-  font-weight: 100;
-  font-size: 1.5rem;
-}
-
 .button:focus, .button:hover, list row:focus, list row:hover {
   background-color: @blue2;
   box-shadow: 0 0 5px 3px @blue3;
@@ -80,15 +73,22 @@ calendar, .quickSettings {
   line-height: 1.2rem;
 }
 
-#launcher entry, .backgroundSection .header label {
-    background: transparent;
-    color: @light3;
-    padding-left: 2rem;
-    outline-offset: -3px;
-    outline: 2px solid #ffffff1c;
-    font-family: 'Hammersmith One';
-    font-size: 1.3rem;
-    border-radius: 0.4rem;
+#launcher entry, window .backgroundSection .header label {
+  background: transparent;
+  color: @light3;
+  outline-offset: -3px;
+  outline: 2px solid #ffffff1c;
+  font-family: 'Hammersmith One';
+  border-radius: 0.4rem;
+}
+.backgroundSection .header label {
+  text-shadow: 0 0 10px @light3;
+  font-size: 2rem;
 }
 
-#launcher overlay, .backgroundSection { padding-bottom: 1rem; }
+/* Record menu */
+#recordMenu label {
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  text-shadow: 0 0 20px @light3;
+}

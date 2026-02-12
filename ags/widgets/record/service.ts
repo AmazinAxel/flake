@@ -10,7 +10,7 @@ const now = () => GLib.DateTime.new_now_local().format('%Y-%m-%d_%H-%M-%S');
 
 export const [ isRec, setIsRec ] = createState(false);
 export const [ recMic, setRecMic ] = createState(false);
-export const [ recQuality, setRecQuality ] = createState('ultra');
+export const [ recQuality, setRecQuality ] = createState('Ultra');
 
 let rec: AstalIO.Process | null = null;
 let file: string;

@@ -9,6 +9,7 @@ export default ({ header, content }: { header: any; content: any }) =>
     <box heightRequest={700}>
         <box
             widthRequest={500}
+            spacing={5}
             cssClasses={['widgetBackground', 'backgroundSection']}
             orientation={Gtk.Orientation.VERTICAL}
             valign={Gtk.Align.START}

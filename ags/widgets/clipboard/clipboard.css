@@ -1,5 +1,5 @@
 #clipboard { border-radius: 0.4rem; }
-list { padding: 1rem; }
+list { padding: 0.7rem 0.9rem 0rem 0.9rem; }
 
 /* Clipboard item */
 list row {
