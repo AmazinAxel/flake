@@ -18,9 +18,8 @@
       adwaita-icon-theme # Icons for GTK apps
       waycorner # Hotcorners
       wl-clipboard # Astal clipboard utils
-      gammastep # Blue light filter
+      wl-gammarelay-rs # Blue light filter
       gpu-screen-recorder # Screen clipping & record tool
-      xwayland-satellite # xwayland support
 
       # Desktop applications
       gthumb # Image & video viewer & editor
@@ -49,9 +48,20 @@
   ];
 
   programs = {
-    niri = {
+    sway = {
       enable = true;
-      useNautilus = false;
+      wrapperFeatures.gtk = true;
+      #xwayland = false;
+    };
+    uwsm = {
+      enable = true;
+      waylandCompositors = {
+        sway = {
+          prettyName = "Sway";
+          comment = "Sway compositor managed by UWSM";
+          binPath = "/run/current-system/sw/bin/sway";
+        };
+      };
     };
     gpu-screen-recorder.enable = true; # Clipping & recording software
 
@@ -122,7 +132,7 @@
     greetd = { # Autologin
       enable = true;
       settings.default_session = {
-        command = "niri-session";
+        command = "uwsm start default";
         user = "alec";
       };
     };

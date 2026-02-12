@@ -1,5 +1,4 @@
 {
-  programs.niri.settings.binds = {
     "Mod+Return".action.spawn = "foot";
     "Mod+Z".action.spawn = [ "ags" "toggle" "bar" ];
     "Mod+X".action.spawn = [ "ags" "toggle" "quickSettings" ];

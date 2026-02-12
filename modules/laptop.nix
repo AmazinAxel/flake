@@ -1,4 +1,4 @@
 { pkgs, ... }: {
   environment.systemPackages = [ pkgs.batsignal ];
-  # todo move batsignal niri startup action here
+  # todo move batsignal sway startup action here
 }

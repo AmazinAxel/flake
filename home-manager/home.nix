@@ -1,8 +1,7 @@
 { inputs, pkgs, ... }: {
   imports = [
-    #./niri/keybinds.nix
-    #./niri/niri.nix
-    #./niri/rules.nix
+    ./sway/keybinds.nix
+    ./sway/sway.nix
 
     ./vscode.nix
     ./fish.nix
@@ -14,7 +13,6 @@
     ./swappy.nix
 
     inputs.ags.homeManagerModules.default
-    #inputs.niri.homeModules.niri
   ];
 
   programs = {
@@ -50,6 +48,7 @@
       package = pkgs.bibata-cursors;
       size = 24;
       gtk.enable = true;
+      sway.enable = true;
     };
   };
 
@@ -60,11 +59,6 @@
   };
 
   xdg = {
-    # Niri config until hm niri/kdl config merged upstream
-    configFile."niri/config.kdl".source = ./niri/config.kdl;
-
-    portal.config.niri."org.freedesktop.impl.portal.FileChooser" = "gtk";
-
     dataFile."fonts" = { # Symlink fonts
       target = "./fonts";
       source = ./fonts;
