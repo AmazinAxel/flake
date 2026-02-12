@@ -73,7 +73,7 @@ calendar, .quickSettings {
   line-height: 1.2rem;
 }
 
-#launcher entry, window .backgroundSection .header label {
+#launcher entry, window .backgroundSection .header:first-child {
   background: transparent;
   color: @light3;
   outline-offset: -3px;
@@ -81,14 +81,11 @@ calendar, .quickSettings {
   font-family: 'Hammersmith One';
   border-radius: 0.4rem;
 }
-.backgroundSection .header label {
+.backgroundSection .header:first-child {
   text-shadow: 0 0 10px @light3;
   font-size: 2rem;
 }
 
 /* Record menu */
-#recordMenu label {
-  font-size: 1.5rem;
-  padding: 0.5rem;
-  text-shadow: 0 0 20px @light3;
-}
+#recordMenu label { font-size: 2.2rem; }
+#recordMenu image { -gtk-icon-shadow: 0 0 10px @light3; }

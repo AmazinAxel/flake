@@ -83,12 +83,12 @@ export default () => <window
             };
         }}/>
         <BackgroundSection
+            height={700} width={500}
             header={<label $type="overlay" label="Clipboard"/>}
             content={<Gtk.ScrolledWindow
                 hscrollbarPolicy={Gtk.PolicyType.NEVER}
                 vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
                 heightRequest={500}
-                widthRequest={400}
             >
                 {list}
             </Gtk.ScrolledWindow>}

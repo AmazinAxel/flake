@@ -32,6 +32,7 @@ export default () =>
         />
 
         <BackgroundSection
+            height={700} width={500}
             header={<entry
                 $type="overlay"
                 primaryIconName="system-search-symbolic"

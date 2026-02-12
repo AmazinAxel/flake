@@ -14,7 +14,6 @@ export default () => <window
     application={app}
     layer={Astal.Layer.OVERLAY}
     $={(self) => window = self}
-    cssClasses={['widgetBackground']}
     >
         <Gtk.EventControllerKey
             onKeyPressed={(_, key) => {
@@ -49,13 +48,15 @@ export default () => <window
             }}/>
 
         <BackgroundSection
-            header={<label $type="overlay" label="Record & Clipping"/>}
-            content={
-                <box halign={Gtk.Align.CENTER}>
-                    <image iconName={recMic((m) => (m) ? 'audio-input-microphone-symbolic' : 'microphone-disabled-symbolic')}/>
-                    <label label={recQuality((q) => q + ' quality')}/>
+            height={100} width={350}
+            
+            header={
+                <box $type="overlay" hexpand vexpand halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} spacing={8}>
+                    <image iconSize={2.0} iconName={recMic((m) => (m) ? 'audio-input-microphone-symbolic' : 'microphone-disabled-symbolic')}/>
+                    <label label={recQuality}/>
                 </box>
-            }/>
+            }
+            content={<></>}/>
     </window>
 
 export const RecordingIndicator = () =>

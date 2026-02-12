@@ -5,10 +5,10 @@ import { playlistName } from './mediaPlayer';
 // Update launcher background to wallpaper
 playlistName.subscribe(() => app.apply_css(`.backgroundOverlay { background-image: url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
 
-export default ({ header, content }: { header: any; content: any }) =>
-    <box heightRequest={700}>
+export default ({ header, content, height, width }: { header: any; content: any, height: number, width: number }) =>
+    <box heightRequest={height}>
         <box
-            widthRequest={500}
+            widthRequest={width}
             spacing={5}
             cssClasses={['widgetBackground', 'backgroundSection']}
             orientation={Gtk.Orientation.VERTICAL}
