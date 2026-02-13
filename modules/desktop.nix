@@ -53,16 +53,15 @@
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;
-      xwayland.enable = false;
+      #xwayland.enable = false;
+      #wrapperFeatures.base = false;
     };
     uwsm = {
       enable = true;
-      waylandCompositors = {
-        sway = {
-          prettyName = "Sway";
-          comment = "Sway compositor managed by UWSM";
-          binPath = "/run/current-system/sw/bin/sway";
-        };
+      waylandCompositors.sway = {
+        prettyName = "Sway";
+        comment = "Sway";
+        binPath = "/run/current-system/sw/bin/sway";
       };
     };
     gpu-screen-recorder.enable = true; # Clipping & recording software
@@ -134,7 +133,7 @@
     greetd = { # Autologin
       enable = true;
       settings.default_session = {
-        command = "uwsm start default";
+        command = "uwsm start sway-uwsm.desktop";
         user = "alec";
       };
     };

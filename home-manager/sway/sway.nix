@@ -3,8 +3,8 @@
     enable = true;
     checkConfig = false;
     wrapperFeatures.gtk = true;
-    systemd.xdgAutostart = true;
-    xwayland = false;
+    #systemd.enable = false; # UWSM handles session management
+    #xwayland = false;
 
     config = {
       # super key
@@ -12,6 +12,16 @@
       bars = []; # No default ugly sway bar
       gaps.inner = 5;
 
+#damage tracking incremental
+#focus_follows_mouse yes
+#default_border pixel
+#default_floating_border pixel
+#unfocused_floating_opacity 0.95
+
+#output * render_direct_scanout on
+#output * adaptive_sync on
+#output * max_render_time 6
+#output * scale_filter nearest
       focus = {
         newWindow = "focus";
         followMouse = "always"; # "yes"
@@ -97,6 +107,7 @@
       floating.border = 3;
 
       startup = [
+        { command = "ags run"; } # Should have started by default
         { command = "gammastep -O 4500"; }
         { command = "fcitx5 -d"; }
         { command = "batsignal -w 20 -c 5 -d 0 -a Low battery"; }
