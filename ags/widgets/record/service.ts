@@ -15,7 +15,7 @@ export const [ recQuality, setRecQuality ] = createState('Ultra');
 let rec: AstalIO.Process | null = null;
 let file: string;
 
-const getFocusedMonitor = () => JSON.parse(exec(['niri', 'msg', '-j', 'focused-output'])).name;
+const getFocusedMonitor = () => JSON.parse(exec(['swaymsg', '-t', 'get_outputs', '-r'])).find((o: any) => o.focused).name;
 
 export const startClippingService = () =>
 	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${getFocusedMonitor()} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)

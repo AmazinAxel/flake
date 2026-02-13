@@ -112,7 +112,6 @@
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
-    samba.enable = true;
 
     # .local resolution for homelab
     avahi = {
