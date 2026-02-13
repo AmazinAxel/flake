@@ -15,6 +15,7 @@
     teams-for-linux # Unoffical Teams client
     libreoffice # Preview Word documents & Excel sheets offline
     thunderbird # Email client
+    kicad-small # PCB design
 
     arduino-ide # Embedded microcontroller programming
     python3 # Required for Arduino IDE
