@@ -1,11 +1,11 @@
-{
-  wayland.windowManager.sway.config = {
-    keybindings = let
-      mod = "Mod4";
-      currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
-      workspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg workspace number $t'";
-      moveItemToWorkspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg move container to workspace number $t && swaymsg workspace number $t'";
-    in {
+let
+  mod = "Mod4";
+  currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
+  workspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg workspace number $t'";
+  moveItemToWorkspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg move container to workspace number $t && swaymsg workspace number $t'";
+in {
+  wayland.windowManager.sway = {
+    config.keybindings = {
       # Volume
       "XF86AudioRaiseVolume" = "exec wpctl set-volume @DEFAULT_SINK@ .05+";
       "XF86AudioLowerVolume" = "exec wpctl set-volume @DEFAULT_SINK@ .05-";
@@ -57,15 +57,18 @@
       "control+${mod}+shift+right" = moveItemToWorkspace "+";
       "control+${mod}+shift+left" = moveItemToWorkspace "-";
 
-      # Scroll through workspaces
-      "${mod}+button4" = workspace "+";
-      "${mod}+button5" = workspace "-";
-
       "${mod}+shift+F" = "togglefloating"; # Make window non-tiling
       "F11" = "fullscreen toggle"; # Fullscreen
       "${mod}+Q" = "kill"; # Close window
 
       "${mod}+tab" = "workspace back_and_forth";
     };
+    # Scroll through workspaces
+    extraConfig = ''
+      bindsym --whole-window Mod4+button4 ${workspace "+"}
+      bindsym --whole-window Mod4+button5 ${workspace "-"}
+      bindsym --whole-window Control+Mod4+button4 ${moveItemToWorkspace "+"}
+      bindsym --whole-window Control+Mod4+button5 ${moveItemToWorkspace "-"}
+    '';
   };
 }

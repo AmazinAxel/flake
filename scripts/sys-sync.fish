@@ -23,7 +23,7 @@ if test -n "$isDirty"
     echo "[Sync] System flake is dirty - not updating system"
 else
     git pull
-    sudo nixos-rebuild switch --flake /home/alec/Projects/flake/
+    sudo nixos-rebuild boot --flake /home/alec/Projects/flake/
 end
 
 # Update last sync time for Astal integration

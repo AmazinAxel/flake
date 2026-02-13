@@ -3,25 +3,24 @@
     enable = true;
     checkConfig = false;
     wrapperFeatures.gtk = true;
-    #systemd.enable = false; # UWSM handles session management
-    #xwayland = false;
+    xwayland = false;
 
     config = {
-      # super key
-      modifier = "Mod4";
+      modifier = "Mod4"; # Super
       bars = []; # No default ugly sway bar
       gaps.inner = 5;
 
-#damage tracking incremental
-#focus_follows_mouse yes
-#default_border pixel
-#default_floating_border pixel
-#unfocused_floating_opacity 0.95
+      #damage tracking incremental
+      #focus_follows_mouse yes
+      #default_border pixel
+      #default_floating_border pixel
+      #unfocused_floating_opacity 0.95
 
-#output * render_direct_scanout on
-#output * adaptive_sync on
-#output * max_render_time 6
-#output * scale_filter nearest
+      #output * render_direct_scanout on
+      #output * adaptive_sync on
+      #output * max_render_time 6
+      #output * scale_filter nearest
+
       focus = {
         newWindow = "focus";
         followMouse = "always"; # "yes"
@@ -31,13 +30,18 @@
 
       input = {
         "*".xkb_variant = "nodeadkeys";
-        "type:touchpad".tap = "enabled";
-        "type:touchpad".drag_lock = "disable";
+        "type:pointer" = {
+          accel_profile = "flat";
+          pointer_accel = "-0.1";
+        };
+        "type:touchpad" = {
+          tap = "enabled";
+          drag_lock = "disable";
+        };
         "type:keyboard" = {
           repeat_delay = "300";
           repeat_rate = "30";
         };
-        
       };
 
       colors = let # Color vars
@@ -62,7 +66,7 @@
           background = blue0;
           border = blue0;
           childBorder = blue0;
-          indicator = dark4;
+          indicator = blue0;
           text = white2;
         };
 
@@ -70,7 +74,7 @@
           background = blue0;
           border = blue0;
           childBorder = blue0;
-          indicator = dark0;
+          indicator = blue0;
           text = white1;     
         };
 
@@ -107,11 +111,10 @@
       floating.border = 3;
 
       startup = [
-        { command = "ags run"; } # Should have started by default
-        { command = "gammastep -O 4500"; }
         { command = "fcitx5 -d"; }
         { command = "batsignal -w 20 -c 5 -d 0 -a Low battery"; }
-        { command = "wl-gammarelay-rs && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
+        { command = "wl-gammarelay-rs"; }
+        { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
       ];
     };
   };

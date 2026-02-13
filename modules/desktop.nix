@@ -53,8 +53,7 @@
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;
-      #xwayland.enable = false;
-      #wrapperFeatures.base = false;
+      xwayland.enable = false;
     };
     uwsm = {
       enable = true;
