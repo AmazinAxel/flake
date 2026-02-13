@@ -1,38 +1,33 @@
 { pkgs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
-
-    checkConfig = true;
+    checkConfig = false;
     wrapperFeatures.gtk = true;
     systemd.xdgAutostart = true;
     xwayland = false;
+
     config = {
       # super key
       modifier = "Mod4";
       bars = []; # No default ugly sway bar
-      gaps = {
-        outer = 0;
-        inner = 5;
-        smartBorders = "no_gaps";
-        smartGaps = true;
-      };
+      gaps.inner = 5;
 
-      focus.newWindow = "focus";
+      focus = {
+        newWindow = "focus";
+        followMouse = "always"; # "yes"
+      };
 
       workspaceAutoBackAndForth = true;
 
       input = {
         "*".xkb_variant = "nodeadkeys";
         "type:touchpad".tap = "enabled";
+        "type:touchpad".drag_lock = "disable";
         "type:keyboard" = {
-          repeat_delay = "200";
+          repeat_delay = "300";
           repeat_rate = "30";
         };
-      };
-
-      output = { # Monitors
-        #"*".scale = "1.3";
-        "HDMI-A-1".pos = "1280 0";
+        
       };
 
       colors = let # Color vars
@@ -97,34 +92,16 @@
       window = {
         titlebar = false;
         border = 3;
-        #commands = [
-        #  {
-        #    floating = false;
-        #    criteria.class = "Minecraft";
-        #  }
-        #];
-        hideEdgeBorders = "smart"; # or "both" or "none"
       };
 
       floating.border = 3;
-
-      # Windows that should be opened in floating mode
-      #floating = [
-      #  { title = ""; }
-      #  { class = ""; }
-      #];
 
       startup = [
         { command = "gammastep -O 4500"; }
         { command = "fcitx5 -d"; }
         { command = "batsignal -w 20 -c 5 -d 0 -a Low battery"; }
+        { command = "wl-gammarelay-rs && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
       ];
     };
-
-    /*extraSessionCommands = ''
-      export SDL_VIDEODRIVER=wayland
-      export QT_QPA_PLATFORM=wayland
-      export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-    '';*/
   };
 }

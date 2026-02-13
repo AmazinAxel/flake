@@ -3,28 +3,30 @@ import { createState, For } from "ags"
 import { createSubprocess, exec } from 'ags/process';
 
 export const [ workspaces, setWorkspaces ] = createState(
-  [{ "idx": 1, "is_focused": true }]
+  [{ id: 1, focused: true }]
 );
 
-const eventStream = createSubprocess('', ['niri', 'msg', '-j', 'event-stream']);
-eventStream.subscribe(() => {
-  const recentEvent = JSON.parse(eventStream.peek());
-  let workspaceJSON;
-  if (recentEvent["WorkspacesChanged"]) {
-    workspaceJSON = recentEvent["WorkspacesChanged"]["workspaces"];
-  } else if (
-    recentEvent["WorkspaceActivated"] ||
-    recentEvent["WorkspaceActiveWindowChanged"] ||
-    recentEvent["WorkspaceUrgencyChanged"]
-  ) {
-    workspaceJSON = JSON.parse(exec(['niri', 'msg', '-j', 'workspaces']));
-  } else return;
-  setWorkspaces(workspaceJSON.slice().sort(
-    (a: { output: string, idx: number }, b: { output: string, idx: number }) =>
-      a.output.localeCompare(b.output) || a.idx - b.idx) // Sort by monitor name then by id
-    .slice(0, Math.min((workspaceJSON.length - 1), 8)) // Dont show more than 8 workspaces
+const updateWorkspaces = () =>
+  setWorkspaces(
+    JSON.parse(exec(['swaymsg', '-t', 'get_workspaces'])).slice()
+      .sort((a: { output: string, id: number }, b: { output: string, id: number }) =>
+        a.output.localeCompare(b.output) || a.id - b.id) // Sort by monitor name then by id
+      .slice(0, 8) // Dont show more than 8 workspaces
   );
-});
+
+const eventStream = createSubprocess('', ['swaymsg', '-t', 'subscribe', '-m', '["workspace"]']);
+eventStream.subscribe(() => updateWorkspaces());
+updateWorkspaces();
+
+function switchWorkspace(direction: number) {
+  const ws = JSON.parse(exec(['swaymsg', '-t', 'get_workspaces']));
+  const current = ws.find((w: { focused: boolean }) => w.focused);
+  if (!current) return;
+  let target = current.num + direction;
+  if (target > 10) target = 1;
+  if (target < 1) target = 10; // todo better logic
+  exec(['swaymsg', 'workspace', 'number', String(target)]);
+};
 
 export const Workspaces = () =>
   <box
@@ -33,12 +35,12 @@ export const Workspaces = () =>
   >
     <Gtk.EventControllerScroll
       flags={Gtk.EventControllerScrollFlags.VERTICAL}
-      onScroll={(_, __, y) => { exec(['niri', 'msg', 'action', 'focus-workspace-' + ((y < 0) ? 'up' : 'down')]) }}
+      onScroll={(_, __, y) => { switchWorkspace(y > 0 ? 1 : -1) }}
     />
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
       <For each={workspaces}>
         {(workspace) => {
-          const classes = (workspace["is_focused"])
+          const classes = (workspace["focused"])
             ? ['workspaceBtn', 'active']
             : ['workspaceBtn'];
 

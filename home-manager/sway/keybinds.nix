@@ -2,66 +2,69 @@
   wayland.windowManager.sway.config = {
     keybindings = let
       mod = "Mod4";
+      currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
+      workspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg workspace number $t'";
+      moveItemToWorkspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg move container to workspace number $t && swaymsg workspace number $t'";
     in {
-      "${mod}+Shift+r" = "exec ags -q && ags"; # Restart Ags 
-      "${mod}+Shift+c" = "reload"; # Sway reload for quick config
-      # Volume & media controls
-      XF86AudioRaiseVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05+";
-      XF86AudioLowerVolume = "exec wpctl set-volume @DEFAULT_SINK@ .05-";
-      XF86AudioMute = "exec wpctl set-mute @DEFAULT_SINK@ toggle";
+      # Volume
+      "XF86AudioRaiseVolume" = "exec wpctl set-volume @DEFAULT_SINK@ .05+";
+      "XF86AudioLowerVolume" = "exec wpctl set-volume @DEFAULT_SINK@ .05-";
+      "XF86AudioMute" = "exec wpctl set-mute @DEFAULT_SINK@ toggle";
 
-      # Brightness controls
-      XF86MonBrightnessUp = "exec brightnessctl set +5%";
-      XF86MonBrightnessDown = "exec brightnessctl set -5%";
+      # Brightness
+      "XF86MonBrightnessUp" = "exec brightnessctl set +15%";
+      "XF86MonBrightnessDown" = "exec brightnessctl set -15%";
 
-      # Quick application access
-      XF86PowerOff = "exec ags -t powermenu"; # Power menu
-      "${mod}+e" = "exec microsoft-edge-stable";
-      "${mod}+Return" = "exec foot"; # Terminal
-      "${mod}+v" = "exec copyq toggle"; # Clipboard TODO replace w/ ags
-      "${mod}+space" = "exec ags -t launcher"; # App laucher
-      "${mod}+period" = "exec emote"; # Emoji picker TODO migrate to ags
-      # TODO: Make Super + C hide the last notification
+      # Power menu
+      "XF86PowerOff" = "exec ags toggle powermenu";
+      "${mod}+shift+S" = "exec toggle powermenu";
 
-      # Screen recording
-      "${mod}+R" = "exec ags -r 'recorder.start()'";
-      "Control+${mod}+R" = "exec ags -r 'recorder.start(true)'"; # Custom video selection size
-      Print = "exec ags -r 'recorder.screenshot()'";
-      "Shift+Print" = "exec ags -r 'recorder.screenshot(true)'"; # Fullscreen screensot
+      "${mod}+E" = "exec librewolf"; # Browser
+      "${mod}+return" = "exec foot"; # Terminal
+      "${mod}+Z" = "exec ags toggle bar"; # Show/hide bar
+      "${mod}+V" = "exec ags toggle clipboard"; # Clipboard
+      "${mod}+space" = "exec ags toggle launcher"; # App laucher
+      "${mod}+period" = "exec ags toggle emojiPicker"; # Emoji picker
+      "${mod}+X" = "exec ags toggle quickSettings"; # Quicksettings
+      "${mod}+A" = "exec ags toggle chat"; # Chat
+      "${mod}+C" = "exec ags request hideNotif"; # Clear last notification
+      "${mod}+R" = "exec ags request record"; # Clear last notification
+      "${mod}+control+D" = "exec ags request toggleDND"; # Clear last notification
 
-      # Mpc player manipluation (Ags integration)
-      # TODO: Add Super + , (left arrow) for previous track
-      # TODO: Add Super + . (right arrow) for next track
-      # TODO: Add super + / to play/pause MPC 
+      "${mod}+control+period" = "exec ags request 'media next'"; # Next mpd song
+      "${mod}+control+comma" = "exec ags request 'media prev'"; # Previous mpd song
+      "${mod}+greater" = "exec ags request 'media nextPlaylist'"; # Next mpd playlist (Shift+.)
+      "${mod}+less" = "exec ags request 'media prevPlaylist'"; # Previous mpd playlist (Shift+,)
+      "${mod}+slash" = "exec ags request 'media toggle'"; # Toggle song status
 
-      # Widow positioning
-      "${mod}+Shift+Left" = "move left";
-      "${mod}+Shift+Right" = "move right";
-      "${mod}+Shift+Up" = "move up";
-      "${mod}+Shift+Down" = "move down";
+      "Print" = ''exec wayshot -s "$(slurp)" --stdout | wl-copy''; # Screenshot
 
-      # Workspace, window, tab manipulation
-      "Control+${mod}+Right" = "workspace next";
-      "Control+${mod}+Left" = "workspace prev";
-      "Control+${mod}+bracketright" = "workspace next";
-      "Control+${mod}+bracketleft" = "workspace prev";
-      "Control+${mod}+Button2" = "workspace next";
-      "Control+${mod}+Button1" = "workspace prev";
-      "Control+${mod}+Shift+Right" = "move to workspace next";
-      "Control+${mod}+Shift+Left" = "move to workspace prev";
-      "${mod}+s" = "togglefloating"; # Make window non-tiling
-      F11 = "fullscreen toggle"; # F11 functionality
-      "${mod}+q" = "kill"; # Close window
+      # Focus
+      "${mod}+left" = "focus left";
+      "${mod}+right" = "focus right";
+      "${mod}+up" = "focus up";
+      "${mod}+down" = "focus down";
+
+      # Window positioning
+      "${mod}+shift+left" = "move left";
+      "${mod}+shift+right" = "move right";
+      "${mod}+shift+up" = "move up";
+      "${mod}+shift+down" = "move down";
+
+      # Workspaces
+      "control+${mod}+right" = workspace "+";
+      "control+${mod}+left" = workspace "-";
+      "control+${mod}+shift+right" = moveItemToWorkspace "+";
+      "control+${mod}+shift+left" = moveItemToWorkspace "-";
 
       # Scroll through workspaces
-      "${mod}+Button4" = "workspace next";
-      "${mod}+Button5" = "workspace prev";
-      
-      # Move and resize windows
-      "${mod}+Button1" = "move";
-      "${mod}+Button3" = "resize";
+      "${mod}+button4" = workspace "+";
+      "${mod}+button5" = workspace "-";
 
-      # Alt+tab functionality
+      "${mod}+shift+F" = "togglefloating"; # Make window non-tiling
+      "F11" = "fullscreen toggle"; # Fullscreen
+      "${mod}+Q" = "kill"; # Close window
+
       "${mod}+tab" = "workspace back_and_forth";
     };
   };

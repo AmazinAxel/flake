@@ -12,14 +12,16 @@
       swaybg # Wallpaper app
       libnotify # Astal internal notifications
       mpc # CLI for Astal media player
-      cifs-utils # Needed for mounting Samba NAS drive
-      rsync # Quickly pull files from NAS drive
+      wayshot # Screenshot
+      slurp # Screenshot selection
       brightnessctl # Screen brightness CLI for Astal
       adwaita-icon-theme # Icons for GTK apps
       waycorner # Hotcorners
       wl-clipboard # Astal clipboard utils
       wl-gammarelay-rs # Blue light filter
       gpu-screen-recorder # Screen clipping & record tool
+      cifs-utils # Needed for mounting Samba NAS drive
+      rsync # Quickly pull files from NAS drive
 
       # Desktop applications
       gthumb # Image & video viewer & editor
@@ -51,7 +53,7 @@
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;
-      #xwayland = false;
+      xwayland.enable = false;
     };
     uwsm = {
       enable = true;
