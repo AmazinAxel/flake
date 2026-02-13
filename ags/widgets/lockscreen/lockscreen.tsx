@@ -37,6 +37,7 @@ export default () =>
         exclusivity={Astal.Exclusivity.IGNORE}
         keymode={Astal.Keymode.EXCLUSIVE}
         anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
+        visible={true}
     >
         <overlay>
             <label
