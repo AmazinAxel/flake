@@ -10,17 +10,6 @@
       bars = []; # No default ugly sway bar
       gaps.inner = 5;
 
-      #damage tracking incremental
-      #focus_follows_mouse yes
-      #default_border pixel
-      #default_floating_border pixel
-      #unfocused_floating_opacity 0.95
-
-      #output * render_direct_scanout on
-      #output * adaptive_sync on
-      #output * max_render_time 6
-      #output * scale_filter nearest
-
       focus = {
         newWindow = "focus";
         followMouse = "always"; # "yes"
@@ -109,6 +98,7 @@
       };
 
       floating.border = 3;
+      output."*".adaptive_sync = "on"; # VRR
 
       startup = [
         { command = "fcitx5 -d"; }
@@ -117,5 +107,9 @@
         { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
       ];
     };
+    # Disable middle mouse paste
+    extraConfig = ''
+      primary_selection disabled
+    '';
   };
 }

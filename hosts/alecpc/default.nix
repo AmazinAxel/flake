@@ -6,7 +6,7 @@
   ];
 
   networking.hostName = "alecpc";
-  #home-manager.users.alec.imports = [ ./hm.nix ];
+  home-manager.users.alec.imports = [ ./hm.nix ];
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [

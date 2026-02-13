@@ -1,9 +1,11 @@
 {
-  wayland.windowManager.hyprland.settings = {
-    exec-once = [ # Autostart apps
-      "[workspace 1 silent] librewolf"
-    ];
-  
-    bind = [ "Super, D, exec, screenshot" ];# Custom side mouse key for quick screenshots
+  wayland.windowManager.sway = {
+    config = {
+      startup = [{ command = "librewolf"; }];
+      keybindings."Mod4+D" = ''exec wayshot -s "$(slurp)" --stdout | wl-copy''; # Side mouse key screenshot
+    };
+    extraConfig = ''
+      for_window [app_id="librewolf"] move to workspace 1; workspace 1
+    '';
   };
 }

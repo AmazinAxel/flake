@@ -1,36 +1,43 @@
 {
-  wayland.windowManager.hyprland.settings = {
-    # Nvidia fix
-    cursor.no_hardware_cursors = true;
+  wayland.windowManager.sway = {
+    config = {
+      output = {
+        "DP-1".position = "1920 0";
+        "HDMI-A-1" = {
+          resolution = "1920x1080@60Hz";
+          position = "0 0";
+        };
+      };
 
-    monitor = [
-      "DP-1    , preferred,     auto,     auto"
-      "HDMI-A-1, 1920x1080@60, auto-left,  auto"
-    ];
+      workspaceOutputAssign = [
+        { workspace = "1"; output = "HDMI-A-1"; }
+        { workspace = "2"; output = "HDMI-A-1"; }
+        { workspace = "3"; output = "HDMI-A-1"; }
+        { workspace = "4"; output = "DP-1"; }
+        { workspace = "5"; output = "DP-1"; }
+        { workspace = "6"; output = "DP-1"; }
+        { workspace = "7"; output = "DP-1"; }
+        { workspace = "8"; output = "DP-1"; }
+        { workspace = "9"; output = "DP-1"; }
+      ];
 
-    workspace = [
-      "1, monitor:HDMI-A-1"
-      "2, monitor:HDMI-A-1"
-      "3, monitor:HDMI-A-1"
-      "4, monitor:DP-1"
-      "5, monitor:DP-1"
-      "6, monitor:DP-1"
-      "7, monitor:DP-1"
-      "8, monitor:DP-1"
-      "9, monitor:DP-1"
-    ];
+      startup = [
+        { command = "discord"; }
+        { command = "librewolf"; }
+      ];
+    };
 
-    # Set __GL_THREADED_OPTIMIZATIONS to 0 on Prism launcher
-    env = [
-      "LIBVA_DRIVER_NAME,nvidia"
-      "GBM_BACKEND,nvidia-drm"
-      "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-      "NVD_BACKEND,direct" # For VAAPI
-    ];
+    extraConfig = ''
+      for_window [app_id="discord"] move to workspace 1; workspace 1
+      for_window [app_id="librewolf"] move to workspace 4; workspace 4
+    '';
 
-    exec-once = [ # Autostart apps
-      "[workspace 1 silent] discord"
-      "[workspace 4 silent] librewolf"
-    ];
+    extraSessionCommands = ''
+      export LIBVA_DRIVER_NAME=nvidia
+      export GBM_BACKEND=nvidia-drm
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export NVD_BACKEND=direct
+      export WLR_NO_HARDWARE_CURSORS=1
+    '';
   };
 }
