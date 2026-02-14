@@ -36,24 +36,22 @@
 }
 .time .day { font-size: 0.9rem; }
 
-/* Workspace list */
-#workspaceList {
-    min-height: 18rem; /* Combined height of workspace buttons */
-}
-#workspaceList .barElement {
-    padding: 0.2rem 0;
-}
-#bar .workspaceBtn {
-    background-color: @dark4;
-    min-height: 1.4rem;
+/* Workspace view */
+#workspaces .barElement { padding: 0.2rem 0; }
+#workspaces .workspaceBtn {
+    background-color: @dark2;
+    min-width: 1rem;
+    min-height: 1.1rem;
     border-radius: 5px;
+    transition: 0.1s;
     margin: 0.25rem 0.45rem;
 }
-#bar .workspaceBtn.active {
+#workspaces .workspaceBtn.active {
     background-color: @blue2;
     box-shadow: 0 0 5px @blue3;
     min-height: 1.6rem;
 }
+#workspaces .workspaceBtn.occupied { background-color: @dark4; min-height: 1.4rem; }
 
 /* Recording indicator */
 .recIndicator {

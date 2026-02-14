@@ -39,7 +39,7 @@ calendar, .quickSettings {
   border-radius: 5px;
   background-color: @dark2;
 }
-#quickSettings, #calendar { padding: 5.5px 5px; }
+#quickSettings, #calendar { padding: 6px 6px; }
 
 #emojiPicker entry {
   background-color: @dark3;

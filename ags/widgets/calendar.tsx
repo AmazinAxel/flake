@@ -8,6 +8,7 @@ export default () =>
     anchor={BOTTOM | LEFT}
     application={app}
     layer={Astal.Layer.OVERLAY}
+    marginLeft={35}
   >
     <Gtk.Calendar/>
   </window>

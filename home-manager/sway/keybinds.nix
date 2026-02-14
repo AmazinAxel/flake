@@ -1,8 +1,8 @@
 let
   mod = "Mod4";
   currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
-  workspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg workspace number $t'";
-  moveItemToWorkspace = direction: "exec sh -c 'c=${currentWorkspace}; t=$((c ${direction} 1)); [ $t -gt 10 ] && t=1; [ $t -lt 1 ] && t=10; swaymsg move container to workspace number $t && swaymsg workspace number $t'";
+  workspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -eq $current ] || swaymsg workspace number $target'";
+  moveItemToWorkspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -eq $current ] || swaymsg move container to workspace number $target && swaymsg workspace number $target'";
 in {
   wayland.windowManager.sway = {
     config.keybindings = {
@@ -72,10 +72,10 @@ in {
     };
     # Scroll through workspaces
     extraConfig = ''
-      bindsym --whole-window Mod4+button4 ${workspace "+"}
-      bindsym --whole-window Mod4+button5 ${workspace "-"}
-      bindsym --whole-window Control+Mod4+button4 ${moveItemToWorkspace "+"}
-      bindsym --whole-window Control+Mod4+button5 ${moveItemToWorkspace "-"}
+      bindsym --whole-window Mod4+button5 ${workspace "+"}
+      bindsym --whole-window Mod4+button4 ${workspace "-"}
+      bindsym --whole-window Control+Mod4+button5 ${moveItemToWorkspace "+"}
+      bindsym --whole-window Control+Mod4+button4 ${moveItemToWorkspace "-"}
     '';
   };
 }

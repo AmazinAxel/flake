@@ -31,6 +31,7 @@
       nemo-fileroller # Create archives in nemo
       file-roller # Open archives in nemo
       discord # Voice & video chat app
+      vesktop
       slack # Hack Club
       filezilla # FTP client
       prismlauncher # Minecraft launcher

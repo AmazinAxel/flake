@@ -10,6 +10,7 @@ export default () =>
         anchor={BOTTOM | LEFT}
         application={app}
         layer={Astal.Layer.OVERLAY}
+        marginLeft={35}
     >
         <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
             <box marginBottom={5}>
