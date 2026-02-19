@@ -20,6 +20,7 @@
       wl-clipboard # Astal clipboard utils
       wl-gammarelay-rs # Blue light filter
       gpu-screen-recorder # Screen clipping & record tool
+      samba # Planning app sync
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
 
@@ -113,6 +114,12 @@
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
+
+    # Prevent crashes
+    earlyoom = {
+      enable = true;
+      freeMemThreshold = 5; # 5%
+    };
 
     # .local resolution for homelab
     avahi = {
