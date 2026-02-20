@@ -30,7 +30,7 @@ import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
 import { monitorBrightness } from './lib/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
-import { workspaces } from './widgets/bar/workspaces';
+import workspaces from './widgets/bar/workspaces';
 
 
 app.start({
@@ -46,7 +46,7 @@ app.start({
         osd();
         powermenu();
         quickSettings();
-        //lockscreen();
+        lockscreen();
         workspaces();
 
         monitorBrightness();

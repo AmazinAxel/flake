@@ -25,6 +25,8 @@
     qpwgraph # Audio output visualizer
   ];
 
+  programs.nix-ld.enable = true; # For dynamic executables
+
   # Bootloader settings (w/ AMD GPU support)
   boot = {
     initrd = {

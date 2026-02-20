@@ -38,12 +38,12 @@ function switchWorkspace(direction: number) {
 };
 
 const showWorkspaces = () => {
-  workspaceWindow!.visible = true;
+  workspaceWindow.visible = true;
   count++;
-  timeout(1000, () => {
+  timeout(500, () => {
     count--;
     if (count === 0)
-      workspaceWindow!.visible = false;
+      workspaceWindow.visible = false;
   });
 };
 
@@ -54,7 +54,7 @@ export default () =>
     layer={Astal.Layer.OVERLAY}
     application={app}
     visible={false}
-    $={(self) => workspaceWindow = self}
+    $={(self) => workspaceWindow = self }
   >
     <box orientation={Gtk.Orientation.VERTICAL}>
       <Gtk.EventControllerScroll
