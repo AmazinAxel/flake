@@ -16,7 +16,7 @@ const updateWorkspaces = () => {
   setWorkspaces(
     [...Array(9).keys()].map((i) => {
       const id = i + 1;
-      const ws = active.find((w: { id: number }) => w.id === id);
+      const ws = active.find((w: { num: number }) => w.num === id);
       return { id, focused: ws?.focused ?? false, occupied: !!ws?.representation };
     })
   );
@@ -32,7 +32,7 @@ updateWorkspaces();
 function switchWorkspace(direction: number) {
   const ws = JSON.parse(exec(['swaymsg', '-t', 'get_workspaces']));
   const current = ws.find((w: { focused: boolean }) => w.focused);
-  const target = Math.min(9, Math.max(1, current.id + direction));
+  const target = Math.min(9, Math.max(1, current.num + direction));
   if (target === current.id) return; // Don't switch to 0 or 10th workspace
   exec(['swaymsg', 'workspace', 'number', String(target)]);
 };
