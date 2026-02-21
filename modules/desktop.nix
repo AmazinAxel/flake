@@ -109,6 +109,9 @@
       };
     };
   };
+  
+  # Workaround to make samba work without needing to enable the service
+  environment.etc."samba/smb.conf".text = "[global]";
 
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscov
