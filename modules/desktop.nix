@@ -57,14 +57,6 @@
       wrapperFeatures.gtk = true;
       xwayland.enable = false;
     };
-    uwsm = {
-      enable = true;
-      waylandCompositors.sway = {
-        prettyName = "Sway";
-        comment = "Sway";
-        binPath = "/run/current-system/sw/bin/sway";
-      };
-    };
     gpu-screen-recorder.enable = true; # Clipping & recording software
 
     git = {
@@ -142,7 +134,7 @@
     greetd = { # Autologin
       enable = true;
       settings.default_session = {
-        command = "uwsm start sway-uwsm.desktop";
+        command = "sway";
         user = "alec";
       };
     };

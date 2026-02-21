@@ -1,4 +1,4 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, lib, ... }: {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
@@ -28,8 +28,10 @@
   programs.kdeconnect.enable = true;
 
   services = {
-    #flatpak.enable = true; # For running Sober
     xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
+
+    # Allow Sway to boot on nvidia
+    greetd.settings.default_session.command = lib.mkForce "sway --unsupported-gpu";
   };
 
   # Nvidia options --
