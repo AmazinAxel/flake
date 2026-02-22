@@ -52,6 +52,7 @@
   ];
 
   programs = {
+    nix-ld.enable = true; # For dynamic executables
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;

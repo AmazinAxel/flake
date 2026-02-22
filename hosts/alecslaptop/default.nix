@@ -34,7 +34,6 @@
   programs = {
     steam.enable = true; # Gaming
     kdeconnect.enable = true; # Device integration
-    nix-ld.enable = true; # For dynamic executables
   };
 
   # Bootloader settings
