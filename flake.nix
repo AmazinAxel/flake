@@ -15,6 +15,10 @@
       url = "github:aylur/astal";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    planning = {
+      url = "github:AmazinAxel/Planning";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { home-manager, nixpkgs, ... }@inputs: {

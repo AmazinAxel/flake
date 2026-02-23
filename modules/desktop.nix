@@ -38,6 +38,8 @@
       prismlauncher # Minecraft launcher
       claude-code
 
+      inputs.planning.packages.${system}.default
+
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
