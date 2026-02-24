@@ -19,14 +19,18 @@
         { workspace = "2"; output = "HDMI-A-1"; }
         { workspace = "3"; output = "HDMI-A-1"; }
         { workspace = "4"; output = "HDMI-A-1"; }
-        { workspace = "5"; output = "DP-1"; }
+        { workspace = "5"; output = "eDP-1"; }
+        { workspace = "6"; output = "eDP-1"; }
+        { workspace = "7"; output = "eDP-1"; }
+        { workspace = "8"; output = "eDP-1"; }
+        { workspace = "9"; output = "eDP-1"; }
       ];
       keybindings."Mod4+D" = ''exec wayshot -s "$(slurp)" --stdout | wl-copy''; # Side mouse key screenshot
     };
     extraConfig = ''
-      for_window [app_id="librewolf"] move to workspace 3; workspace 3
-      for_window [app_id="thunderbird"] move to workspace 7; workspace 7
-      for_window [app_id="teams-for-linux"] move to workspace 8; workspace 8
+      for_window [app_id="librewolf"] move to workspace 3, workspace 3
+      for_window [app_id="thunderbird"] move to workspace 7, workspace 7
+      for_window [app_id="teams-for-linux"] move to workspace 8, workspace 8
     '';
   };
 }

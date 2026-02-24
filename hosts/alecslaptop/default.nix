@@ -24,7 +24,7 @@
     thunderbird # Email client
     worldpainter # Minecraft world generator
     chromium # Honorlock supported browser
-    kicad-small # PCB design
+    kicad # PCB design
 
     bun # All-in-one JS toolkit
     jre # For Minecraft - uses the latest stable Java runtime version
