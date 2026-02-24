@@ -104,6 +104,7 @@
         { command = "fcitx5 -d"; }
         { command = "batsignal -w 20 -c 5 -d 0 -a Low battery"; }
         { command = "wl-gammarelay-rs"; }
+        { command = "ags run"; }
         { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
       ];
     };

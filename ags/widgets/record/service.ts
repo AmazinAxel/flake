@@ -26,7 +26,7 @@ export const startRec = () => {
 	file = `${captureDir}/${now()}.mp4`;
 	const audio = (recMic.peek() == true) ? "default_output|default_input" : "default_output";
 
-	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.peek()} -w ${getFocusedMonitor()} -o ${file}`);
+	rec = AstalIO.Process.subprocess(`gpu-screen-recorder -a ${audio} -q ${recQuality.peek().toLowerCase()} -w ${getFocusedMonitor()} -o ${file}`);
 
 	setIsRec(true);
 };
