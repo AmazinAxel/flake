@@ -58,7 +58,6 @@
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;
-      xwayland.enable = false;
     };
     gpu-screen-recorder.enable = true; # Clipping & recording software
 

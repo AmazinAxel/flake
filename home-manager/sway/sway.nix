@@ -3,7 +3,6 @@
     enable = true;
     checkConfig = false;
     wrapperFeatures.gtk = true;
-    xwayland = false;
 
     config = {
       modifier = "Mod4"; # Super
