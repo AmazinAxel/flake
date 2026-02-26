@@ -39,7 +39,7 @@
       prismlauncher # Minecraft launcher
       claude-code
 
-      inputs.planning.packages.${system}.default
+      inputs.planning.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
