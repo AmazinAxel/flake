@@ -1,15 +1,17 @@
 import { Astal, Gtk } from 'ags/gtk4';
-import { createState } from "ags"
+import { createBinding, createState, For, This } from "ags"
 import { createSubprocess, exec } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
+const monitors = createBinding(app, "monitors");
 
 export const [ workspaces, setWorkspaces ] = createState(
   [...Array(9).keys()].map((i) => ({ id: i + 1, focused: false, occupied: false })) // Starting state
 );
 let workspaceWindow: Gtk.Window;
 let count = 0;
+const [ isVisible, setIsVisible ] = createState(false);
 
 const updateWorkspaces = () => {
   const active = JSON.parse(exec(['swaymsg', '-t', 'get_workspaces']));
@@ -38,43 +40,48 @@ function switchWorkspace(direction: number) {
 };
 
 const showWorkspaces = () => {
-  workspaceWindow.visible = true;
+  setIsVisible(true);
   count++;
   timeout(500, () => {
     count--;
     if (count === 0)
-      workspaceWindow.visible = false;
+      setIsVisible(false);
   });
 };
 
 export default () =>
-  <window
-    name="workspaces"
-    anchor={TOP | LEFT}
-    layer={Astal.Layer.OVERLAY}
-    application={app}
-    visible={false}
-    $={(self) => workspaceWindow = self }
-  >
-    <box orientation={Gtk.Orientation.VERTICAL}>
-      <Gtk.EventControllerScroll
-        flags={Gtk.EventControllerScrollFlags.VERTICAL}
-        onScroll={(_, __, y) => switchWorkspace(y > 0 ? 1 : -1)}
-      />
-      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
-        {[...Array(9).keys()].map((i) => i + 1).map((id) =>
-          <box cssClasses={workspaces((ws) => {
-            const w = ws.find((w) => w.id === id);
-            if (!w)
-              return ['workspaceBtn'];
+  <For each={monitors}>
+    {(monitor) => <This this={app}>
+      <window
+        name="workspaces"
+        anchor={TOP | LEFT}
+        layer={Astal.Layer.OVERLAY}
+        gdkmonitor={monitor}
+        application={app}
+        visible={isVisible}
+        $={(self) => workspaceWindow = self }
+      >
+        <box orientation={Gtk.Orientation.VERTICAL}>
+          <Gtk.EventControllerScroll
+            flags={Gtk.EventControllerScrollFlags.VERTICAL}
+            onScroll={(_, __, y) => switchWorkspace(y > 0 ? 1 : -1)}
+          />
+          <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
+            {[...Array(9).keys()].map((i) => i + 1).map((id) =>
+              <box cssClasses={workspaces((ws) => {
+                const w = ws.find((w) => w.id === id);
+                if (!w)
+                  return ['workspaceBtn'];
 
-            return w.focused
-              ? ['workspaceBtn', 'active']
-              : w.occupied
-                ? ['workspaceBtn', 'occupied']
-                : ['workspaceBtn'];
-          })}/>
-        )}
-      </box>
-    </box>
-  </window>
+                return w.focused
+                  ? ['workspaceBtn', 'active']
+                  : w.occupied
+                    ? ['workspaceBtn', 'occupied']
+                    : ['workspaceBtn'];
+              })}/>
+            )}
+          </box>
+        </box>
+      </window>
+  </This>}
+  </For>;

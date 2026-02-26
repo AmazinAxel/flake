@@ -36,7 +36,7 @@ import workspaces from './widgets/bar/workspaces';
 app.start({
     css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle + lockscreenStyle,
     main() {
-        bar()
+        bar();
         chat();
         calendar();
         clipboard();

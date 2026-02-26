@@ -3,7 +3,10 @@ import app from 'ags/gtk4/app';
 import Auth from 'gi://AstalAuth';
 import { createPoll } from 'ags/time';
 import GLib from 'gi://GLib';
-import { createState } from 'ags';
+import { createBinding, createState, For, This } from 'ags';
+const monitors = createBinding(app, "monitors");
+
+export const [ isLocked, setIsLocked ] = createState(true);
 
 const [ isAuthenticating, setIsAuthenticating ] = createState(false);
 const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'));
@@ -17,7 +20,7 @@ const checkLogin = (entry: Gtk.Entry) => {
     Auth.Pam.authenticate(password, (_, task) => {
         try {
             Auth.Pam.authenticate_finish(task);
-            app.get_window('lockscreen')?.hide();
+            setIsLocked(false);
         } catch { // Wrong password
             GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                 entry.grab_focus(); // Refocus
@@ -30,35 +33,41 @@ const checkLogin = (entry: Gtk.Entry) => {
 };
 
 export default () =>
-    <window
-        name="lockscreen"
-        application={app}
-        layer={Astal.Layer.OVERLAY}
-        exclusivity={Astal.Exclusivity.IGNORE}
-        keymode={Astal.Keymode.EXCLUSIVE}
-        anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
-        visible={true}
-    >
-        <overlay>
-            <label
-                halign={Gtk.Align.CENTER}
-                valign={Gtk.Align.CENTER}
-                label={time((time) => time!.toString())}
-                css_classes={isAuthenticating((v) => v ? ['timeout'] : [])}
-                canTarget={false}
-                $type="overlay"
-            />
-            <entry
-                hexpand
-                vexpand
-                visibility={false}
-                invisibleChar={0}
-                onActivate={checkLogin}
-                $={(self) => {
-                    app.connect('window-toggled', (_, window) =>
-                        (window.name === 'lockscreen' && window.visible)
-                        && self.grab_focus()
-                    )}}
-            />
-        </overlay>
-    </window>
+    <For each={monitors}>
+        {(monitor) => <This this={app}>
+            <window
+                name="lockscreen"
+                application={app}
+                gdkmonitor={monitor}
+                layer={Astal.Layer.OVERLAY}
+                exclusivity={Astal.Exclusivity.IGNORE}
+                keymode={Astal.Keymode.EXCLUSIVE}
+                anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
+                visible={isLocked}
+            >
+                <overlay>
+                    <label
+                        halign={Gtk.Align.CENTER}
+                        valign={Gtk.Align.CENTER}
+                        label={time((time) => time!.toString())}
+                        css_classes={isAuthenticating((v) => v ? ['timeout'] : [])}
+                        canTarget={false}
+                        $type="overlay"
+                    />
+                    <entry
+                        hexpand
+                        vexpand
+                        visibility={false}
+                        invisibleChar={0}
+                        onActivate={checkLogin}
+                        $={(self) => {
+                            self.connect('map', () => self.grab_focus());
+                            app.connect('window-toggled', (_, window) =>
+                                (window.name === 'lockscreen' && window.visible)
+                                && self.grab_focus()
+                            )}}
+                    />
+                </overlay>
+            </window>
+        </This>}
+    </For>;
