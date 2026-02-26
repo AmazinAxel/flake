@@ -10,7 +10,7 @@
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [
-    #kdePackages.kdenlive # Video editor
+    kdePackages.kdenlive # Video editor
     blockbench # Minecraft 3D modeling app
     gimp3 # Image editor
     teams-for-linux # Unoffical MS Teams client

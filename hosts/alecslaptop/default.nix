@@ -12,7 +12,7 @@
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [
-    #kdePackages.kdenlive # Video editor
+    kdePackages.kdenlive # Video editor
     blockbench # Minecraft 3D modeling app
     godot # Game engine
     gimp3 # Image editor
