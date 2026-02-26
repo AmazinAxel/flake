@@ -1,5 +1,3 @@
-import Gdk from 'gi://Gdk'
-import app from 'ags/gtk4/app'
 import { Gtk } from 'ags/gtk4'
 import { createBinding } from "ags"
 import { DND } from '../../notifications/notifications';
@@ -35,20 +33,9 @@ const DNDIcon = () =>
   <image visible={DND} iconName='notifications-disabled-symbolic'/>
 
 export const Status = () =>
-  <button
-    onClicked={() => {
-      app.get_window('calendar')?.hide();
-      app.toggle_window('quickSettings');
-    }}
-    cursor={Gdk.Cursor.new_from_name('pointer', null)}
-  >
-    <Gtk.EventControllerScroll
-      flags={Gtk.EventControllerScrollFlags.VERTICAL}
-      onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}/>
-    <box orientation={Gtk.Orientation.VERTICAL} spacing={7} cssClasses={['statusMenu']}>
-      <VolumeIcon/>
-      <BatteryWidget/>
-      <BluetoothIcon/>
-      <DNDIcon/>
-    </box>
-  </button>
+  <box orientation={Gtk.Orientation.VERTICAL} spacing={7} cssClasses={['statusMenu']}>
+    <VolumeIcon/>
+    <BatteryWidget/>
+    <BluetoothIcon/>
+    <DNDIcon/>
+  </box>

@@ -10,9 +10,9 @@
       };
 
       startup = [
-        { command = "librewolf"; }
-        { command = "thunderbird"; }
-        { command = "teams-for-linux"; }
+        { command = ''swaymsg "workspace 3; exec librewolf"''; }
+        { command = ''swaymsg "workspace 7; exec thunderbird"''; }
+        { command = ''swaymsg "workspace 8; exec teams-for-linux"''; }
       ];
       workspaceOutputAssign = [
         { workspace = "1"; output = "HDMI-A-1"; }
@@ -28,9 +28,6 @@
       keybindings."Mod4+D" = ''exec wayshot -s "$(slurp)" --stdout | wl-copy''; # Side mouse key screenshot
     };
     extraConfig = ''
-      for_window [app_id="librewolf"] move to workspace 3, workspace 3
-      for_window [app_id="thunderbird"] move to workspace 7, workspace 7
-      for_window [app_id="teams-for-linux"] move to workspace 8, workspace 8
     '';
   };
 }

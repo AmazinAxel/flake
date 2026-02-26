@@ -22,14 +22,12 @@
       ];
 
       startup = [
-        { command = "discord"; }
-        { command = "librewolf"; }
+        { command = ''swaymsg "workspace 1; exec discord"''; }
+        { command = ''swaymsg "workspace 4; exec librewolf"''; }
       ];
     };
 
     extraConfig = ''
-      for_window [app_id="discord"] move to workspace 1; workspace 1
-      for_window [app_id="librewolf"] move to workspace 4; workspace 4
     '';
 
     extraSessionCommands = ''
