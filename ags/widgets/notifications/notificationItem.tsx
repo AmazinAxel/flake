@@ -1,6 +1,5 @@
 import GLib from "gi://GLib";
 import { Gtk, Gdk } from 'ags/gtk4';
-
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 const { START, CENTER, END } = Gtk.Align
@@ -15,17 +14,12 @@ export const notificationItem = (n: Notifd.Notification) =>
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['notification']}>
         <box cssClasses={['header']}>
             <label
-                cssClasses={['app-name']}
+                cssClasses={['appName']}
                 halign={START}
                 ellipsize={Pango.EllipsizeMode.END}
                 label={capitalizeFirstLetter(n.appName ?? 'Unknown')}
             />
-            <label
-                cssClasses={['time']}
-                hexpand
-                halign={END}
-                label={time(n.time)}
-            />
+            <label hexpand halign={END} label={time(n.time)}/>
         </box>
         <box cssClasses={['content']}>
             <box orientation={Gtk.Orientation.VERTICAL}>
@@ -50,9 +44,7 @@ export const notificationItem = (n: Notifd.Notification) =>
                             cursor={Gdk.Cursor.new_from_name('pointer', null)}
                             onClicked={() => {
                                 n.invoke(id);
-                                setTimeout(() =>
-                                    (notifd.get_notification(n.id)) && n.dismiss()
-                                , 100)
+                                setTimeout(() => (notifd.get_notification(n.id)) && n.dismiss(), 100)
                             }}
                         >
                             <label label={label.replace('Activate', 'Open') ?? ''} halign={CENTER}/>

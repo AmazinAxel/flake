@@ -8,12 +8,12 @@ let inputBuffer = new Gtk.TextBuffer;
 
 export const [ chatContent, setChatContent ] = createState(new Array<Gtk.Widget>());
 
-const [ width, setWidth ] = createState(450);
+const [ width, setWidth ] = createState(400);
 const [ expandIcon, setExpandIcon ] = createState("view-fullscreen-symbolic");
 
 const toggleSize = () => {
-  setWidth((width.peek() == 450) ? 700 : 450)
-  setExpandIcon((width.peek() == 450) ? 'view-fullscreen-symbolic' : 'view-restore-symbolic')
+  setWidth((width.peek() == 400) ? 700 : 400)
+  setExpandIcon((width.peek() == 400) ? 'view-fullscreen-symbolic' : 'view-restore-symbolic')
   app.get_window('chat')?.set_default_size(width.peek(), -1)
 };
 

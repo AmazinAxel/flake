@@ -38,6 +38,8 @@ in {
       "${mod}+shift+S" = "exec ags toggle powermenu";
       # S = sleep, Q = shutdown, L = lock, R = restart 
 
+      "${mod}+S" = "exec playerctl play-pause"; # toggle mpris play/pause
+
       # Ags MPD controls
       "${mod}+control+period" = "exec ags request 'media next'";
       "${mod}+control+comma" = "exec ags request 'media prev'";

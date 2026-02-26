@@ -23,6 +23,7 @@
       samba # Planning app sync
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
+      playerctl # Play/pause mpris from keybind
 
       # Desktop applications
       gthumb # Image & video viewer & editor

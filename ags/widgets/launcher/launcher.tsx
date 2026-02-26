@@ -19,7 +19,6 @@ import BackgroundSection from "../../lib/backgroundSection";
 export default () =>
     <window
         name="launcher"
-        anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
         keymode={Astal.Keymode.ON_DEMAND}
         application={app}
         layer={Astal.Layer.OVERLAY}

@@ -101,7 +101,7 @@ const reminders = () => {
     if ((Date.now() - lastSync) > 540000000) { // Last sync was ~7 days ago
         notifySend({
             appName: 'Sync',
-            title: 'Sync system files',
+            title: 'Sync system',
             actions: [{
                 id: 1,
                 label: 'Update & Sync',
@@ -111,7 +111,7 @@ const reminders = () => {
     } else if (folderSize > 100000000) { // Greater than 100MB
         notifySend({
             appName: 'Cleanup',
-            title: 'Empty Downloads folder',
+            title: 'Empty Downloads',
             actions: [{
                 id: 1,
                 label: 'View folder',

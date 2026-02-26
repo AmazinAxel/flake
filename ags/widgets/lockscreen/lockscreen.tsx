@@ -4,12 +4,15 @@ import Auth from 'gi://AstalAuth';
 import { createPoll } from 'ags/time';
 import GLib from 'gi://GLib';
 import { createBinding, createState, For, This } from 'ags';
+import { playlistName } from '../../lib/mediaPlayer';
 const monitors = createBinding(app, "monitors");
 
 export const [ isLocked, setIsLocked ] = createState(true);
 
 const [ isAuthenticating, setIsAuthenticating ] = createState(false);
 const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'));
+
+playlistName.subscribe(() => app.apply_css(`#lockscreen entry { background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
 
 const checkLogin = (entry: Gtk.Entry) => {
     const password = entry.get_text();
@@ -49,7 +52,8 @@ export default () =>
                     <label
                         halign={Gtk.Align.CENTER}
                         valign={Gtk.Align.CENTER}
-                        label={time((time) => time!.toString())}
+                        useMarkup={true}
+                        label={time((t) => '<span line_height="0.75">' + t + '</span>')}
                         css_classes={isAuthenticating((v) => v ? ['timeout'] : [])}
                         canTarget={false}
                         $type="overlay"

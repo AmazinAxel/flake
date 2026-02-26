@@ -61,27 +61,25 @@ export default () =>
         visible={isVisible}
         $={(self) => workspaceWindow = self }
       >
-        <box orientation={Gtk.Orientation.VERTICAL}>
+        <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
           <Gtk.EventControllerScroll
             flags={Gtk.EventControllerScrollFlags.VERTICAL}
             onScroll={(_, __, y) => switchWorkspace(y > 0 ? 1 : -1)}
           />
-          <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
-            {[...Array(9).keys()].map((i) => i + 1).map((id) =>
-              <box cssClasses={workspaces((ws) => {
-                const w = ws.find((w) => w.id === id);
-                if (!w)
-                  return ['workspaceBtn'];
+          {[...Array(9).keys()].map((i) => i + 1).map((id) =>
+            <box cssClasses={workspaces((ws) => {
+              const w = ws.find((w) => w.id === id);
+              if (!w)
+                return ['workspaceBtn'];
 
-                return w.focused
-                  ? ['workspaceBtn', 'active']
-                  : w.occupied
-                    ? ['workspaceBtn', 'occupied']
-                    : ['workspaceBtn'];
-              })}/>
-            )}
-          </box>
+              return w.focused
+                ? ['workspaceBtn', 'active']
+                : w.occupied
+                  ? ['workspaceBtn', 'occupied']
+                  : ['workspaceBtn'];
+            })}/>
+          )}
         </box>
       </window>
-  </This>}
+    </This>}
   </For>;

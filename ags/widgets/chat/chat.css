@@ -1,9 +1,8 @@
 #chat {
     background-color: @theme_bg_color;
-    margin: 0.25rem 0rem 0.5rem 0.5rem;
-    border-radius: 0.5rem 0 0 0.5rem;
+    margin: 0.35rem -1px 0.6rem 0rem;
     padding: 0.5rem;
-    border: 0.2rem solid @blue2;
+    border: 0.2rem solid @blue3;
 }
 
 #chat .header {

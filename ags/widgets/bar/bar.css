@@ -1,6 +1,6 @@
 .barElement {
     background: @theme_bg_color;
-    margin: 0.35rem 0rem 0.35rem 0.3rem;
+    margin: 0.4rem;
     border-radius: 0.5rem;
     border: 0.15rem @dark4 solid;
 }
