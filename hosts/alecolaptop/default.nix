@@ -21,7 +21,6 @@
     python3 # Required for Arduino IDE
     jre # For Minecraft - uses the latest stable Java runtime version
     bun # All-in-one JS toolkit
-    chromium # Honorlock supported browser
     qpwgraph # Audio output visualizer
   ];
 

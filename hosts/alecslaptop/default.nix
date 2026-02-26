@@ -23,7 +23,6 @@
     flashprint # Flashforge 3D printer slicer
     thunderbird # Email client
     worldpainter # Minecraft world generator
-    chromium # Honorlock supported browser
     kicad # PCB design
 
     bun # All-in-one JS toolkit
