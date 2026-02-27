@@ -1,20 +1,22 @@
-import { Astal, Gtk } from 'ags/gtk4';
+import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { execAsync } from 'ags/process';
 import { setIsLocked } from '../lockscreen/lockscreen';
+import inputControl from '../../lib/inputControl';
 
-let window: Gtk.Window;
-export default () =>
-   <window
-      name="powermenu"
-      $={(self) => window = self}
-      application={app}
-      layer={Astal.Layer.OVERLAY}
-      keymode={Astal.Keymode.ON_DEMAND}
+export default () => inputControl('powermenu', () =>
+   <box
+      cssClasses={['widgetBackground']}
+      halign={Gtk.Align.CENTER}
+      valign={Gtk.Align.CENTER}
+      focusable={true}
+      $={(self) => app.connect('window-toggled', () =>
+         app.get_window('powermenu')?.visible && self.grab_focus()
+      )}
    >
       <Gtk.EventControllerKey
          onKeyPressed={(_, key) => {
-         window.hide();
+         app.get_window('powermenu')?.hide();
          switch (key) {
             case 115: // S - sleep
                setIsLocked(true);
@@ -31,10 +33,9 @@ export default () =>
                break;
          };
       }}/>
-      <box cssClasses={['widgetBackground']}>
-         <image cssClasses={['sleep']} iconName="weather-clear-night-symbolic"/>
-         <image cssClasses={['shutdown']} iconName="system-shutdown-symbolic"/>
-         <image cssClasses={['lock']} iconName="system-lock-screen-symbolic"/>
-         <image cssClasses={['reboot']} iconName="system-reboot-symbolic"/>
-      </box>
-   </window>
+      <image cssClasses={['sleep']} iconName="weather-clear-night-symbolic"/>
+      <image cssClasses={['shutdown']} iconName="system-shutdown-symbolic"/>
+      <image cssClasses={['lock']} iconName="system-lock-screen-symbolic"/>
+      <image cssClasses={['reboot']} iconName="system-reboot-symbolic"/>
+   </box>
+   );

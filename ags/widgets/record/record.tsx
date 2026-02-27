@@ -1,26 +1,26 @@
 import { execAsync } from "ags/process";
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
-import Astal from "gi://Astal"
 import BackgroundSection from "../../lib/backgroundSection";
-
-import { notifySend } from '../../lib/notifySend'; 
+import { notifySend } from '../../lib/notifySend';
 import { recMic, setRecMic, recQuality, startRec, setRecQuality, isRec } from './service';
+import inputControl from "../../lib/inputControl";
 
-let window: Gtk.Window;
-export default () => <window
-    name="recordMenu"
-    keymode={Astal.Keymode.ON_DEMAND}
-    application={app}
-    layer={Astal.Layer.OVERLAY}
-    $={(self) => window = self}
+export default () => inputControl('recordMenu', () =>
+    <box
+        focusable={true}
+        halign={Gtk.Align.CENTER}
+        valign={Gtk.Align.CENTER}
+        $={(self) => app.connect('window-toggled', () =>
+            app.get_window('recordMenu')?.visible && self.grab_focus()
+        )}
     >
         <Gtk.EventControllerKey
             onKeyPressed={(_, key) => {
                 switch (key) {
                     case 32: // Space - start recording
                         startRec();
-                        window.hide()
+                        app.get_window('recordMenu')?.hide()
                         break;
                     case 99: // C - clip & save last 30 seconds
                         execAsync("pkill -SIGUSR1 -f gpu-screen-recorder")
@@ -33,7 +33,7 @@ export default () => <window
                                 command: 'nemo /home/alec/Videos/Clips',
                             }]
                         });
-                        window.hide()
+                        app.get_window('recordMenu')?.hide()
                         break;
                     case 114: // R - toggle microphone input
                         setRecMic(!recMic.peek())
@@ -43,13 +43,11 @@ export default () => <window
                             setRecQuality('Ultra') : setRecQuality('Medium');
                         break;
                     default:
-                        window.hide()
+                        app.get_window('recordMenu')?.hide()
                 };
             }}/>
-
         <BackgroundSection
             height={100} width={350}
-            
             header={
                 <box $type="overlay" hexpand vexpand halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} spacing={8}>
                     <image iconSize={2.0} iconName={recMic((m) => (m) ? 'audio-input-microphone-symbolic' : 'microphone-disabled-symbolic')}/>
@@ -57,7 +55,8 @@ export default () => <window
                 </box>
             }
             content={<></>}/>
-    </window>
+    </box>
+);
 
 export const RecordingIndicator = () =>
     <image

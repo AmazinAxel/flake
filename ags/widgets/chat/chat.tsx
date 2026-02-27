@@ -48,7 +48,7 @@ export default () =>
   <window
     name="chat"
     exclusivity={Astal.Exclusivity.EXCLUSIVE}
-    keymode={Astal.Keymode.ON_DEMAND}
+    keymode={Astal.Keymode.EXCLUSIVE}
     anchor={TOP | BOTTOM | RIGHT}
     application={app}
     layer={Astal.Layer.OVERLAY}

@@ -6,7 +6,11 @@ import { playlistName } from './mediaPlayer';
 playlistName.subscribe(() => app.apply_css(`.backgroundOverlay { background-image: url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
 
 export default ({ header, content, height, width }: { header: any; content: any, height: number, width: number }) =>
-    <box heightRequest={height}>
+    <box
+        heightRequest={height}
+        halign={Gtk.Align.CENTER}
+        valign={Gtk.Align.CENTER}
+    >
         <box
             widthRequest={width}
             spacing={5}
