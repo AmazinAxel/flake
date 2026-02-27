@@ -26,8 +26,9 @@ export default () =>
 
       <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement', 'infoCenter']}>
         <Gtk.EventControllerScroll
-        flags={Gtk.EventControllerScrollFlags.VERTICAL}
-        onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}/>
+          flags={Gtk.EventControllerScrollFlags.VERTICAL}
+          onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}
+        />
         <RecordingIndicator/>
         <Time/>
         <Status/>
