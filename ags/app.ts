@@ -5,7 +5,6 @@ import chatStyle from './widgets/chat/chat.css';
 import barStyle from './widgets/bar/bar.css';
 import notificationStyle from './widgets/notifications/notifications.css';
 import osdStyle from './widgets/osd/osd.css';
-import quicksettingsStyle from './widgets/quicksettings/quicksettings.css';
 import powermenuStyle from './widgets/powermenu/powermenu.css';
 import lockscreenStyle from './widgets/lockscreen/lockscreen.css';
 
@@ -34,7 +33,7 @@ import workspaces from './widgets/bar/workspaces';
 
 
 app.start({
-    css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + quicksettingsStyle + powermenuStyle + lockscreenStyle,
+    css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
         bar();
         chat();

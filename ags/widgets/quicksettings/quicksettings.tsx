@@ -10,14 +10,12 @@ export default () =>
         anchor={BOTTOM | LEFT}
         application={app}
         layer={Astal.Layer.OVERLAY}
-        marginLeft={35}
+        marginLeft={31}
     >
         <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
-            <box marginBottom={5}>
-                <box orientation={Gtk.Orientation.VERTICAL}>
-                    <VolumeSlider/>
-                    <BrightnessSlider/>
-                </box>
+            <box orientation={Gtk.Orientation.VERTICAL}>
+                <VolumeSlider/>
+                <BrightnessSlider/>
             </box>
             <SinkSelector/>
         </box>

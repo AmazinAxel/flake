@@ -35,11 +35,20 @@ window {
 }
 
 calendar, .quickSettings {
-  border: 0.12em solid @blue2;
-  border-radius: 5px;
+  border: 0.15em solid @blue2;
+  border-radius: 0 0.5rem 0 0;
   background-color: @dark2;
+  margin: 0.45rem;
 }
-#quickSettings, #calendar { padding: 6px 6px; }
+calendar { margin-bottom: 5.9px; }
+
+.quickSettings {
+  min-width: 10rem;
+  padding: 0.8rem;
+}
+
+/* Sink selector */
+popover { min-width: 20rem; }
 
 #emojiPicker entry {
   background-color: @dark3;

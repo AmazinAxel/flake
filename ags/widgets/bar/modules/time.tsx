@@ -9,9 +9,9 @@ const dayName = createPoll('', 3600000, () => getDateTime().format("%a")!);
 const time = createPoll('', 1000, () => getDateTime().format('%H\n%M')!);
 
 export const Time = () =>
-  <box orientation={Gtk.Orientation.VERTICAL} hexpand>
+  <box orientation={Gtk.Orientation.VERTICAL} hexpand cssClasses={['time', 'timeSection']}>
     <label cssClasses={['date']} label={month}/>
     <label cssClasses={['date', 'bottom']} label={day}/>
-    <label cssClasses={['time']} label={time} />
+    <label cssClasses={['time']} label={time}/>
     <label cssClasses={['day']} label={dayName}/>
   </box>
