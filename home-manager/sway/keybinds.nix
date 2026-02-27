@@ -47,7 +47,7 @@ in {
       "${mod}+less" = "exec ags request 'media prevPlaylist'";
       "${mod}+slash" = "exec ags request 'media toggle'";
 
-      "Print" = ''exec wayshot -s "$(slurp)" --stdout | wl-copy''; # Screenshot
+      "Print" = ''exec wayfreeze --hide-cursor --after-freeze-cmd 'grim -g "$(slurp)" - | wl-copy; killall wayfreeze' ''; # Screenshot
 
       # Move focus in a workspace
       "${mod}+left" = "focus left";
