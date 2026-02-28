@@ -15,6 +15,7 @@
       wayfreeze # Screenshot freeze
       grim # Screenshot
       slurp # Screenshot selection
+      satty # Annotation
       brightnessctl # Screen brightness CLI for Astal
       adwaita-icon-theme # Icons for GTK apps
       waycorner # Hotcorners

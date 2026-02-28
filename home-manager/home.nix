@@ -10,7 +10,7 @@
     ./librewolf.nix
     ./mpd.nix
     ./starship.nix
-    ./swappy.nix
+    ./satty.nix
 
     inputs.ags.homeManagerModules.default
   ];
