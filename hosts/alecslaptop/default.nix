@@ -4,13 +4,11 @@
     ../common.nix
     ../../modules/desktop.nix
     ../../modules/printing.nix
-    ../../modules/laptop.nix
   ];
 
   networking.hostName = "alecslaptop"; # Hostname
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  # Host-specific packages
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive # Video editor
     blockbench # Minecraft 3D modeling app

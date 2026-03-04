@@ -1,33 +1,34 @@
 {
-  wayland.windowManager.sway = {
-    config = {
-      output = {
-        "HDMI-A-1" = {
-          resolution = "1920x1080@144Hz";
-          position = "0 0";
-        };
-        "*".position = "1920 0"; # Laptop/other monitors
-      };
+  imports = [ ../../home-manager/laptop.nix ];
 
-      startup = [
-        { command = ''swaymsg "workspace 3; exec librewolf"''; }
-        { command = ''swaymsg "workspace 7; exec thunderbird"''; }
-        { command = ''swaymsg "workspace 8; exec teams-for-linux"''; }
-      ];
-      workspaceOutputAssign = [
-        { workspace = "1"; output = "HDMI-A-1"; }
-        { workspace = "2"; output = "HDMI-A-1"; }
-        { workspace = "3"; output = "HDMI-A-1"; }
-        { workspace = "4"; output = "HDMI-A-1"; }
-        { workspace = "5"; output = "eDP-1"; }
-        { workspace = "6"; output = "eDP-1"; }
-        { workspace = "7"; output = "eDP-1"; }
-        { workspace = "8"; output = "eDP-1"; }
-        { workspace = "9"; output = "eDP-1"; }
-      ];
-      keybindings."Mod4+D" = ''exec wayfreeze --hide-cursor --after-freeze-cmd 'grim -g "$(slurp)" - | wl-copy; killall wayfreeze' ''; # Side mouse key screenshot
+  wayland.windowManager.sway.config = {
+    output = {
+      "HDMI-A-1" = {
+        resolution = "1920x1080@144Hz";
+        position = "0 0";
+      };
+      "*".position = "1920 0"; # Laptop/other monitors
     };
-    extraConfig = ''
-    '';
+
+    startup = [
+      { command = ''swaymsg "workspace 3; exec librewolf"''; }
+      { command = ''swaymsg "workspace 7; exec thunderbird"''; }
+      { command = ''swaymsg "workspace 8; exec teams-for-linux"''; }
+    ];
+
+    workspaceOutputAssign = [
+      { workspace = "1"; output = "HDMI-A-1"; }
+      { workspace = "2"; output = "HDMI-A-1"; }
+      { workspace = "3"; output = "HDMI-A-1"; }
+      { workspace = "4"; output = "HDMI-A-1"; }
+      { workspace = "5"; output = "eDP-1"; }
+      { workspace = "6"; output = "eDP-1"; }
+      { workspace = "7"; output = "eDP-1"; }
+      { workspace = "8"; output = "eDP-1"; }
+      { workspace = "9"; output = "eDP-1"; }
+    ];
+
+    # Side mouse key screenshot
+    keybindings."Mod4+D" = ''exec wayfreeze --hide-cursor --after-freeze-cmd 'grim -g "$(slurp)" - | wl-copy; killall wayfreeze' '';
   };
 }

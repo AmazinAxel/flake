@@ -3,13 +3,11 @@
     ./hardware-configuration.nix
     ../common.nix
     ../../modules/desktop.nix
-    ../../modules/laptop.nix
   ];
 
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  # Host-specific packages
   environment.systemPackages = with pkgs; [
     gimp3 # Image editor
     teams-for-linux # Unoffical Teams client
@@ -24,7 +22,6 @@
     qpwgraph # Audio output visualizer
   ];
 
-  # Bootloader settings (w/ AMD GPU support)
   boot = {
     initrd = {
       kernelModules = [ "amdgpu" ];

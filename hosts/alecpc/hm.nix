@@ -27,9 +27,6 @@
       ];
     };
 
-    extraConfig = ''
-    '';
-
     extraSessionCommands = ''
       export LIBVA_DRIVER_NAME=nvidia
       export GBM_BACKEND=nvidia-drm

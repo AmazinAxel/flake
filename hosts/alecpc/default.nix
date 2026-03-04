@@ -8,7 +8,6 @@
   networking.hostName = "alecpc";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  # Host-specific packages
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive # Video editor
     blockbench # Minecraft 3D modeling app
