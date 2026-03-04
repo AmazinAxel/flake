@@ -1,9 +1,10 @@
-import { createState, createBinding } from 'ags';
+import { createState, createBinding, For, This } from 'ags';
 import { timeout } from 'ags/time';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import Wp from 'gi://AstalWp';
 import { brightness } from '../../lib/brightness';
+const monitors = createBinding(app, "monitors");
 
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 let dontShow = true;
@@ -15,25 +16,30 @@ const volumeBind = createBinding(speaker, 'volume')
 timeout(3000, () => dontShow = false);
 
 export default () =>
-    <window
-        name="osd"
-        anchor={Astal.WindowAnchor.BOTTOM}
-        application={app}
-        layer={Astal.Layer.OVERLAY}
-        $={(self) => {
-            brightness.subscribe(() =>
-                osdChange('display-brightness-symbolic', brightness.peek(), self)
-            );
-            volumeBind.subscribe(() =>
-                osdChange(speaker.volume_icon, speaker.volume, self)
-            );
-        }}
-    >
-        <box cssClasses={['osd']}>
-            <image iconName={icon}/>
-            <levelbar value={val} widthRequest={400}/>
-        </box>
-    </window>
+    <For each={monitors}>
+        {(monitor) => <This this={app}>
+            <window
+                name="osd"
+                anchor={Astal.WindowAnchor.BOTTOM}
+                application={app}
+                layer={Astal.Layer.OVERLAY}
+                gdkmonitor={monitor}
+                $={(self) => {
+                    brightness.subscribe(() =>
+                        osdChange('display-brightness-symbolic', brightness.peek(), self)
+                    );
+                    volumeBind.subscribe(() =>
+                        osdChange(speaker.volume_icon, speaker.volume, self)
+                    );
+                }}
+            >
+                <box cssClasses={['osd']}>
+                    <image iconName={icon}/>
+                    <levelbar value={val} widthRequest={400}/>
+                </box>
+            </window>
+        </This>}
+    </For>
 
 const osdChange = (iconType: string, value: number, osd: Gtk.Window) => {
     if (dontShow)
