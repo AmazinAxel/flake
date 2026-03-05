@@ -149,4 +149,12 @@
   };
 
   security.pam.services.astal-auth = {}; # For astal lockscreen to work
+
+  # Since we dont use the sway nix module we have to set the portal explicitly for things like flatpak and screensharing to work
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = "*";
+  };
 }
