@@ -57,6 +57,7 @@
   ];
 
   programs = {
+    dconf.enable = true; # For hm
     nix-ld.enable = true; # For dynamic executables
     gpu-screen-recorder.enable = true; # Clipping & recording software
 
