@@ -1,6 +1,6 @@
 import { createState, createBinding, For, This } from 'ags';
 import { timeout } from 'ags/time';
-import { Astal, Gtk } from 'ags/gtk4';
+import { Astal } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import Wp from 'gi://AstalWp';
 import { brightness } from '../../lib/brightness';
@@ -11,6 +11,7 @@ let dontShow = true;
 let count = 0;
 export const [ icon, setIcon ] = createState('');
 export const [ val, setVal ] = createState(0);
+const [ visible, setVisible ] = createState(false);
 const volumeBind = createBinding(speaker, 'volume')
 
 timeout(3000, () => dontShow = false);
@@ -24,12 +25,13 @@ export default () =>
                 application={app}
                 layer={Astal.Layer.OVERLAY}
                 gdkmonitor={monitor}
-                $={(self) => {
+                visible={visible}
+                $={() => {
                     brightness.subscribe(() =>
-                        osdChange('display-brightness-symbolic', brightness.peek(), self)
+                        osdChange('display-brightness-symbolic', brightness.peek())
                     );
                     volumeBind.subscribe(() =>
-                        osdChange(speaker.volume_icon, speaker.volume, self)
+                        osdChange(speaker.volume_icon, speaker.volume)
                     );
                 }}
             >
@@ -41,19 +43,17 @@ export default () =>
         </This>}
     </For>
 
-const osdChange = (iconType: string, value: number, osd: Gtk.Window) => {
+const osdChange = (iconType: string, value: number) => {
     if (dontShow)
         return;
 
     setIcon(iconType);
     setVal(value);
-    osd.visible = true;
+    setVisible(true);
 
     count++;
     timeout(1000, () => {
-        count--;
-
-        if (count === 0)
-            osd.visible = false;
+        if (--count === 0)
+            setVisible(false);
     });
 };
