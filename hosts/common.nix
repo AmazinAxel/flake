@@ -18,11 +18,16 @@
     initrd.systemd.enable = true; # Faster parallel boot
   };
 
-  networking.wireless.iwd = {
-    enable = lib.mkDefault true;
-    settings = {
-      IPv6.Enabled = true;
-      Settings.AutoConnect = true;
+  networking = {
+    dhcpcd.enable = false;
+    wireless.iwd = {
+      enable = lib.mkDefault true;
+      settings = {
+        IPv6.Enabled = true;
+        Settings.AutoConnect = true;
+        General.EnableNetworkConfiguration = true;
+        Network.NameResolvingService = "systemd";
+      };
     };
   };
 
