@@ -41,7 +41,10 @@
     warn-dirty = false;
   };
 
-  services.journald.extraConfig = "SystemMaxUse=20M";
+  services = {
+    journald.extraConfig = "SystemMaxUse=20M";
+    resolved.enable = true; # DNS resolve
+  };
   fileSystems."/".options = [ "noatime" "discard" ]; # SSD trim
   documentation.enable = false;
   environment.defaultPackages = lib.mkForce [];
