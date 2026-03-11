@@ -24,12 +24,12 @@
 
       extraPackages = with inputs.astal.packages.x86_64-linux; [
         apps # App launcher
-        auth # Lockscreen
-        battery # Laptop battery
-        bluetooth # Bluez
-        mpris # Media controls
-        notifd # Desktop notifications
-        wireplumber # Used by pipewire
+        auth
+        battery
+        bluetooth
+        mpris
+        notifd
+        wireplumber
         pkgs.gtksourceview5 # Chat code syntax highlighting
         pkgs.glib-networking # AI chat
       ];

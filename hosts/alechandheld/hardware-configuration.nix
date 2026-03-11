@@ -4,7 +4,7 @@
     fsType = "ext4";
   };
 
-  # Additional microSD card for more games
+  # external microSD card for more games
   fileSystems."/mnt/content" = {
     device = "/dev/disk/by-uuid/89bd4766-cb7b-46ad-aef9-13c21769d7c9";
     fsType = "ext4";

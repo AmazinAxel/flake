@@ -34,8 +34,8 @@
   dconf = {
     enable = true;
     settings = {
-      # Force dark mode on all apps
       "org/gnome/desktop/interface".color-scheme = "prefer-dark";
+      "org/gnome/SoundRecorder".audio-profile = "mp3";
 
       # Gnome text editor config
       "org/gnome/TextEditor" = {
@@ -47,9 +47,6 @@
         style-variant = "dark";
         use-system-font = false;
       };
-
-      # Gnome sound recorder default audio output
-      "org/gnome/SoundRecorder".audio-profile = "mp3";
     };
   };
 }

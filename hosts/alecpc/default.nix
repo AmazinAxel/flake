@@ -9,20 +9,18 @@
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   environment.systemPackages = with pkgs; [
-    kdePackages.kdenlive # Video editor
-    blockbench # Minecraft 3D modeling app
-    gimp3 # Image editor
-    teams-for-linux # Unoffical MS Teams client
-    libreoffice # Preview Word documents and Excel sheets offline
-    gnome-sound-recorder # Voice recording app
-    flashprint # Flashforge 3D printer
-    thunderbird # Email client
+    kdePackages.kdenlive
+    blockbench
+    gimp3
+    libreoffice
+    gnome-sound-recorder
+    flashprint
+    thunderbird
 
-    bun # All-in-one JS toolkit
-    jre # For Minecraft - uses the latest stable Java runtime version
-    jdk25_headless # Java JDK version 23 for compling & running jars
-    nodejs_22 # JS runtime
-    steam-run # Used for running some games
+    bun
+    jre
+    nodejs_22
+    steam-run
   ];
   programs.kdeconnect.enable = true;
 

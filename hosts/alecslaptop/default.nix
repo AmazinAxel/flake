@@ -10,23 +10,23 @@
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   environment.systemPackages = with pkgs; [
-    kdePackages.kdenlive # Video editor
-    blockbench # Minecraft 3D modeling app
-    godot # Game engine
-    gimp3 # Image editor
-    teams-for-linux # Unoffical Teams client
-    libreoffice # Preview Word documents and Excel sheets offline
-    gnome-sound-recorder # Voice recording app
-    gnome-disk-utility # Drive repartitioning utility
-    flashprint # Flashforge 3D printer slicer
-    thunderbird # Email client
-    worldpainter # Minecraft world generator
-    kicad # PCB design
+    kdePackages.kdenlive
+    blockbench
+    godot
+    gimp3
+    teams-for-linux
+    libreoffice
+    gnome-sound-recorder
+    gnome-disk-utility
+    flashprint
+    thunderbird
+    worldpainter
+    kicad
 
-    bun # All-in-one JS toolkit
-    jre # For Minecraft - uses the latest stable Java runtime version
-    nodejs_22 # JS runtime
-    steam-run # Used for running some games
+    bun
+    jre
+    nodejs_22
+    steam-run
   ];
   programs = {
     steam.enable = true; # Gaming

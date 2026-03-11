@@ -9,17 +9,17 @@
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   environment.systemPackages = with pkgs; [
-    gimp3 # Image editor
-    teams-for-linux # Unoffical Teams client
-    libreoffice # Preview Word documents & Excel sheets offline
-    thunderbird # Email client
-    kicad-small # PCB design
+    gimp3
+    teams-for-linux
+    libreoffice
+    thunderbird
+    kicad-small
 
-    arduino-ide # Embedded microcontroller programming
-    python3 # Required for Arduino IDE
-    jre # For Minecraft - uses the latest stable Java runtime version
-    bun # All-in-one JS toolkit
-    qpwgraph # Audio output visualizer
+    arduino-ide
+    python3
+    jre
+    bun
+    qpwgraph
   ];
 
   boot = {

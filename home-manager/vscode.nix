@@ -3,16 +3,16 @@
     enable = true;
     profiles.default = {
       extensions = with pkgs.vscode-extensions; [
-        arcticicestudio.nord-visual-studio-code # Nord theme
-        jnoortheen.nix-ide # Nix syntax highlighting
-        mechatroner.rainbow-csv # CSV syntax highlighting
-        davidanson.vscode-markdownlint # Markdown lint & spellcheck
-        yzhang.markdown-all-in-one # Markdown ToC, keybinds, preview support
-        github.vscode-github-actions # Github Actions highlighting
-        dbaeumer.vscode-eslint # ESlint integration
-        ms-vscode.live-server # Local HTTP dev server
-        svelte.svelte-vscode # Svelte support
-        ms-vsliveshare.vsliveshare # Collaborative editing
+        arcticicestudio.nord-visual-studio-code
+        jnoortheen.nix-ide
+        mechatroner.rainbow-csv
+        davidanson.vscode-markdownlint # .md lint & spellcheck
+        yzhang.markdown-all-in-one # .md keybinds, preview support
+        github.vscode-github-actions
+        dbaeumer.vscode-eslint
+        ms-vscode.live-server
+        svelte.svelte-vscode
+        ms-vsliveshare.vsliveshare
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{
         name = "Sk-VSC";
         publisher = "ayhamalali";
@@ -35,8 +35,8 @@
         };
         explorer = {
           confirmDelete = false;
-          confirmDragAndDrop = false; # Disable drag & drop popup
-          confirmPasteNative = false; # Disable image paste popup
+          confirmDragAndDrop = false; # No drag & drop popup
+          confirmPasteNative = false; # No image paste popup
         };
         git = {
           enableSmartCommit = true;
@@ -45,7 +45,7 @@
         };
         workbench = {
           startupEditor = "fish";
-          colorTheme = "Nord"; # Enable theme - requires VSCode restart
+          colorTheme = "Nord"; # Enable theme
         };
         chat.disableAIFeatures = true;
         terminal.integrated = {
