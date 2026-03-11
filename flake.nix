@@ -6,6 +6,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     ags = {
       url = "github:aylur/ags";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,6 +16,7 @@
       url = "github:aylur/astal";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     planning = {
       url = "github:AmazinAxel/Planning";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,6 +25,7 @@
 
   outputs = { home-manager, nixpkgs, ... }@inputs: {
     nixosConfigurations = {
+
       # Primary laptop
       "alecslaptop" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -55,6 +58,8 @@
           home-manager.nixosModules.home-manager
         ];
       };
+
+      # Pi Zero homelab - https://github.com/amazinaxel/homelab
     };
   };
 }

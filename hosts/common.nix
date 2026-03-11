@@ -8,14 +8,14 @@
     loader = {
       systemd-boot = {
         enable = lib.mkDefault true;
-        configurationLimit = 2; # Saves space in boot partition
+        configurationLimit = 2; # Save space in /boot
         editor = false;
       };
       efi.canTouchEfiVariables = true;
-      timeout = 0; # Hold down space on boot to access menu
+      timeout = 0; # Hold down space on boot to access
     };
-    tmp.cleanOnBoot = true;
     kernelPackages = pkgs.linuxPackages_latest;
+    initrd.systemd.enable = true; # Faster parallel boot
   };
 
   networking.wireless.iwd = {
@@ -26,7 +26,8 @@
     };
   };
 
-  time.timeZone = "America/Los_Angeles"; # Locale setting also set to en_US by default
+  time.timeZone = "America/Los_Angeles"; # lang also set to en_US
+  zramSwap.enable = true; # Compress ram for better performance
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
@@ -36,12 +37,10 @@
   };
 
   services.journald.extraConfig = "SystemMaxUse=20M";
-  fileSystems."/".options = [ "noatime" "discard" ]; # Optimize SSD trim
+  fileSystems."/".options = [ "noatime" "discard" ]; # SSD trim
   documentation.enable = false;
-
   environment.defaultPackages = lib.mkForce [];
   programs.command-not-found.enable = false; # Don't show recommendations when a package is missing
 
   system.stateVersion = lib.mkDefault "24.05";
 }
-

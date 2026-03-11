@@ -1,21 +1,18 @@
 #!/usr/bin/env fish
 
 set mntPoint /mnt/alechomelab
-
-## Pull music from shared homelab storage
 read -l -P "[Sync] Enter NAS password: " passwd --silent
 
-# Mount share
+# Mount & sync from share
 mkdir -p $mntPoint
 sudo mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
 
-# Sync music directory from share 
 echo "[Sync] Pulling music from NAS"
 sudo rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
 mpc update > /dev/null
 sudo umount $mntPoint
 
-## Rebuild with latest flake
+## Rebuild latest
 cd /home/alec/Projects/flake/
 set isDirty (git status --porcelain)
 
@@ -26,5 +23,5 @@ else
     sudo nixos-rebuild boot --flake /home/alec/Projects/flake/
 end
 
-# Update last sync time for Astal integration
+# Astal
 date +%s%3N > /home/alec/Projects/flake/ags/lastSync.txt

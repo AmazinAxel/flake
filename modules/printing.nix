@@ -1,6 +1,7 @@
 { pkgs, ... }: {
+  # Printing with CUPS
   services = {
-    printing = { # Printing with CUPS
+    printing = {
       enable = true;
       drivers = [ pkgs.hplip ]; # HP
       listenAddresses = [ "*:631" ];

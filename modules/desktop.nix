@@ -9,36 +9,35 @@
   environment = {
     systemPackages = with pkgs; [
       # Desktop services
-      swaybg # Wallpaper app
+      swaybg
       libnotify # Astal internal notifications
-      mpc # CLI for Astal media player
+      mpc
       wayfreeze # Screenshot freeze
-      grim # Screenshot
-      slurp # Screenshot selection
+      grim
+      slurp
       satty # Annotation
-      brightnessctl # Screen brightness CLI for Astal
+      brightnessctl
       adwaita-icon-theme # Icons for GTK apps
-      waycorner # Hotcorners
       wl-clipboard # Astal clipboard utils
       wl-gammarelay-rs # Blue light filter
-      gpu-screen-recorder # Screen clipping & record tool
+      gpu-screen-recorder
       samba # Planning app sync
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
-      playerctl # Play/pause mpris from keybind
-      killall # Util
+      playerctl
+      killall
 
       # Desktop applications
-      gthumb # Image & video viewer & editor
-      gnome-text-editor # Simple text editor
-      gnome-system-monitor # Task manager
-      nemo-with-extensions # File manager
-      nemo-fileroller # Create archives in nemo
-      file-roller # Open archives in nemo
-      discord # Voice & video chat app
-      slack # Hack Club
-      filezilla # FTP client
-      prismlauncher # Minecraft launcher
+      gthumb
+      gnome-text-editor
+      gnome-system-monitor
+      nemo-with-extensions
+      nemo-fileroller
+      file-roller
+      discord
+      slack
+      filezilla
+      prismlauncher
       claude-code
 
       inputs.planning.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -49,6 +48,7 @@
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     ];
     sessionVariables.NIXOS_OZONE_WL = "1"; # For Electron
+    etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
   };
 
   fonts.packages = with pkgs; [
@@ -98,14 +98,11 @@
 
         addons = {
           clipboard.globalSection."TriggerKey" = ""; # Disable clipboard
-          classicui.globalSection."Theme" = "Nord-Dark"; # Theme
+          classicui.globalSection."Theme" = "Nord-Dark";
         };
       };
     };
   };
-  
-  # Workaround to make samba work without needing to enable the service
-  environment.etc."samba/smb.conf".text = "[global]";
 
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscov
