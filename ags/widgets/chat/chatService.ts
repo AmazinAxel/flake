@@ -40,7 +40,7 @@ export const [ messages, setMessages ] = createState<MessageState[]>([]);
 const ENV_KEY = readFile('/home/alec/GroqAIKey').trim();
 const temperature = 0.3;
 
-const [ content, setContent ] = createState('CRITICAL FORMATTING RULE - READ FIRST: You must ONLY use GTK Pango XML. Markdown is FORBIDDEN. Use <b>bold</b> (for headers too), <i>italic</i>, and <span font-family"monospace">code</span>. Never use **, __, * , _, `, or #. For list headers use Pango bold formatting. Before sending each response, verify that you have not used any of those markdown characters outside code blocks. Be as concise as possible.');
+const [ content, setContent ] = createState('Be as concise as possible.');
 const [ thinking, setThinking ] = createState(false);
 const [ done, setDone ] = createState(false);
 
@@ -135,14 +135,14 @@ export const sendMessage = (msg: string) => {
   newMessage(Role.USER, msg);
 
   const body = {
-    model: "qwen/qwen3-32b",
+    model: "openai/gpt-oss-120b", // moonshotai/kimi-k2-instruct
     messages: messages.peek()
       .filter((m) => m.role !== Role.SYSTEM)
       .map((m) => ({ role: m.role, content: m.content.peek() }))
       .concat({ role: Role.SYSTEM, content: instructions.content.peek() }),
     temperature,
     //max_completion_tokens: 2048, // 1024
-    include_reasoning: false,
+    //include_reasoning: false,
     stream: true
   };
 

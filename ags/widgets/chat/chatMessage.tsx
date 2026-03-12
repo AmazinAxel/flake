@@ -1,5 +1,6 @@
 import Gtk from "gi://Gtk?version=4.0";
 import { With } from "ags";
+import md2pango from "../../lib/md2pango";
 import { MessageState, Role } from "./chatService";
 
 export default ({ role, message }: { role: Role; message: MessageState }) => {
@@ -17,7 +18,7 @@ export default ({ role, message }: { role: Role; message: MessageState }) => {
       <With value={message.content}>
         {(content) => (
           <label
-            label={content.replace(/&(?!amp;)/g, '&amp;')}
+            label={message.done.peek() ? md2pango(content) : content}
             useMarkup={message.done.peek()}
             wrap
             selectable
