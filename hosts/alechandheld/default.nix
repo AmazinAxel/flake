@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
+    ./customKernel.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -21,6 +22,10 @@
     };
     sshd.enable = true;
     libinput.enable = true;
+    earlyoom = {
+      enable = true;
+      freeMemThreshold = 5; # 5%
+    };
   };
 
   networking = {

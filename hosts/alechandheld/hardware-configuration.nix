@@ -15,6 +15,7 @@
     initrd.availableKernelModules = [ "usbhid" "hid" "joydev" "evdev" "uinput" ];
     loader = {
       systemd-boot.enable = false;
+      grub.enable = false;
       generic-extlinux-compatible = {
         enable = true;
         configurationLimit = 2;
