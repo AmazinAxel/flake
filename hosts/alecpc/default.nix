@@ -22,13 +22,24 @@
     nodejs_22
     steam-run
   ];
-  programs.kdeconnect.enable = true;
+  programs = {
+    kdeconnect.enable = true;
+    #ccache.enable = true;
+  };
 
   services = {
     xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
 
     # Allow Sway to boot on nvidia
     greetd.settings.default_session.command = lib.mkForce "sway --unsupported-gpu";
+  };
+
+  # Faster builds for alechandheld and alechomelab
+  nix.settings = {
+    max-jobs = "auto";
+    cores = 0;
+    #extra-sandbox-paths = [ "/var/cache/ccache" ];
+    #use-sandbox = false; # temp build fix
   };
 
   # Nvidia options --

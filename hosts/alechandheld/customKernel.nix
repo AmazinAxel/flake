@@ -1,119 +1,156 @@
 { pkgs, lib, ... }:
 
 let
-  patchDir = ./patches; # idk why this has to be a var TODO
-
-  patchFiles = map (p: ./patches/${p})
+  mainlinePatches = map (p: ./mainline-patches/${p})
     (builtins.filter (f: lib.hasSuffix ".patch" f)
-      (builtins.attrNames (builtins.readDir patchDir)));
+      (builtins.attrNames (builtins.readDir ./mainline-patches)));
+
+  devicePatches = map (p: ./patches/${p})
+    (builtins.filter (f: lib.hasSuffix ".patch" f)
+      (builtins.attrNames (builtins.readDir ./patches)));
+
+  f = lib.mkForce;
 
   customKernel = pkgs.linux_6_19.override {
+    ignoreConfigErrors = true;
     kernelPatches = map (p: {
       name = builtins.baseNameOf p;
       patch = p;
-    }) patchFiles;
+    }) (mainlinePatches ++ devicePatches);
 
     structuredExtraConfig = with lib.kernel; {
-      # --- Display pipeline (built-in for early boot framebuffer) ---
-      DRM_SUN4I              = yes;
-      DRM_SUN6I_DSI          = yes;
-      DRM_SUN8I_DW_HDMI      = yes;
-      DRM_SUN8I_MIXER        = yes;
-      DRM_SUN8I_TCON_TOP     = yes;
-      DRM_SUN50I_PLANES      = yes;
-      DRM_PANEL_SIMPLE       = module;
-      DRM_PANEL_MIPI         = module;
-      PHY_SUN6I_MIPI_DPHY    = yes;
-      DRM_BRIDGE_CONNECTOR   = yes;
-      DRM_DISPLAY_CONNECTOR  = yes;
-      DRM_SIMPLE_BRIDGE      = yes;
-      DRM_DW_HDMI            = yes;
-      DRM_DW_HDMI_I2S_AUDIO  = module;
-      DRM_ITE_IT6263         = yes;
+      # Display
+      DRM_SUN4I = f yes;
+      DRM_SUN6I_DSI = f yes;
+      DRM_SUN8I_DW_HDMI = f yes;
+      DRM_SUN8I_MIXER = f yes;
+      DRM_SUN8I_TCON_TOP = f yes;
+      DRM_SUN50I_PLANES = f yes;
+
+      DRM_PANEL_SIMPLE = f module;
+      DRM_PANEL_MIPI = f module;
+      PHY_SUN6I_MIPI_DPHY = f yes;
+      DRM_BRIDGE_CONNECTOR = f yes;
+      DRM_DISPLAY_CONNECTOR = f yes;
+      DRM_SIMPLE_BRIDGE = f yes;
+      DRM_DW_HDMI = f yes;
+      DRM_DW_HDMI_I2S_AUDIO = module;
+      DRM_ITE_IT6263 = f yes;
+
+      # Framebuffer console for early boot
+      DRM_FBDEV_EMULATION = f yes;
+      FRAMEBUFFER_CONSOLE = f yes;
 
       # Backlight
-      BACKLIGHT_PWM          = yes;
-      BACKLIGHT_GPIO         = yes;
-      BACKLIGHT_LED          = yes;
+      BACKLIGHT_CLASS_DEVICE = f module;
+      BACKLIGHT_PWM = f module;
+      BACKLIGHT_GPIO = f module;
+      BACKLIGHT_LED = f module;
 
-      # Framebuffer console (see output during boot)
-      DRM_FBDEV_EMULATION    = yes;
-      FRAMEBUFFER_CONSOLE    = yes;
+      # GPU - built-in to avoid probe order issues
+      DRM_PANFROST = f yes;
 
-      # --- GPU ---
-      DRM_PANFROST           = module;
+      # Allwinner clocks & bus
+      SUN8I_DE2_CCU = f yes;
+      SUN50I_DE2_BUS = f yes;
+      SUN50I_H616_CCU = f yes;
 
-      # --- Allwinner clocks / bus ---
-      SUN8I_DE2_CCU          = yes;
-      SUN50I_DE2_BUS         = yes;
-      SUN50I_H616_CCU        = yes;
+      # Power management (AXP PMIC)
+      MFD_AXP20X = f yes;
+      MFD_AXP20X_I2C = f yes;
+      MFD_AXP20X_RSB = f yes;
+      REGULATOR_AXP20X = f yes;
+      AXP20X_POWER = module;
+      CHARGER_AXP20X = module;
+      BATTERY_AXP20X = module;
+      INPUT_AXP20X_PEK = f yes;
+      AXP20X_ADC = f yes;
 
-      # --- Power management (AXP PMIC) ---
-      MFD_AXP20X             = yes;
-      MFD_AXP20X_I2C         = yes;
-      MFD_AXP20X_RSB         = yes;
-      REGULATOR_AXP20X       = yes;
-      AXP20X_POWER           = module;
-      CHARGER_AXP20X         = module;
-      BATTERY_AXP20X         = module;
-      INPUT_AXP20X_PEK       = yes;
+      WIRELESS = f yes;
+      WLAN = f yes;
+      WLAN_VENDOR_REALTEK = f yes;
+      RTW88 = f module;
+      RTW88_CORE = f module;
+      RTW88_SDIO = f module;
+      RTW88_8821C = f module;
+      RTW88_8821CS = f module;
+      RTW88_LEDS = f yes;
 
-      # --- WiFi (RTL8821CS) ---
-      RTW88                  = module;
-      RTW88_CORE             = module;
-      RTW88_SDIO             = module;
-      RTW88_8821C            = module;
-      RTW88_8821CS           = module;
+      # Input (gamepad, joystick & buttons)
+      INPUT_POLLDEV = f yes;
+      KEYBOARD_ADC = f yes;
+      KEYBOARD_GPIO = f yes;
+      KEYBOARD_GPIO_POLLED = f yes;
+      JOYSTICK_ADC = f yes;
+      INPUT_PWM_VIBRA = f yes;
+      INPUT_EVDEV = f yes;
+      INPUT_UINPUT = f yes;
+      SUN20I_GPADC = f yes; # analog joystick ADC
 
-      # --- Input (gamepad, joystick, buttons) ---
-      KEYBOARD_ADC           = yes;
-      KEYBOARD_GPIO          = yes;
-      KEYBOARD_GPIO_POLLED   = yes;
-      JOYSTICK_ADC           = yes;
-      INPUT_PWM_VIBRA        = yes;
-      INPUT_EVDEV            = yes;
-      INPUT_UINPUT           = yes;
+      # IIO subsystem (required by SUN20I_GPADC and rocknix-singleadc-joypad)
+      IIO = f yes;
+      IIO_MUX = f yes; # analog mux for joystick channels
 
-      # --- Audio ---
-      SND_SUN4I_CODEC        = module;
-      SND_SUN4I_I2S          = module;
-      SND_SUN4I_SPDIF        = module;
-      SND_SOC_HDMI_CODEC     = module;
+      # Audio
+      SND_SUN4I_CODEC = module;
+      SND_SUN4I_I2S = module;
+      SND_SUN4I_SPDIF = module;
+      SND_SOC_HDMI_CODEC = module;
 
-      # --- Storage / MMC ---
-      MMC_SUNXI              = yes;
+      # Storage/MMC
+      MMC_SUNXI = f yes;
 
-      # --- Thermal / watchdog ---
-      SUN8I_THERMAL          = yes;
-      SUNXI_WATCHDOG         = yes;
+      # Thermal & watchdog
+      SUN8I_THERMAL = f yes;
+      SUNXI_WATCHDOG = f yes;
 
-      # --- USB ---
-      PHY_SUN4I_USB          = yes;
-      USB_MUSB_HDRC          = yes;
-      USB_MUSB_SUNXI         = yes;
+      # USB
+      PHY_SUN4I_USB = f yes;
+      USB_MUSB_HDRC = f yes;
+      USB_MUSB_SUNXI = f yes;
 
-      # --- IOMMU ---
-      SUN50I_IOMMU           = yes;
+      # IOMMU
+      SUN50I_IOMMU = f yes;
 
-      # --- DMA ---
-      DMA_SUN6I              = yes;
+      # DMA
+      DMA_SUN6I = f yes;
 
-      # --- PWM (for backlight & vibration) ---
-      PWM_SUN4I              = yes;
+      # PWM for backlight & vibration
+      PWM_SUN4I = f yes;
+      PWM_SUN20I = f yes; # H700 uses SUN20I PWM for backlight
 
-      # --- Pinctrl ---
-      PINCTRL_SUN50I_H616    = yes;
-      PINCTRL_SUN50I_H616_R  = yes;
+      # SPI (panel is SPI-connected)
+      SPI = f yes;
+      SPI_SUN6I = f yes;
 
-      # --- RTC ---
-      RTC_DRV_SUN6I          = yes;
+      # RSB bus (AXP PMIC on H700 uses RSB, not I2C)
+      SUNXI_RSB = f yes;
 
-      # --- Crypto HW acceleration ---
-      CRYPTO_DEV_SUN8I_CE    = module;
-      CRYPTO_DEV_SUN8I_SS    = module;
+      # MIPI D-PHY framework
+      GENERIC_PHY_MIPI_DPHY = f yes;
+
+      # Pinctrl
+      PINCTRL_SUN50I_H616 = f yes;
+      PINCTRL_SUN50I_H616_R = f yes;
+
+      # RTC
+      RTC_DRV_SUN6I = f yes;
+
+      # Crypto HW acceleration
+      CRYPTO_DEV_SUN8I_CE = module;
+      CRYPTO_DEV_SUN8I_SS = module;
+
+      RFKILL = f yes;
+      RFKILL_GPIO = f yes;
+
+      DEBUG_INFO_NONE = f yes;
+      DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT = f no;
     };
   };
+
   customLinuxPackages = pkgs.linuxPackagesFor customKernel;
+  rocknixJoypad = customLinuxPackages.callPackage ./rocknix-joypad.nix { };
 in {
   boot.kernelPackages = customLinuxPackages;
+  boot.extraModulePackages = [ rocknixJoypad ];
 }

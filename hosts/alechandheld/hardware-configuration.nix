@@ -1,4 +1,4 @@
-{
+{ pkgs, ... }: {
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
     fsType = "ext4";
@@ -12,7 +12,8 @@
   };
 
   boot = {
-    initrd.availableKernelModules = [ "usbhid" "hid" "joydev" "evdev" "uinput" ];
+    initrd.availableKernelModules = [ "usbhid" "hid" "evdev" "uinput" ];
+    #initrd.kernelModules = [ "panel-simple" "panel-mipi" "pwm-bl" "gpio-backlight" ];
     loader = {
       systemd-boot.enable = false;
       grub.enable = false;
@@ -21,12 +22,14 @@
         configurationLimit = 2;
       };
     };
-    kernelModules = [ "hid" "hid_generic" "usbhid" "joydev" "evdev" "uinput" ];
+    # rtw88 modules are now built-in; rocknix-singleadc-joypad is the out-of-tree gamepad driver
+    kernelModules = [ "hid" "hid_generic" "usbhid" "evdev" "uinput" "rocknix-singleadc-joypad" "panel-simple" "panel-mipi" "pwm-bl" "gpio-backlight" ];
   };
 
   hardware = {
     deviceTree.name = "allwinner/sun50i-h700-anbernic-rg35xx-h.dtb";
     enableRedistributableFirmware = true;
+    firmware = [ pkgs.linux-firmware ];
 
     # For gamepad/joystick?
     i2c.enable = true;

@@ -32,7 +32,7 @@
   };
 
   time.timeZone = "America/Los_Angeles"; # lang also set to en_US
-  zramSwap.enable = true; # Compress ram for better performance
+  zramSwap.enable = lib.mkDefault true; # Compress ram for better performance
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
