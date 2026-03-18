@@ -19,12 +19,12 @@
 
   # For running retroarch
   services = {
-    #cage = {
-    #  enable = true;
-    #  user = "alec";
-    #  program = "${pkgs.retroarch}/bin/retroarch";
-    #  extraArguments = [ "-s" ]; # Allow TTY switching
-    #};
+    cage = {
+      enable = true;
+      user = "alec";
+      program = "${pkgs.retroarch}/bin/retroarch";
+      extraArguments = [ "-s" ]; # Allow TTY switching
+    };
     sshd.enable = true;
     libinput.enable = true;
     earlyoom = {
