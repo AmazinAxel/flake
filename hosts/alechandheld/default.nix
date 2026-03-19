@@ -1,8 +1,7 @@
 { pkgs, ... }:
 
 let
-  volumeHandler = pkgs.writeShellScript "volume-handler" ''
-    # Find gpio-keys-volume event device
+  volumeKeysScript = pkgs.writeShellScript "volume-keys" ''
     DEV=""
     for f in /sys/class/input/event*/device/name; do
       if [ "$(cat "$f" 2>/dev/null)" = "gpio-keys-volume" ]; then
@@ -11,7 +10,7 @@ let
         break
       fi
     done
-    [ -z "$DEV" ] && exit 0
+    [ -z "$DEV" ] && exit 1
 
     ${pkgs.evtest}/bin/evtest "$DEV" | while IFS= read -r line; do
       case "$line" in
@@ -23,11 +22,6 @@ let
           ;;
       esac
     done
-  '';
-
-  cageProgram = pkgs.writeShellScript "cage-session" ''
-    ${volumeHandler} &
-    exec ${pkgs.gamemode}/bin/gamemoderun ${pkgs.retroarch}/bin/retroarch
   '';
 in {
   # sudo nixos-rebuild boot --flake .#alechandheld --target-host alec@10.0.0.169 --sudo --ask-sudo-password --no-reexec --option system "aarch64-linux"
@@ -54,7 +48,7 @@ in {
     cage = {
       enable = true;
       user = "alec";
-      program = "${cageProgram}";
+      program = "${pkgs.gamemode}/bin/gamemoderun ${pkgs.retroarch}/bin/retroarch";
       extraArguments = [ "-s" ]; # Allow TTY switching
     };
     sshd.enable = true;
@@ -70,6 +64,17 @@ in {
     };
   };
 
+  systemd.services.volume-keys = {
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      User = "alec";
+      SupplementaryGroups = [ "input" ];
+      ExecStart = volumeKeysScript;
+      Restart = "always";
+      RestartSec = "2s";
+    };
+  };
+
   networking = {
     wireless.iwd.enable = false; # todo switch to iwd?
     networkmanager.enable = true;
@@ -82,25 +87,13 @@ in {
 
   powerManagement.cpuFreqGovernor = "schedutil"; # idk what this does
 
-  systemd.services.NetworkManager-wait-online.enable = false; # not needed
+  systemd.services.NetworkManager-wait-online.enable = false; # waiting not needed
 
   boot.kernel.sysctl = {
     "kernel.sched_autogroup_enabled" = 0;
     "vm.dirty_ratio" = 20;
     "vm.dirty_background_ratio" = 5;
   };
-
-  #nixpkgs.overlays = [(final: prev: {
-  #  retroarch-bare = prev.retroarch-bare.overrideAttrs (old: {
-  #    configureFlags = old.configureFlags ++ [
-  #      "--enable-opengles"
-  #      "--enable-opengles3"
-  #      "--enable-opengles3_1"
-  #      "--disable-v4l2" # no camera
-  #      "--disable-microphone" # no mic
-  #    ];
-  #  });
-  #})];
 
   users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" ];
   nix.settings.trusted-users = [ "alec" ]; # Remote deployment
