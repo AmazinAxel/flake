@@ -1,4 +1,35 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+
+let
+  volumeHandler = pkgs.writeShellScript "volume-handler" ''
+    # Find gpio-keys-volume event device
+    DEV=""
+    for f in /sys/class/input/event*/device/name; do
+      if [ "$(cat "$f" 2>/dev/null)" = "gpio-keys-volume" ]; then
+        num=$(echo "$f" | grep -o 'event[0-9]*')
+        DEV="/dev/input/$num"
+        break
+      fi
+    done
+    [ -z "$DEV" ] && exit 0
+
+    ${pkgs.evtest}/bin/evtest "$DEV" | while IFS= read -r line; do
+      case "$line" in
+        *"(KEY_VOLUMEUP), value 1"*|*"(KEY_VOLUMEUP), value 2"*)
+          echo -n "VOLUME_UP" > /dev/udp/127.0.0.1/55355 || true
+          ;;
+        *"(KEY_VOLUMEDOWN), value 1"*|*"(KEY_VOLUMEDOWN), value 2"*)
+          echo -n "VOLUME_DOWN" > /dev/udp/127.0.0.1/55355 || true
+          ;;
+      esac
+    done
+  '';
+
+  cageProgram = pkgs.writeShellScript "cage-session" ''
+    ${volumeHandler} &
+    exec ${pkgs.gamemode}/bin/gamemoderun ${pkgs.retroarch}/bin/retroarch
+  '';
+in {
   # sudo nixos-rebuild boot --flake .#alechandheld --target-host alec@10.0.0.169 --sudo --ask-sudo-password --no-reexec --option system "aarch64-linux"
   imports = [
     ./hardware-configuration.nix
@@ -23,7 +54,7 @@
     cage = {
       enable = true;
       user = "alec";
-      program = "${pkgs.gamemode}/bin/gamemoderun ${pkgs.retroarch}/bin/retroarch";
+      program = "${cageProgram}";
       extraArguments = [ "-s" ]; # Allow TTY switching
     };
     sshd.enable = true;
@@ -36,13 +67,6 @@
       enable = true;
       alsa.enable = true;
       pulse.enable = true;
-    };
-    triggerhappy = {
-      enable = true;
-      bindings = [
-        { keys = [ "VOLUMEUP" ];   event = "press"; cmd = "XDG_RUNTIME_DIR=/run/user/1000 ${pkgs.util-linux}/bin/runuser -u alec -- ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"; }
-        { keys = [ "VOLUMEDOWN" ]; event = "press"; cmd = "XDG_RUNTIME_DIR=/run/user/1000 ${pkgs.util-linux}/bin/runuser -u alec -- ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }
-      ];
     };
   };
 

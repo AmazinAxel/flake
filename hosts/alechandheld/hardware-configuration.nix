@@ -12,11 +12,11 @@ in {
   };
 
   # external microSD card for more games
-  #fileSystems."/mnt/content" = {
-  #  device = "/dev/disk/by-uuid/89bd4766-cb7b-46ad-aef9-13c21769d7c9";
-  #  fsType = "ext4";
-  #  options = [ "nofail" "noatime" "discard" ];
-  #};
+  fileSystems."/mnt/AlecContent" = {
+    device = "/dev/disk/by-label/AlecContent";
+    fsType = "ext4";
+    options = [ "nofail" "x-systemd.device-timeout=5s" "noatime" "discard" ];
+  };
 
   boot = {
     initrd = {
