@@ -15,7 +15,7 @@
       timeout = 0; # Hold down space on boot to access
     };
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
-    initrd.systemd.enable = true; # Faster parallel boot
+    initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
   };
 
   networking = {
