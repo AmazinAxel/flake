@@ -49,6 +49,10 @@ in {
       input_player1_r_y_plus_axis = "+4";
       input_player1_r_y_minus_axis = "-4";
       input_menu_toggle_btn = "10";
+
+      wifi_driver = "nmcli";
+      bluetooth_driver = "bluetoothctl";
+      menu_show_advanced_settings = "true";
     };
   };
 

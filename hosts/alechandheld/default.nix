@@ -1,27 +1,28 @@
 { pkgs, ... }:
 
 let
-  volumeKeysScript = pkgs.writeShellScript "volume-keys" ''
-    DEV=""
-    for f in /sys/class/input/event*/device/name; do
-      if [ "$(cat "$f" 2>/dev/null)" = "gpio-keys-volume" ]; then
-        num=$(echo "$f" | grep -o 'event[0-9]*')
-        DEV="/dev/input/$num"
-        break
-      fi
-    done
-    [ -z "$DEV" ] && exit 1
+  retroarchCustom = pkgs.retroarch-bare.overrideAttrs (old: {
+    configureFlags = old.configureFlags ++ [
+      "--enable-wifi"
+      "--enable-bluetooth"
+    ];
+  });
 
-    ${pkgs.evtest}/bin/evtest "$DEV" | while IFS= read -r line; do
-      case "$line" in
-        *"(KEY_VOLUMEUP), value 1"*|*"(KEY_VOLUMEUP), value 2"*)
-          echo -n "VOLUME_UP" > /dev/udp/127.0.0.1/55355 || true
-          ;;
-        *"(KEY_VOLUMEDOWN), value 1"*|*"(KEY_VOLUMEDOWN), value 2"*)
-          echo -n "VOLUME_DOWN" > /dev/udp/127.0.0.1/55355 || true
-          ;;
-      esac
-    done
+  volUp = pkgs.writeShellScript "vol-up" ''
+    if [ -f /tmp/fn-held ]; then
+      ${pkgs.brightnessctl}/bin/brightnessctl set +10%
+    else
+      echo -n "VOLUME_UP" > /dev/udp/127.0.0.1/55355 || true
+    fi
+  '';
+
+  volDown = pkgs.writeShellScript "vol-down" ''
+    if [ -f /tmp/fn-held ]; then
+      pct=$(${pkgs.brightnessctl}/bin/brightnessctl -m | cut -d, -f4 | tr -d '%')
+      [ "''${pct:-100}" -gt 10 ] && ${pkgs.brightnessctl}/bin/brightnessctl set 10%-
+    else
+      echo -n "VOLUME_DOWN" > /dev/udp/127.0.0.1/55355 || true
+    fi
   '';
 in {
   # sudo nixos-rebuild boot --flake .#alechandheld --target-host alec@10.0.0.169 --sudo --ask-sudo-password --no-reexec --option system "aarch64-linux"
@@ -33,9 +34,8 @@ in {
 
   environment.systemPackages = with pkgs; [
     gitMinimal
-    (retroarch.withCores (cores: with cores; [
-      # eeeee todo
-    ]))
+    retroarchCustom
+    brightnessctl
   ];
 
   home-manager.users.alec.imports = [ ./hm.nix ];
@@ -48,7 +48,7 @@ in {
     cage = {
       enable = true;
       user = "alec";
-      program = "${pkgs.gamemode}/bin/gamemoderun ${pkgs.retroarch}/bin/retroarch";
+      program = "${pkgs.gamemode}/bin/gamemoderun ${retroarchCustom}/bin/retroarch";
       extraArguments = [ "-s" ]; # Allow TTY switching
     };
     sshd.enable = true;
@@ -64,16 +64,54 @@ in {
     };
   };
 
-  systemd.services.volume-keys = {
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      User = "alec";
-      SupplementaryGroups = [ "input" ];
-      ExecStart = volumeKeysScript;
-      Restart = "always";
-      RestartSec = "2s";
-    };
+  services.triggerhappy = {
+    enable = true;
+    user = "alec";
+    bindings = [
+      # Track function key (BTN_MODE) state via flag file
+      { keys = [ "BTN_MODE" ]; event = "press";   cmd = "${pkgs.coreutils}/bin/touch /tmp/fn-held"; }
+      { keys = [ "BTN_MODE" ]; event = "release"; cmd = "${pkgs.coreutils}/bin/rm -f /tmp/fn-held"; }
+      # Press: route to brightness (if fn held) or volume
+      { keys = [ "KEY_VOLUMEUP" ];   event = "press"; cmd = "${volUp}"; }
+      { keys = [ "KEY_VOLUMEDOWN" ]; event = "press"; cmd = "${volDown}"; }
+      # Hold (autorepeat): volume only, never brightness regardless of fn state
+      { keys = [ "KEY_VOLUMEUP" ];   event = "hold"; cmd = "[ ! -f /tmp/fn-held ] && echo -n VOLUME_UP > /dev/udp/127.0.0.1/55355 || true"; }
+      { keys = [ "KEY_VOLUMEDOWN" ]; event = "hold"; cmd = "[ ! -f /tmp/fn-held ] && echo -n VOLUME_DOWN > /dev/udp/127.0.0.1/55355 || true"; }
+    ];
   };
+
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="backlight", \
+      RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness", \
+      RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
+  '';
+
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (subject.user !== "alec") return;
+      if (action.id.startsWith("org.bluez") ||
+          action.id === "org.freedesktop.login1.power-off" ||
+          action.id === "org.freedesktop.login1.reboot" ||
+          action.id === "org.freedesktop.login1.suspend" ||
+          action.id === "org.freedesktop.login1.hibernate") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
+  services.logind.settings.Login = {
+    HandlePowerKey = "suspend";
+    HandlePowerKeyLongPress = "poweroff";
+  };
+
+  powerManagement.resumeCommands = ''
+    ${pkgs.systemd}/bin/systemctl --user -M alec@ restart wireplumber pipewire pipewire-pulse
+  '';
 
   networking = {
     wireless.iwd.enable = false; # todo switch to iwd?
@@ -95,7 +133,7 @@ in {
     "vm.dirty_background_ratio" = 5;
   };
 
-  users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" ];
+  users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" "bluetooth" "networkmanager" ];
   nix.settings.trusted-users = [ "alec" ]; # Remote deployment
 
   services.journald.extraConfig = "Storage=volatile"; # Extend SD card lifespan
