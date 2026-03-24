@@ -12,7 +12,7 @@ in {
       menu_driver = "rgui";
       video_driver = "gl";
       video_fullscreen = "true";
-      video_threaded = "true";
+      video_threaded = "false"; # TEMP FIX
       video_smooth = "false";
       audio_driver = "pulse";
       audio_latency = "64";
@@ -22,8 +22,8 @@ in {
       input_autodetect_enable = "false";
       config_save_on_exit = "false";
       network_cmd_enable = "true";
-      #log_verbosity = "true";
-      #log_dir = "/tmp";
+      log_verbosity = "true";
+      log_dir = "/tmp";
 
       # gamepad
       input_player1_joypad_index = "0";
@@ -55,7 +55,9 @@ in {
 
       wifi_driver = "nmcli"; # for wifi settings
       bluetooth_driver = "bluetoothctl"; # for bluetooth settings
-      menu_show_advanced_settings = "true"; # ??
+      menu_show_advanced_settings = "true"; # ?? remove probably
+
+      # fix cores not being found
       libretro_directory = "/run/current-system/sw/lib/retroarch/cores";
       libretro_info_path = "${pkgs.libretro-core-info}/share/retroarch/cores";
     };

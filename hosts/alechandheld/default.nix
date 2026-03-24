@@ -3,22 +3,25 @@
 let
   retroarchCustom = pkgs.retroarch-bare.overrideAttrs (old: {
     configureFlags = old.configureFlags ++ [
-      "--enable-opengl" # enables opengl support
-      #"--enable-opengles" # ???
-      #"--enable-opengles3" # ???
+      "--enable-opengles" # better than opengl
+      "--enable-opengles3"
       "--enable-kms"
+      "--enable-neon"
 
-      #"--enable-alsa" # audio
-      #"--enable-threads" # audio
+      "--enable-threads" # audio
       "--enable-wifi" # wifi menu
       "--enable-bluetooth" # bt menu
 
       # unused
       "--disable-v4l2" # camera
       "--disable-microphone" # no mic
-      #"--disable-x11"
-      #"--disable-vulkan" # probably fine
-      #"--disable-wayland"
+      "--disable-x11"
+      "--disable-vulkan" # not supported on this gpu
+      "--disable-wayland"
+      "--disable-cdrom" # guh
+      "--disable-discord" # rich presence
+      "--disable-cheevos" # retroarchievements
+      "--disable-langextra"
     ];
   });
 
@@ -46,12 +49,11 @@ in {
     ../common.nix
     ./customKernel.nix
     ./inputHandlers.nix
+    ./menus.nix
   ];
 
   environment.systemPackages = with pkgs; [
-    gitMinimal
     retroarchCustom
-    brightnessctl
     fake08Core
     libretro.mgba
     libretro-core-info # has fake-08 core info too
@@ -62,12 +64,6 @@ in {
   zramSwap.enable = false; # Breaks boot if enabled
 
   services = {
-    cage = {
-      enable = true;
-      user = "alec";
-      program = "${pkgs.gamemode}/bin/gamemoderun ${retroarchCustom}/bin/retroarch";
-      extraArguments = [ "-s" ]; # Allow TTY switching
-    };
     sshd.enable = true;
     libinput.enable = true;
     earlyoom = {

@@ -21,6 +21,11 @@
       url = "github:AmazinAxel/Planning";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    portmaster-nix = {
+      url = "github:Daaboulex/portmaster-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { home-manager, nixpkgs, ... }@inputs: {
@@ -50,6 +55,8 @@
         modules = [
           ./hosts/alechandheld/default.nix
           home-manager.nixosModules.home-manager
+          inputs.portmaster-nix.nixosModules.default
+          { nixpkgs.overlays = [ inputs.portmaster-nix.overlays.default ]; }
         ];
       };
 

@@ -87,7 +87,7 @@ in {
   systemd.services = {
     gamepad-handler = {
       wantedBy = [ "multi-user.target" ];
-      before = [ "cage.service" ];
+      #before = [ "cage.service" ];
       serviceConfig = {
         User = "alec";
         SupplementaryGroups = [ "input" "uinput" ];
@@ -112,7 +112,7 @@ in {
       wantedBy = [ "multi-user.target" ];
       after = [ "brightness-daemon.service" ];
       wants = [ "brightness-daemon.service" ];
-      before = [ "cage.service" ];
+      #before = [ "cage.service" ];
       serviceConfig = {
         User = "alec";
         SupplementaryGroups = [ "input" ];
@@ -122,10 +122,11 @@ in {
       };
     };
 
-    cage = {
-      after = [ "gamepad-handler.service" "vol-handler.service" ];
-      wants = [ "gamepad-handler.service" "vol-handler.service" ];
-    };
+    #cage = {
+    #  after = [ "gamepad-handler.service" "vol-handler.service" ];
+    #  wants = [ "gamepad-handler.service" "vol-handler.service" ];
+    #  serviceConfig.Environment = "PULSE_SERVER=unix:/run/user/1001/pulse/native";
+    #};
   };
 
   services.udev.extraRules = ''
@@ -138,5 +139,9 @@ in {
     SUBSYSTEM=="input", ATTRS{name}=="H700 Gamepad", \
       ENV{ID_INPUT_JOYSTICK}="", ENV{ID_INPUT_ACCELEROMETER}="", \
       ENV{ID_INPUT_KEY}="", ENV{ID_INPUT_KEYBOARD}=""
+
+    # Enable H616 DAC output (off by default)
+    SUBSYSTEM=="sound", KERNEL=="controlC0", ACTION=="add", \
+      RUN+="${pkgs.alsa-utils}/bin/amixer -D hw:0 cset numid=6 on,on"
   '';
 }
