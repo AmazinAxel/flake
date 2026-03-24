@@ -1,12 +1,11 @@
 { lib, pkgs, ... }:
 
 let
-  toRetroarchCfg = attrs:
-    lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: ''${k} = "${v}"'') attrs) + "\n";
+  retroarchCfg = attrs: lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: ''${k} = "${v}"'') attrs) + "\n";
 in {
   xdg.configFile."retroarch/retroarch.cfg" = {
     force = true;
-    text = toRetroarchCfg {
+    text = retroarchCfg {
       input_driver = "udev";
       input_joypad_driver = "udev";
       joypad_autoconfig_dir = "~/.config/retroarch/autoconfig";
@@ -17,10 +16,14 @@ in {
       video_smooth = "false";
       audio_driver = "pulse";
       audio_latency = "64";
+      audio_sync = "false";
+      video_swap_interval = "0";
       rewind_enable = "false";
       input_autodetect_enable = "false";
       config_save_on_exit = "false";
       network_cmd_enable = "true";
+      #log_verbosity = "true";
+      #log_dir = "/tmp";
 
       # gamepad
       input_player1_joypad_index = "0";
@@ -53,6 +56,8 @@ in {
       wifi_driver = "nmcli"; # for wifi settings
       bluetooth_driver = "bluetoothctl"; # for bluetooth settings
       menu_show_advanced_settings = "true"; # ??
+      libretro_directory = "/run/current-system/sw/lib/retroarch/cores";
+      libretro_info_path = "${pkgs.libretro-core-info}/share/retroarch/cores";
     };
   };
 
