@@ -22,8 +22,8 @@ let
     # AlecHandheld-specific PortMaster configuration
     # Auto-sourced by PortMaster.sh when CFW_NAME=AlecHandheld
 
-    # Store ports in the user's home directory
-    export directory="home/alec"
+    # Store ports on the SD card
+    export directory="mnt/AlecContent"
 
     # No sudo — running as user alec
     export ESUDO=""
@@ -78,9 +78,16 @@ let
       love
       # OpenGL ES / Mesa for games
       libGL
+      # Wayland client libs — SDL2 loads these at runtime for Wayland backend
+      wayland
       # Audio
       alsa-lib
       openal
+      libvorbis
+      libtheora
+      flac
+      libopus
+      mpg123
       # Input (gptokeyb needs udev)
       udev
       # Image libs
@@ -92,9 +99,24 @@ let
       freetype
     ];
 
-    extraBwrapArgs = [ "--bind" "/dev/tty0" "/dev/tty0" ];
+    extraBwrapArgs = [
+      # Wayland socket lives under /run/user — bwrap puts a tmpfs on /run so
+      # we must explicitly expose it, otherwise SDL2 can't connect to cage
+      "--bind" "/run/user" "/run/user"
+      # udev socket — SDL2 joystick/gamecontroller subsystem calls udev_new()
+      # which crashes (NULL deref) if /run/udev is missing inside the sandbox
+      "--bind" "/run/udev" "/run/udev"
+      # SD card — ports and game files live here
+      "--bind" "/mnt" "/mnt"
+      # tty0 access for PortMaster.sh console switching (best-effort)
+      "--bind" "/dev/tty0" "/dev/tty0"
+    ];
 
-    runScript = pkgs.writeShellScript "portmaster-run" ''
+    runScript = pkgs.writeTextFile {
+      name = "portmaster-run";
+      executable = true;
+      text = ''
+        #!/bin/sh
       PMDIR="/var/lib/portmaster/PortMaster"
 
       # ── First-run initialisation ───────────────────────────────────────────
@@ -120,14 +142,14 @@ let
         # pugwash adds these to sys.path at startup
         if [ -f "$PMDIR/pylibs.zip" ]; then
           echo "Extracting Python libraries..."
-          (cd "$PMDIR" && unzip -q pylibs.zip)
+          (cd "$PMDIR" && unzip -o -q pylibs.zip)
         fi
 
         # Install AlecHandheld platform overrides
-        cp ${alecHandheldMod} "$PMDIR/mod_AlecHandheld.txt"
+        install -m 644 ${alecHandheldMod} "$PMDIR/mod_AlecHandheld.txt"
 
-        # Ports live here — create if absent
-        mkdir -p /home/alec/ports
+        # Ports live on the SD card
+        mkdir -p /mnt/AlecContent/ports
 
         # Remove old version markers, write new one
         rm -f "$PMDIR"/.nix-initialized-*
@@ -137,12 +159,37 @@ let
 
       # ── Launch ────────────────────────────────────────────────────────────
       export HOME=/home/alec
-      export CFW_NAME=AlecHandheld
       export SDL_VIDEODRIVER=wayland
+      export SDL_JOYSTICK_HIDAPI=0
+      export PYTHONFAULTHANDLER=1
+      # Custom controller mapping for H700 Gamepad (Bus=0x0019 VID=0x484b PID=0x14df)
+      # Maps physical labels: A(btn0)=east/back → SDL b, B(btn1)=south/confirm → SDL a
+      # X(btn2)=north → SDL y, Y(btn3)=west → SDL x  (Nintendo layout)
+      export SDL_GAMECONTROLLERCONFIG="190000004b480000df14000000010000,H700 Gamepad,platform:Linux,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,rightstick:b12,dpup:b13,dpdown:b14,dpleft:b15,dpright:b16,leftx:a0,lefty:a1,rightx:a3,righty:a4,"
+
+      # Patch control.txt so PortMaster.sh reads CFW_NAME=AlecHandheld
+      if [ -f "$PMDIR/control.txt" ]; then
+        if grep -q "^CFW_NAME=" "$PMDIR/control.txt"; then
+          sed -i "s/^CFW_NAME=.*/CFW_NAME=AlecHandheld/" "$PMDIR/control.txt"
+        else
+          echo "CFW_NAME=AlecHandheld" >> "$PMDIR/control.txt"
+        fi
+      else
+        echo "CFW_NAME=AlecHandheld" > "$PMDIR/control.txt"
+      fi
+
+      # Always keep mod files current
+      install -m 644 ${alecHandheldMod} "$PMDIR/mod_AlecHandheld.txt"
+      # mod_.txt is sourced when CFW detection returns empty — belt-and-suspenders
+      install -m 644 ${alecHandheldMod} "$PMDIR/mod_.txt"
+
+      # Dump environment for debugging (remove once working)
+      env | grep -E 'WAYLAND|SDL|XDG|DISPLAY' > /tmp/portmaster-bwrap-env.txt
 
       cd "$PMDIR"
       exec bash PortMaster.sh
-    '';
+      '';
+    };
   };
 in {
   environment.systemPackages = [ portmaster ];
@@ -167,7 +214,5 @@ in {
     "d /opt/system                        0755 root root  -"
     "d /opt/system/Tools                  0755 root root  -"
     "L /opt/system/Tools/PortMaster       -    -    -     - /var/lib/portmaster/PortMaster"
-    # Ports directory (Stardew Valley, Balatro, etc. install here)
-    "d /home/alec/ports                   0755 alec users -"
   ];
 }

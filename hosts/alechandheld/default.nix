@@ -94,7 +94,8 @@ in {
           action.id === "org.freedesktop.login1.suspend" ||
           action.id === "org.freedesktop.login1.hibernate" ||
           (action.id === "org.freedesktop.systemd1.manage-units" &&
-           action.lookup("unit") === "oga_events.service")) {
+           (action.lookup("unit") === "oga_events.service" ||
+            action.lookup("unit") === "gamepad-handler.service"))) {
         return polkit.Result.YES;
       }
     });

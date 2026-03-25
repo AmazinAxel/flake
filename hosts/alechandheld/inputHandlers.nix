@@ -53,7 +53,13 @@ let
     done
     exec 3>/tmp/brightness-cmd
 
-    vol()    { echo -n "$1" > /dev/udp/127.0.0.1/55355 2>/dev/null || true; }
+    vol() {
+      echo -n "$1" > /dev/udp/127.0.0.1/55355 2>/dev/null || true
+      case "$1" in
+        VOLUME_UP)   ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5% 2>/dev/null || true ;;
+        VOLUME_DOWN) ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5% 2>/dev/null || true ;;
+      esac
+    }
     bright() {
       [ "$bright_cd" -lt 5 ] && bright_cd=$((bright_cd + 1))
       [ "$bright_cd" -ge 5 ] || return

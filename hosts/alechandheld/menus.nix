@@ -115,7 +115,19 @@ let
         app=$(cat /tmp/launch-request)
         rm -f /tmp/launch-request
         case "$app" in
-          portmaster) cage -- portmaster > /tmp/portmaster.log 2>&1 ;;
+          portmaster)
+            # Stop evsieve so SDL2 sees the real gamepad (not the virtual FF-mirroring
+            # uinput device which causes SDL_InitSubSystem(JOYSTICK) to segfault)
+            systemctl stop gamepad-handler || true
+            cage -- portmaster > /tmp/portmaster.log 2>&1
+            systemctl start gamepad-handler || true
+            # Wait for evsieve to create the virtual device before RetroArch starts
+            timeout=10
+            while [ $timeout -gt 0 ] && ! grep -q "Evsieve" /proc/bus/input/devices 2>/dev/null; do
+              sleep 0.5
+              timeout=$((timeout - 1))
+            done
+            ;;
         esac
       fi
     done
