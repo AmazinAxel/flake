@@ -106,6 +106,10 @@ let
       # udev socket — SDL2 joystick/gamecontroller subsystem calls udev_new()
       # which crashes (NULL deref) if /run/udev is missing inside the sandbox
       "--bind" "/run/udev" "/run/udev"
+      # Input devices — bwrap creates a minimal tmpfs /dev with no /dev/input.
+      # SDL2's EVDEV backend segfaults (NULL deref in opendir) when /dev/input
+      # is absent; bind the host's /dev/input so SDL2 can enumerate joysticks.
+      "--bind" "/dev/input" "/dev/input"
       # SD card — ports and game files live here
       "--bind" "/mnt" "/mnt"
       # tty0 access for PortMaster.sh console switching (best-effort)
@@ -162,6 +166,10 @@ let
       export SDL_VIDEODRIVER=wayland
       export SDL_JOYSTICK_HIDAPI=0
       export PYTHONFAULTHANDLER=1
+      # Pre-compiled handheld binaries (love.aarch64, gptokeyb, etc.) may have
+      # been built against Debian multiarch paths.  Expose both so they find libs
+      # whether they use /usr/lib or /usr/lib/aarch64-linux-gnu RPATH.
+      export LD_LIBRARY_PATH=/usr/lib:/usr/lib/aarch64-linux-gnu''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
       # Custom controller mapping for H700 Gamepad (Bus=0x0019 VID=0x484b PID=0x14df)
       # Maps physical labels: A(btn0)=east/back → SDL b, B(btn1)=south/confirm → SDL a
       # X(btn2)=north → SDL y, Y(btn3)=west → SDL x  (Nintendo layout)
@@ -214,5 +222,8 @@ in {
     "d /opt/system                        0755 root root  -"
     "d /opt/system/Tools                  0755 root root  -"
     "L /opt/system/Tools/PortMaster       -    -    -     - /var/lib/portmaster/PortMaster"
+    # SD card content directory — ensure alec owns it so PortMaster can write ports/
+    "d /mnt/AlecContent                   0755 alec users -"
+    "d /mnt/AlecContent/ports             0755 alec users -"
   ];
 }

@@ -116,17 +116,7 @@ let
         rm -f /tmp/launch-request
         case "$app" in
           portmaster)
-            # Stop evsieve so SDL2 sees the real gamepad (not the virtual FF-mirroring
-            # uinput device which causes SDL_InitSubSystem(JOYSTICK) to segfault)
-            systemctl stop gamepad-handler || true
             cage -- portmaster > /tmp/portmaster.log 2>&1
-            systemctl start gamepad-handler || true
-            # Wait for evsieve to create the virtual device before RetroArch starts
-            timeout=10
-            while [ $timeout -gt 0 ] && ! grep -q "Evsieve" /proc/bus/input/devices 2>/dev/null; do
-              sleep 0.5
-              timeout=$((timeout - 1))
-            done
             ;;
         esac
       fi
@@ -142,7 +132,7 @@ in {
   # ── alechandheld service (replaces cage.service) ─────────────────────────
   systemd.services.alechandheld = {
     description = "Alechandheld Gaming Session (KMS/DRM)";
-    after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "systemd-logind.service" ];
+    after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "virtual-keyboard.service" "systemd-logind.service" ];
     wants     = [ "systemd-logind.service" ];
     wantedBy  = [ "multi-user.target" ];
     # Prevent getty from racing for tty1 — without this the login prompt wins

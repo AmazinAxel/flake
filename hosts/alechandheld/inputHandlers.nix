@@ -1,6 +1,48 @@
 { pkgs, ... }:
 
 let
+  # Virtual keyboard so cage always advertises WL_SEAT_CAPABILITY_KEYBOARD.
+  # Without a keyboard device, SDL2's Wayland backend crashes on init (NULL
+  # deref in xkbcommon setup) — even if only a gamepad is present.
+  virtualKbdSrc = pkgs.writeText "virtual-kbd.c" ''
+    #include <fcntl.h>
+    #include <linux/uinput.h>
+    #include <string.h>
+    #include <unistd.h>
+    #include <signal.h>
+    static int ufd = -1;
+    static void cleanup(int sig) {
+      (void)sig;
+      if (ufd >= 0) { ioctl(ufd, UI_DEV_DESTROY, 0); close(ufd); }
+      _exit(0);
+    }
+    int main(void) {
+      struct uinput_setup s;
+      memset(&s, 0, sizeof(s));
+      ufd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+      if (ufd < 0) return 1;
+      ioctl(ufd, UI_SET_EVBIT, EV_KEY);
+      ioctl(ufd, UI_SET_KEYBIT, KEY_A);
+      strncpy(s.name, "Virtual Keyboard", UINPUT_MAX_NAME_SIZE - 1);
+      s.id.bustype = BUS_VIRTUAL;
+      s.id.vendor  = 0x1234;
+      s.id.product = 0x0001;
+      s.id.version = 1;
+      ioctl(ufd, UI_DEV_SETUP, &s);
+      ioctl(ufd, UI_DEV_CREATE);
+      signal(SIGTERM, cleanup);
+      signal(SIGINT,  cleanup);
+      while (1) pause();
+    }
+  '';
+
+  virtualKbd = pkgs.stdenv.mkDerivation {
+    name = "virtual-kbd";
+    dontUnpack = true;
+    buildPhase = "$CC -O2 -o virtual-kbd ${virtualKbdSrc}";
+    installPhase = "install -Dm755 virtual-kbd $out/bin/virtual-kbd";
+  };
+
   findDev = ''
     find_dev() {
       for f in /sys/class/input/event*/device/name; do
@@ -91,6 +133,18 @@ in {
   hardware.uinput.enable = true;
 
   systemd.services = {
+    virtual-keyboard = {
+      description = "Virtual keyboard device for Wayland seat capability";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        User = "alec";
+        SupplementaryGroups = [ "uinput" ];
+        ExecStart = "${virtualKbd}/bin/virtual-kbd";
+        Restart = "always";
+        RestartSec = "2s";
+      };
+    };
+
     gamepad-handler = {
       wantedBy = [ "multi-user.target" ];
       #before = [ "cage.service" ];
@@ -146,9 +200,12 @@ in {
       RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness", \
       RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
 
-    # Hide the physical gamepad from RetroArch's joypad enumeration so it
-    # uses the virtual device (created by gamepad-handler) as joypad index 0.
-    SUBSYSTEM=="input", ATTRS{name}=="H700 Gamepad", \
+    # Hide the PHYSICAL H700 Gamepad from joystick enumeration so apps use the
+    # evsieve virtual device instead.  DEVPATH!="*/virtual/*" ensures we only
+    # match the real hardware node — the virtual uinput device lives under
+    # /devices/virtual/... and must stay visible (ID_INPUT_JOYSTICK intact)
+    # so SDL2-based apps like PortMaster can see it as a joystick.
+    SUBSYSTEM=="input", ATTRS{name}=="H700 Gamepad", DEVPATH!="*/virtual/*", \
       ENV{ID_INPUT_JOYSTICK}="", ENV{ID_INPUT_ACCELEROMETER}="", \
       ENV{ID_INPUT_KEY}="", ENV{ID_INPUT_KEYBOARD}=""
   '';
