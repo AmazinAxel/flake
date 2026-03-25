@@ -3,10 +3,10 @@
 let
   retroarchCustom = pkgs.retroarch-bare.overrideAttrs (old: {
     configureFlags = old.configureFlags ++ [
-      "--enable-opengles" # better than opengl
-      "--enable-opengles3"
-      "--enable-kms"
-      "--enable-neon"
+      "--enable-opengl" # better than opengl
+      #"--enable-opengles" # better than opengl
+      #"--enable-opengles3"
+      "--enable-wayland"
 
       "--enable-threads" # audio
       "--enable-wifi" # wifi menu
@@ -17,7 +17,7 @@ let
       "--disable-microphone" # no mic
       "--disable-x11"
       "--disable-vulkan" # not supported on this gpu
-      "--disable-wayland"
+      "--disable-kms"
       "--disable-cdrom" # guh
       "--disable-discord" # rich presence
       "--disable-cheevos" # retroarchievements
@@ -50,12 +50,15 @@ in {
     ./customKernel.nix
     ./inputHandlers.nix
     ./menus.nix
+    ./portmaster.nix
   ];
 
   environment.systemPackages = with pkgs; [
     retroarchCustom
     fake08Core
     libretro.mgba
+    libretro.melonds
+    libretro.desmume
     libretro-core-info # has fake-08 core info too
   ];
 
@@ -89,7 +92,9 @@ in {
           action.id === "org.freedesktop.login1.power-off" ||
           action.id === "org.freedesktop.login1.reboot" ||
           action.id === "org.freedesktop.login1.suspend" ||
-          action.id === "org.freedesktop.login1.hibernate") {
+          action.id === "org.freedesktop.login1.hibernate" ||
+          (action.id === "org.freedesktop.systemd1.manage-units" &&
+           action.lookup("unit") === "oga_events.service")) {
         return polkit.Result.YES;
       }
     });
@@ -123,7 +128,7 @@ in {
     "vm.dirty_background_ratio" = 5;
   };
 
-  users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" "bluetooth" "networkmanager" "video" "uinput" ];
+  users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
   nix.settings.trusted-users = [ "alec" ]; # Remote deployment
 
   services.journald.extraConfig = "Storage=volatile"; # Extend SD card lifespan

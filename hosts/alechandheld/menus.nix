@@ -96,15 +96,26 @@ let
 
   # ── Main session loop script ─────────────────────────────────────────────
   gameLauncher = pkgs.writeShellScript "game-launcher" ''
-    export PATH=${lib.makeBinPath [ pkgs.gamemode pkgs.cage ]}:$PATH
+    export PATH=${lib.makeBinPath [ pkgs.gamemode pkgs.cage ]}:/run/current-system/sw/bin:$PATH
     while true; do
       rm -f /tmp/launch-request
-      gamemoderun retroarch
+      cage -- gamemoderun retroarch &
+      CAGE_PID=$!
+      # Poll for a launch request; kill cage when one appears
+      while kill -0 "$CAGE_PID" 2>/dev/null; do
+        if [ -f /tmp/launch-request ]; then
+          kill "$CAGE_PID"
+          wait "$CAGE_PID" 2>/dev/null
+          break
+        fi
+        sleep 0.2
+      done
+      wait "$CAGE_PID" 2>/dev/null
       if [ -f /tmp/launch-request ]; then
         app=$(cat /tmp/launch-request)
         rm -f /tmp/launch-request
         case "$app" in
-          portmaster) cage -- portmaster ;;
+          portmaster) cage -- portmaster > /tmp/portmaster.log 2>&1 ;;
         esac
       fi
     done
@@ -112,23 +123,29 @@ let
 in {
   environment.systemPackages = [ launcherCore launcherFiles ];
 
+  # Minimal PAM service — avoids the broken pam_lastlog2 module in the full
+  # "login" stack while still creating a logind session for KMS/DRM access.
+  security.pam.services.alechandheld.startSession = true;
+
   # ── alechandheld service (replaces cage.service) ─────────────────────────
   systemd.services.alechandheld = {
     description = "Alechandheld Gaming Session (KMS/DRM)";
-    after  = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "systemd-logind.service" ];
-    wants  = [ "systemd-logind.service" ];
-    wantedBy = [ "multi-user.target" ];
+    after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "systemd-logind.service" ];
+    wants     = [ "systemd-logind.service" ];
+    wantedBy  = [ "multi-user.target" ];
+    # Prevent getty from racing for tty1 — without this the login prompt wins
+    conflicts = [ "getty@tty1.service" "autovt@tty1.service" ];
     environment = {
       HOME             = "/home/alec";
       USER             = "alec";
-      XDG_RUNTIME_DIR  = "/run/user/1000";
+      XDG_RUNTIME_DIR  = "/run/user/1001";
       XDG_SEAT         = "seat0";
       XDG_VTNR         = "1";
     };
     serviceConfig = {
       Type           = "simple";
       User           = "alec";
-      PAMName        = "login";
+      PAMName        = "alechandheld";
       TTYPath        = "/dev/tty1";
       TTYReset       = true;
       TTYVHangup     = true;
@@ -137,14 +154,15 @@ in {
       StandardError  = "journal";
       UtmpIdentifier = "tty1";
       UtmpMode       = "user";
-      ExecStart      = "${gameLauncher}";
-      Restart        = "always";
-      RestartSec     = 2;
+      ExecStart           = "${gameLauncher}";
+      Restart             = "always";
+      RestartSec          = 2;
+      # Drop all capabilities — cage uses libseat/logind (D-Bus) for device
+      # access so no process capabilities are needed, and inherited caps break bwrap
+      CapabilityBoundingSet = "";
+      AmbientCapabilities   = "";
     };
   };
-
-  # ── Portmaster background service ────────────────────────────────────────
-  services.portmaster.enable = true;
 
   # ── RetroArch playlist (home-manager) ────────────────────────────────────
   home-manager.users.alec.xdg.configFile."retroarch/playlists/portmaster.lpl".text =

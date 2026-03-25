@@ -122,11 +122,17 @@ in {
       };
     };
 
-    #cage = {
-    #  after = [ "gamepad-handler.service" "vol-handler.service" ];
-    #  wants = [ "gamepad-handler.service" "vol-handler.service" ];
-    #  serviceConfig.Environment = "PULSE_SERVER=unix:/run/user/1001/pulse/native";
-    #};
+    dac-enable = {
+      #description = "Enable H616 DAC output";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "sound.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${pkgs.alsa-utils}/bin/amixer -D hw:0 cset numid=6 on,on";
+        ExecStop = "${pkgs.alsa-utils}/bin/amixer -D hw:0 cset numid=6 off,off";
+      };
+    };
   };
 
   services.udev.extraRules = ''
@@ -139,9 +145,5 @@ in {
     SUBSYSTEM=="input", ATTRS{name}=="H700 Gamepad", \
       ENV{ID_INPUT_JOYSTICK}="", ENV{ID_INPUT_ACCELEROMETER}="", \
       ENV{ID_INPUT_KEY}="", ENV{ID_INPUT_KEYBOARD}=""
-
-    # Enable H616 DAC output (off by default)
-    SUBSYSTEM=="sound", KERNEL=="controlC0", ACTION=="add", \
-      RUN+="${pkgs.alsa-utils}/bin/amixer -D hw:0 cset numid=6 on,on"
   '';
 }

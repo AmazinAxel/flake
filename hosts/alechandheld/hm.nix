@@ -53,15 +53,42 @@ in {
       input_player1_r_y_minus_axis = "-4";
       input_menu_toggle_btn = "10";
 
+      savestate_auto_save = "true";
+      savestate_auto_load = "true";
+      autosave_interval = "60"; # flush SRAM to disk every 60s, not just on clean exit
+
       wifi_driver = "nmcli"; # for wifi settings
       bluetooth_driver = "bluetoothctl"; # for bluetooth settings
       menu_show_advanced_settings = "true"; # ?? remove probably
+
+      input_remapping_directory = "~/.config/retroarch/remaps";
 
       # fix cores not being found
       libretro_directory = "/run/current-system/sw/lib/retroarch/cores";
       libretro_info_path = "${pkgs.libretro-core-info}/share/retroarch/cores";
     };
   };
+
+  # melonDS core options - goes in the global options file, not a per-core .opt
+  # (per-core .opt only works with game_specific_options enabled)
+  #xdg.configFile."retroarch/retroarch-core-options.cfg".text = ''
+  #  melonds_jit_enable = "enabled"
+  #  melonds_jit_block_size = "32"
+  #  melonds_threaded_renderer = "enabled"
+  #'';
+
+  # melonDS needs a bigger audio buffer - DS runs at ~59.83fps (non-standard) which causes
+  # stuttering at the global 64ms latency. audio_sync also needs to be on for it to pace correctly.
+  #xdg.configFile."retroarch/config/melonDS/melonDS.cfg".text = retroarchCfg {
+  #  audio_latency = "256";
+  #  audio_sync = "true";
+  #};
+
+  # Swap A and B buttons on gba
+  xdg.configFile."retroarch/remaps/mGBA/mGBA.rmp".text = ''
+    input_player1_btn_a = "0"
+    input_player1_btn_b = "8"
+  '';
 
   home.stateVersion = "24.05";
 }
