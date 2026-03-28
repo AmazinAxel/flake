@@ -14,11 +14,8 @@
         blink = true;
         beam-thickness = 1;
       };
-      colors = {
-        alpha = 0.7;
-        urls = "5e81ac"; # Blue (regular4)
-      };
       colors-dark = {
+        alpha = 0.7;
         background = "2e3440"; # Black (regular0)
         foreground = "d8dee9"; # Grayish-white
 
@@ -31,6 +28,8 @@
         regular5 = "b48ead"; # Magenta
         regular6 = "81a1c1"; # Cyan
         regular7 = "eceff4"; # White
+
+        urls = "5e81ac"; # Blue (regular4)
       };
       key-bindings.clipboard-paste = "Control+v XF86Paste";
     };

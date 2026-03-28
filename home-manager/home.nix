@@ -39,7 +39,7 @@
   systemd.user.startServices = "sd-switch"; # Better system unit reloads
 
   home = {
-    stateVersion = "23.05";
+    stateVersion = "26.05";
     username = "alec";
     homeDirectory = "/home/alec";
 

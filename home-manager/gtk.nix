@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, config, ... }: {
   gtk = {
     enable = true;
     gtk3.bookmarks = [
@@ -28,7 +28,10 @@
       });
     };
     gtk3.extraConfig.gtk-im-module = "fcitx";
-    gtk4.extraConfig.gtk-im-module = "fcitx";
+    gtk4 = {
+      theme = config.gtk.theme;
+      extraConfig.gtk-im-module = "fcitx";
+    };
   };
 
   dconf = {

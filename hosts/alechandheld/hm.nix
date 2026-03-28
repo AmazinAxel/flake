@@ -90,5 +90,5 @@ in {
     input_player1_btn_b = "8"
   '';
 
-  home.stateVersion = "24.05";
+  home.stateVersion = "26.05";
 }
