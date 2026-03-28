@@ -23,7 +23,7 @@
 
       startup = [
         { command = ''swaymsg "workspace 1; exec discord"''; }
-        { command = ''swaymsg "workspace 4; exec librewolf"''; }
+        { command = ''swaymsg "workspace 4; exec zen-beta"''; }
       ];
     };
 

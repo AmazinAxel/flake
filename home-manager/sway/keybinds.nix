@@ -16,7 +16,7 @@ in {
       "XF86MonBrightnessDown" = "exec brightnessctl set -15%";
 
       # Apps
-      "${mod}+E" = "exec librewolf";
+      "${mod}+E" = "exec zen-beta";
       "${mod}+return" = "exec foot";
       
       # Ags

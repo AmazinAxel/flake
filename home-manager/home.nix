@@ -8,6 +8,7 @@
     ./foot.nix
     ./gtk.nix
     ./librewolf.nix
+    ./zen-browser.nix
     ./mpd.nix
     ./starship.nix
     ./satty.nix

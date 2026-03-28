@@ -11,7 +11,7 @@
     };
 
     startup = [
-      { command = ''swaymsg "workspace 3; exec librewolf"''; }
+      { command = ''swaymsg "workspace 3; exec zen-beta"''; }
       { command = ''swaymsg "workspace 8; exec thunderbird"''; }
       { command = ''swaymsg "workspace 5; exec teams-for-linux"''; }
     ];
