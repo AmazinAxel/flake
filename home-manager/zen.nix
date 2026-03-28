@@ -7,9 +7,7 @@
 
     profiles.default = {
       settings = { # Other settings are managed by Mozilla settings sync
-        "identity.fxaccounts.enabled" = true;
-        "toolkit.tabbox.switchByScrolling" = true;
-        "mousewheel.min_line_scroll_amount" = 30;
+        "mousewheel.min_line_scroll_amount" = 40;
 
         # middle mouse fixes
         "middlemouse.paste" = false;
@@ -19,6 +17,7 @@
         "zen.view.compact.toolbar-hide-after-hover.duration" = 500;
         "zen.watermark.enabled" = false;
         "zen.urlbar.wait-to-clear" = 5000;
+        "zen.urlbar.replace-newtab" = false; # open new tab page
       };
 
       search = {
@@ -42,7 +41,6 @@
         "1e86cf37-a127-4f24-b919-d265b5ce29a0" # remove toolbar clutter
         "81fcd6b3-f014-4796-988f-6c3cb3874db8" # declutter context menu
         "c6813222-6571-4ba6-8faf-58f3343324f6" # remove rounded corners
-        "4ab93b88-151c-451b-a1b7-a1e0e28fa7f8" # no sidebar scrollbar
         "d8b79d4a-6cba-4495-9ff6-d6d30b0e94fe" # better active tab highlight
         "e51b85e6-cef5-45d4-9fff-6986637974e1" # smaller toast
       ];

@@ -3,15 +3,15 @@
     ./sway/keybinds.nix
     ./sway/sway.nix
 
-    ./vscode.nix
     ./fish.nix
     ./foot.nix
     ./gtk.nix
     ./librewolf.nix
-    ./zen-browser.nix
     ./mpd.nix
-    ./starship.nix
     ./satty.nix
+    ./starship.nix
+    ./vscode.nix
+    ./zen.nix
 
     inputs.ags.homeManagerModules.default
   ];
