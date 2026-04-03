@@ -7,7 +7,7 @@
 
     profiles.default = {
       settings = { # Other settings are managed by Mozilla settings sync
-        "mousewheel.min_line_scroll_amount" = 40;
+        "mousewheel.min_line_scroll_amount" = 50;
 
         # middle mouse fixes
         "middlemouse.paste" = false;
@@ -32,7 +32,7 @@
         "uc.tabs.show-separator" = "never";
         "uc.tabs.dim-type" = "both";
         "uc.pinned.height" = "small";
-        "uc.favicon.size" = "normal"; # large
+        "uc.favicon.size" = "large";
         "uc.workspace.icon.size" = "large";
         "uc.workspace.current.icon.size" = "large";
 
@@ -66,8 +66,6 @@
         "uc.hidecontext.savelink" = true;
         "uc.hidecontext.screenshot" = true;
         "uc.hidecontext.navigation" = true;
-
-        #"toolkit.legacyUserProfileCustomizations.stylesheets" = true; # custom css
       };
 
       search = {
@@ -88,18 +86,11 @@
       mods = [
         "ad97bb70-0066-4e42-9b5f-173a5e42c6fc" # better pins/essentials
         "a6335949-4465-4b71-926c-4a52d34bc9c0" # better find bar
-        #"1e86cf37-a127-4f24-b919-d265b5ce29a0" # remove toolbar clutter
         "81fcd6b3-f014-4796-988f-6c3cb3874db8" # declutter context menu
         "c6813222-6571-4ba6-8faf-58f3343324f6" # remove rounded corners
         "d8b79d4a-6cba-4495-9ff6-d6d30b0e94fe" # better active tab highlight
         "e51b85e6-cef5-45d4-9fff-6986637974e1" # smaller toast
       ];
-
-      userChrome = ''
-        #navigator-toolbox {
-          background-color: #2b2b2b; /* Changes the toolbar background color */
-        }
-      '';
     };
   };
 }

@@ -40,7 +40,7 @@
       (prismlauncher.override {
         additionalLibs = [ pkgs.libxkbcommon ]; # TODO remove temp fix
       })
-      claude-code
+      #claude-code
 
       inputs.planning.packages.${pkgs.stdenv.hostPlatform.system}.default
 
