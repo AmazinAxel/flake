@@ -12,6 +12,7 @@
         # middle mouse fixes
         "middlemouse.paste" = false;
         "middlemouse.contentLoadURL" = false;
+        "toolkit.tabbox.switchByScrolling" = true;
 
         "zen.view.compact.hide-toolbar" = true;
         "zen.view.compact.toolbar-hide-after-hover.duration" = 500;

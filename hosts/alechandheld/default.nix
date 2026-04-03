@@ -3,10 +3,10 @@
 let
   retroarchCustom = pkgs.retroarch-bare.overrideAttrs (old: {
     configureFlags = old.configureFlags ++ [
-      "--enable-opengl" # better than opengl
-      #"--enable-opengles" # better than opengl
-      #"--enable-opengles3"
-      "--enable-wayland"
+      "--enable-opengles" # Mali GPU on H700 supports GLES, not full desktop GL
+      "--enable-opengles3"
+      "--enable-kms"
+    #  "--enable-neon" # ARM NEON SIMD
 
       "--enable-threads" # audio
       "--enable-wifi" # wifi menu
@@ -17,7 +17,8 @@ let
       "--disable-microphone" # no mic
       "--disable-x11"
       "--disable-vulkan" # not supported on this gpu
-      "--disable-kms"
+      "--disable-wayland"
+      "--disable-qt" # no desktop ui needed
       "--disable-cdrom" # guh
       "--disable-discord" # rich presence
       "--disable-cheevos" # retroarchievements
@@ -104,8 +105,14 @@ in {
     HandlePowerKeyLongPress = "poweroff";
   };
 
+  powerManagement.powerDownCommands = ''
+    ${pkgs.util-linux}/bin/sync
+  '';
+
   powerManagement.resumeCommands = ''
     ${pkgs.systemd}/bin/systemctl --user -M alec@ restart wireplumber pipewire pipewire-pulse
+    # Restart SD card automount unit so the card remounts after wake
+    ${pkgs.systemd}/bin/systemctl restart mnt-AlecContent.automount 2>/dev/null || true
   '';
 
   networking = {
@@ -124,14 +131,40 @@ in {
   security.rtkit.enable = true; # realtime priority for pw
   powerManagement.cpuFreqGovernor = "schedutil";
   systemd.services.NetworkManager-wait-online.enable = false;
+  boot.kernelParams = [
+    # Panfrost (Mali-G31) uses CMA for GPU buffer objects.  The compiled-in
+    # default is 32 MB which is exhausted by Celeste's texture load.
+    # ROCKNIX targets reserve 256 MB on the same H700 hardware.
+    "cma=256M"
+    "nowatchdog"    # disable hardware watchdog timer
+    "nmi_watchdog=0"
+  ];
   boot.kernel.sysctl = {
     "kernel.sched_autogroup_enabled" = 0;
     "vm.dirty_ratio" = 20;
     "vm.dirty_background_ratio" = 5;
+    "vm.vfs_cache_pressure" = 50;   # keep VFS/dentry caches in RAM longer
   };
 
   users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
   nix.settings.trusted-users = [ "alec" ]; # Remote deployment
 
   services.journald.extraConfig = "Storage=volatile"; # Extend SD card lifespan
+
+  # WirePlumber: prefer A2DP (high-quality stereo output) over HFP/HSP when
+  # Bluetooth earbuds connect.  Prevents the mic profile from activating and
+  # auto-switches PipeWire's default sink so RetroArch/PortMaster follow.
+  services.pipewire.wireplumber.extraConfig."10-bluetooth" = {
+    "monitor.bluez.properties" = {
+      "bluez5.roles"            = [ "a2dp_sink" "hsp_hs" "hfp_hf" "hfp_ag" "hsp_ag" ];
+      "bluez5.codecs"           = [ "sbc_xq" "aac" "sbc" ];
+      "bluez5.auto-connect"     = [ "a2dp_sink" ];
+      "bluez5.enable-msbc"      = false;
+      "bluez5.enable-hw-volume" = true;
+    };
+    "wireplumber.settings" = {
+      # Do not switch to headset profile (HFP/HSP) when earbuds connect — keep A2DP
+      "bluetooth.autoswitch-to-headset-profile" = false;
+    };
+  };
 }

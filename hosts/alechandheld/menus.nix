@@ -96,27 +96,83 @@ let
 
   # ── Main session loop script ─────────────────────────────────────────────
   gameLauncher = pkgs.writeShellScript "game-launcher" ''
-    export PATH=${lib.makeBinPath [ pkgs.gamemode pkgs.cage ]}:/run/current-system/sw/bin:$PATH
+    export PATH=/run/current-system/sw/bin:$PATH
+
+    LAUNCHER_CORE="${launcherCore}/lib/retroarch/cores/launcher_libretro.so"
+    LAUNCHERS_DIR="$HOME/.config/retroarch/launchers/ports"
+    PORTS_PLAYLIST="$HOME/.config/retroarch/playlists/ports.lpl"
+
+    # Scan /mnt/AlecContent/ports/*.sh and write a RetroArch playlist so
+    # installed ports appear as direct launcher entries (no PortMaster UI needed).
+    scan_ports() {
+      mkdir -p "$LAUNCHERS_DIR"
+      items=""
+      for script in /mnt/AlecContent/ports/*.sh; do
+        [ -f "$script" ] || continue
+        name=$(basename "$script" .sh)
+        launch_file="$LAUNCHERS_DIR/''${name}.launch"
+        touch "$launch_file"
+        esc_name=$(printf '%s' "$name" | sed 's/\\/\\\\/g; s/"/\\"/g')
+        esc_launch=$(printf '%s' "$launch_file" | sed 's/\\/\\\\/g; s/"/\\"/g')
+        items="''${items},{\"path\":\"''${esc_launch}\",\"label\":\"''${esc_name}\",\"core_path\":\"$LAUNCHER_CORE\",\"core_name\":\"Launcher\",\"crc32\":\"00000000|crc\",\"db_name\":\"ports.lpl\"}"
+      done
+      printf '{"version":"1.4","items":[%s]}\n' "''${items#,}" > "$PORTS_PLAYLIST"
+    }
+
+    # Wait for PipeWire to start, then sleep 3 s to let WirePlumber start and
+    # finish restoring ALSA mixer state from its database.  If we run amixer
+    # before WirePlumber finishes its restore it will override us with the
+    # saved (off) state.
+    for _i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+      [ -S /run/user/1001/pipewire-0 ] && break
+      sleep 1
+    done
+    sleep 3
+    ${pkgs.alsa-utils}/bin/amixer -D hw:0 cset numid=6 on,on > /dev/null 2>&1 || true
+
     while true; do
+      printf '\033c'  # clear TTY so boot text doesn't show through
+      scan_ports      # rebuild ports playlist from SD card before each RA launch
       rm -f /tmp/launch-request
-      cage -- gamemoderun retroarch &
-      CAGE_PID=$!
-      # Poll for a launch request; kill cage when one appears
-      while kill -0 "$CAGE_PID" 2>/dev/null; do
+      retroarch >/tmp/retroarch.log 2>&1 &
+      RA_PID=$!
+      # Poll for a launch request; kill retroarch when one appears
+      while kill -0 "$RA_PID" 2>/dev/null; do
         if [ -f /tmp/launch-request ]; then
-          kill "$CAGE_PID"
-          wait "$CAGE_PID" 2>/dev/null
+          echo -n "QUIT" > /dev/udp/127.0.0.1/55355 2>/dev/null || true
+          sleep 0.5
+          kill "$RA_PID" 2>/dev/null || true
+          wait "$RA_PID" 2>/dev/null
           break
         fi
         sleep 0.2
       done
-      wait "$CAGE_PID" 2>/dev/null
+      wait "$RA_PID" 2>/dev/null
       if [ -f /tmp/launch-request ]; then
         app=$(cat /tmp/launch-request)
         rm -f /tmp/launch-request
         case "$app" in
           portmaster)
-            cage -- portmaster > /tmp/portmaster.log 2>&1
+            printf '\033c'
+            # Give the kernel time to release DRM master after RetroArch exits
+            sleep 1
+            portmaster > /tmp/portmaster.log 2>&1
+            ;;
+          *)
+            # Look for a matching port script on the SD card
+            port_script=""
+            for _p in \
+              "/mnt/AlecContent/ports/''${app}.sh" \
+              "/mnt/AlecContent/ports/''${app}/''${app}.sh"; do
+              [ -f "$_p" ] && port_script="$_p" && break
+            done
+            if [ -n "$port_script" ]; then
+              printf '\033c'
+              sleep 1
+              portmaster "$port_script" > /tmp/portmaster.log 2>&1
+            else
+              printf '[%s] unrecognised launch request: [%s]\n' "$(date -Iseconds)" "$app" >> /tmp/launcher.log
+            fi
             ;;
         esac
       fi
@@ -132,10 +188,9 @@ in {
   # ── alechandheld service (replaces cage.service) ─────────────────────────
   systemd.services.alechandheld = {
     description = "Alechandheld Gaming Session (KMS/DRM)";
-    after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "virtual-keyboard.service" "systemd-logind.service" ];
+    after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "systemd-logind.service" ];
     wants     = [ "systemd-logind.service" ];
     wantedBy  = [ "multi-user.target" ];
-    # Prevent getty from racing for tty1 — without this the login prompt wins
     conflicts = [ "getty@tty1.service" "autovt@tty1.service" ];
     environment = {
       HOME             = "/home/alec";
@@ -143,6 +198,8 @@ in {
       XDG_RUNTIME_DIR  = "/run/user/1001";
       XDG_SEAT         = "seat0";
       XDG_VTNR         = "1";
+      EGL_PLATFORM          = "gbm"; # KMS/GBM path for GLES on Mali GPU
+      XDG_SESSION_TYPE      = "tty"; # logind session type; "drm" is not a valid value
     };
     serviceConfig = {
       Type           = "simple";
@@ -157,11 +214,16 @@ in {
       UtmpIdentifier = "tty1";
       UtmpMode       = "user";
       ExecStart           = "${gameLauncher}";
+      ExecStopPost        = "${pkgs.alsa-utils}/bin/amixer -D hw:0 cset numid=6 off,off";
       Restart             = "always";
       RestartSec          = 2;
-      # Drop all capabilities — cage uses libseat/logind (D-Bus) for device
-      # access so no process capabilities are needed, and inherited caps break bwrap
-      CapabilityBoundingSet = "";
+      # No ambient caps — the game-launcher shell script runs unprivileged.
+      # The bounding set must include the caps that setuid bwrap (/run/portmaster/bwrap)
+      # needs: SYS_ADMIN for mount namespaces (no user-ns → LLVM/Panfrost works),
+      # SETUID/SETGID to drop from eUID=0 to alec after sandbox setup, SETPCAP to
+      # manipulate capability sets.  Children inherit the bounding set; without these
+      # entries, permitted = all_caps ∩ ∅ = ∅ and bwrap's mount() calls fail EPERM.
+      CapabilityBoundingSet = "CAP_SYS_ADMIN CAP_SETUID CAP_SETGID CAP_SETPCAP";
       AmbientCapabilities   = "";
     };
   };

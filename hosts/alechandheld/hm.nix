@@ -12,7 +12,7 @@ in {
       menu_driver = "rgui";
       video_driver = "gl";
       video_fullscreen = "true";
-      video_threaded = "false"; # TEMP FIX
+      video_threaded = "false"; # TEMP FIX REMOVE?
       video_smooth = "false";
       audio_driver = "pulse";
       audio_latency = "64";
@@ -57,9 +57,12 @@ in {
       savestate_auto_load = "true";
       autosave_interval = "60"; # flush SRAM to disk every 60s, not just on clean exit
 
+      video_font_size = "48"; # larger OSD/toast font at 640x480 ???
+      video_scale_integer = "false"; # always fill the screen; prevents in-game menu from inheriting the game's smaller viewport ???
+
       wifi_driver = "nmcli"; # for wifi settings
       bluetooth_driver = "bluetoothctl"; # for bluetooth settings
-      menu_show_advanced_settings = "true"; # ?? remove probably
+      menu_show_advanced_settings = "true"; # todo remove?
 
       input_remapping_directory = "~/.config/retroarch/remaps";
 
@@ -68,21 +71,6 @@ in {
       libretro_info_path = "${pkgs.libretro-core-info}/share/retroarch/cores";
     };
   };
-
-  # melonDS core options - goes in the global options file, not a per-core .opt
-  # (per-core .opt only works with game_specific_options enabled)
-  #xdg.configFile."retroarch/retroarch-core-options.cfg".text = ''
-  #  melonds_jit_enable = "enabled"
-  #  melonds_jit_block_size = "32"
-  #  melonds_threaded_renderer = "enabled"
-  #'';
-
-  # melonDS needs a bigger audio buffer - DS runs at ~59.83fps (non-standard) which causes
-  # stuttering at the global 64ms latency. audio_sync also needs to be on for it to pace correctly.
-  #xdg.configFile."retroarch/config/melonDS/melonDS.cfg".text = retroarchCfg {
-  #  audio_latency = "256";
-  #  audio_sync = "true";
-  #};
 
   # Swap A and B buttons on gba
   xdg.configFile."retroarch/remaps/mGBA/mGBA.rmp".text = ''

@@ -1,6 +1,5 @@
 { pkgs, lib, ... }:
 let
-  # Todo
   anbernicPanelFirmware = pkgs.runCommand "anbernic-panel-firmware" {} ''
     mkdir -p $out/lib/firmware/panels
     cp ${./panels}/*.panel $out/lib/firmware/panels/
@@ -15,7 +14,9 @@ in {
   fileSystems."/mnt/AlecContent" = {
     device = "/dev/disk/by-label/AlecContent";
     fsType = "ext4";
-    options = [ "nofail" "x-systemd.device-timeout=5s" "noatime" "discard" ];
+    # x-systemd.automount: defers mount until first access and retries automatically on failure.
+    # x-systemd.device-timeout: H700 MMC init can take longer than the old 5s on cold boot.
+    options = [ "nofail" "x-systemd.automount" "x-systemd.device-timeout=10s" "noatime" "discard" ];
   };
 
   boot = {
