@@ -17,7 +17,11 @@
         "zen.view.compact.toolbar-hide-after-hover.duration" = 500;
         "zen.watermark.enabled" = false;
         "zen.urlbar.wait-to-clear" = 5000;
-        "zen.urlbar.replace-newtab" = false; # open new tab page
+        "zen.urlbar.replace-newtab" = true; # open new tab page
+
+        # hide new tab clutter
+        "browser.newtabpage.activity-stream.feeds.system.topsites" = false;
+        "browser.newtabpage.activity-stream.feeds.system.topstories" = false;
       };
 
       search = {
@@ -44,6 +48,12 @@
         "d8b79d4a-6cba-4495-9ff6-d6d30b0e94fe" # better active tab highlight
         "e51b85e6-cef5-45d4-9fff-6986637974e1" # smaller toast
       ];
+
+      userChrome = ''
+        #navigator-toolbox {
+          background-color: #2b2b2b; /* Changes the toolbar background color */
+        }
+      '';
     };
   };
 }

@@ -57,8 +57,6 @@ in {
     retroarchCustom
     fake08Core
     libretro.mgba
-    libretro.melonds
-    libretro.desmume
     libretro-core-info # has fake-08 core info too
   ];
 
@@ -113,7 +111,10 @@ in {
   networking = {
     networkmanager = {
       enable = true;
-      wifi.backend = "iwd";
+      wifi = {
+        backend = "iwd";
+        powersave = false; # Stop network drops
+      };
     };
     hostName = "alechandheld";
     firewall.enable = false; # causes errors
