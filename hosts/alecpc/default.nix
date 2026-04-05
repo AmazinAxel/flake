@@ -63,6 +63,6 @@
     modesetting.enable = true;
     powerManagement.enable = true;
     open = false; # GPU architecture is older than Turing
-    package = config.boot.kernelPackages.nvidiaPackages.production;
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580; # GTX 1050 Ti last supported package
   };
 }

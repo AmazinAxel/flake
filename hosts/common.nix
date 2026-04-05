@@ -12,7 +12,7 @@
         editor = false;
       };
       efi.canTouchEfiVariables = true;
-      timeout = 0; # Hold down space on boot to access
+      timeout = lib.mkForce 0; # Hold down space on boot to access
     };
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
