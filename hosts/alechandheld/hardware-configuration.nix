@@ -14,14 +14,12 @@ in {
   fileSystems."/mnt/AlecContent" = {
     device = "/dev/disk/by-label/AlecContent";
     fsType = "ext4";
-    # x-systemd.automount: defers mount until first access and retries automatically on failure.
-    # x-systemd.device-timeout: H700 MMC init can take longer than the old 5s on cold boot.
     options = [ "nofail" "x-systemd.automount" "x-systemd.device-timeout=10s" "noatime" "discard" ];
   };
 
   boot = {
     initrd = {
-      availableKernelModules = [ "usbhid" "hid" "evdev" "uinput" ];
+      availableKernelModules = [ "usbhid" "hid" "evdev" "uinput" ]; # todo
       allowMissingModules = true;
       systemd.enable = false;
     };

@@ -57,8 +57,8 @@ in {
       savestate_auto_load = "true";
       autosave_interval = "60"; # flush SRAM to disk every 60s, not just on clean exit
 
-      video_font_size = "48"; # larger OSD/toast font at 640x480 ???
-      video_scale_integer = "false"; # always fill the screen; prevents in-game menu from inheriting the game's smaller viewport ???
+      #video_font_size = "48"; # larger OSD/toast font at 640x480 ???
+      #video_scale_integer = "false"; # always fill the screen; prevents in-game menu from inheriting the game's smaller viewport ???
 
       wifi_driver = "nmcli"; # for wifi settings
       bluetooth_driver = "bluetoothctl"; # for bluetooth settings

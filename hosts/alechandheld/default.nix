@@ -6,7 +6,7 @@ let
       "--enable-opengles" # Mali GPU on H700 supports GLES, not full desktop GL
       "--enable-opengles3"
       "--enable-kms"
-    #  "--enable-neon" # ARM NEON SIMD
+      #"--enable-neon" # ARM NEON SIMD
 
       "--enable-threads" # audio
       "--enable-wifi" # wifi menu
@@ -37,9 +37,7 @@ let
       fetchSubmodules = true;
     };
     buildPhase = "make -C platform/libretro platform=unix";
-    installPhase = ''
-      install -Dt $out/lib/retroarch/cores platform/libretro/fake08_libretro.so
-    '';
+    installPhase = "install -Dt $out/lib/retroarch/cores platform/libretro/fake08_libretro.so";
     passthru.libretroCore = "/lib/retroarch/cores";
     passthru.core = "fake08";
   };
@@ -48,6 +46,7 @@ in {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
+
     ./customKernel.nix
     ./inputHandlers.nix
     ./menus.nix
@@ -67,7 +66,7 @@ in {
 
   services = {
     sshd.enable = true;
-    libinput.enable = true;
+    libinput.enable = true; # todo
     earlyoom = {
       enable = true;
       freeMemThreshold = 5;
@@ -105,13 +104,8 @@ in {
     HandlePowerKeyLongPress = "poweroff";
   };
 
-  powerManagement.powerDownCommands = ''
-    ${pkgs.util-linux}/bin/sync
-  '';
-
   powerManagement.resumeCommands = ''
     ${pkgs.systemd}/bin/systemctl --user -M alec@ restart wireplumber pipewire pipewire-pulse
-    # Restart SD card automount unit so the card remounts after wake
     ${pkgs.systemd}/bin/systemctl restart mnt-AlecContent.automount 2>/dev/null || true
   '';
 
@@ -132,18 +126,15 @@ in {
   powerManagement.cpuFreqGovernor = "schedutil";
   systemd.services.NetworkManager-wait-online.enable = false;
   boot.kernelParams = [
-    # Panfrost (Mali-G31) uses CMA for GPU buffer objects.  The compiled-in
-    # default is 32 MB which is exhausted by Celeste's texture load.
-    # ROCKNIX targets reserve 256 MB on the same H700 hardware.
-    "cma=256M"
-    "nowatchdog"    # disable hardware watchdog timer
+    "cma=256M" # default 32mb, for running more intensive games
+    "nowatchdog"
     "nmi_watchdog=0"
   ];
   boot.kernel.sysctl = {
     "kernel.sched_autogroup_enabled" = 0;
     "vm.dirty_ratio" = 20;
     "vm.dirty_background_ratio" = 5;
-    "vm.vfs_cache_pressure" = 50;   # keep VFS/dentry caches in RAM longer
+    "vm.vfs_cache_pressure" = 50;
   };
 
   users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
@@ -151,20 +142,17 @@ in {
 
   services.journald.extraConfig = "Storage=volatile"; # Extend SD card lifespan
 
-  # WirePlumber: prefer A2DP (high-quality stereo output) over HFP/HSP when
-  # Bluetooth earbuds connect.  Prevents the mic profile from activating and
-  # auto-switches PipeWire's default sink so RetroArch/PortMaster follow.
+  # WirePlumber: prefer A2DP (high-quality stereo output, no mic) over HFP/HSP.
+  # bluez5.auto-connect: request A2DP profile first, then HFP as fallback.
+  # Removing the wireplumber.settings block — bluetooth.autoswitch-to-headset-profile
+  # is not a valid key in this WirePlumber version and causes the file to be ignored.
   services.pipewire.wireplumber.extraConfig."10-bluetooth" = {
     "monitor.bluez.properties" = {
-      "bluez5.roles"            = [ "a2dp_sink" "hsp_hs" "hfp_hf" "hfp_ag" "hsp_ag" ];
+      "bluez5.roles"            = [ "a2dp_sink" "a2dp_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
       "bluez5.codecs"           = [ "sbc_xq" "aac" "sbc" ];
-      "bluez5.auto-connect"     = [ "a2dp_sink" ];
-      "bluez5.enable-msbc"      = false;
+      "bluez5.auto-connect"     = [ "a2dp_sink" "a2dp_source" "hsp_hs" "hfp_hf" ];
       "bluez5.enable-hw-volume" = true;
-    };
-    "wireplumber.settings" = {
-      # Do not switch to headset profile (HFP/HSP) when earbuds connect — keep A2DP
-      "bluetooth.autoswitch-to-headset-profile" = false;
+      "bluez5.enable-msbc"      = false;
     };
   };
 }

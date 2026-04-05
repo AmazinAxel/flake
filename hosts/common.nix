@@ -2,6 +2,7 @@
   users.users.alec = { # Default user
     isNormalUser = true;
     extraGroups = [ "wheel" "audio" "video" "dialout" ];
+    initialPassword = "nixos";
   };
 
   boot = {
