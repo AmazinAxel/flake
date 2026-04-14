@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
@@ -32,6 +32,7 @@
     steam.enable = true; # Gaming
     kdeconnect.enable = true; # Device integration
   };
+  environment.sessionVariables.LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.systemd ]; # fix MC warning
 
   # Bootloader settings
   boot = {

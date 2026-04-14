@@ -63,6 +63,26 @@
         "type": "github"
       }
     },
+    "homelab": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1776128574,
+        "narHash": "sha256-880Le3ioY/bT8krtnvHr9HkJVENXKVszg9RQh0cqjA0=",
+        "owner": "AmazinAxel",
+        "repo": "homelab",
+        "rev": "ff4084ea6b35ef663b1d3ea42debe1acd2806f20",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AmazinAxel",
+        "repo": "homelab",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1775710090,
@@ -104,6 +124,7 @@
         "ags": "ags",
         "astal": "astal",
         "home-manager": "home-manager",
+        "homelab": "homelab",
         "nixpkgs": "nixpkgs",
         "planning": "planning",
         "zen-browser": "zen-browser"

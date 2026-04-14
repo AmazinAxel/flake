@@ -14,7 +14,7 @@
   };
 
   boot = { # Zero 2W boot
-    kernelPackages = pkgs.linuxPackages_rpi02w;
+    #kernelPackages = pkgs.linuxPackages_rpi02w;
     kernelModules = [ "gpiochip" "spidev" ];
   };
 
@@ -37,15 +37,17 @@
     #};
   };
 
-  services.samba = { # USB NAS
-    enable = true;
-    package = pkgs.samba4Full; # Autodiscovery support
-    openFirewall = true;
-    settings."USB" = {
-      path = "/media";
-      writable = true;
-      "valid users" = [ "alec" ];
-      "admin users" = [ "alec" ]; # Full read & write access
+  services = {
+    samba = { # USB NAS
+      enable = true;
+      package = pkgs.samba4Full; # Autodiscovery support
+      openFirewall = true;
+      settings."USB" = {
+        path = "/media";
+        writable = true;
+        "valid users" = [ "alec" ];
+        "admin users" = [ "alec" ]; # Full read & write access
+      };
     };
     samba-wsdd = { # Auto-disovery
       enable = true;

@@ -35,7 +35,7 @@
     };
   };
 
-  outputs = { home-manager, nixpkgs, ... }@inputs: {
+  outputs = { home-manager, nixpkgs, planning, homelab, ... }@inputs: {
     nixosConfigurations = {
 
       # Primary laptop
@@ -58,7 +58,6 @@
 
       # Gaming handheld (aarch64)
       "alechandheld" = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alechandheld/default.nix
@@ -81,6 +80,8 @@
         modules = [
           ./hosts/alechomelab/default.nix
           ./hosts/alechomelab/services.nix
+          ./modules/pi.nix
+          { _module.args.planning = planning.packages.aarch64-linux.planning; }
         ];
       };
 
@@ -89,7 +90,8 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/aleclocaldev/default.nix
-          ./hosts/aleclocaldev/services.nix
+          #./hosts/aleclocaldev/services.nix
+          ./modules/pi.nix
         ];
       };
     };

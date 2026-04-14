@@ -7,7 +7,6 @@
       timeout = 0; # Hold down space on boot to access menu
     };
     tmp.cleanOnBoot = true;
-    kernelPackages = pkgs.linuxPackages_rpi02w;
     kernelModules = [ "gpiochip" "spidev" ];
   };
 

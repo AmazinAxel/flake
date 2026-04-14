@@ -15,13 +15,6 @@ let
 in {
   systemd = {
     services = {
-      webserver = service // {
-        path = [ pkgs.util-linux ];
-        serviceConfig = service.serviceConfig // privileges // {
-          EnvironmentFile = "/home/alec/homelab/webserver/.env";
-          ExecStart = "${pkgs.bun}/bin/bun /home/alec/homelab/webserver/webserver";
-        };
-      };
       homelabDisplay = service // {
         serviceConfig = service.serviceConfig // privileges // {
           ExecStart = "/home/alec/homelab/display/homelabDisplay";
