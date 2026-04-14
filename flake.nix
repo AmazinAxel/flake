@@ -29,6 +29,10 @@
       url = "github:AmazinAxel/Planning";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    homelab = {
+      url = "github:AmazinAxel/homelab";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { home-manager, nixpkgs, ... }@inputs: {
@@ -71,7 +75,23 @@
         ];
       };
 
-      # Pi Zero homelab - https://github.com/amazinaxel/homelab
+      # Homelab (Pi Zero 2W)
+      "alechomelab" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/alechomelab/default.nix
+          ./hosts/alechomelab/services.nix
+        ];
+      };
+
+      # Localhost development server (Pi 4B)
+      "aleclocaldev" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/aleclocaldev/default.nix
+          ./hosts/aleclocaldev/services.nix
+        ];
+      };
     };
   };
 }

@@ -62,20 +62,6 @@
     dconf.enable = true; # For hm
     nix-ld.enable = true; # For dynamic executables
     gpu-screen-recorder.enable = true; # Clipping & recording software
-
-    git = {
-      enable = true;
-      package = pkgs.gitMinimal;
-      config = {
-        init.defaultBranch = "main";
-        color.ui = true;
-        core.editor = "code";
-        credential.helper = "store";
-        github.user = "AmazinAxel"; # Github
-        user.name = "AmazinAxel"; # Git
-        push.autoSetupRemote = true;
-      };
-    };
   };
 
   # Chinese input support

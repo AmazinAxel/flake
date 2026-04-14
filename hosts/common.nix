@@ -32,6 +32,23 @@
     };
   };
 
+  programs = {
+    git = {
+      enable = true;
+      package = pkgs.gitMinimal;
+      config = {
+        init.defaultBranch = "main";
+        color.ui = true;
+        core.editor = "code";
+        credential.helper = "store";
+        github.user = "AmazinAxel"; # Github
+        user.name = "AmazinAxel"; # Git
+        push.autoSetupRemote = true;
+      };
+    };
+    command-not-found.enable = false;
+  };
+
   time.timeZone = "America/Los_Angeles"; # lang also set to en_US
   zramSwap.enable = lib.mkDefault true; # Compress ram for better performance
 
@@ -49,7 +66,6 @@
   fileSystems."/".options = [ "noatime" "discard" ]; # SSD trim
   documentation.enable = false;
   environment.defaultPackages = lib.mkForce [];
-  programs.command-not-found.enable = false; # Don't show recommendations when a package is missing
 
   system.stateVersion = lib.mkDefault "24.05";
 }
