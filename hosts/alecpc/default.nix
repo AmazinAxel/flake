@@ -18,14 +18,11 @@
     thunderbird
 
     bun
-    jre
+    openjdk25
     nodejs_22
     steam-run
   ];
-  programs = {
-    kdeconnect.enable = true;
-    #ccache.enable = true;
-  };
+  programs.kdeconnect.enable = true;
 
   services = {
     xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
@@ -38,8 +35,6 @@
   nix.settings = {
     max-jobs = "auto";
     cores = 0;
-    #extra-sandbox-paths = [ "/var/cache/ccache" ];
-    #use-sandbox = false; # temp build fix
   };
 
   # Nvidia options --

@@ -75,13 +75,15 @@
       };
 
       # Homelab (Pi Zero 2W)
+      # nixos-rebuild switch --flake .#alechomelab --sudo --ask-sudo-password --target-host alec@alechomelab.local
       "alechomelab" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alechomelab/default.nix
-          ./hosts/alechomelab/services.nix
-          ./modules/pi.nix
-          { _module.args.planning = planning.packages.aarch64-linux.planning; }
+          {
+            _module.args.planning = planning.packages.aarch64-linux.planning;
+            _module.args.homelabDisplay = homelab.packages.aarch64-linux.homelabDisplay;
+          }
         ];
       };
 
@@ -90,8 +92,6 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/aleclocaldev/default.nix
-          #./hosts/aleclocaldev/services.nix
-          ./modules/pi.nix
         ];
       };
     };

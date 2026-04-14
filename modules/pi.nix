@@ -1,22 +1,10 @@
-{ pkgs, ... }: {
-  # Raspi boot
-  boot = {
-    loader = {
-      grub.enable = false;
-      generic-extlinux-compatible.enable = true;
-      timeout = 0; # Hold down space on boot to access menu
-    };
-    tmp.cleanOnBoot = true;
-    kernelModules = [ "gpiochip" "spidev" ];
-  };
-
-  # Networking
-  networking = {
-    hostName = "alechomelab";
-    firewall.allowedTCPPorts = [ 80 9000 8000 ];
-    networkmanager = {
-      enable = true; # For nmtui
-      wifi.powersave = false; # Stop network drops
+{ pkgs, lib, ... }: {
+  boot.loader = { # Raspi boot
+    systemd-boot.enable = false;
+    grub.enable = false;
+    generic-extlinux-compatible = {
+      enable = true;
+      configurationLimit = 2;
     };
   };
 
@@ -30,7 +18,6 @@
       publish = {
         enable = true;
         addresses = true; # For HTTP IP
-        userServices = true; # For NAS
       };
     };
   };
@@ -38,7 +25,7 @@
   fileSystems."/" = { # Device SD card
     device = "/dev/disk/by-label/NIXOS_SD";
     fsType = "ext4";
-    options = [ "noatime" ];
+    options = lib.mkForce [ "noatime" ]; # force to note include discard flag
   };
 
   services.journald.extraConfig = "Storage=volatile";

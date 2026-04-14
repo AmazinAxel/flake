@@ -24,7 +24,7 @@
     kicad
 
     bun
-    jre
+    openjdk25
     nodejs_22
     steam-run
   ];

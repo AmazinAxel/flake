@@ -23,7 +23,7 @@ in {
       allowMissingModules = true;
       systemd.enable = false;
     };
-    loader = {
+    loader = { # todo merge module with pi.nix
       systemd-boot.enable = false;
       grub.enable = false;
       generic-extlinux-compatible = {

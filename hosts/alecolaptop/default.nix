@@ -17,7 +17,7 @@
 
     arduino-ide
     python3
-    jre
+    openjdk25
     bun
     qpwgraph
   ];

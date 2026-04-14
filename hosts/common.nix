@@ -15,6 +15,7 @@
       efi.canTouchEfiVariables = true;
       timeout = lib.mkForce 0; # Hold down space on boot to access
     };
+    tmp.cleanOnBoot = true;
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
   };

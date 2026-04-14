@@ -44,7 +44,7 @@ export default () =>
                 gdkmonitor={monitor}
                 layer={Astal.Layer.OVERLAY}
                 exclusivity={Astal.Exclusivity.IGNORE}
-                keymode={Astal.Keymode.EXCLUSIVE}
+                keymode={Astal.Keymode.ON_DEMAND}
                 anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
                 visible={isLocked}
             >

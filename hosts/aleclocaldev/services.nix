@@ -57,7 +57,7 @@ in {
         ${pkgs.fish}/bin/fish /home/alec/homelab/scripts/githubBackup.fish
         ${pkgs.fish}/bin/fish /home/alec/homelab/scripts/spotifySync.fish
 
-        ${pkgs.toybox}/bin/time date +%s > /home/alec/lastSynced
+        ${pkgs.toybox}/bin/date +%s > /home/alec/lastSynced
       '';
     };
 

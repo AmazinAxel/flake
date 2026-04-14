@@ -3,27 +3,26 @@
 
 /{
     compatible = "raspberrypi,model-zero-2-w";
+
     fragment@0 {
-        target = <&gpio>;
+        target-path = "/soc/gpio@7e200000";
         __overlay__ {
             spi0_pins: spi0_pins {
                 brcm,pins = <9 10 11>;
                 brcm,function = <4>;
             };
-
             spi0_cs_pins: spi0_cs_pins {
                 brcm,pins = <8 7>;
-                brcm,function = <1>;
+                brcm,function = <4>;
             };
         };
     };
 
     fragment@1 {
-        target = <&spi0>;
+        target-path = "/soc/spi@7e204000";
         __overlay__ {
             pinctrl-names = "default";
             pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
-            cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
             status = "okay";
 
             spidev0: spidev@0 {

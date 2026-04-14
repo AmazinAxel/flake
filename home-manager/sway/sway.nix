@@ -94,10 +94,22 @@
       window = {
         titlebar = false;
         border = 3;
+        commands = map (criteria: { inherit criteria; command = "floating enable"; }) [
+          { window_role = "dialog"; }
+          { window_role = "pop-up"; }
+          { window_type = "dialog"; }
+          { window_type = "utility"; }
+          { window_type = "toolbar"; }
+          { window_type = "splash"; }
+          { app_id = "xdg-desktop-portal-gtk"; }
+        ];
       };
 
-      floating.border = 3;
-      output."*".adaptive_sync = "on"; # VRR
+      floating = {
+        border = 3;
+        titlebar = false;
+      };
+      #output."*".adaptive_sync = "on"; # VRR
 
       startup = [
         { command = "fcitx5 -d"; }

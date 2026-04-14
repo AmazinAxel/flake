@@ -45,7 +45,7 @@ app.start({
         osd();
         powermenu();
         quickSettings();
-        lockscreen();
+        //lockscreen();
         workspaces();
 
         monitorBrightness();

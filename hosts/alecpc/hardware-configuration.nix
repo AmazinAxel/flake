@@ -7,11 +7,6 @@
     fsType = "ext4";
   };
 
-  #fileSystems."/boot" = {
-  #  device = "/dev/disk/by-uuid/8B49-7B9B";
-  #  fsType = "vfat";
-  #};
-
   nixpkgs.hostPlatform = "x86_64-linux";
   hardware = {
     enableRedistributableFirmware = true;

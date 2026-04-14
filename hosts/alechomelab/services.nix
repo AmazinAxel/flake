@@ -1,4 +1,4 @@
-{ pkgs, planning, ... }:
+{ pkgs, planning, homelabDisplay, ... }:
 
 let
   service = { # basic service config
@@ -15,6 +15,7 @@ let
 in {
   systemd = {
     services = {
+      # requires .env in the webserver/ folder with AIRNOW_TOKEN= 
       webserver = service // {
         path = [ pkgs.util-linux ];
         serviceConfig = service.serviceConfig // privileges // {
@@ -24,7 +25,7 @@ in {
       };
       homelabDisplay = service // {
         serviceConfig = service.serviceConfig // privileges // {
-          ExecStart = "/home/alec/homelab/display/homelabDisplay";
+          ExecStart = "${homelabDisplay}/bin/homelabDisplay";
         };
       };
       lofi = service // {
@@ -64,7 +65,7 @@ in {
         ${pkgs.fish}/bin/fish /home/alec/homelab/scripts/githubBackup.fish
         ${pkgs.fish}/bin/fish /home/alec/homelab/scripts/spotifySync.fish
 
-        ${pkgs.toybox}/bin/time date +%s > /home/alec/lastSynced
+        ${pkgs.toybox}/bin/date +%s > /home/alec/lastSynced
       '';
     };
 
