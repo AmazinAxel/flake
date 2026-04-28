@@ -1,10 +1,10 @@
 import { Astal, Gtk } from 'ags/gtk4';
-import { createBinding, createState, For, This } from "ags"
+import { createState, For, This } from "ags"
 import { createSubprocess, exec } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
-const monitors = createBinding(app, "monitors");
+import { monitors } from '../../lib/monitors';
 
 export const [ workspaces, setWorkspaces ] = createState(
   [...Array(9).keys()].map((i) => ({ id: i + 1, focused: false, occupied: false })) // Starting state

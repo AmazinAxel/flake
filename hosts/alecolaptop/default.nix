@@ -8,6 +8,8 @@
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
+  # todo https://wiki.nixos.org/wiki/Swap
+
   environment.systemPackages = with pkgs; [
     gimp3
     teams-for-linux

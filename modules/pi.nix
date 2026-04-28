@@ -8,6 +8,8 @@
     };
   };
 
+  hardware.enableRedistributableFirmware = false; # Causes build fail for .iso otherwise
+
   services = {
     openssh.enable = true; # SSH support
 

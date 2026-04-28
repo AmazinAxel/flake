@@ -9,7 +9,6 @@
   hardware = {
     firmware = [ pkgs.raspberrypiWirelessFirmware ];
     i2c.enable = true;
-    enableRedistributableFirmware = false; # Causes build fail for .iso otherwise
 
     deviceTree = { # spi for display output
       enable = true;

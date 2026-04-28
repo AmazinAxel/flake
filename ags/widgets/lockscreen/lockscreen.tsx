@@ -3,9 +3,9 @@ import app from 'ags/gtk4/app';
 import Auth from 'gi://AstalAuth';
 import { createPoll } from 'ags/time';
 import GLib from 'gi://GLib';
-import { createBinding, createState, For, This } from 'ags';
+import { createState, For, This } from 'ags';
 import { playlistName } from '../../lib/mediaPlayer';
-const monitors = createBinding(app, "monitors");
+import { monitors } from '../../lib/monitors';
 
 export const [ isLocked, setIsLocked ] = createState(true);
 

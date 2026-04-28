@@ -4,7 +4,7 @@ import { Astal } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import Wp from 'gi://AstalWp';
 import { brightness } from '../../lib/brightness';
-const monitors = createBinding(app, "monitors");
+import { monitors } from '../../lib/monitors';
 
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 let dontShow = true;

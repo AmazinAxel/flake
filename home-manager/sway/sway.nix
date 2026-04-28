@@ -12,6 +12,7 @@
       focus = {
         newWindow = "focus";
         followMouse = "always"; # "yes"
+        onWindowActivation = "focus";
       };
 
       workspaceAutoBackAndForth = true;
