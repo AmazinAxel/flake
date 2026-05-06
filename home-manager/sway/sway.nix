@@ -12,7 +12,6 @@
       focus = {
         newWindow = "focus";
         followMouse = "always"; # "yes"
-        onWindowActivation = "focus";
       };
 
       workspaceAutoBackAndForth = true;
@@ -120,8 +119,6 @@
       ];
     };
     # Disable middle mouse paste
-    extraConfig = ''
-      primary_selection disabled
-    '';
+    extraConfig = "primary_selection disabled";
   };
 }

@@ -2,13 +2,13 @@ import GLib from "gi://GLib";
 import { Gtk, Gdk } from 'ags/gtk4';
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
-const { START, CENTER, END } = Gtk.Align
+import { execAsync } from 'ags/process';
+const { START, CENTER, END } = Gtk.Align;
 const notifd = Notifd.get_default();
 
 const time = (time: number) => GLib.DateTime.new_from_unix_local(time).format("%H:%M")!;
 
-const capitalizeFirstLetter = (s: string) =>
-   s.charAt(0).toUpperCase() + s.slice(1);
+const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const notificationItem = (n: Notifd.Notification) =>
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['notification']}>
@@ -44,9 +44,9 @@ export const notificationItem = (n: Notifd.Notification) =>
                             cursor={Gdk.Cursor.new_from_name('pointer', null)}
                             onClicked={() => {
                                 n.invoke(id);
-                                setTimeout(() => (notifd.get_notification(n.id)) && n.dismiss(), 100)
-                            }}
-                        >
+                                n.desktopEntry && execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]);
+                                setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
+                            }}>
                             <label label={label.replace('Activate', 'Open') ?? ''} halign={CENTER}/>
                         </button>
                     )}
