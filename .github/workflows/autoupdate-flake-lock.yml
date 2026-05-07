@@ -29,6 +29,6 @@ jobs:
 
       - name: Merge PR
         if: ${{ steps.update.outputs.pull-request-number != '' }}
-        run: gh pr merge --auto "${{ steps.update.outputs.pull-request-number }}" --rebase
+        run: gh pr merge "${{ steps.update.outputs.pull-request-number }}" --rebase --delete-branch
         env:
           GH_TOKEN: ${{ github.token }}

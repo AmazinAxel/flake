@@ -19,6 +19,7 @@
         "zen.watermark.enabled" = false;
         "zen.urlbar.wait-to-clear" = 5000;
         "zen.urlbar.replace-newtab" = true; # open new tab page
+        "zen.workspaces.show-workspace-indicator" = false;
 
         # hide new tab clutter
         "browser.newtabpage.activity-stream.feeds.system.topsites" = false;

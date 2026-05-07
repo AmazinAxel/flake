@@ -13,7 +13,7 @@ in {
 
       # Brightness
       "XF86MonBrightnessUp" = "exec brightnessctl set +15%";
-      "XF86MonBrightnessDown" = "exec brightnessctl set -15%";
+      "XF86MonBrightnessDown" = "exec brightnessctl set 15%-";
 
       # Apps
       "${mod}+E" = "exec zen-beta";
