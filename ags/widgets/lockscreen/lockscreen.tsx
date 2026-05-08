@@ -7,7 +7,7 @@ import { createState, For, This } from 'ags';
 import { playlistName } from '../../lib/mediaPlayer';
 import { monitors } from '../../lib/monitors';
 
-export const [ isLocked, setIsLocked ] = createState(true);
+export const [ isLocked, setIsLocked ] = createState(false);
 
 const [ isAuthenticating, setIsAuthenticating ] = createState(false);
 const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'));
