@@ -11,6 +11,7 @@ export default (windowName: string, Child: () => JSX.Element, onShow?: any) =>
     application={app}
     layer={Astal.Layer.OVERLAY}
     onShow={onShow}
+    class="backgroundDim"
   >
     <Child/>
   </window>
