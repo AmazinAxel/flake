@@ -9,7 +9,7 @@ import powermenuStyle from './widgets/powermenu/powermenu.css';
 import lockscreenStyle from './widgets/lockscreen/lockscreen.css';
 
 import app from "ags/gtk4/app"
-import { exec } from "ags/process";
+import { exec, execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
 import bar from './widgets/bar/bar';
@@ -32,6 +32,7 @@ import { monitorBrightness } from './lib/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
 import workspaces from './widgets/bar/workspaces';
 
+let blueLightFilter = false;
 
 app.start({
     css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
@@ -91,6 +92,10 @@ app.start({
                 break;
             case "toggleFocus":
                 setIsFocused(!focus.peek());
+                break;
+            case "toggleFilter":
+                execAsync(`busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q ${blueLightFilter ? 3500 : 6500}`);
+                blueLightFilter = !blueLightFilter;
                 break;
         };
         res("Request handled successfully");

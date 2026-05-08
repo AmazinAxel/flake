@@ -38,10 +38,7 @@ export default () => inputControl('launcher', () =>
             onNotifyText={({ text }) => search(text)}
             $={self => {
                 textBox = self;
-                app.connect("window-toggled", () =>
-                    app.get_window("launcher")?.visible && self.grab_focus()
-                );
-                focus.subscribe(() => search(self.text));
+                app.connect("window-toggled", () => app.get_window("launcher")?.visible && self.grab_focus());
         }}>
             <EscKey/>
         </entry>}

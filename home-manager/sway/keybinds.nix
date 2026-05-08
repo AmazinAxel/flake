@@ -42,7 +42,7 @@ in {
       "${mod}+S" = "exec playerctl play-pause"; # toggle mpris play/pause
 
       # blue light filter toggle
-      "${mod}+b" = "todo put code to detect busctl current status, if blue light filter on, turn off, otherwise turn on (refernce default value from sway.nix!)";
+      "${mod}+b" = "exec ags request toggleFilter";
 
       # Ags MPD controls
       "${mod}+control+period" = "exec ags request 'media next'";
