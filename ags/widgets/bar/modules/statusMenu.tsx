@@ -1,6 +1,7 @@
 import { Gtk } from 'ags/gtk4'
 import { createBinding } from "ags"
 import { DND } from '../../notifications/notifications';
+import { focus }  from '../../launcher/launcher';
 import Bluetooth from 'gi://AstalBluetooth';
 import Wp from 'gi://AstalWp';
 import Battery from 'gi://AstalBattery';
@@ -32,10 +33,14 @@ const VolumeIcon = () =>
 const DNDIcon = () =>
   <image visible={DND} iconName='notifications-disabled-symbolic'/>
 
+const FocusIcon = () =>
+  <image visible={focus} iconName='emoji-flags-symbolic'/>
+
 export const Status = () =>
   <box orientation={Gtk.Orientation.VERTICAL} spacing={7} cssClasses={['statusMenu']}>
     <VolumeIcon/>
     <BatteryWidget/>
     <BluetoothIcon/>
     <DNDIcon/>
+    <FocusIcon/>
   </box>

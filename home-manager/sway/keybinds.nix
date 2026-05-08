@@ -27,6 +27,7 @@ in {
       "${mod}+A" = "exec ags toggle chat";
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+control+D" = "exec ags request toggleDND";
+      "${mod}+L" = "exec ags request toggleFocus";
 
       "${mod}+V" = "exec ags toggle clipboard";
       # Enter = select entry, C = copy 2nd entry, E = edit image with satty, W = wipe clipboard

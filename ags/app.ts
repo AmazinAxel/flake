@@ -17,6 +17,7 @@ import chat from './widgets/chat/chat';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
+import { focus, setIsFocused }  from './widgets/launcher/launcher';
 import launcher from './widgets/launcher/launcher';
 import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
@@ -87,6 +88,9 @@ app.start({
                 break;
             case "toggleDND":
                 setDND(!DND.peek())
+                break;
+            case "toggleFocus":
+                setIsFocused(!focus.peek());
                 break;
         };
         res("Request handled successfully");

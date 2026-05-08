@@ -11,7 +11,15 @@ let textBox: Gtk.Entry;
 const [appsList, setAppsList] = createState(new Array<Apps.Application>())
 setAppsList(apps.fuzzy_query('').slice(0, 5));
 
-const search = (text: string) => setAppsList(apps.fuzzy_query(text).slice(0, 5))
+export const [ focus, setIsFocused ] = createState(false);
+const focusBlockedAppNames = ['discord', 'slack'];
+
+const isBlocked = (a: Apps.Application) =>
+    focus.peek() && focusBlockedAppNames.some(b => a.name.toLowerCase().includes(b));
+
+const search = (text: string) => setAppsList(
+    apps.fuzzy_query(text).filter(a => !isBlocked(a)).slice(0, 5)
+);
 
 const hide = () => app.toggle_window("launcher");
 const EscKey = () => <Gtk.EventControllerKey onKeyPressed={(_, key) => key == 65307 && hide()}/>
@@ -33,6 +41,7 @@ export default () => inputControl('launcher', () =>
                 app.connect("window-toggled", () =>
                     app.get_window("launcher")?.visible && self.grab_focus()
                 );
+                focus.subscribe(() => search(self.text));
         }}>
             <EscKey/>
         </entry>}
