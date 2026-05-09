@@ -10,6 +10,7 @@ export default (name: string, Child: () => JSX.Element) =>
         application={app}
         layer={Astal.Layer.OVERLAY}
         marginLeft={barMargin}
+        cssClasses={['sidebarWidget']}
     >
         <Child/>
     </window>

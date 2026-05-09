@@ -26,7 +26,7 @@ const nameSubstitute = (name: string) => {
 	if (!name) return '';
 	
 	if (name.includes('HD Audio Controller')) {
-		return String(name.split(' ').pop()); // Returns 'Speaker' or 'Headphones'
+		return String(name.split(' ').pop()); // returns 'Speaker' or 'Headphones'
 	} else if (name.includes('HDMI')) {
 		return "Monitor"; // Monitor has a speaker
 	} else if (name == 'K38') {

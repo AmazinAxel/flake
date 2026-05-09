@@ -25,6 +25,8 @@ in {
       "${mod}+X" = "exec ags request closeSidebarWidget";
       "control+${mod}+z" = "exec ags request toggleQuicksettings";
       "control+${mod}+v" = "exec ags request toggleCalendar";
+      "control+${mod}+x" = "exec ags request toggleBluetooth";
+      "control+${mod}+c" = "exec ags request toggleWifi";
       "${mod}+A" = "exec ags toggle chat";
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+control+D" = "exec ags request toggleDND";

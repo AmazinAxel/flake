@@ -13,8 +13,10 @@ import { exec, execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
 import bar, { setBarMargin } from './widgets/bar/bar';
+import bluetooth from './widgets/bar/bluetooth';
+import wifi from './widgets/bar/network';
 import chat from './widgets/chat/chat';
-import calendar from './widgets/calendar';
+import calendar from './widgets/bar/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
@@ -22,7 +24,7 @@ import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
-import quickSettings from './widgets/quicksettings/quicksettings';
+import quickSettings from './widgets/bar/quicksettings/quicksettings';
 import lockscreen from './widgets/lockscreen/lockscreen';
 import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
@@ -46,6 +48,8 @@ app.start({
         osd();
         powermenu();
         quickSettings();
+        bluetooth();
+        wifi();
         lockscreen();
         workspaces();
 
@@ -87,16 +91,19 @@ app.start({
                 };
                 break;
             case "toggleQuicksettings":
-                app.toggle_window('quickSettings');
-                if (app.get_window('calendar')?.visible) app.toggle_window('calendar');
+                closeSidebar('quickSettings');
                 break;
             case "toggleCalendar":
-                app.toggle_window('calendar');
-                if (app.get_window('quickSettings')?.visible) app.toggle_window('quickSettings');
+                closeSidebar('calendar');
+                break;
+            case "toggleBluetooth":
+                closeSidebar('bluetooth');
+                break;
+            case "toggleWifi":
+                closeSidebar('wifi');
                 break;
             case "closeSidebarWidget":
-                if (app.get_window('quickSettings')?.visible) app.toggle_window('quickSettings');
-                if (app.get_window('calendar')?.visible) app.toggle_window('calendar');
+                closeSidebar();
                 break;
             case "toggleInfoArea":
                 setBarMargin(app.get_window('bar')?.visible ? 0 : 31);
@@ -116,6 +123,14 @@ app.start({
         res("Request handled successfully");
     }
 });
+
+const closeSidebar = (except?: string) => {
+    ['quickSettings', 'calendar', 'bluetooth', 'wifi'].forEach(name =>
+        (name !== except && app.get_window(name)?.visible) && app.toggle_window(name)
+    );
+    if (except) app.toggle_window(except);
+};
+
 
 const reminders = () => {
     const lastSync = Number(astalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));

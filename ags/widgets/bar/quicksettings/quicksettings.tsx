@@ -1,7 +1,7 @@
-import { BrightnessSlider } from '../../lib/brightness';
+import { BrightnessSlider } from '../../../lib/brightness';
 import { VolumeSlider, SinkSelector } from './sound';
 import { Gtk } from 'ags/gtk4';
-import sidebarWindow from '../../lib/sidebarWindow';
+import sidebarWindow from '../../../lib/sidebarWindow';
 
 const quickSettings = () =>
     <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>

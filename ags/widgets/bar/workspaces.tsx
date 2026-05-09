@@ -31,14 +31,6 @@ eventStream.subscribe(() => { // Show workspaces on workspace change
 });
 updateWorkspaces();
 
-function switchWorkspace(direction: number) {
-  const ws = JSON.parse(exec(['swaymsg', '-t', 'get_workspaces']));
-  const current = ws.find((w: { focused: boolean }) => w.focused);
-  const target = Math.min(9, Math.max(1, current.num + direction));
-  if (target === current.id) return; // Don't switch to 0 or 10th workspace
-  exec(['swaymsg', 'workspace', 'number', String(target)]);
-};
-
 const showWorkspaces = () => {
   setIsVisible(true);
   count++;
@@ -62,10 +54,6 @@ export default () =>
         $={(self) => workspaceWindow = self }
       >
         <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
-          <Gtk.EventControllerScroll
-            flags={Gtk.EventControllerScrollFlags.VERTICAL}
-            onScroll={(_, __, y) => switchWorkspace(y > 0 ? 1 : -1)}
-          />
           {[...Array(9).keys()].map((i) => i + 1).map((id) =>
             <box cssClasses={workspaces((ws) => {
               const w = ws.find((w) => w.id === id);
