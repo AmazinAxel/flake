@@ -12,13 +12,12 @@ import app from "ags/gtk4/app"
 import { exec, execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
-import bar from './widgets/bar/bar';
+import bar, { setBarMargin } from './widgets/bar/bar';
 import chat from './widgets/chat/chat';
 import calendar from './widgets/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
-import { focus, setIsFocused }  from './widgets/launcher/launcher';
-import launcher from './widgets/launcher/launcher';
+import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
 import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
@@ -88,12 +87,16 @@ app.start({
                 };
                 break;
             case "toggleQuicksettings":
-                app.toggle_window("quickSettings");
-                if (app.get_window("calendar")?.visible) app.toggle_window("calendar");
+                app.toggle_window('quickSettings');
+                if (app.get_window('calendar')?.visible) app.toggle_window('calendar');
                 break;
             case "toggleCalendar":
-                app.toggle_window("calendar");
-                if (app.get_window("quickSettings")?.visible) app.toggle_window("quickSettings");
+                app.toggle_window('calendar');
+                if (app.get_window('quickSettings')?.visible) app.toggle_window('quickSettings');
+                break;
+            case "toggleInfoArea":
+                setBarMargin(app.get_window('bar')?.visible ? 0 : 31);
+                app.toggle_window('bar'); // todo rename
                 break;
             case "toggleDND":
                 setDND(!DND.peek())

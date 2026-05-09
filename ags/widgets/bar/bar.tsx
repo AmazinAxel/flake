@@ -20,16 +20,6 @@ export default () =>
     anchor={BOTTOM | LEFT}
     layer={Astal.Layer.OVERLAY}
     application={app}
-    
-    /*$={(self) => {
-    unfinished
-        /*self.connect(, () =>
-            setBarMargin(self.visible ? self.get_allocated_width() : 0)
-        );
-        self.connect('notify::visible', () => {
-            if (!self.visible) setBarMargin(0);
-        });
-    }}*/
   >
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.END}>
       <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} cssClasses={['barElement']} name={'media'}>

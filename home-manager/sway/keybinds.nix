@@ -20,7 +20,6 @@ in {
       "${mod}+return" = "exec foot";
       
       # Ags
-      "${mod}+Z" = "exec ags toggle bar";
       "${mod}+space" = "exec ags toggle launcher";
       "${mod}+period" = "exec ags toggle emojiPicker";
       "${mod}+X" = "exec ags request toggleQuicksettings";
@@ -29,6 +28,7 @@ in {
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+control+D" = "exec ags request toggleDND";
       "${mod}+L" = "exec ags request toggleFocus";
+      "${mod}+Z" = "exec ags request toggleInfoArea";
 
       "${mod}+V" = "exec ags toggle clipboard";
       # Enter = select entry, C = copy 2nd entry, E = edit image with satty, W = wipe clipboard
