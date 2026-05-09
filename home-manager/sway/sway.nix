@@ -102,6 +102,7 @@
           { window_type = "toolbar"; }
           { window_type = "splash"; }
           { app_id = "xdg-desktop-portal-gtk"; }
+          { app_id = "nemo"; }
         ];
       };
 

@@ -87,6 +87,14 @@ app.start({
                         break;
                 };
                 break;
+            case "toggleQuicksettings":
+                app.toggle_window("quickSettings");
+                if (app.get_window("calendar")?.visible) app.toggle_window("calendar");
+                break;
+            case "toggleCalendar":
+                app.toggle_window("calendar");
+                if (app.get_window("quickSettings")?.visible) app.toggle_window("quickSettings");
+                break;
             case "toggleDND":
                 setDND(!DND.peek())
                 break;

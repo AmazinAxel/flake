@@ -1,5 +1,6 @@
 import app from "ags/gtk4/app"
 import { Astal, Gtk } from "ags/gtk4"
+import { createState } from 'ags';
 import { Time } from './modules/time';
 import { Status } from './modules/statusMenu';
 import { Mpris } from './modules/mpris';
@@ -10,6 +11,8 @@ import Wp from "gi://AstalWp";
 const { BOTTOM, LEFT } = Astal.WindowAnchor;
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 
+export const [ barMargin, setBarMargin ] = createState(0);
+
 export default () =>
   <window
     name="bar"
@@ -17,6 +20,16 @@ export default () =>
     anchor={BOTTOM | LEFT}
     layer={Astal.Layer.OVERLAY}
     application={app}
+    
+    /*$={(self) => {
+    unfinished
+        /*self.connect(, () =>
+            setBarMargin(self.visible ? self.get_allocated_width() : 0)
+        );
+        self.connect('notify::visible', () => {
+            if (!self.visible) setBarMargin(0);
+        });
+    }}*/
   >
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.END}>
       <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} cssClasses={['barElement']} name={'media'}>
