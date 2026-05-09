@@ -94,6 +94,10 @@ app.start({
                 app.toggle_window('calendar');
                 if (app.get_window('quickSettings')?.visible) app.toggle_window('quickSettings');
                 break;
+            case "closeSidebarWidget":
+                if (app.get_window('quickSettings')?.visible) app.toggle_window('quickSettings');
+                if (app.get_window('calendar')?.visible) app.toggle_window('calendar');
+                break;
             case "toggleInfoArea":
                 setBarMargin(app.get_window('bar')?.visible ? 0 : 31);
                 app.toggle_window('bar'); // todo rename

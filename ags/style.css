@@ -46,6 +46,13 @@ calendar { margin-bottom: 5.9px; }
   min-width: 10rem;
   padding: 0.8rem;
 }
+#quicksettingsAudioLabel {
+  font-family: 'Hammersmith One';
+  font-size: 1.5rem;
+  padding: 0.25rem 0 0.25rem 0;
+  color: @blue2;
+  text-shadow: 0 0 1rem @blue2;
+}
 
 .backgroundDim { background-color: rgba(0, 0, 0, 0.3); }
 

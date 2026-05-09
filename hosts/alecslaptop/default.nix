@@ -42,6 +42,8 @@
     initrd = { # AMD GPU support
       kernelModules = [ "amdgpu" ];
       includeDefaultModules = false;
+      compressor = "zstd";
+      compressorArgs = [ "-19" "-T0" ];
     };
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # Arch64 cross compilation support
   };

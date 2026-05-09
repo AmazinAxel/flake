@@ -22,8 +22,9 @@ in {
       # Ags
       "${mod}+space" = "exec ags toggle launcher";
       "${mod}+period" = "exec ags toggle emojiPicker";
-      "${mod}+X" = "exec ags request toggleQuicksettings";
-      "${mod}+shift+X" = "exec ags request toggleCalendar";
+      "${mod}+X" = "exec ags request closeSidebarWidget";
+      "control+${mod}+z" = "exec ags request toggleQuicksettings";
+      "control+${mod}+v" = "exec ags request toggleCalendar";
       "${mod}+A" = "exec ags toggle chat";
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+control+D" = "exec ags request toggleDND";

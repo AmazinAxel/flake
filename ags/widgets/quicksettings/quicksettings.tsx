@@ -1,24 +1,16 @@
 import { BrightnessSlider } from '../../lib/brightness';
 import { VolumeSlider, SinkSelector } from './sound';
-import { Astal, Gtk } from 'ags/gtk4';
-import app from 'ags/gtk4/app'
-import { barMargin } from '../bar/bar';
-const { BOTTOM, LEFT } = Astal.WindowAnchor;
+import { Gtk } from 'ags/gtk4';
+import sidebarWindow from '../../lib/sidebarWindow';
 
-export default () =>
-    <window
-        name="quickSettings"
-        anchor={BOTTOM | LEFT}
-        application={app}
-        layer={Astal.Layer.OVERLAY}
-        marginLeft={barMargin}
-    >
-        <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
-            <box orientation={Gtk.Orientation.VERTICAL}>
-                <VolumeSlider/>
-                <BrightnessSlider/>
-            </box>
-            <SinkSelector/>
+const quickSettings = () =>
+    <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
+        <box orientation={Gtk.Orientation.VERTICAL}>
+            <VolumeSlider/>
+            <BrightnessSlider/>
         </box>
-    </window>
+        <label label="Audio devices" name="quicksettingsAudioLabel" halign={Gtk.Align.START}/>
+        <SinkSelector/>
+    </box>
 
+export default () => sidebarWindow('quickSettings', quickSettings);
