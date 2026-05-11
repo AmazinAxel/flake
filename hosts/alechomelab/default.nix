@@ -13,7 +13,10 @@
     deviceTree = { # spi for display output
       enable = true;
       filter = "*rpi-zero-2*.dtb";
-      overlays = [{ name = "spi0"; dtsFile = ./spi0.dts; }];
+      overlays = [{
+        name = "spi0-2cs";
+        dtboFile = "${pkgs.raspberrypifw}/share/raspberrypi/boot/overlays/spi0-2cs.dtbo";
+      }];
     };
   };
   boot.kernelModules = [ "spidev" ];

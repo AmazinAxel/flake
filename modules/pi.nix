@@ -1,14 +1,20 @@
 { pkgs, lib, ... }: {
-  boot.loader = { # Raspi boot
-    systemd-boot.enable = false;
-    grub.enable = false;
-    generic-extlinux-compatible = {
-      enable = true;
-      configurationLimit = 2;
+  boot = {
+    loader = { # Raspi boot
+      systemd-boot.enable = false;
+      grub.enable = false;
+      generic-extlinux-compatible = {
+        enable = true;
+        configurationLimit = 2;
+      };
     };
+
+    # we try building zfs which is broken
+    supportedFilesystems = lib.mkForce [ "ext4" ];
+    initrd.supportedFilesystems = lib.mkForce [ "ext4" ];
   };
 
-  hardware.enableRedistributableFirmware = false; # Causes build fail for .iso otherwise
+  hardware.enableRedistributableFirmware = lib.mkForce false; # Causes build fail for .iso otherwise
 
   services = {
     openssh.enable = true; # SSH support
