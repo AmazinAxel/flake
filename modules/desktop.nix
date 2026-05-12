@@ -42,6 +42,12 @@
       })
       #claude-code
 
+      # Helix packages
+      marksman # markdown
+      typescript-language-server # some LSP stuff
+      vscode-langservers-extracted # more lSP stuff
+
+
       inputs.planning.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Scripts

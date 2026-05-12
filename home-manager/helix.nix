@@ -1,10 +1,11 @@
+{ pkgs, ... }:
 {
   programs.helix = {
     enable = true;
     defaultEditor = true;
     settings = {
       theme = "nord";
-      
+
       editor = {
         #mouse = true; # mouse mode
         middle-click-paste = false;
@@ -16,7 +17,7 @@
         trim-trailing-whitespace = true;
         popup-border = "all";
         clipboard-provider = "wayland";
-        
+
         #statusline = { }; # mode, file-name, [spacer] read-only-indicator, file-modification-indicator, version-control
         statusline = {
           left = ["mode" "file-name" ];
@@ -57,10 +58,10 @@
       "inherits" = "nord";
       "ui.background" = { }; # transparent background
     };
-    #languages.language = [{
-    #  name = "nix";
-    #  auto-format = true;
-    #  formatter.command = lib.getExe pkgs.nixfmt-rfc-style;
-    #}];
+    #languages.language = [
+    #  { name = "javascript"; auto-format = true; }
+    #  { name = "typescript"; auto-format = true; }
+    #  { name = "tsx"; auto-format = true; }
+    #];
   };
 }
