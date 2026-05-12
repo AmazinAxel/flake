@@ -8,6 +8,7 @@
       ga = "git add -A";
       gp = "git pull";
     };
+    functions.gc = "git commit -m '$argv'";
     interactiveShellInit = ''
       set fish_greeting
       fetch

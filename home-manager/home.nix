@@ -6,6 +6,7 @@
     ./fish.nix
     ./foot.nix
     ./gtk.nix
+    ./helix.nix
     ./mpd.nix
     ./satty.nix
     ./starship.nix
