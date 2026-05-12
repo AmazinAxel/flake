@@ -9,7 +9,7 @@ import powermenuStyle from './widgets/powermenu/powermenu.css';
 import lockscreenStyle from './widgets/lockscreen/lockscreen.css';
 
 import app from "ags/gtk4/app"
-import { exec, execAsync } from "ags/process";
+import { execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
 import bar, { setBarMargin } from './widgets/bar/bar';
@@ -132,9 +132,8 @@ const closeSidebar = (except?: string) => {
 };
 
 
-const reminders = () => {
+const reminders = async () => {
     const lastSync = Number(astalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));
-    const folderSize = Number(exec(`fish -c "du -sb /home/alec/Downloads | awk '{print \$1}'"`));
 
     if ((Date.now() - lastSync) > 540000000) { // Last sync was ~7 days ago
         notifySend({
@@ -146,7 +145,12 @@ const reminders = () => {
                 command: `foot -e fish -c 'sys-sync; echo "Press a key to exit"; read --nchars=1'`
             }]
         });
-    } else if (folderSize > 100000000) { // Greater than 100MB
+        return;
+    };
+
+    const folderSize = await execAsync(`bash -c "du -sb /home/alec/Downloads | awk '{print \$1}'"`)
+        .then(Number).catch(() => 0);
+    if (folderSize > 100000000) { // Greater than 100MB
         notifySend({
             appName: 'Cleanup',
             title: 'Empty Downloads',

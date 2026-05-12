@@ -30,8 +30,18 @@
         mpris
         notifd
         wireplumber
+
         pkgs.gtksourceview5 # Chat code syntax highlighting
         pkgs.glib-networking # AI chat
+        pkgs.brightnessctl
+        pkgs.sway # swaymsg IPC
+        pkgs.iwd # wifi control
+        pkgs.mpc # MPD
+        pkgs.cliphist
+        pkgs.wl-clipboard # wl-copy
+        pkgs.satty
+        pkgs.swaybg
+        pkgs.procps # pkill for gpu-screenrec
       ];
     };
   };

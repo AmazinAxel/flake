@@ -8,7 +8,7 @@
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  # todo https://wiki.nixos.org/wiki/Swap
+  swapDevices = [{ device = "/swapfile"; size = 2048; }];
 
   environment.systemPackages = with pkgs; [
     gimp3

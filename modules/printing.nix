@@ -4,7 +4,6 @@
     printing = {
       enable = true;
       drivers = [ pkgs.hplip ]; # HP
-      listenAddresses = [ "*:631" ];
       allowFrom = [ "all" ];
       browsing = true;
       defaultShared = true;

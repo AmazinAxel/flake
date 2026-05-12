@@ -126,6 +126,7 @@
       };
     };
   };
+  security.rtkit.enable = true; # better audio latency
 
   # Bluetooth
   hardware.bluetooth = {

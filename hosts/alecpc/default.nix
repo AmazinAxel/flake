@@ -8,6 +8,8 @@
   networking.hostName = "alecpc";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
+  swapDevices = [{ device = "/swapfile"; size = 2048; }];
+
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive
     blockbench

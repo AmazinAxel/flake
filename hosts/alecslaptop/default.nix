@@ -37,7 +37,8 @@
   # Bootloader settings
   boot = {
     # Sea Islands Radeon support for Vulkan
-    kernelParams = [ "radeon.cik_support=0" "amdgpu.cik_support=1" ];
+    kernelParams = [ "radeon.cik_support=0" "amdgpu.cik_support=1" "numa=off" ];
+    consoleLogLevel = 3; # Suppress ACPI BIOS firmware bug spam (KERN_ERR) from console
 
     initrd = { # AMD GPU support
       kernelModules = [ "amdgpu" ];
@@ -52,6 +53,8 @@
     graphics.extraPackages = [ pkgs.rocmPackages.clr.icd ];
     amdgpu.opencl.enable = true;
   };
+
+  swapDevices = [{ device = "/swapfile"; size = 4096; }];
 
   services = {
     flatpak.enable = true; # For running Sober

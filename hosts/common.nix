@@ -17,7 +17,12 @@
     };
     tmp.useTmpfs = true;
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
-    kernelParams = [ "quiet" "nowatchdog" "nmi_watchdog=0" ];
+    kernelParams = [ "nowatchdog" "nmi_watchdog=0" ];
+    kernelModules = [ "tcp_bbr" ];
+    kernel.sysctl = { # faster network
+      "net.ipv4.tcp_congestion_control" = "bbr";
+      "net.core.default_qdisc" = "fq"; # pairs with BBR
+    };
     initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
   };
 
@@ -63,7 +68,16 @@
 
   services = {
     journald.extraConfig = "SystemMaxUse=20M";
-    resolved.enable = true; # DNS resolve
+    resolved = {
+      enable = true;
+      settings.Resolve = {
+        MulticastDNS = "no"; # avahi handles mDNS
+        DNS = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com";
+        #FallbackDNS = "8.8.8.8#dns.google 8.8.4.4#dns.google";
+        DNSOverTLS = "opportunistic";
+        Domains = "~."; # override DHCP-provided DNS (ISP)
+      };
+    };
   };
   fileSystems."/".options = [ "noatime" "discard" ]; # SSD trim
   documentation.enable = false;
