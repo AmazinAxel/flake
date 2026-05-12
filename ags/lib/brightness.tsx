@@ -1,29 +1,33 @@
-import { monitorFile, readFileAsync } from 'ags/file';
 import { exec, execAsync } from 'ags/process';
 import { createState } from 'ags';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
 
 const get = (args: string) => Number(exec('brightnessctl ' + args));
 const screen = exec('bash -c "ls -w1 /sys/class/backlight | head -1"');
+const brightnessPath = `/sys/class/backlight/${screen}/brightness`;
 
 const screenMax = get("max");
-export const [ brightness, setBrightnessValue ] = createState(get("get") / (screenMax || 1)) 
+export const [ brightness, setBrightnessValue ] = createState(get("get") / (screenMax || 1))
 
 const setBrightness = (percent: number) => {
-    if (percent < 0)
-        percent = 0;
-
-    if (percent > 1)
-        percent = 1;
-
-    execAsync(`brightnessctl set ${Math.floor(percent * 100)}% -q`)
-    .then(() => setBrightnessValue(percent));
+    const steps = Math.max(0, Math.min(screenMax, Math.floor(percent * screenMax)));
+    setBrightnessValue(steps / screenMax);
+    execAsync(`brightnessctl set ${steps} -q`);
 };
 
-export const monitorBrightness = () =>
-    monitorFile(`/sys/class/backlight/${screen}/brightness`, async (file) => {
-        const v = await readFileAsync(file);
-        setBrightnessValue(Number(v) / screenMax);
+export const monitorBrightness = () => {
+    const file = Gio.File.new_for_path(brightnessPath);
+    const monitor = file.monitor(Gio.FileMonitorFlags.NONE, null);
+    monitor.connect('changed', (_m: Gio.FileMonitor, _f: Gio.File, _o: Gio.File | null, eventType: Gio.FileMonitorEvent) => {
+        if (eventType !== Gio.FileMonitorEvent.CHANGES_DONE_HINT) return;
+        const [ok, contents] = GLib.file_get_contents(brightnessPath);
+        if (!ok) return;
+        const v = Number(new TextDecoder().decode(contents).trim()) / screenMax;
+        if (v !== brightness.peek()) setBrightnessValue(v); // only updates for non internal changes
     });
+    return monitor;
+};
 
 export const BrightnessSlider = () =>
     <box>

@@ -8,8 +8,10 @@ import inputControl from '../../lib/inputControl';
 
 const apps = new Apps.Apps()
 let textBox: Gtk.Entry;
-const [appsList, setAppsList] = createState(new Array<Apps.Application>())
+const [ appsList, setAppsList ] = createState(new Array<Apps.Application>())
 setAppsList(apps.fuzzy_query('').slice(0, 5));
+apps.connect('notify::list', () => search(''));
+apps.reload();
 
 export const [ focus, setIsFocused ] = createState(false);
 const focusBlockedAppNames = ['discord', 'slack'];
