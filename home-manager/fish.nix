@@ -6,7 +6,8 @@
       homelab-update = "cd /home/alec/Projects/homelab && git pull && nixos-rebuild switch --flake .#alechomelab --sudo --ask-sudo-password --target-host alec@alechomelab.local";
       g = "git";
       ga = "git add -A";
-      gp = "git pull";
+      gl = "git pull";
+      gp = "git push";
     };
     functions.gc = ''git commit -m "$argv"'';
     interactiveShellInit = ''
