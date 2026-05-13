@@ -40,7 +40,7 @@
       (prismlauncher.override {
         additionalLibs = [ pkgs.libxkbcommon ]; # TODO remove temp fix
       })
-      #claude-code
+      claude-code
 
       # Helix packages
       marksman # markdown

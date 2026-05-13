@@ -52,7 +52,7 @@ async function handlePost(req) {
   };
 };
 
-const page = await Bun.file("/home/alec/homelab/webserver/page.html").text();
+const page = await Bun.file(import.meta.dir + "/page.html").text();
 const pageWithToken = page.replaceAll("AIRNOW_TOKEN", process.env.AIRNOW_TOKEN);
 
 serve({
@@ -65,7 +65,7 @@ serve({
       return handlePost(req);
 
     else if (pathname == "/favicon.ico")
-      return new Response(Bun.file("/home/alec/homelab/webserver/favicon.ico"), {
+      return new Response(Bun.file(import.meta.dir + "/favicon.ico"), {
         headers: { "Content-Type": "image/x-icon" }
       });
     else if (pathname.includes("/getdata")) {

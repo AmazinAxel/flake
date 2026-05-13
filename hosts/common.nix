@@ -35,6 +35,7 @@
         Settings.AutoConnect = true;
         General.EnableNetworkConfiguration = true;
         Network.NameResolvingService = "systemd";
+        Scan.DisablePeriodicScan = true; # not needed
       };
     };
   };
@@ -64,6 +65,7 @@
     experimental-features = "nix-command flakes";
     auto-optimise-store = true;
     warn-dirty = false;
+    trusted-users = [ "alec" ]; # for remote deployments
   };
 
   services = {

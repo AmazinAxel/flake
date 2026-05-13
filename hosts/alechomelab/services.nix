@@ -1,4 +1,4 @@
-{ pkgs, planning, homelabDisplay, ... }:
+{ pkgs, homelabDisplay, ... }:
 
 let
   service = { # basic service config
@@ -15,12 +15,12 @@ let
 in {
   systemd = {
     services = {
-      # requires .env in the webserver/ folder with AIRNOW_TOKEN= 
+      # requires /etc/homelab/webserver.env with AIRNOW_TOKEN=
       webserver = service // {
         path = [ pkgs.util-linux ];
         serviceConfig = service.serviceConfig // privileges // {
-          EnvironmentFile = "/home/alec/homelab/webserver/.env";
-          ExecStart = "${pkgs.bun}/bin/bun /home/alec/homelab/webserver/webserver";
+          EnvironmentFile = "/etc/homelab/webserver.env";
+          ExecStart = "${pkgs.bun}/bin/bun ${./webserver}/webserver.js";
         };
       };
       homelabDisplay = service // {
@@ -33,37 +33,10 @@ in {
           ExecStart = "${pkgs.php82}/bin/php -S 0.0.0.0:9000 -t /media/lofi/";
         };
       };
-      planning = let 
-        theme = pkgs.graphite-gtk-theme.override {
-          tweaks = [ "nord" ];
-          themeVariants = [ "default" ];
-          colorVariants = [ "dark" ];
-        };
-      in service // {
-        after = [ "planning-broadway.service" ];
-        requires = [ "planning-broadway.service" ];
-        environment = {
-          GDK_BACKEND = "broadway";
-          BROADWAY_DISPLAY = ":5";
-          GTK_THEME = "Graphite-Dark-nord";
-          XDG_DATA_DIRS = "${theme}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.hicolor-icon-theme}/share";
-        }; # MUST RUN mkdir -p /home/alec/.config/planning
-        serviceConfig = service.serviceConfig // {
-          User = "alec";
-          WorkingDirectory = "/home/alec/";
-          ExecStart = "${planning}/bin/planning";
-        };
-      };
-      planning-broadway = service // {
-        serviceConfig = service.serviceConfig // {
-          User = "alec";
-          ExecStart = "${pkgs.gtk4}/bin/gtk4-broadwayd --port 8000 :5";
-        };
-      };
 
       daily.script = ''
-        ${pkgs.fish}/bin/fish /home/alec/homelab/scripts/githubBackup.fish
-        ${pkgs.fish}/bin/fish /home/alec/homelab/scripts/spotifySync.fish
+        ${pkgs.fish}/bin/fish ${./scripts}/githubBackup.fish
+        ${pkgs.fish}/bin/fish ${./scripts}/spotifySync.fish
 
         ${pkgs.toybox}/bin/date +%s > /home/alec/lastSynced
       '';

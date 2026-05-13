@@ -101,8 +101,9 @@
           { window_type = "utility"; }
           { window_type = "toolbar"; }
           { window_type = "splash"; }
-          { app_id = "xdg-desktop-portal-gtk"; }
-          { app_id = "nemo"; }
+#          { app_id = "xdg-desktop-portal-gtk"; }
+          { app_id = "nemo"; } # file browser
+          { app_id = "org.gnome.FileRoller"; } # file extraction dialogs
         ];
       };
 

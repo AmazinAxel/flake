@@ -4,37 +4,24 @@
     ../common.nix
     ../../modules/pi.nix
   ];
-  environment.systemPackages = with pkgs; [ bun spotdl jq fish ];
+  environment.systemPackages = with pkgs; [ bun jq fish ];
 
   hardware = {
-    firmware = [ pkgs.raspberrypiWirelessFirmware ];
     i2c.enable = true;
 
     deviceTree = { # spi for display output
       enable = true;
       filter = "*rpi-zero-2*.dtb";
-      overlays = [{
-        name = "spi0-2cs";
-        dtboFile = "${pkgs.raspberrypifw}/share/raspberrypi/boot/overlays/spi0-2cs.dtbo";
-      }];
+      # IF BUILDING ISO COMMENT LINE BELOW
+      overlays = [{ name = "spi0"; dtsFile = ./spi0.dts; }];
     };
   };
   boot.kernelModules = [ "spidev" ];
-
-  fonts.packages = [(pkgs.stdenv.mkDerivation { # Planning fonts
-    name = "fonts";
-    src = ../../home-manager/fonts;
-    installPhase = ''
-      mkdir -p $out/share/fonts/truetype
-      cp -r $src/* $out/share/fonts/truetype/
-    '';
-  })];
 
   # Networking
   networking = {
     hostName = "alechomelab";
     firewall.allowedTCPPorts = [ 80 9000 8000 ];
-    #wifi.powersave = false; # Stop network drops
   };
 
   services = {
@@ -64,6 +51,7 @@
   system.stateVersion = "25.11";
 
   /*
+  [all]
   # For proper boot
   kernel=u-boot-rpi3.bin
   arm_64bit=1
@@ -86,5 +74,4 @@
   disable_splash=1
   avoid_warnings=1
   */
-
 }

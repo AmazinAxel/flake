@@ -21,7 +21,6 @@
     python3
     openjdk25
     bun
-    claude-code
   ];
 
   boot = {
