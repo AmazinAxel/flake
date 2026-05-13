@@ -7,24 +7,25 @@ read -l -P "[Sync] Enter NAS password: " passwd --silent
 mkdir -p $mntPoint
 sudo mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
 
-echo "[Sync] Pulling music from NAS"
+echo \n"[Sync] Pulling music from NAS"
 sudo rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
 mpc update > /dev/null
 sudo umount $mntPoint
 
-echo "[Sync] Pulling passwords"
+echo \n"[Sync] Pulling passwords"
 pass git pull --rebase
 
 if not pass git diff --quiet
-    echo "[Sync] Passwords modified"
+    echo \n"[Sync] Passwords modified"
     pass git push
+end
 
 ## Rebuild latest
 cd /home/alec/Projects/flake/
 set isDirty (git status --porcelain)
 
 if test -n "$isDirty"
-    echo "[Sync] System flake is dirty - not updating system"
+    echo \n"[Sync] System flake is dirty - not updating system"
 else
     git pull
     sudo nixos-rebuild boot --flake /home/alec/Projects/flake/

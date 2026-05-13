@@ -34,9 +34,7 @@ export const notifySend = ({
         // Optional params
         appName && '--app-name=' + escapeShellArg(appName),
         category && '--category=' + escapeShellArg(category)
-    ].concat(
-        actions.map(({ id, label }) => `--action=${id}=${escapeShellArg(label)}`),
-    ).join(' ');
+    ].concat(actions.map(({ id, label }) => '--action=' + id + '=' + escapeShellArg(label))).join(' ');
 
     subprocess(
         cmd,

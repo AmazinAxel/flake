@@ -30,6 +30,7 @@
     firewall.allowedTCPPorts = [ 80 9000 8000 ];
   };
 
+  # must run 'sudo smbpasswd -a alec' to log in!!
   services = {
     samba = { # USB NAS
       enable = true;
