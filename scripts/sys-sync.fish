@@ -12,6 +12,13 @@ sudo rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
 mpc update > /dev/null
 sudo umount $mntPoint
 
+echo "[Sync] Pulling passwords"
+pass git pull --rebase
+
+if not pass git diff --quiet
+    echo "[Sync] Passwords modified"
+    pass git push
+
 ## Rebuild latest
 cd /home/alec/Projects/flake/
 set isDirty (git status --porcelain)

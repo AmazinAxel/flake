@@ -26,6 +26,8 @@
       rsync # Quickly pull files from NAS drive
       playerctl
       killall
+      pass # password management
+      gnupg # GPG for passkeys
 
       # Desktop applications
       gthumb
@@ -68,6 +70,10 @@
     dconf.enable = true; # For hm
     nix-ld.enable = true; # For dynamic executables
     gpu-screen-recorder.enable = true; # Clipping & recording software
+    gnupg.agent = {
+      enable = true;
+      pinentryPackage = pkgs.pinentry-gtk2;
+    };
   };
 
   # Chinese input support

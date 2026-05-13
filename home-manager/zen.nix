@@ -1,9 +1,10 @@
-{ inputs, ... }: {
+{ inputs, pkgs, ... }: {
   imports = [ inputs.zen-browser.homeModules.beta ];
 
   programs.zen-browser = {
     enable = true;
     setAsDefaultBrowser = true;
+    nativeMessagingHosts = [ pkgs.passff-host ]; # for pass store
 
     profiles.default = {
       settings = { # Other settings are managed by Mozilla settings sync
