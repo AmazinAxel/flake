@@ -5,6 +5,13 @@
     ../../modules/pi.nix
   ];
   environment.systemPackages = with pkgs; [ bun jq fish ];
+  systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
+
+  users.extraGroups = {
+    gpio = { };
+    spi = { };
+  };
+
 
   hardware = {
     i2c.enable = true;
@@ -12,7 +19,6 @@
     deviceTree = { # spi for display output
       enable = true;
       filter = "*rpi-zero-2*.dtb";
-      # IF BUILDING ISO COMMENT LINE BELOW
       overlays = [{ name = "spi0"; dtsFile = ./spi0.dts; }];
     };
   };
