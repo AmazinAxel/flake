@@ -64,30 +64,25 @@ export const initMedia = () => {
 
 
 export const Media = () =>
-    <button
-        name={'mediaBtn'}
-        onClicked={playPause}
-        cursor={Gdk.Cursor.new_from_name('pointer', null)}
-        $={() =>
-            playlistName.subscribe(() => {
-                const color = playlistColors[playlist.peek() - 1];
-                app.apply_css(`
-                    #bar #mediaBtn {
-                        background-color: #${color};
-                    }
-                    #bar #media {
-                        border: 0.15rem shade(#${color}, 1.15) solid;
-                    }
-                `)
-            })
-        }
-    >
-        <Gtk.EventControllerScroll
-            flags={Gtk.EventControllerScrollFlags.VERTICAL} 
-            onScroll={(_, __, y) => {
-                execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
+    <box name={'mediaBtn'}
+        $={() => playlistName.subscribe(() => {
+            const color = playlistColors[playlist.peek() - 1];
+            app.apply_css(`
+                #bar #mediaBtn {
+                    background-color: #${color};
+                }
+                #bar #media {
+                    border: 0.15rem shade(#${color}, 1.15) solid;
+                }
+            `)
+        })
+    }>
+    <Gtk.EventControllerScroll
+        flags={Gtk.EventControllerScrollFlags.VERTICAL} 
+        onScroll={(_, __, y) => {
+            execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
         }}/>
         <image iconName={isPlaying.as(
             (v: boolean) => (v) ? 'media-playback-pause-symbolic' : 'media-playback-start-symbolic')
         }/>
-    </button>
+    </box>

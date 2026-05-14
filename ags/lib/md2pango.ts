@@ -539,31 +539,19 @@ function renderTable(tableLines: string[]): string {
   const rows = tableLines.slice(2).map(parseTableRow);
   const colCount = header.length;
  
-  // Calculate column widths
-  const widths = new Array(colCount).fill(0);
-  for (let c = 0; c < colCount; c++) {
-    widths[c] = Math.max(widths[c], (header[c] || "").length);
-    for (const row of rows) {
-      widths[c] = Math.max(widths[c], (row[c] || "").length);
-    }
-  }
- 
-  const pad = (s: string, w: number) => s + " ".repeat(Math.max(0, w - s.length));
-  const sep = widths.map((w) => "─".repeat(w + 2)).join("┬");
- 
   const formatRow = (cells: string[], bold: boolean): string => {
-    const parts = cells.map((cell, ci) => {
-      const content = parseInline(pad(cell || "", widths[ci]));
-      return bold ? ` <b>${content}</b> ` : ` ${content} `;
+    const parts = cells.map((cell) => {
+      const content = parseInline(cell || "");
+      return bold ? `<b>${content}</b>` : content;
     });
-    return parts.join("│");
+    return parts.join(" │ ");
   };
- 
+
   const out: string[] = [];
-  out.push(`<tt>${formatRow(header, true)}</tt>`);
-  out.push(`<tt>${sep}</tt>`);
+  out.push(formatRow(header, true));
+  out.push('─'.repeat(40));
   for (const row of rows) {
-    out.push(`<tt>${formatRow(row, false)}</tt>`);
+    out.push(formatRow(row, false));
   }
   return out.join("\n");
 }

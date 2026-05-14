@@ -56,11 +56,10 @@ export default () =>
   >
     <box orientation={Gtk.Orientation.VERTICAL} vexpand>
       <box cssClasses={["header"]}>
-        <button onClicked={() => toggleSize()}>
+        <button hexpand halign={Gtk.Align.START} onClicked={() => toggleSize()}>
           <image iconName={expandIcon}/>
         </button>
 
-        <label label="Chat" hexpand halign={Gtk.Align.CENTER}/>
         <button onClicked={() => clearChat()} halign={Gtk.Align.END}>
           <image iconName="user-trash-symbolic"/>
         </button>

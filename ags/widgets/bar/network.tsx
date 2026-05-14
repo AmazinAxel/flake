@@ -4,8 +4,6 @@ import { execAsync } from 'ags/process';
 import Gdk from 'gi://Gdk';
 import sidebarWindow from '../../lib/sidebarWindow';
 
-// i dont know if this works
-
 type WifiNet = { ssid: string; security: string; strength: number; connected: boolean };
 
 const STATION = 'wlan0';
@@ -61,7 +59,6 @@ const Content = () =>
             <label label="Wi-Fi" hexpand halign={Gtk.Align.START}/>
             <button
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                tooltipText="Scan"
                 onClicked={scan}
                 $={(self) => { scanning.subscribe(() => { self.sensitive = !scanning(); }); }}
             >
@@ -79,7 +76,6 @@ const Content = () =>
                         <button
                             cursor={Gdk.Cursor.new_from_name('pointer', null)}
                             cssClasses={net.connected ? ['active'] : []}
-                            tooltipText={net.connected ? 'Disconnect' : 'Connect'}
                             onClicked={() => {
                                 if (net.connected) {
                                     execAsync(['iwctl', 'station', STATION, 'disconnect']).then(refresh).catch(() => {});

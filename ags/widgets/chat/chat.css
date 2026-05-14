@@ -5,13 +5,6 @@
     border: 0.2rem solid @blue3;
 }
 
-#chat .header {
-    font-size: 1.5rem;
-    color: @light3;
-    font-family: 'Hammersmith One';
-    padding-bottom: 0.5rem;
-}
-
 #chat .input {
     background-color: @dark3;
     border-radius: 0.7rem;

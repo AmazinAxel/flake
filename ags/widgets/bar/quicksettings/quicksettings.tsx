@@ -4,12 +4,12 @@ import { Gtk } from 'ags/gtk4';
 import sidebarWindow from '../../../lib/sidebarWindow';
 
 const quickSettings = () =>
-    <box widthRequest={350} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
+    <box widthRequest={300} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
         <box orientation={Gtk.Orientation.VERTICAL}>
             <VolumeSlider/>
             <BrightnessSlider/>
         </box>
-        <label label="Audio devices" name="quicksettingsAudioLabel" halign={Gtk.Align.START}/>
+        <Gtk.Separator/>
         <SinkSelector/>
     </box>
 
