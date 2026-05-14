@@ -1,7 +1,7 @@
 import { BrightnessSlider } from '../../../lib/brightness';
 import { VolumeSlider, SinkSelector } from './sound';
 import { Gtk } from 'ags/gtk4';
-import sidebarWindow from '../../../lib/sidebarWindow';
+import asideStatusWindow from '../../../lib/asideStatusWindow';
 
 const quickSettings = () =>
     <box widthRequest={300} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
@@ -13,4 +13,4 @@ const quickSettings = () =>
         <SinkSelector/>
     </box>
 
-export default () => sidebarWindow('quickSettings', quickSettings);
+export default () => asideStatusWindow('quickSettings', quickSettings);

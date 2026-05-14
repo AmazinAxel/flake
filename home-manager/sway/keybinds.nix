@@ -22,14 +22,14 @@ in {
       # Ags
       "${mod}+space" = "exec ags toggle launcher";
       "${mod}+period" = "exec ags toggle emojiPicker";
-      "${mod}+X" = "exec ags request closeSidebarWidget";
+      "${mod}+X" = "exec ags request closeAsideStatusMenuWidget";
       "control+${mod}+z" = "exec ags request toggleQuicksettings";
       "control+${mod}+v" = "exec ags request toggleCalendar";
       "control+${mod}+x" = "exec ags request toggleBluetooth";
       "control+${mod}+c" = "exec ags request toggleWifi";
       "${mod}+A" = "exec ags toggle chat";
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
-      "${mod}+control+D" = "exec ags request toggleDND";
+      "${mod}+S" = "exec ags request toggleDND";
       "${mod}+L" = "exec ags request toggleFocus";
       "${mod}+Z" = "exec ags request toggleInfoArea";
 
@@ -43,7 +43,10 @@ in {
       "${mod}+shift+S" = "exec ags toggle powermenu";
       # S = sleep, Q = shutdown, L = lock, R = restart 
 
-      "${mod}+S" = "exec playerctl play-pause"; # toggle mpris play/pause
+      # Mpris
+      "control+${mod}+S" = "exec playerctl play-pause"; # toggle play/pause
+      "control+${mod}+D" = "exec playerctl next"; # toggle play/pause
+      "control+${mod}+A" = "exec playerctl previous"; # toggle play/pause
 
       # blue light filter toggle
       "${mod}+b" = "exec ags request toggleFilter";

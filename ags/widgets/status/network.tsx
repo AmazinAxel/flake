@@ -2,7 +2,7 @@ import { createState, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 import Gdk from 'gi://Gdk';
-import sidebarWindow from '../../lib/sidebarWindow';
+import asideStatusWindow from '../../lib/asideStatusWindow';
 
 type WifiNet = { ssid: string; security: string; strength: number; connected: boolean };
 
@@ -126,4 +126,4 @@ const Content = () =>
         </For>
     </box>;
 
-export default () => sidebarWindow('wifi', Content);
+export default () => asideStatusWindow('wifi', Content);

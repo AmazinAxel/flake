@@ -2,7 +2,7 @@ import style from './style.css';
 import lancherStyle from './widgets/launcher/launcher.css';
 import clipboardStyle from './widgets/clipboard/clipboard.css';
 import chatStyle from './widgets/chat/chat.css';
-import barStyle from './widgets/bar/bar.css';
+import statusStyle from './widgets/status/status.css';
 import notificationStyle from './widgets/notifications/notifications.css';
 import osdStyle from './widgets/osd/osd.css';
 import powermenuStyle from './widgets/powermenu/powermenu.css';
@@ -12,11 +12,11 @@ import app from "ags/gtk4/app"
 import { execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
-import bar, { setBarMargin } from './widgets/bar/bar';
-import bluetooth from './widgets/bar/bluetooth';
-import wifi from './widgets/bar/network';
+import status, { setStatusMargin } from './widgets/status/status';
+import bluetooth from './widgets/status/bluetooth';
+import wifi from './widgets/status/network';
 import chat from './widgets/chat/chat';
-import calendar from './widgets/bar/calendar';
+import calendar from './widgets/status/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
@@ -24,21 +24,21 @@ import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
-import quickSettings from './widgets/bar/quicksettings/quicksettings';
+import quickSettings from './widgets/status/quicksettings/quicksettings';
 import lockscreen from './widgets/lockscreen/lockscreen';
 import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
 import { monitorBrightness } from './lib/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
-import workspaces from './widgets/bar/workspaces';
+import workspaces from './widgets/status/workspaces';
 
 let blueLightFilter = false;
 
 app.start({
-    css: style + lancherStyle + clipboardStyle + chatStyle + barStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
+    css: style + lancherStyle + clipboardStyle + chatStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
-        bar();
+        status();
         chat();
         calendar();
         clipboard();
@@ -91,23 +91,23 @@ app.start({
                 };
                 break;
             case "toggleQuicksettings":
-                closeSidebar('quickSettings');
+                closeAsideStatusMenu('quickSettings');
                 break;
             case "toggleCalendar":
-                closeSidebar('calendar');
+                closeAsideStatusMenu('calendar');
                 break;
             case "toggleBluetooth":
-                closeSidebar('bluetooth');
+                closeAsideStatusMenu('bluetooth');
                 break;
             case "toggleWifi":
-                closeSidebar('wifi');
+                closeAsideStatusMenu('wifi');
                 break;
-            case "closeSidebarWidget":
-                closeSidebar();
+            case "closeAsideStatusMenuWidget":
+                closeAsideStatusMenu();
                 break;
             case "toggleInfoArea":
-                setBarMargin(app.get_window('bar')?.visible ? 0 : 31);
-                app.toggle_window('bar'); // todo rename
+                setStatusMargin(app.get_window('status')?.visible ? 0 : 31);
+                app.toggle_window('status');
                 break;
             case "toggleDND":
                 setDND(!DND.peek())
@@ -124,7 +124,7 @@ app.start({
     }
 });
 
-const closeSidebar = (except?: string) => {
+const closeAsideStatusMenu = (except?: string) => {
     ['quickSettings', 'calendar', 'bluetooth', 'wifi'].forEach(name =>
         (name !== except && app.get_window(name)?.visible) && app.toggle_window(name)
     );

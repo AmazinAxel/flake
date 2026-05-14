@@ -2,7 +2,7 @@ import BluetoothService from 'gi://AstalBluetooth';
 import { createBinding, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Gdk from 'gi://Gdk';
-import sidebarWindow from '../../lib/sidebarWindow';
+import asideStatusWindow from '../../lib/asideStatusWindow';
 
 const bluetooth = BluetoothService.get_default();
 const isMac = (d: BluetoothService.Device) => d.alias.replaceAll('-', ':') === d.address;
@@ -110,4 +110,4 @@ const BluetoothMenu = () =>
         </Gtk.ScrolledWindow>
     </box>;
 
-export default () => sidebarWindow('bluetooth', BluetoothMenu);
+export default () => asideStatusWindow('bluetooth', BluetoothMenu);

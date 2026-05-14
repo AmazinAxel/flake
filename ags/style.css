@@ -34,7 +34,7 @@ window {
   font-family: 'Sora';
 }
 
-.sidebarWidget {
+.asideStatusWidget {
   border: 0.15em solid @blue2;
   border-radius: 0 0.5rem 0 0;
   background-color: @dark2;
@@ -57,7 +57,7 @@ popover { min-width: 20rem; }
 
 button { border: 1px solid @dark4; }
 calendar button { border: none; }
-#network button.active, #bluetooth button.active, .button:focus, .button:hover, list row:focus, list row:hover {
+button.active, .button:focus, .button:hover, list row:focus, list row:hover {
   background-color: @blue2;
   box-shadow: 0 0 5px 3px @blue3;
   border: 1px solid @blue1;

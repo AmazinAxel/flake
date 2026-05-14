@@ -53,7 +53,7 @@ export default () =>
         visible={isVisible}
         $={(self) => workspaceWindow = self }
       >
-        <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement']}>
+        <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement']}>
           {[...Array(9).keys()].map((i) => i + 1).map((id) =>
             <box cssClasses={workspaces((ws) => {
               const w = ws.find((w) => w.id === id);

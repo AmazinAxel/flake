@@ -68,10 +68,10 @@ export const Media = () =>
         $={() => playlistName.subscribe(() => {
             const color = playlistColors[playlist.peek() - 1];
             app.apply_css(`
-                #bar #mediaBtn {
+                #status #mediaBtn {
                     background-color: #${color};
                 }
-                #bar #media {
+                #status #media {
                     border: 0.15rem shade(#${color}, 1.15) solid;
                 }
             `)

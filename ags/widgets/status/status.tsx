@@ -2,7 +2,7 @@ import app from "ags/gtk4/app"
 import { Astal, Gtk } from "ags/gtk4"
 import { createState } from 'ags';
 import { Time } from './modules/time';
-import { Status } from './modules/statusMenu';
+import { Status } from './modules/statusIcons';
 import { Mpris } from './modules/mpris';
 import { Media } from '../../lib/mediaPlayer';
 import { RecordingIndicator } from '../record/record';
@@ -11,23 +11,23 @@ import Wp from "gi://AstalWp";
 const { BOTTOM, LEFT } = Astal.WindowAnchor;
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 
-export const [ barMargin, setBarMargin ] = createState(0);
+export const [ statusMargin, setStatusMargin ] = createState(0);
 
 export default () =>
   <window
-    name="bar"
+    name="status"
     exclusivity={Astal.Exclusivity.EXCLUSIVE}
     anchor={BOTTOM | LEFT}
     layer={Astal.Layer.OVERLAY}
     application={app}
   >
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.END}>
-      <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} cssClasses={['barElement']} name={'media'}>
+      <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} cssClasses={['statusElement']} name={'media'}>
         <Media/>
         <Mpris/>
       </box>
 
-      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['barElement', 'infoCenter']}>
+      <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement', 'infoCenter']}>
         <Gtk.EventControllerScroll
           flags={Gtk.EventControllerScrollFlags.VERTICAL}
           onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}

@@ -47,6 +47,7 @@ export const SinkSelector = () =>
                 return <button
 					onClicked={() => { speaker.isDefault = true; }}
 					cursor={Gdk.Cursor.new_from_name('pointer', null)}
+                    cssClasses={isDefault(v => v ? ['active'] : [])}
 				>
                     <box>
                         <image visible={isDefault} iconName="emblem-default-symbolic" marginEnd={7}/>

@@ -1,4 +1,3 @@
-import { Gdk } from 'ags/gtk4';
 import { createBinding } from "ags"
 import MprisService from 'gi://AstalMpris';
 

@@ -1,6 +1,6 @@
 import { Astal } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-import { barMargin } from '../widgets/bar/bar';
+import { statusMargin } from '../widgets/status/status';
 const { BOTTOM, LEFT } = Astal.WindowAnchor;
 
 export default (name: string, Child: () => JSX.Element) =>
@@ -9,8 +9,8 @@ export default (name: string, Child: () => JSX.Element) =>
         anchor={BOTTOM | LEFT}
         application={app}
         layer={Astal.Layer.OVERLAY}
-        marginLeft={barMargin}
-        cssClasses={['sidebarWidget']}
+        marginLeft={statusMargin}
+        cssClasses={['asideStatusWidget']}
     >
         <Child/>
     </window>
