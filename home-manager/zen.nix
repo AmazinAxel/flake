@@ -4,9 +4,10 @@
   programs.zen-browser = {
     enable = true;
     setAsDefaultBrowser = true;
-    nativeMessagingHosts = [ pkgs.passff-host ]; # for pass store
+    nativeMessagingHosts = [ pkgs.passff-host ]; # pass store integration
 
     profiles.default = {
+      search.default = "bing";
       settings = { # Other settings are managed by Mozilla settings sync
         "mousewheel.min_line_scroll_amount" = 50;
 

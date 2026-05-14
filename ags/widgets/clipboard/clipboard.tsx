@@ -80,8 +80,6 @@ export default () => inputControl('clipboard', () =>
                         execAsync('cliphist wipe');
                         app.get_window('clipboard')?.hide()
                         break;
-                    default:
-                        app.get_window('clipboard')?.hide()
                 };
             }}/>
             {list}

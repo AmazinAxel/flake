@@ -32,7 +32,7 @@ const nameSubstitute = (name: string) => {
 };
 
 
-const BluetoothMenu = () =>
+export default () => asideStatusWindow('bluetooth', () =>
     <box orientation={Gtk.Orientation.VERTICAL}>
         <box spacing={4} marginBottom={7}>
             <button
@@ -115,6 +115,5 @@ const BluetoothMenu = () =>
             </For>
             </box>
         </Gtk.ScrolledWindow>
-    </box>;
-
-export default () => asideStatusWindow('bluetooth', BluetoothMenu);
+    </box>
+);

@@ -1,5 +1,5 @@
 import app from "ags/gtk4/app"
-import { Astal } from "ags/gtk4"
+import { Astal, Gtk } from "ags/gtk4"
 const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
 export default (windowName: string, Child: () => JSX.Element, onShow?: any) =>
@@ -13,5 +13,6 @@ export default (windowName: string, Child: () => JSX.Element, onShow?: any) =>
     onShow={onShow}
     class="backgroundDim"
   >
+		<Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65307) && app.toggle_window(windowName)}/>
     <Child/>
   </window>

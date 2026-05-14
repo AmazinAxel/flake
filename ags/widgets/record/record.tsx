@@ -42,8 +42,6 @@ export default () => inputControl('recordMenu', () =>
                         (recQuality.peek() == 'Medium') ?
                             setRecQuality('Ultra') : setRecQuality('Medium');
                         break;
-                    default:
-                        app.get_window('recordMenu')?.hide()
                 };
             }}/>
         <BackgroundSection

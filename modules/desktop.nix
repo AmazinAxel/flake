@@ -57,7 +57,10 @@
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     ];
-    sessionVariables.NIXOS_OZONE_WL = "1"; # For Electron
+    sessionVariables = {
+      NIXOS_OZONE_WL = "1"; # For Electron
+      MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
+    };
     etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
   };
 

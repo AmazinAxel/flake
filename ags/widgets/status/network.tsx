@@ -3,6 +3,7 @@ import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 import Gdk from 'gi://Gdk';
 import asideStatusWindow from '../../lib/asideStatusWindow';
+import app from 'ags/gtk4/app';
 
 type WifiNet = { ssid: string; security: string; strength: number; connected: boolean };
 
@@ -51,7 +52,7 @@ const scan = () => {
         .catch(() => setScanning(false));
 };
 
-const NetworkMenu = () =>
+export default () => asideStatusWindow('wifi', () =>
     <box orientation={Gtk.Orientation.VERTICAL} $={(self) => { self.connect('map', refresh); }}>
         <box cssClasses={['widgetHeader']} spacing={4}>
             <image iconName="network-wireless-symbolic"/>
@@ -60,10 +61,10 @@ const NetworkMenu = () =>
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={scan}
                 $={(self) => {
-                    /*app.connect('window-toggled', () => {
+                    app.connect('window-toggled', () => {
                         if (app.get_window('bluetooth')?.visible == true)
                         self.grab_focus();
-                    });*/
+                    });
 
                     scanning.subscribe(() => { self.sensitive = !scanning(); });
                 }}
@@ -130,6 +131,6 @@ const NetworkMenu = () =>
                 </box>;
             }}
         </For>
-    </box>;
+    </box>
+);
 
-export default () => asideStatusWindow('wifi', NetworkMenu);

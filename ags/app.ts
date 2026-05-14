@@ -43,7 +43,6 @@ app.start({
         calendar();
         clipboard();
         emojiPicker();
-        launcher();
         recordMenu();
         osd();
         powermenu();
@@ -58,7 +57,8 @@ app.start({
         initMedia();
         reminders();
 
-        startClippingService(); // Run last so any errors wont impact start
+        launcher(); // ran late so it has more time to add all apps
+        startClippingService(); // Run last so if not installed it wont impact start
     },
     requestHandler(req, res) {
         const reqArgs = req[0].split(" ");
@@ -106,7 +106,7 @@ app.start({
                 closeAsideStatusMenu();
                 break;
             case "toggleInfoArea":
-                setStatusMargin(app.get_window('status')?.visible ? 0 : 31);
+                setStatusMargin(app.get_window('status')?.visible ? 0 : 41);
                 app.toggle_window('status');
                 break;
             case "toggleDND":

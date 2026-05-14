@@ -24,7 +24,6 @@ const search = (text: string) => setAppsList(
 );
 
 const hide = () => app.toggle_window("launcher");
-const EscKey = () => <Gtk.EventControllerKey onKeyPressed={(_, key) => key == 65307 && hide()}/>
 
 export default () => inputControl('launcher', () =>
     <BackgroundSection
@@ -42,11 +41,9 @@ export default () => inputControl('launcher', () =>
                 textBox = self;
                 app.connect("window-toggled", () => app.get_window("launcher")?.visible && self.grab_focus());
         }}>
-            <EscKey/>
         </entry>}
 
         content={<box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
-            <EscKey/>
             <For each={appsList}>
                 {(app) => (
                     <button

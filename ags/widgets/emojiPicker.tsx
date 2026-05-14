@@ -26,6 +26,5 @@ export default () => inputControl('emojiPicker', () =>
       };
     }}
   >
-    <Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65307) && hide()} />
   </entry>
 );

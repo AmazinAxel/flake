@@ -3,7 +3,7 @@ import { VolumeSlider, SinkSelector } from './sound';
 import { Gtk } from 'ags/gtk4';
 import asideStatusWindow from '../../../lib/asideStatusWindow';
 
-const quickSettings = () =>
+export default () => asideStatusWindow('quickSettings', () =>
     <box widthRequest={300} cssClasses={['quickSettings']} orientation={Gtk.Orientation.VERTICAL}>
         <box orientation={Gtk.Orientation.VERTICAL}>
             <VolumeSlider/>
@@ -12,5 +12,4 @@ const quickSettings = () =>
         <Gtk.Separator/>
         <SinkSelector/>
     </box>
-
-export default () => asideStatusWindow('quickSettings', quickSettings);
+);
