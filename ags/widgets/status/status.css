@@ -8,9 +8,9 @@
 #status .statusElement#media { border-radius: 0.5rem; }
 #workspaces .statusElement { border-radius: 0 0 0.5rem 0.5rem; }
 
-.statusMenu { padding: 0.5rem 0 0.7rem 0; }
+.statusMenu { padding: 0.5rem 0 1rem 0; }
 .statusMenu image {
-    -gtk-icon-size: 0.85rem;
+    -gtk-icon-size: 0.9rem;
     -gtk-icon-shadow: 0 0 12px @light3;
     color: @light3;
 }
@@ -22,34 +22,35 @@
     text-shadow: 0 0 3px @blue3;
     margin: 0;
     font-style: italic;
+    font-size: 1.1rem;
 }
 .time { font-family: 'WenQuanYi Zen Hei Mono'; }
-.date.bottom { margin-bottom: 3px; }
 .time .time {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 2px;
     color: @blue2;
     text-shadow: 0 0 5px @blue3;
+    padding: 4px 5px 2px 5px;
 }
-.time .day { font-size: 0.9rem; padding-right: 1px; }
+.time .day { font-size: 1.1rem; }
 
 /* Workspace view */
 #workspaces .statusElement { padding: 0.2rem 0; margin: 0.45rem 0.4rem; }
-#workspaces .workspaceBtn {
+#workspaces .workspace {
     background-color: @dark2;
-    min-width: 1rem;
-    min-height: 1.1rem;
+    min-width: 1.32rem;
+    min-height: 1.6rem;
     border-radius: 5px;
     transition: 0.1s;
-    margin: 0.25rem 0.45rem;
+    margin: 0.3rem 0.5rem;
 }
-#workspaces .workspaceBtn.active {
+#workspaces .workspace.active {
     background-color: @blue2;
     box-shadow: 0 0 5px @blue3;
-    min-height: 1.6rem;
+    min-height: 2.1rem;
 }
-#workspaces .workspaceBtn.occupied { background-color: @dark4; min-height: 1.4rem; }
+#workspaces .workspace.occupied { background-color: @dark4; min-height: 1.9rem; }
 
 /* Recording indicator */
 .recIndicator {
@@ -59,6 +60,7 @@
 }
 
 /* Media/mpris player */
-#status #mediaBtn { border-radius: 0.3rem; padding: 0.3rem; }
-#status #mprisBtn { padding: 0.5rem 0; }
+#mediaBtn image, #media image { -gtk-icon-size: 1.3rem; }
+#status #mediaBtn { border-radius: 0.3rem; padding: 0.5rem; }
+#status #mprisBtn { padding: 0.8rem 0; }
 #status #media, #status #mediaBtn { transition-duration: 0.3s; }

@@ -58,13 +58,13 @@ export default () =>
             <box cssClasses={workspaces((ws) => {
               const w = ws.find((w) => w.id === id);
               if (!w)
-                return ['workspaceBtn'];
+                return ['workspace'];
 
               return w.focused
-                ? ['workspaceBtn', 'active']
+                ? ['workspace', 'active']
                 : w.occupied
-                  ? ['workspaceBtn', 'occupied']
-                  : ['workspaceBtn'];
+                  ? ['workspace', 'occupied']
+                  : ['workspace'];
             })}/>
           )}
         </box>
