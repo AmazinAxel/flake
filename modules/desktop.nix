@@ -15,7 +15,7 @@
       wayfreeze # Screenshot freeze
       grim
       slurp
-      satty # Annotation
+      swappy # Annotation
       brightnessctl
       adwaita-icon-theme # Icons for GTK apps
       wl-clipboard # Astal clipboard utils

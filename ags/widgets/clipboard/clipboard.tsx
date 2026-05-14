@@ -24,7 +24,7 @@ list.set_sort_func((a, b) => {
     return row2id - row1id;
 });
 
-monitorFile(`/home/alec/.cache/cliphist/db`, (_, event) =>
+monitorFile('/home/alec/.cache/cliphist/db', (_, event) =>
     (event == Gio.FileMonitorEvent.CHANGES_DONE_HINT) && refreshItems()
 );
 
@@ -67,14 +67,14 @@ export default () => inputControl('clipboard', () =>
                     case 99: // C - copy 2nd recent entry
                         list.get_row_at_index(1)?.activate()
                         break;
-                    case 101: // E - edit image with satty
+                    case 101: // E - edit image with swappy
                         const id = list.get_selected_row()?.child.name ?? list.get_row_at_index(0)?.child.name;
 
                         const path = `/tmp/ags/cliphist/${id}.png`; // .png extension is assumed here
                         if (!GLib.file_test(path, GLib.FileTest.EXISTS)) break;
 
                         app.get_window('clipboard')?.hide()
-                        execAsync('satty --floating-hack --filename ' + path);
+                        execAsync('swappy -f ' + path);
                         break;
                     case 119: // W - wipe clipboard history
                         execAsync('cliphist wipe');

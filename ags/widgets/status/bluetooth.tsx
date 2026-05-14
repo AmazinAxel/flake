@@ -16,6 +16,8 @@ const devicesBind = createBinding(bluetooth, 'devices')((devs: BluetoothService.
     })
 );
 
+const bluetoothOn = createBinding(bluetooth, 'isPowered');
+
 const nameSubstitute = (name: string) => {
 	if (!name) return '';
 	
@@ -40,10 +42,12 @@ export default () => asideStatusWindow('bluetooth', () =>
                 halign={Gtk.Align.START}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={() => bluetooth.toggle()}
+                cssClasses={bluetoothOn.as(power => power ? ['active', 'bluetoothButton'] : ['unpowered', 'bluetoothButton'])}
                 $={(self) => {
-                    const update = () => { self.cssClasses = bluetooth.isPowered ? ['active'] : []; };
-                    bluetooth.connect('notify::is-powered', update);
-                    update();
+                    app.connect('window-toggled', () => {
+                        if (app.get_window('bluetooth')?.visible == true && !bluetooth.isPowered)
+                            self.grab_focus();
+                    });
                 }}
             >
                 <image iconName="bluetooth-active-symbolic"/>
@@ -55,12 +59,8 @@ export default () => asideStatusWindow('bluetooth', () =>
                     if (!adapter) return;
                     adapter.discovering ? adapter.stop_discovery() : adapter.start_discovery();
                 }}
+                visible={bluetoothOn}
                 $={(self) => {
-                    app.connect('window-toggled', () => {
-                        if (app.get_window('bluetooth')?.visible == true)
-                        self.grab_focus();
-                    });
-
                     const update = () => { self.cssClasses = bluetooth.adapter?.discovering ? ['active'] : []; };
                     bluetooth.adapter?.connect('notify::discovering', update);
                     update();
@@ -69,29 +69,24 @@ export default () => asideStatusWindow('bluetooth', () =>
                 <image iconName="view-refresh-symbolic"/>
             </button>
         </box>
-        <Gtk.Separator/>
-        <Gtk.ScrolledWindow hscrollbarPolicy={Gtk.PolicyType.NEVER} hexpand vexpand propagateNaturalWidth propagateNaturalHeight maxContentHeight={500}>
-            <box orientation={Gtk.Orientation.VERTICAL}>
-            <For each={devicesBind}>
-                {(device: BluetoothService.Device) => {
-                    // TODO each device should be a button, when press del it deletes it, enter/space selects it
-                    const connectedBind = createBinding(device, 'connected');
-                    const connectingBind = createBinding(device, 'connecting');
-                    const batteryBind = createBinding(device, 'batteryPercentage');
-                    return <box cssClasses={['deviceRow']} spacing={8}>
-                        <image iconName={(device.icon ? device.icon + '-symbolic' : 'bluetooth-symbolic')}/>
-                        <box orientation={Gtk.Orientation.VERTICAL} hexpand valign={Gtk.Align.CENTER}>
-                            <label label={nameSubstitute(device.alias)} halign={Gtk.Align.START} ellipsize={3}/>
-                            <label
-                                visible={batteryBind((p: number) => p >= 0)}
-                                label={batteryBind((p: number) => p >= 0 ? `${Math.round(p)}%` : '')}
-                                cssClasses={['deviceBattery']}
-                                halign={Gtk.Align.START}
-                            />
-                        </box>
-                        <button
-                            cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            sensitive={connectingBind((c: boolean) => !c)}
+        <Gtk.Separator visible={bluetoothOn}/>
+        <Gtk.ScrolledWindow
+            hscrollbarPolicy={Gtk.PolicyType.NEVER}
+            hexpand vexpand
+            propagateNaturalWidth propagateNaturalHeight
+            maxContentHeight={500}
+            visible={bluetoothOn}
+            // TODO when bluetooth is turned on, it should grab the first child in this list and focus it
+            //$={(self) => (bluetooth.isPowered) && self.get_first_child()?.get_first_child()?.grab_focus()} // todo
+        >
+            <box orientation={Gtk.Orientation.VERTICAL} spacing={5}>
+                <For each={devicesBind}>
+                    {(device: BluetoothService.Device) => {
+                        const connectedBind = createBinding(device, 'connected');
+                        const connectingBind = createBinding(device, 'connecting');
+                        const batteryBind = createBinding(device, 'batteryPercentage');
+                        return <button hexpand
+                            sensitive={connectingBind(c => !c)}
                             onClicked={() => {
                                 if (device.connected) device.disconnect_device();
                                 else {
@@ -102,17 +97,21 @@ export default () => asideStatusWindow('bluetooth', () =>
                             }}
                             cssClasses={connectedBind((c: boolean) => c ? ['active'] : [])}
                         >
-                            <image iconName={connectedBind((c: boolean) => c ? 'network-disconnect-symbolic' : 'network-transmit-symbolic')}/>
+                            <Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65288) && bluetooth.adapter?.remove_device(device)}/>
+                            <box orientation={Gtk.Orientation.HORIZONTAL} hexpand valign={Gtk.Align.CENTER} spacing={10}>
+                                <image iconName={device.icon + '-symbolic'}/>
+                                <label label={nameSubstitute(device.alias)} halign={Gtk.Align.START} ellipsize={3}/>
+                                <label
+                                    visible={batteryBind((p: number) => p >= 0)}
+                                    label={batteryBind((p: number) => p >= 0 ? `${Math.round(p)}%` : '')}
+                                    cssClasses={['deviceBattery']}
+                                    halign={Gtk.Align.START}
+                                />
+                                <image hexpand halign={Gtk.Align.END} iconName={connectedBind((c: boolean) => c ? 'network-disconnect-symbolic' : 'network-transmit-symbolic')}/>
+                            </box>
                         </button>
-                        <button
-                            cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            onClicked={() => bluetooth.adapter?.remove_device(device)}
-                        >
-                            <image iconName="edit-delete-symbolic"/>
-                        </button>
-                    </box>;
-                }}
-            </For>
+                    }}
+                </For>
             </box>
         </Gtk.ScrolledWindow>
     </box>

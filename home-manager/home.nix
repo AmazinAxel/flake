@@ -6,9 +6,8 @@
     ./fish.nix
     ./foot.nix
     ./gtk.nix
-    ./helix.nix
     ./mpd.nix
-    ./satty.nix
+    ./swappy.nix
     ./starship.nix
     ./vscode.nix
     ./zen.nix
@@ -40,7 +39,7 @@
         pkgs.mpc # MPD
         pkgs.cliphist
         pkgs.wl-clipboard # wl-copy
-        pkgs.satty
+        pkgs.swappy
         pkgs.swaybg
         pkgs.procps # pkill for gpu-screenrec
       ];

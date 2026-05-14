@@ -35,6 +35,14 @@
 }
 .time .day { font-size: 1.1rem; }
 
+/* Bluetooth */
+.unpowered {
+    padding: 2rem;
+    margin: 0.5rem;
+    -gtk-icon-size: 3rem;
+}
+.bluetoothButton { transition: none; }
+
 /* Workspace view */
 #workspaces .statusElement { padding: 0.2rem 0; margin: 0.45rem 0.4rem; }
 #workspaces .workspace {

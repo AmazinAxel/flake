@@ -40,16 +40,16 @@ const FocusIcon = () =>
 let [ networkIcon, setNetworkIcon ] = createState('');
 
 const updateNetworkIcon = () => {
-    const state = readFile('/sys/class/net/wlan0/operstate').trim();
-    console.log('changed', state)
+  const state = readFile('/sys/class/net/wlan0/operstate').trim();
+  //console.log('changed', state)
 
-    setNetworkIcon(
-        state === 'up'
-            ? 'network-wireless-symbolic'
-            : state === 'down'
-            ? 'network-wireless-offline-symbolic'
-            : 'network-wireless-acquiring-symbolic'
-    );
+  setNetworkIcon(
+      state === 'up'
+          ? 'network-wireless-symbolic'
+          : state === 'down'
+          ? 'network-wireless-offline-symbolic'
+          : 'network-wireless-acquiring-symbolic'
+  );
 };
 updateNetworkIcon()
 monitorFile('/sys/class/net/wlan0/operstate', updateNetworkIcon); // todo find workaround
