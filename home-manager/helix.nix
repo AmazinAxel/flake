@@ -7,18 +7,16 @@
       theme = "nord";
 
       editor = {
-        #mouse = true; # mouse mode
         middle-click-paste = false;
         scroll-lines = 10; # mouse scroll
         shell = ["fish" "-c"]; # default is bash
-        #auto-info = false; # todo enable
+        auto-info = false; # todo enable
         default-line-ending = "lf";
         trim-final-newlines = true; # only trims extra newlines
         trim-trailing-whitespace = true;
         popup-border = "all";
         clipboard-provider = "wayland";
 
-        #statusline = { }; # mode, file-name, [spacer] read-only-indicator, file-modification-indicator, version-control
         statusline = {
           left = ["mode" "file-name" ];
           center = [];

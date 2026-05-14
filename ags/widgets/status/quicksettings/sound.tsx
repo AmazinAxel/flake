@@ -14,6 +14,7 @@ export const VolumeSlider = () =>
         <image iconName={speakerIconBind}/>
         <slider
             hexpand
+            focusable={false}
             onChangeValue={({ value }) => {
                 speaker.volume = value;
                 speaker.mute = false;
@@ -24,7 +25,6 @@ export const VolumeSlider = () =>
 
 const nameSubstitute = (name: string) => {
 	if (!name) return '';
-	
 	if (name.includes('HD Audio Controller')) {
 		return String(name.split(' ').pop()); // returns 'Speaker' or 'Headphones'
 	} else if (name.includes('HDMI')) {
@@ -40,7 +40,9 @@ const nameSubstitute = (name: string) => {
 const speakersBind = createBinding(audio, 'speakers');
 
 export const SinkSelector = () =>
-    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['sinkSelector']} spacing={5}>
+    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['sinkSelector']} spacing={5}
+        $={(self) => { self.connect('map', () => self.get_first_child()?.grab_focus()); }}
+    >
         <For each={speakersBind}>
             {(speaker) => {
                 const isDefault = createBinding(speaker, 'isDefault');

@@ -28,7 +28,7 @@
 @define-color blue3 #5e81ac;
 @define-color blue4 #8fbcbb;
 
-button:focus { outline: none; }
+.notification button:focus { outline: none; }
 window {
   background: transparent;
   font-family: 'Sora';
@@ -56,12 +56,13 @@ popover { min-width: 20rem; }
 }
 
 button { border: 1px solid @dark4; }
-calendar button { border: none; }
-button.active, .button:focus, .button:hover, list row:focus, list row:hover {
+
+button.active, .button:focus, .button:hover, list row:focus, list row:hover, calendar button:focus, calendar .today {
   background-color: @blue2;
   box-shadow: 0 0 5px 3px @blue3;
   border: 1px solid @blue1;
 }
+calendar .today { color: @light1; opacity: 0.8; }
 
 #bluetooth, #network { padding-right: 1.1rem; }
 

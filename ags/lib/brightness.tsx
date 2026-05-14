@@ -34,6 +34,7 @@ export const BrightnessSlider = () =>
         <image iconName="display-brightness-symbolic"/>
         <slider
             hexpand
+            focusable={false}
             value={brightness.as((v: number) => v)}
             onChangeValue={({ value }) => setBrightness(value)}
         />

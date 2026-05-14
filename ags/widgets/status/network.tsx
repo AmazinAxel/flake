@@ -7,9 +7,9 @@ import asideStatusWindow from '../../lib/asideStatusWindow';
 type WifiNet = { ssid: string; security: string; strength: number; connected: boolean };
 
 const STATION = 'wlan0';
-const [networks, setNetworks] = createState<WifiNet[]>([]);
-const [scanning, setScanning] = createState(false);
-const [pendingSSID, setPendingSSID] = createState<string | null>(null);
+const [ networks, setNetworks ] = createState<WifiNet[]>([]);
+const [ scanning, setScanning ] = createState(false);
+const [ pendingSSID, setPendingSSID ] = createState<string | null>(null);
 
 const sigIcon = (n: number) => [
     'network-wireless-signal-none-symbolic',
@@ -51,16 +51,22 @@ const scan = () => {
         .catch(() => setScanning(false));
 };
 
-const Content = () =>
-    <box orientation={Gtk.Orientation.VERTICAL}
-        $={(self) => { self.connect('map', refresh); }}>
+const NetworkMenu = () =>
+    <box orientation={Gtk.Orientation.VERTICAL} $={(self) => { self.connect('map', refresh); }}>
         <box cssClasses={['widgetHeader']} spacing={4}>
             <image iconName="network-wireless-symbolic"/>
             <label label="Wi-Fi" hexpand halign={Gtk.Align.START}/>
             <button
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={scan}
-                $={(self) => { scanning.subscribe(() => { self.sensitive = !scanning(); }); }}
+                $={(self) => {
+                    /*app.connect('window-toggled', () => {
+                        if (app.get_window('bluetooth')?.visible == true)
+                        self.grab_focus();
+                    });*/
+
+                    scanning.subscribe(() => { self.sensitive = !scanning(); });
+                }}
             >
                 <image iconName="view-refresh-symbolic"/>
             </button>
@@ -126,4 +132,4 @@ const Content = () =>
         </For>
     </box>;
 
-export default () => asideStatusWindow('wifi', Content);
+export default () => asideStatusWindow('wifi', NetworkMenu);

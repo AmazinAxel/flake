@@ -3,6 +3,7 @@ import { createBinding, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Gdk from 'gi://Gdk';
 import asideStatusWindow from '../../lib/asideStatusWindow';
+import app from 'ags/gtk4/app';
 
 const bluetooth = BluetoothService.get_default();
 const isMac = (d: BluetoothService.Device) => d.alias.replaceAll('-', ':') === d.address;
@@ -55,6 +56,11 @@ const BluetoothMenu = () =>
                     adapter.discovering ? adapter.stop_discovery() : adapter.start_discovery();
                 }}
                 $={(self) => {
+                    app.connect('window-toggled', () => {
+                        if (app.get_window('bluetooth')?.visible == true)
+                        self.grab_focus();
+                    });
+
                     const update = () => { self.cssClasses = bluetooth.adapter?.discovering ? ['active'] : []; };
                     bluetooth.adapter?.connect('notify::discovering', update);
                     update();
@@ -68,6 +74,7 @@ const BluetoothMenu = () =>
             <box orientation={Gtk.Orientation.VERTICAL}>
             <For each={devicesBind}>
                 {(device: BluetoothService.Device) => {
+                    // TODO each device should be a button, when press del it deletes it, enter/space selects it
                     const connectedBind = createBinding(device, 'connected');
                     const connectingBind = createBinding(device, 'connecting');
                     const batteryBind = createBinding(device, 'batteryPercentage');

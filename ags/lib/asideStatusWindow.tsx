@@ -1,4 +1,4 @@
-import { Astal } from 'ags/gtk4';
+import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import { statusMargin } from '../widgets/status/status';
 const { BOTTOM, LEFT } = Astal.WindowAnchor;
@@ -11,6 +11,8 @@ export default (name: string, Child: () => JSX.Element) =>
         layer={Astal.Layer.OVERLAY}
         marginLeft={statusMargin}
         cssClasses={['asideStatusWidget']}
+        keymode={Astal.Keymode.EXCLUSIVE}
     >
+        <Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65307) && app.toggle_window(name)} />
         <Child/>
     </window>
