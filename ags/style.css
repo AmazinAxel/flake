@@ -28,6 +28,7 @@
 @define-color blue3 #5e81ac;
 @define-color blue4 #8fbcbb;
 
+button:focus { outline: @blue2 solid 2px; outline-offset: 1px; }
 .notification button:focus { outline: none; }
 window {
   background: transparent;

@@ -2,21 +2,18 @@ import BluetoothService from 'gi://AstalBluetooth';
 import { createBinding, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Gdk from 'gi://Gdk';
+import Wp from 'gi://AstalWp';
 import asideStatusWindow from '../../lib/asideStatusWindow';
 import app from 'ags/gtk4/app';
 
 const bluetooth = BluetoothService.get_default();
-const isMac = (d: BluetoothService.Device) => d.alias.replaceAll('-', ':') === d.address;
+const audio = Wp.get_default()?.audio; // for auto-sink switching
+const bluetoothOn = createBinding(bluetooth, 'isPowered');
+const discovering = createBinding(bluetooth.adapter, 'discovering');
 
 const devicesBind = createBinding(bluetooth, 'devices')((devs: BluetoothService.Device[]) =>
-    devs.filter(d => !isMac(d)).sort((a, b) => {
-        if (a.connected !== b.connected) return a.connected ? -1 : 1;
-        if (a.paired !== b.paired) return a.paired ? -1 : 1;
-        return a.alias.localeCompare(b.alias);
-    })
+    devs.filter(d => d.alias.replaceAll('-', ':') != d.address) // not a mac
 );
-
-const bluetoothOn = createBinding(bluetooth, 'isPowered');
 
 const nameSubstitute = (name: string) => {
 	if (!name) return '';
@@ -56,15 +53,10 @@ export default () => asideStatusWindow('bluetooth', () =>
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={() => {
                     const adapter = bluetooth.adapter;
-                    if (!adapter) return;
                     adapter.discovering ? adapter.stop_discovery() : adapter.start_discovery();
                 }}
                 visible={bluetoothOn}
-                $={(self) => {
-                    const update = () => { self.cssClasses = bluetooth.adapter?.discovering ? ['active'] : []; };
-                    bluetooth.adapter?.connect('notify::discovering', update);
-                    update();
-                }}
+                cssClasses={discovering.as((d) => d ? ['active'] : [])}
             >
                 <image iconName="view-refresh-symbolic"/>
             </button>
@@ -76,38 +68,81 @@ export default () => asideStatusWindow('bluetooth', () =>
             propagateNaturalWidth propagateNaturalHeight
             maxContentHeight={500}
             visible={bluetoothOn}
-            // TODO when bluetooth is turned on, it should grab the first child in this list and focus it
-            //$={(self) => (bluetooth.isPowered) && self.get_first_child()?.get_first_child()?.grab_focus()} // todo
+            $={(self) => {
+                bluetooth.connect('notify::is-powered', () => {
+                    if (bluetooth.isPowered)
+                        self.get_first_child()?.get_first_child()?.get_first_child()?.grab_focus();
+                });
+            }}
         >
-            <box orientation={Gtk.Orientation.VERTICAL} spacing={5}>
+            <box orientation={Gtk.Orientation.VERTICAL}>
                 <For each={devicesBind}>
                     {(device: BluetoothService.Device) => {
                         const connectedBind = createBinding(device, 'connected');
                         const connectingBind = createBinding(device, 'connecting');
                         const batteryBind = createBinding(device, 'batteryPercentage');
+                        let btn: Gtk.Button;
                         return <button hexpand
                             sensitive={connectingBind(c => !c)}
+                            $={(self) => {
+                                btn = self;
+
+                                // use this workaround since we have two binds, TODO maybe theres a better way to combine these, forgot what its called
+                                const update = () => {
+                                    self.visible = device.paired || device.connected || (bluetooth.adapter?.discovering ?? false);
+                                };
+                                device.connect('notify::connected', update);
+                                bluetooth.adapter?.connect('notify::discovering', update);
+                                update();
+                            }}
                             onClicked={() => {
-                                if (device.connected) device.disconnect_device();
-                                else {
-                                    if (bluetooth.adapter?.discovering) bluetooth.adapter.stop_discovery();
-                                    if (device.paired) device.connect_device();
-                                    else device.pair();
+                                if (device.connected) {
+                                    device.disconnect_device((_, res) => device.disconnect_device_finish(res));
+                                    return;
+                                }
+                                if (bluetooth.adapter?.discovering) bluetooth.adapter.stop_discovery();
+                                device.trusted = true; // adds to list
+
+                                // todo clean this up
+                                const connectAndSwitch = () => device.connect_device((_, res) => {
+                                    device.connect_device_finish(res);
+                                    // auto switch sink
+                                    const audioSink = audio.speakers.find((s: Wp.Endpoint) => s.name?.includes(device.name));
+                                    if (audioSink) audioSink.isDefault = true;
+                                });
+                                if (device.paired) {
+                                    connectAndSwitch();
+                                } else {
+                                    const id = device.connect('notify::paired', () => {
+                                        if (device.paired) {
+                                            device.disconnect(id);
+                                            connectAndSwitch();
+                                        }
+                                    });
+                                    device.pair();
                                 }
                             }}
                             cssClasses={connectedBind((c: boolean) => c ? ['active'] : [])}
                         >
-                            <Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65288) && bluetooth.adapter?.remove_device(device)}/>
+                            <Gtk.EventControllerKey onKeyPressed={(_, key) => {
+                                if (key == 65288 && device.paired && !bluetooth.adapter?.discovering) {
+                                    btn.visible = false;
+                                    bluetooth.adapter?.remove_device(device);
+                                }
+                            }}/>
                             <box orientation={Gtk.Orientation.HORIZONTAL} hexpand valign={Gtk.Align.CENTER} spacing={10}>
                                 <image iconName={device.icon + '-symbolic'}/>
                                 <label label={nameSubstitute(device.alias)} halign={Gtk.Align.START} ellipsize={3}/>
                                 <label
-                                    visible={batteryBind((p: number) => p >= 0)}
-                                    label={batteryBind((p: number) => p >= 0 ? `${Math.round(p)}%` : '')}
-                                    cssClasses={['deviceBattery']}
+                                    label={batteryBind((p) => Math.round(p * 100) + '%')}
                                     halign={Gtk.Align.START}
+                                    $={(self) => {
+                                        const update = () => { self.visible = device.connected && device.batteryPercentage >= 0; };
+                                        device.connect('notify::connected', update);
+                                        device.connect('notify::battery-percentage', update);
+                                        update();
+                                    }}
                                 />
-                                <image hexpand halign={Gtk.Align.END} iconName={connectedBind((c: boolean) => c ? 'network-disconnect-symbolic' : 'network-transmit-symbolic')}/>
                             </box>
                         </button>
                     }}
