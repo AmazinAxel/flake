@@ -44,6 +44,11 @@
       })
       claude-code
 
+      # vim
+      ripgrep # grep
+      yazi # search
+      viu # neovide images
+
       # Helix packages
       marksman # markdown
       typescript-language-server # some LSP stuff
@@ -65,7 +70,7 @@
   };
 
   fonts.packages = with pkgs; [
-    iosevka # Programming
+    nerd-fonts.iosevka # Programming
     wqy_zenhei # Chinese
   ];
 

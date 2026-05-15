@@ -6,7 +6,7 @@
         title = "Terminal";
         shell = "fish";
         pad = "5x5";
-        font = "Iosevka:size=9";
+        font = "Iosevka Nerd Font Mono:size=9";
       };
       cursor = {
         style = "beam";
@@ -15,7 +15,7 @@
         beam-thickness = 1;
       };
       colors-dark = {
-        alpha = 0.7;
+        alpha = 0.9;
         background = "2e3440"; # Black (regular0)
         foreground = "d8dee9"; # Grayish-white
 

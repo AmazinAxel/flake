@@ -3,6 +3,8 @@
     ./sway/keybinds.nix
     ./sway/sway.nix
 
+    ./nordvim/nordvim.nix
+
     ./fish.nix
     ./foot.nix
     ./gtk.nix
