@@ -25,6 +25,16 @@
             name = "skript-syntax-highlighting";
           };
         })
+        (pkgs.vimUtils.buildVimPlugin { # Platformio
+          pname = "vim-platformio";
+          version = "1.0";
+          src = pkgs.fetchFromGitHub {
+            owner = "normen";
+            repo = "vim-pio";
+            rev = "master";
+            hash = "sha256-BW+bBb17+ukfWTg1zMMBxHk0thL6xFWiPXuHjB5K6VE=";
+          };
+        })
         (pkgs.vimUtils.buildVimPlugin { # Jabs
           pname = "jabs.nvim";
           version = "1.0";
