@@ -55,6 +55,7 @@
             icon = "terminal-bash";
           };
         };
+        update.mode = "none";
         svelte.enable-ts-plugin = true; # Svelte TS intellisense
         window.titleBarStyle = "custom"; # Fix Wayland bug
         javascript.updateImportsOnFileMove.enabled = "always";

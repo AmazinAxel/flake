@@ -95,10 +95,6 @@
         USB_EXCLUDE_AUDIO = 1;
         USB_EXCLUDE_PRINTER = 1;
 
-        # Wifi power
-        WIFI_PWR_ON_AC = "off";
-        WIFI_PWR_ON_BAT = "on";
-
         # Audio codec
         SOUND_POWER_SAVE_ON_AC = 0;
         SOUND_POWER_SAVE_ON_BAT = 1;
