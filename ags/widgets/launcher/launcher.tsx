@@ -5,13 +5,13 @@ import { createState, For } from 'ags';
 import { execAsync } from 'ags/process';
 import BackgroundSection from "../../lib/backgroundSection";
 import inputControl from '../../lib/inputControl';
+import { timeout } from 'ags/time';
 
 const apps = new Apps.Apps()
 let textBox: Gtk.Entry;
 const [ appsList, setAppsList ] = createState(new Array<Apps.Application>())
 setAppsList(apps.fuzzy_query('').slice(0, 5));
-apps.connect('notify::list', () => search(''));
-apps.reload();
+timeout(1000, () => apps.reload()) // fix bug
 
 export const [ focus, setIsFocused ] = createState(false);
 const focusBlockedAppNames = ['discord', 'slack'];

@@ -42,7 +42,7 @@
 
       # Gnome text editor config
       "org/gnome/TextEditor" = {
-        custom-font = "Iosevka 12";
+        custom-font = "Iosevka Nerd Font Mono 12";
         highlight-current-line = true;
         restore-session = true;
         show-line-numbers = true;

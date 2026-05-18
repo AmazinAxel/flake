@@ -35,8 +35,7 @@ export default () => asideStatusWindow('bluetooth', () =>
     <box orientation={Gtk.Orientation.VERTICAL}>
         <box spacing={4} marginBottom={7}>
             <button
-                hexpand
-                halign={Gtk.Align.START}
+                hexpand halign={Gtk.Align.START}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={() => bluetooth.toggle()}
                 cssClasses={bluetoothOn.as(power => power ? ['active', 'bluetoothButton'] : ['unpowered', 'bluetoothButton'])}
@@ -84,6 +83,7 @@ export default () => asideStatusWindow('bluetooth', () =>
                         let btn: Gtk.Button;
                         return <button hexpand
                             sensitive={connectingBind(c => !c)}
+			    cursor={Gdk.Cursor.new_from_name('pointer', null)}
                             $={(self) => {
                                 btn = self;
 

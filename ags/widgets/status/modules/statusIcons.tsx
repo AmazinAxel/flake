@@ -5,7 +5,7 @@ import { focus }  from '../../launcher/launcher';
 import Bluetooth from 'gi://AstalBluetooth';
 import Wp from 'gi://AstalWp';
 import Battery from 'gi://AstalBattery';
-import { monitorFile, readFile } from 'ags/file';
+import { readFile } from 'ags/file';
 
 const bluetooth = Bluetooth.get_default()
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
@@ -51,8 +51,8 @@ const updateNetworkIcon = () => {
           : 'network-wireless-acquiring-symbolic'
   );
 };
-updateNetworkIcon()
-monitorFile('/sys/class/net/wlan0/operstate', updateNetworkIcon); // todo find workaround
+updateNetworkIcon();
+setInterval(updateNetworkIcon, 3000); // todo find non poll method
 
 const NetworkIcon = () => <image iconName={networkIcon}/>
 

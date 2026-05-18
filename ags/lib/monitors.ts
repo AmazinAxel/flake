@@ -1,6 +1,6 @@
 import { createBinding, createState } from 'ags';
 import app from 'ags/gtk4/app';
-//import { timeout } from 'ags/time';
+import { timeout } from 'ags/time';
 
 const rawMonitors = createBinding(app, "monitors");
 export const [ monitors, setMonitors ] = createState([...app.monitors]);
@@ -12,7 +12,6 @@ rawMonitors.subscribe(() => {
         setMonitors([...monitorList]);
     } else {
         // debounce monitor additions to fix bug
-        //timeout(1000, () => setMonitors([...rawMonitors.peek()]));
-        setMonitors([...rawMonitors.peek()]);
+        timeout(1000, () => setMonitors([...rawMonitors.peek()]));
     }
 });

@@ -28,7 +28,7 @@
       userSettings = {
         editor = {
           wordWrap = "on";
-          fontFamily = "'Iosevka'";
+          fontFamily = "'Iosevka Nerd Font Mono'";
           fontLigatures = "'calt'"; # Iosevka ligatures
           confirmPasteNative = false;
           minimap.enabled = false;
