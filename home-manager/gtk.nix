@@ -24,7 +24,7 @@
       package = (pkgs.graphite-gtk-theme.override {
         tweaks = [ "nord" ];
         themeVariants = [ "default" ];
-        colorVariants = [ "dark" ];
+        colorVariants = [ "light" "dark" ];
       });
     };
     gtk3.extraConfig.gtk-im-module = "fcitx";

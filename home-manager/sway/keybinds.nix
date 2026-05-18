@@ -1,8 +1,18 @@
-let
+{ pkgs, ... }: let
   mod = "Mod4";
   currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
   workspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -eq $current ] || swaymsg workspace number $target'";
   moveItemToWorkspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -ne $current ] && swaymsg move container to workspace number $target && swaymsg workspace number $target'";
+  toggleTheme = pkgs.writeShellScript "toggle-theme" ''
+    gs=${pkgs.glib}/bin/gsettings
+    if [ "$($gs get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
+      $gs set org.gnome.desktop.interface color-scheme 'prefer-light'
+      $gs set org.gnome.desktop.interface gtk-theme 'Graphite-nord'
+    else
+      $gs set org.gnome.desktop.interface color-scheme 'prefer-dark'
+      $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Dark-nord'
+    fi
+  '';
 in {
   wayland.windowManager.sway = {
     config.keybindings = {
@@ -30,7 +40,8 @@ in {
       "${mod}+A" = "exec ags toggle chat";
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+S" = "exec ags request toggleDND";
-      "${mod}+L" = "exec ags request toggleFocus";
+      "${mod}+L" = "exec ${toggleTheme}";
+      "${mod}+T" = "exec ags request toggleFocus";
       "${mod}+Z" = "exec ags request toggleInfoArea";
 
       "${mod}+V" = "exec ags toggle clipboard";
