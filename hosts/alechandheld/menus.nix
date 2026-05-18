@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 let
   # ── Launcher libretro core (C) ──────────────────────────────────────────
   launcherCSrc = pkgs.writeText "launcher_libretro.c" ''

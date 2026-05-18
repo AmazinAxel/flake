@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 let
   retroarchCustom = pkgs.retroarch-bare.overrideAttrs (old: {

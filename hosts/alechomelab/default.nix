@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, ... }: {
   imports = [
     ./services.nix
     ../common.nix
@@ -11,7 +11,7 @@
     gpio = { };
     spi = { };
   };
-
+  users.users.alec.extraGroups = [ "gpio" "spi" ];
 
   hardware = {
     i2c.enable = true;

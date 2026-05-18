@@ -70,6 +70,7 @@
 
   services = {
     journald.extraConfig = "SystemMaxUse=20M";
+    fstrim.enable = true; # weekly SSD trim
     resolved = {
       enable = true;
       settings.Resolve = {
@@ -81,7 +82,7 @@
       };
     };
   };
-  fileSystems."/".options = [ "noatime" "discard" ]; # SSD trim
+  fileSystems."/".options = [ "noatime" ];
   documentation.enable = false;
   environment.defaultPackages = lib.mkForce [];
 

@@ -31,6 +31,10 @@
       includeDefaultModules = false;
     };
     binfmt.emulatedSystems = [ "aarch64-linux" ];
+    kernelParams = [ "amd_pstate=active" "mem_sleep_default=deep" ];
+
+    # Batch dirty page flushes
+    kernel.sysctl."vm.dirty_writeback_centisecs" = 6000;
   };
 
   services = {
@@ -43,6 +47,39 @@
 
         CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+
+        # no CPU boost on battery
+        CPU_BOOST_ON_AC = 1;
+        CPU_BOOST_ON_BAT = 0;
+
+        # firmware platform profile
+        PLATFORM_PROFILE_ON_AC = "performance";
+        PLATFORM_PROFILE_ON_BAT = "low-power";
+
+        # pci active state power management
+        PCIE_ASPM_ON_AC = "default";
+        PCIE_ASPM_ON_BAT = "powersupersave";
+
+        # pci device sleep
+        RUNTIME_PM_ON_AC = "on";
+        RUNTIME_PM_ON_BAT = "auto";
+
+        # USB autosuspend
+        USB_AUTOSUSPEND = 1;
+        USB_EXCLUDE_AUDIO = 1;
+        USB_EXCLUDE_PRINTER = 1;
+
+        # Wifi power
+        WIFI_PWR_ON_AC = "off";
+        WIFI_PWR_ON_BAT = "on";
+
+        # Audio codec
+        SOUND_POWER_SAVE_ON_AC = 0;
+        SOUND_POWER_SAVE_ON_BAT = 1;
+        SOUND_POWER_SAVE_CONTROLLER = "Y";
+
+        # Wake on LAN
+        WOL_DISABLE = "Y";
       };
     };
 
