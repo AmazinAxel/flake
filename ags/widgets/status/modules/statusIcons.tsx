@@ -22,7 +22,7 @@ const batPercentageBind = createBinding(battery, 'percentage');
 const batteryIconName = createBinding(battery, 'batteryIconName')
 const BatteryWidget = () => 
     <image
-      tooltipText={batPercentageBind((p) => (p * 100) + '%')}
+      tooltipText={batPercentageBind((p) => Math.round(p * 100) + '%')}
       iconName={batteryIconName}
       visible={Boolean(battery.percentage)} // Hide if on desktop
     />

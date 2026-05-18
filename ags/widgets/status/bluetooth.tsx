@@ -1,5 +1,5 @@
 import BluetoothService from 'gi://AstalBluetooth';
-import { createBinding, For } from 'ags';
+import { createBinding, createState, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Gdk from 'gi://Gdk';
 import Wp from 'gi://AstalWp';
@@ -9,7 +9,16 @@ import app from 'ags/gtk4/app';
 const bluetooth = BluetoothService.get_default();
 const audio = Wp.get_default()?.audio; // for auto-sink switching
 const bluetoothOn = createBinding(bluetooth, 'isPowered');
-const discovering = createBinding(bluetooth.adapter, 'discovering');
+
+// adapter may be null at startup if BT firmware is still loading (binding directly on it crashes ags)
+const [ discovering, setDiscovering ] = createState(false);
+const wireAdapter = (adapter: BluetoothService.Adapter | null) => {
+    if (!adapter) return;
+    setDiscovering(adapter.discovering);
+    adapter.connect('notify::discovering', () => setDiscovering(adapter.discovering));
+};
+wireAdapter(bluetooth.adapter);
+bluetooth.connect('notify::adapter', () => wireAdapter(bluetooth.adapter));
 
 const devicesBind = createBinding(bluetooth, 'devices')((devs: BluetoothService.Device[]) =>
     devs.filter(d => d.alias.replaceAll('-', ':') != d.address) // not a mac
