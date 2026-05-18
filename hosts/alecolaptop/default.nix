@@ -21,6 +21,8 @@
     python3
     openjdk25
     bun
+    claude-code
+    platformio
   ];
 
   boot = {
@@ -90,6 +92,7 @@
     };
 
     udev = {
+      packages = [ pkgs.platformio-core.udev ];
       # Pi Pico
       extraRules = ''
         SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000a", MODE="0666"

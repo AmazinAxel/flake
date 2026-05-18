@@ -203,6 +203,20 @@
           end,
         })
 
+        -- Buffer save scroll position
+        vim.api.nvim_create_autocmd("BufLeave", {
+          callback = function()
+            vim.b.winview = vim.fn.winsaveview()
+          end,
+        })
+        vim.api.nvim_create_autocmd("BufEnter", {
+          callback = function()
+            if vim.b.winview then
+              vim.fn.winrestview(vim.b.winview)
+            end
+          end,
+        })
+
         vim.filetype.add({ extension = { sk = "skript" } })
       '';
     };
