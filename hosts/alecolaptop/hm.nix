@@ -1,4 +1,4 @@
-{
+{ pkgs, ...}: {
   imports = [ ../../home-manager/laptop.nix ];
 
   wayland.windowManager.sway.config = {
