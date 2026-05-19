@@ -39,7 +39,9 @@
         Settings.AutoConnect = true;
         General.EnableNetworkConfiguration = false; # networkd handles DHCP now
         Network.NameResolvingService = "systemd";
-        Scan.DisablePeriodicScan = true; # not needed
+        Scan.InitialPeriodicScanInterval = 10;
+        Scan.MaximumPeriodicScanInterval = 30;
+        #Scan.DisablePeriodicScan = true; # not needed
       };
     };
   };
