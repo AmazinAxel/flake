@@ -3,8 +3,16 @@
     ../common.nix
     ../../modules/pi.nix
   ];
-  environment.systemPackages = with pkgs; [  ];
-  #systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
+  environment.systemPackages = with pkgs; [
+    (python3.withPackages (ps: with ps; [
+      pyserial
+      prompt-toolkit
+      numpy
+      pillow
+      scikit-image
+    ]))
+    poppler-utils
+  ];
 
   users.extraGroups.gpio = { };
   users.users.alec.extraGroups = [ "gpio" ];

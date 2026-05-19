@@ -3,6 +3,22 @@
   currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
   workspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -eq $current ] || swaymsg workspace number $target'";
   moveItemToWorkspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -ne $current ] && swaymsg move container to workspace number $target && swaymsg workspace number $target'";
+  openFoot = pkgs.writeShellScript "open-foot" ''
+    ws=$(swaymsg -t get_workspaces | ${pkgs.jq}/bin/jq -r '.[] | select(.focused) | .name')
+    non_foot=$(swaymsg -t get_tree | ${pkgs.jq}/bin/jq -r --arg ws "$ws" '
+      ([.. | objects | select(.type? == "workspace" and .name? == $ws)][0] // {}) |
+      [.. | objects | select(
+        (.type? == "con" or .type? == "floating_con") and
+        (.nodes? // [] | length) == 0 and
+        ((.app_id? // "") | startswith("foot") | not)
+      )] | length
+    ')
+    if [ "''${non_foot:-0}" -gt 0 ]; then
+      exec foot --app-id foot-float
+    else
+      exec foot
+    fi
+  '';
   toggleTheme = pkgs.writeShellScript "toggle-theme" ''
     gs=${pkgs.glib}/bin/gsettings
     if [ "$($gs get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
@@ -27,7 +43,7 @@ in {
 
       # Apps
       "${mod}+E" = "exec zen-beta";
-      "${mod}+return" = "exec foot";
+      "${mod}+return" = "exec ${openFoot}";
       
       # Ags
       "${mod}+space" = "exec ags toggle launcher";

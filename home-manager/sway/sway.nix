@@ -103,7 +103,7 @@
           { window_type = "splash"; }
 #          { app_id = "xdg-desktop-portal-gtk"; }
           { app_id = "nemo"; } # file browser
-          { app_id = "foot"; } # terminal
+          { app_id = "foot-float"; } # terminal
           { app_id = "org.gnome.FileRoller"; } # file extraction dialogs
           { app_id = "org.gnome.SystemMonitor"; }
         ];
