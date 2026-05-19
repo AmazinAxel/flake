@@ -14,6 +14,14 @@
     poppler-utils
   ];
 
+  boot.kernelModules = [ "dwc2" "cdc_acm" ];
+  boot.extraModprobeConfig = "options dwc2 dr_mode=host";
+
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000a", MODE="0666"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000a", MODE="0666"
+  '';
+
   users.extraGroups.gpio = { };
   users.users.alec.extraGroups = [ "gpio" ];
   hardware.i2c.enable = true;
@@ -35,6 +43,9 @@
 
   # Turn on gpio button
   gpio=6,19,5,26,13,21,20,16=pu
+
+  # ttyACM support
+  dtoverlay=dwc2,dr_mode=host
 
   # Disable hdmi output
   gpu_mem=16

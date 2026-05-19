@@ -69,7 +69,6 @@
         USB_EXCLUDE_AUDIO = 1;
         USB_EXCLUDE_PRINTER = 1;
 
-
         # Audio codec
         SOUND_POWER_SAVE_ON_AC = 0;
         SOUND_POWER_SAVE_ON_BAT = 1;
@@ -116,12 +115,6 @@
         "bluez5.codecs" = [ "aac" "sbc_xq" "sbc" ];
         "bluez5.enable-hw-volume" = true;
         "bluez5.enable-msbc" = false;
-      };
-
-      # auto-switch to new sinks (mostly for bluetooth)
-      "11-default-policy"."wireplumber.settings" = {
-        "default-policy-move" = true;
-        "default-policy-follow" = true;
       };
     };
 
