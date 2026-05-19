@@ -74,11 +74,13 @@
         ];
       };
 
-      # Homelab (Pi zero 2W)
-      # nixos-rebuild switch --flake .#alechomelab --sudo --ask-sudo-password --target-host alec@alechomelab.local
-      # OR nix build .#nixosConfigurations.alechomelab.config.system.build.sdImage
+      # Servers, build using
+      # nixos-rebuild switch --flake .#<hostname> --sudo --ask-sudo-password --target-host alec@<hostname>.local
+      # OR nix build .#nixosConfigurations.<hostname>.config.system.build.sdImage
+
+      # Homelab (Zero 2W)
       "alechomelab" = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        #specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alechomelab/default.nix
           {
@@ -92,6 +94,15 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/aleclocaldev/default.nix
+          home-manager.nixosModules.home-manager
+        ];
+      };
+
+      # Permablot (custom printerblot printer, Zero 2W)
+      "permablot" = nixpkgs.lib.nixosSystem {
+        #specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/permablot/default.nix
         ];
       };
     };

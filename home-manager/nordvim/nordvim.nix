@@ -1,5 +1,4 @@
 { pkgs, ...}: {
-  imports = [ ./neovide.nix ];
   programs = {
     neovim = {
       enable = true;
@@ -47,6 +46,8 @@
 	  vim.opt.number = true
 	  vim.opt.ruler = false
 	  vim.opt.cmdheight = 0
+    vim.o.guifont = "Iosevka Nerd Font Mono:h14"
+    vim.o.termguicolors = true
 
 	  require('onenord').setup({
 	    theme = "dark",

@@ -1,8 +1,6 @@
 {
   programs.neovim.initLua = ''
     vim.g.neovide_opacity = 0.9
-    vim.o.guifont = "Iosevka Nerd Font Mono:h14"
-    vim.o.termguicolors = true
 
     vim.g.neovide_padding_top = 2
     vim.g.neovide_padding_bottom = 2

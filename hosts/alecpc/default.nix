@@ -16,6 +16,7 @@
     gimp3
     libreoffice
     gnome-sound-recorder
+    gnome-disk-utility
     flashprint
     thunderbird
 

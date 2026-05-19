@@ -7,7 +7,8 @@
   #systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
 
   users.extraGroups.gpio = { };
-  users.users.alec.extraGroups = [ "gpio" ];  hardware.i2c.enable = true;
+  users.users.alec.extraGroups = [ "gpio" ];
+  hardware.i2c.enable = true;
 
   # Networking
   networking = {

@@ -21,22 +21,43 @@
     kernelModules = [ "tcp_bbr" ];
     kernel.sysctl = { # faster network
       "net.ipv4.tcp_congestion_control" = "bbr";
-      "net.core.default_qdisc" = "fq"; # pairs with BBR
+      "net.core.default_qdisc" = "fq"; # goes with BBR
+      "net.ipv4.tcp_fastopen" = 3; # saves a round-trip
+      "net.ipv4.tcp_slow_start_after_idle" = 0; # don't reset cwnd after idle
+      "net.ipv4.tcp_mtu_probing" = 1; # reduces fragmentation
     };
     initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
   };
 
   networking = {
     dhcpcd.enable = false;
+    useNetworkd = true; # newer
     wireless.iwd = {
       enable = lib.mkDefault true;
       settings = {
         IPv6.Enabled = true;
         Settings.AutoConnect = true;
-        General.EnableNetworkConfiguration = true;
+        General.EnableNetworkConfiguration = false; # networkd handles DHCP now
         Network.NameResolvingService = "systemd";
         Scan.DisablePeriodicScan = true; # not needed
       };
+    };
+  };
+
+  systemd.network = {
+    enable = true;
+    networks."20-wireless" = {
+      matchConfig.Type = "wlan";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = true;
+        IgnoreCarrierLoss = "5s";
+      };
+      dhcpV4Config.UseMTU = true; # honor MTU from router to avoid fragmentation
+    };
+    wait-online = {
+      anyInterface = true; # only need one interface up, todo probably redundant
+      timeout = 10; # dont prolong boot for too long
     };
   };
 

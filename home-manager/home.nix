@@ -4,6 +4,7 @@
     ./sway/sway.nix
 
     ./nordvim/nordvim.nix
+    ./nordvim/neovide.nix
 
     ./fish.nix
     ./foot.nix
