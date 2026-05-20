@@ -43,7 +43,7 @@
         "admin users" = [ "alec" ]; # Full read/write access
       };
     };
-    services.openssh.settings.Macs = [ "hmac-sha2-512" ]; # fix ios pass
+    openssh.settings.Macs = [ "hmac-sha2-512" ]; # fix ios pass
     avahi.publish.userServices = true; # NAS
     samba-wsdd = { # Auto-disovery
       enable = true;
