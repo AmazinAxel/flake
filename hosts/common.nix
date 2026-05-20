@@ -84,11 +84,16 @@
   zramSwap.enable = lib.mkDefault true; # Compress ram for better performance
 
   nixpkgs.config.allowUnfree = true;
-  nix.settings = {
-    experimental-features = "nix-command flakes";
-    auto-optimise-store = true;
-    warn-dirty = false;
-    trusted-users = [ "alec" ]; # for remote deployments
+  nix = {
+    channel.enable = false; # we only use flakes
+    #nixPath = lib.mkForce [ "nixpkgs=${pkgs.path}" ];
+
+    settings = {
+      experimental-features = "nix-command flakes";
+      auto-optimise-store = true;
+      warn-dirty = false;
+      trusted-users = [ "alec" ]; # for remote deployments
+    };
   };
 
   services = {

@@ -34,15 +34,10 @@
   enable_gic=1
   armstub=armstub8-gic.bin
   arm_boost=1
-  
+
   # For proper boot
   arm_64bit=1
   enable_uart=1
-
-  # Turn on spi & i2c and gpio buttons
-  dtparam=spi=on
-  dtparam=i2c_arm=on
-  gpio=6,19,5,26,13,21,20,16=pu
 
   # Disable hdmi output
   gpu_mem=16

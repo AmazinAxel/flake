@@ -61,12 +61,6 @@
   arm_64bit=1
   enable_uart=1
 
-  # Turn on gpio button
-  gpio=6,19,5,26,13,21,20,16=pu
-
-  # ttyACM support
-  dtoverlay=dwc2,dr_mode=host
-
   # Disable hdmi output
   gpu_mem=16
   disable_fw_kms_setup=1

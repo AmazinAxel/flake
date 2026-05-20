@@ -16,13 +16,20 @@
   hardware = {
     i2c.enable = true;
 
-    deviceTree = { # spi for display output
+    # custom spi dts for waveshare display output
+    deviceTree = {
       enable = true;
       filter = "*rpi-zero-2*.dtb";
       overlays = [{ name = "spi0"; dtsFile = ./spi0.dts; }];
     };
   };
-  boot.kernelModules = [ "spidev" ];
+  boot = {
+    kernelModules = [ "spidev" ];
+    extraModprobeConfig = ''
+      options spidev bufsiz=65536
+    '';
+    blacklistedKernelModules = [ "snd_bcm2835" "btbcm" "hci_uart" "bluetooth" ]; # dont need audio or bluetooth
+  };
 
   # Networking
   networking = {
@@ -60,24 +67,15 @@
 
   /*
   [all]
-  # For proper boot
   kernel=u-boot-rpi3.bin
   arm_64bit=1
   enable_uart=1
 
-  # Turn on spi & i2c and gpio buttons
-  dtparam=spi=on
-  dtparam=i2c_arm=on
-  gpio=6,19,5,26,13,21,20,16=pu
-
-  # Disable hdmi output
   gpu_mem=16
   disable_fw_kms_setup=1
   disable_overscan=1
   hdmi_force_hotplug=0
   hdmi_blanking=2
-
-  # Faster boot
   boot_delay=0
   disable_splash=1
   avoid_warnings=1
