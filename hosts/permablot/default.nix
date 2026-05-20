@@ -14,9 +14,6 @@
     poppler-utils
   ];
 
-  boot.kernelModules = [ "dwc2" "cdc_acm" ];
-  boot.extraModprobeConfig = "options dwc2 dr_mode=host";
-
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000a", MODE="0666"
     SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000a", MODE="0666"
@@ -24,7 +21,30 @@
 
   users.extraGroups.gpio = { };
   users.users.alec.extraGroups = [ "gpio" ];
-  hardware.i2c.enable = true;
+  hardware = {
+    i2c.enable = true;
+    deviceTree = {
+      enable = true;
+      overlays = [{
+        name = "dwc2-host";
+        dtsText = ''
+          /dts-v1/;
+          /plugin/;
+          / {
+            compatible = "brcm,bcm2837";
+            fragment@0 {
+              target = <&usb>;
+              __overlay__ {
+                dr_mode = "host";
+              };
+            };
+          };
+        '';
+      }];
+    };
+  };
+
+  boot.kernelModules = [ "cdc_acm" ];  # dwc2 will autoload now
 
   # Networking
   networking = {
