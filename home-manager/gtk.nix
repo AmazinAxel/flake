@@ -23,7 +23,6 @@
       name = "Graphite-Dark-nord";
       package = (pkgs.graphite-gtk-theme.override {
         tweaks = [ "nord" ];
-        themeVariants = [ "default" ];
         colorVariants = [ "light" "dark" ];
       });
     };
@@ -37,7 +36,10 @@
   dconf = {
     enable = true;
     settings = {
-      "org/gnome/desktop/interface".color-scheme = "prefer-dark";
+      "org/gnome/desktop/interface" = {
+        color-scheme = "prefer-dark";
+        gtk-theme = "Graphite-Dark-nord";
+      };
       "org/gnome/SoundRecorder".audio-profile = "mp3";
 
       # Gnome text editor config

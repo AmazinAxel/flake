@@ -3,33 +3,59 @@
   currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
   workspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -eq $current ] || swaymsg workspace number $target'";
   moveItemToWorkspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -ne $current ] && swaymsg move container to workspace number $target && swaymsg workspace number $target'";
-  openFoot = pkgs.writeShellScript "open-foot" ''
+  # True iff the focused workspace has apps other than foot/nemo
+  shouldFloat = pkgs.writeShellScript "should-float" ''
     ws=$(swaymsg -t get_workspaces | ${pkgs.jq}/bin/jq -r '.[] | select(.focused) | .name')
-    non_foot=$(swaymsg -t get_tree | ${pkgs.jq}/bin/jq -r --arg ws "$ws" '
+    others=$(swaymsg -t get_tree | ${pkgs.jq}/bin/jq -r --arg ws "$ws" '
       ([.. | objects | select(.type? == "workspace" and .name? == $ws)][0] // {}) |
       [.. | objects | select(
         (.type? == "con" or .type? == "floating_con") and
         (.nodes? // [] | length) == 0 and
-        ((.app_id? // "") | startswith("foot") | not)
+        (((.app_id? // "") | startswith("foot")) | not) and
+        ((.app_id? // "") != "nemo")
       )] | length
     ')
-    if [ "''${non_foot:-0}" -gt 0 ]; then
+    [ "''${others:-0}" -gt 0 ]
+  '';
+  openFoot = pkgs.writeShellScript "open-foot" ''
+    if ${shouldFloat}; then
       exec foot --app-id foot-float
     else
       exec foot
     fi
   '';
+  # nemo has no --app-id like foot, so the sway rule always floats it;
+  # in the tile case, subscribe and un-float the new nemo window via IPC.
+  openNemo = pkgs.writeShellScriptBin "nemo" ''
+    if ${shouldFloat}; then
+      exec ${pkgs.nemo-with-extensions}/bin/nemo "$@"
+    fi
+    (
+      ${pkgs.sway}/bin/swaymsg -t subscribe -m '["window"]' 2>/dev/null \
+        | ${pkgs.jq}/bin/jq -c --unbuffered 'select(.change == "new" and (.container.app_id // "") == "nemo") | .container.id' \
+        | head -n 1 \
+        | while IFS= read -r con_id; do
+            ${pkgs.sway}/bin/swaymsg "[con_id=$con_id] floating disable" >/dev/null
+          done
+    ) &
+    watcher=$!
+    ( sleep 2; kill $watcher 2>/dev/null ) &
+    ${pkgs.nemo-with-extensions}/bin/nemo "$@"
+    wait $watcher 2>/dev/null
+  '';
   toggleTheme = pkgs.writeShellScript "toggle-theme" ''
     gs=${pkgs.glib}/bin/gsettings
     if [ "$($gs get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
       $gs set org.gnome.desktop.interface color-scheme 'prefer-light'
-      $gs set org.gnome.desktop.interface gtk-theme 'Graphite-nord'
+      $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Light-nord'
     else
       $gs set org.gnome.desktop.interface color-scheme 'prefer-dark'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Dark-nord'
     fi
   '';
 in {
+  home.packages = [ openNemo ]; # Shadow system nemo with wrapper
+
   wayland.windowManager.sway = {
     config.keybindings = {
       # Volume

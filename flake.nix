@@ -90,10 +90,10 @@
       };
 
       # Localhost development server (Pi 4B)
-      "aleclocaldev" = nixpkgs.lib.nixosSystem {
+      "alecdev" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/aleclocaldev/default.nix
+          ./hosts/alecdev/default.nix
           home-manager.nixosModules.home-manager
         ];
       };

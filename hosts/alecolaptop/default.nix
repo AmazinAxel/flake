@@ -24,6 +24,7 @@
     claude-code
     platformio
   ];
+  programs.kdeconnect.enable = true;
 
   boot = {
     initrd = {

@@ -23,6 +23,11 @@
         publisher = "Misodee";
         version = "0.9.3";
         sha256 = "sha256-47AO385wHsiMquXX6YvhWbCkjOENzB4DECgwMCpeSv4";
+      } {
+        name = "nord-light";
+        publisher = "huytd";
+        version = "0.1.1";
+        sha256 = "sha256-q2GG3j5j3CLGF02J7/plywKLkhUmm2Gn3MiSVmiZ+48=";
       }];
 
       userSettings = {
@@ -45,8 +50,11 @@
         };
         workbench = {
           startupEditor = "fish";
-          colorTheme = "Nord"; # Enable theme
+          colorTheme = "Nord"; # default
+          preferredDarkColorTheme = "Nord";
+          preferredLightColorTheme = "Nord Light";
         };
+        window.autoDetectColorScheme = true; # Follow system
         chat.disableAIFeatures = true;
         terminal.integrated = {
           defaultProfile.linux = "fish";
