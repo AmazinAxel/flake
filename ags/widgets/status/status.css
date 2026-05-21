@@ -46,23 +46,6 @@
 /* Network */
 #bluetooth button, #network button { margin: 4px; }
 
-/* Workspace view */
-#workspaces .statusElement { padding: 0.2rem 0; margin: 0.45rem 0.4rem; }
-#workspaces .workspace {
-    background-color: @dark2;
-    min-width: 1.32rem;
-    min-height: 1.6rem;
-    border-radius: 5px;
-    transition: 0.1s;
-    margin: 0.3rem 0.5rem;
-}
-#workspaces .workspace.active {
-    background-color: @blue2;
-    box-shadow: 0 0 5px @blue3;
-    min-height: 2.1rem;
-}
-#workspaces .workspace.occupied { background-color: @dark4; min-height: 1.9rem; }
-
 /* Recording indicator */
 .recIndicator {
     color: #bf616a;

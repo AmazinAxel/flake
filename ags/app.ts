@@ -31,7 +31,7 @@ import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
 import { monitorBrightness } from './lib/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
-import workspaces from './widgets/status/workspaces';
+import workspaces from './widgets/workspaces';
 
 let blueLightFilter = false;
 

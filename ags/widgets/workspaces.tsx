@@ -4,14 +4,15 @@ import { createSubprocess, exec } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
-import { monitors } from '../../lib/monitors';
+import { monitors } from '../lib/monitors';
+import OutTransition from '../lib/outTransition';
 
 export const [ workspaces, setWorkspaces ] = createState(
   [...Array(9).keys()].map((i) => ({ id: i + 1, focused: false, occupied: false })) // Starting state
 );
-let workspaceWindow: Gtk.Window;
 let count = 0;
-const [ isVisible, setIsVisible ] = createState(false);
+const [ windowVisible, setWindowVisible ] = createState(false);
+const [ reveal, setReveal ] = createState(false);
 
 const updateWorkspaces = () => {
   const active = JSON.parse(exec(['swaymsg', '-t', 'get_workspaces']));
@@ -32,12 +33,12 @@ eventStream.subscribe(() => { // Show workspaces on workspace change
 updateWorkspaces();
 
 const showWorkspaces = () => {
-  setIsVisible(true);
+  setWindowVisible(true);
+  setReveal(true);
   count++;
-  timeout(500, () => {
+  timeout(400, () => {
     count--;
-    if (count === 0)
-      setIsVisible(false);
+    if (count === 0) setReveal(false);
   });
 };
 
@@ -50,24 +51,27 @@ export default () =>
         layer={Astal.Layer.OVERLAY}
         gdkmonitor={monitor}
         application={app}
-        visible={isVisible}
-        $={(self) => workspaceWindow = self }
+        visible={windowVisible}
+        defaultHeight={1} // gtk layer shell glitch workaround
+        defaultWidth={1}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement']}>
-          {[...Array(9).keys()].map((i) => i + 1).map((id) =>
-            <box cssClasses={workspaces((ws) => {
-              const w = ws.find((w) => w.id === id);
-              if (!w)
-                return ['workspace'];
+        <OutTransition reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false) }>
+          <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement']}>
+            {[...Array(9).keys()].map((i) => i + 1).map((id) =>
+              <box cssClasses={workspaces((ws) => {
+                const w = ws.find((w) => w.id === id);
+                if (!w)
+                  return ['workspace'];
 
-              return w.focused
-                ? ['workspace', 'active']
-                : w.occupied
-                  ? ['workspace', 'occupied']
-                  : ['workspace'];
-            })}/>
-          )}
-        </box>
+                return w.focused
+                  ? ['workspace', 'active']
+                  : w.occupied
+                    ? ['workspace', 'occupied']
+                    : ['workspace'];
+              })}/>
+            )}
+          </box>
+        </OutTransition>
       </window>
     </This>}
   </For>;
