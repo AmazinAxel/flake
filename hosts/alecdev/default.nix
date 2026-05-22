@@ -10,9 +10,15 @@
     "w /sys/class/leds/PWR/trigger - - - - none"
   ]; # no power or act LEDs
 
+  users.users.alec.shell = pkgs.fish; # default ssh shell
+  #environment.shells = [ pkgs.fish ];
+
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {
-    imports = [ ../../home-manager/kakoune.nix ];
+    imports = [
+      ../../home-manager/kakoune.nix
+      ../../home-manager/fish.nix
+    ];
     home.stateVersion = "26.05";
   };
 
