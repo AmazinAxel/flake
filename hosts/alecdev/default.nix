@@ -10,6 +10,10 @@
     "w /sys/class/leds/PWR/trigger - - - - none"
   ]; # no power or act LEDs
 
+  environment.systemPackages = [
+    (writeScriptBin "fetch" (builtins.readFile ../../scripts/fetch.fish)) # called by fish
+  ];
+
   users.users.alec.shell = pkgs.fish; # default ssh shell
   programs.fish.enable = true; # fix eval ^
   #environment.shells = [ pkgs.fish ];
