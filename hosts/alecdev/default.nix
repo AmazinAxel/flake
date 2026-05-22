@@ -12,7 +12,7 @@
 
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {
-    imports = [ ../../home-manager/nordvim/nordvim.nix ];
+    imports = [ ../../home-manager/kakoune.nix ];
     home.stateVersion = "26.05";
   };
 
