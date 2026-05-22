@@ -12,8 +12,7 @@ in {
 
       # stash only in case of something bad
       sudo -u minecraft git -C ${serverDir} stash clear
-      sudo -u minecraft git stash
-
+      sudo -u minecraft git -C ${serverDir} stash
 
       #sudo -u minecraft git -C ${serverDir} reset --hard HEAD
       #sudo -u minecraft git -C ${serverDir} clean -fd
