@@ -2,8 +2,7 @@ import { createState, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 import Gdk from 'gi://Gdk';
-import asideStatusWindow from '../../lib/asideStatusWindow';
-import app from 'ags/gtk4/app';
+import { currentAsideWindow } from '../../lib/asideStatusWindow';
 
 type WifiNet = { ssid: string; security: string; strength: number; connected: boolean; path: string };
 
@@ -143,7 +142,7 @@ const scan = async () => {
     }
 };
 
-export default () => asideStatusWindow('wifi', () =>
+export default () =>
     <box orientation={Gtk.Orientation.VERTICAL}>
         <box spacing={4} marginBottom={7}>
             <button
@@ -162,8 +161,8 @@ export default () => asideStatusWindow('wifi', () =>
                 sensitive={scanning.as(s => !s)}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 $={(self) => {
-                    app.connect('window-toggled', () => {
-                        if (app.get_window('bluetooth')?.visible == true)
+                    currentAsideWindow.subscribe(() => {
+                        if (currentAsideWindow.peek() === 'wifi')
                             self.grab_focus();
                     });
                 }}
@@ -233,4 +232,3 @@ export default () => asideStatusWindow('wifi', () =>
             }}
         </For>
     </box>
-);

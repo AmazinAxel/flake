@@ -32,6 +32,7 @@ import { isRec, stopRec, startClippingService } from './widgets/record/service';
 import { monitorBrightness } from './lib/brightness';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
 import workspaces from './widgets/workspaces';
+import asideStatusWindow, { setAsideWindow, closeAsideWindow } from './lib/asideStatusWindow';
 
 let blueLightFilter = false;
 
@@ -40,15 +41,17 @@ app.start({
     main() {
         status();
         chat();
-        calendar();
         clipboard();
         emojiPicker();
         recordMenu();
         osd();
         powermenu();
-        quickSettings();
-        bluetooth();
-        wifi();
+        asideStatusWindow({
+            quickSettings,
+            bluetooth,
+            wifi,
+            calendar
+        });
         lockscreen();
         workspaces();
 
@@ -91,19 +94,19 @@ app.start({
                 };
                 break;
             case "toggleQuicksettings":
-                closeAsideStatusMenu('quickSettings');
+                setAsideWindow('quickSettings');
                 break;
             case "toggleCalendar":
-                closeAsideStatusMenu('calendar');
+                setAsideWindow('calendar');
                 break;
             case "toggleBluetooth":
-                closeAsideStatusMenu('bluetooth');
+                setAsideWindow('bluetooth');
                 break;
             case "toggleWifi":
-                closeAsideStatusMenu('wifi');
+                setAsideWindow('wifi');
                 break;
             case "closeAsideStatusMenuWidget":
-                closeAsideStatusMenu();
+                closeAsideWindow();
                 break;
             case "toggleInfoArea":
                 setStatusMargin(app.get_window('status')?.visible ? 0 : 41);
@@ -123,14 +126,6 @@ app.start({
         res("Request handled successfully");
     }
 });
-
-const closeAsideStatusMenu = (except?: string) => {
-    ['quickSettings', 'calendar', 'bluetooth', 'wifi'].forEach(name =>
-        (name !== except && app.get_window(name)?.visible) && app.toggle_window(name)
-    );
-    if (except) app.toggle_window(except);
-};
-
 
 const reminders = async () => {
     const lastSync = Number(astalIO.read_file("/home/alec/Projects/flake/ags/lastSync.txt"));

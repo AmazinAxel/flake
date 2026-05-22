@@ -14,9 +14,10 @@ export const [ icon, setIcon ] = createState('');
 export const [ val, setVal ] = createState(0);
 const [ windowVisible, setWindowVisible ] = createState(false);
 const [ reveal, setReveal ] = createState(false);
-const volumeBind = createBinding(speaker, 'volume')
+const volumeBind = createBinding(speaker, 'volume');
+const isMuted = createBinding(speaker, 'mute');
 
-timeout(2000, () => dontShow = false);
+timeout(2000, () => dontShow = false); // stop osd from showing when ags starts
 
 export default () =>
     <For each={monitors}>
@@ -34,9 +35,11 @@ export default () =>
                     brightness.subscribe(() =>
                         osdChange('display-brightness-symbolic', brightness.peek())
                     );
-                    volumeBind.subscribe(() =>
-                        osdChange(speaker.volume_icon, speaker.volume)
-                    );
+
+                    // volume changes for the mute bind as well
+                    const volumeChanged = () => osdChange(speaker.volume_icon, speaker.volume);
+                    volumeBind.subscribe(volumeChanged);
+                    isMuted.subscribe(volumeChanged);
                 }}
             >
                 <OutTransition duration={125} reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false)} type={Gtk.RevealerTransitionType.SLIDE_UP}>

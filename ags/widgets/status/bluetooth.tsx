@@ -3,8 +3,7 @@ import { createBinding, createState, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Gdk from 'gi://Gdk';
 import Wp from 'gi://AstalWp';
-import asideStatusWindow from '../../lib/asideStatusWindow';
-import app from 'ags/gtk4/app';
+import { currentAsideWindow } from '../../lib/asideStatusWindow';
 
 const bluetooth = BluetoothService.get_default();
 const audio = Wp.get_default()?.audio; // for auto-sink switching
@@ -40,7 +39,7 @@ const nameSubstitute = (name: string) => {
 };
 
 
-export default () => asideStatusWindow('bluetooth', () =>
+export default () =>
     <box orientation={Gtk.Orientation.VERTICAL}>
         <box spacing={4} marginBottom={7}>
             <button
@@ -49,8 +48,8 @@ export default () => asideStatusWindow('bluetooth', () =>
                 onClicked={() => bluetooth.toggle()}
                 cssClasses={bluetoothOn.as(power => power ? ['active', 'bluetoothButton'] : ['unpowered', 'bluetoothButton'])}
                 $={(self) => {
-                    app.connect('window-toggled', () => {
-                        if (app.get_window('bluetooth')?.visible == true && !bluetooth.isPowered)
+                    currentAsideWindow.subscribe(() => {
+                        if (currentAsideWindow.peek() === 'bluetooth' && !bluetooth.isPowered)
                             self.grab_focus();
                     });
                 }}
@@ -159,4 +158,3 @@ export default () => asideStatusWindow('bluetooth', () =>
             </box>
         </Gtk.ScrolledWindow>
     </box>
-);

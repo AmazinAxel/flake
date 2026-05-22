@@ -1,18 +1,17 @@
 import { Gtk } from 'ags/gtk4';
-import app from 'ags/gtk4/app';
 import GLib from 'gi://GLib';
-import asideStatusWindow from '../../lib/asideStatusWindow';
+import { currentAsideWindow } from '../../lib/asideStatusWindow';
 
-export default () => asideStatusWindow('calendar', () =>
+export default () =>
     <Gtk.Calendar $={(self) => {
-        app.connect('window-toggled', () => {
-            if (!app.get_window('calendar')?.visible) return;
+        currentAsideWindow.subscribe(() => {
+            if (currentAsideWindow.peek() !== 'calendar') return;
             self.select_day(GLib.DateTime.new_now_local());
 
             // very hacky workaround to focus first calendar child
+            // todo better way to do it?
             let w: Gtk.Widget | null = self.get_first_child();
             while (w && !(w instanceof Gtk.Button)) w = w.get_first_child();
             w?.grab_focus();
         });
     }}/>
-);

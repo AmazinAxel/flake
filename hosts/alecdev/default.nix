@@ -5,7 +5,10 @@
     ../../modules/pi.nix
   ];
 
-  systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
+  systemd.tmpfiles.rules = [
+    "w /sys/class/leds/ACT/trigger - - - - none"
+    "w /sys/class/leds/PWR/trigger - - - - none"
+  ]; # no power or act LEDs
 
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {
