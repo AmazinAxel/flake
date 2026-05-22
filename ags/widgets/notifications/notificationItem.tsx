@@ -3,6 +3,8 @@ import { Gtk, Gdk } from 'ags/gtk4';
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 import { execAsync } from 'ags/process';
+import type { Accessor } from 'ags';
+import OutTransition from "../../lib/outTransition";
 const { START, CENTER, END } = Gtk.Align;
 const notifd = Notifd.get_default();
 
@@ -10,47 +12,49 @@ const time = (time: number) => GLib.DateTime.new_from_unix_local(time).format("%
 
 const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-export const notificationItem = (n: Notifd.Notification) =>
-    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['notification']}>
-        <box cssClasses={['header']}>
-            <label
-                cssClasses={['appName']}
-                halign={START}
-                ellipsize={Pango.EllipsizeMode.END}
-                label={capitalizeFirstLetter(n.appName ?? 'Unknown')}
-            />
-            <label hexpand halign={END} label={time(n.time)}/>
-        </box>
-        <box cssClasses={['content']}>
-            <box orientation={Gtk.Orientation.VERTICAL}>
+export const notificationItem = (n: Notifd.Notification, reveal: Accessor<boolean>, onHidden: () => void) =>
+    <OutTransition duration={100} reveal={reveal} onHidden={onHidden} type={Gtk.RevealerTransitionType.SLIDE_LEFT}>
+        <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['notification']}>
+            <box cssClasses={['header']}>
                 <label
-                    cssClasses={['summary']}
+                    cssClasses={['appName']}
                     halign={START}
-                    wrap
-                    xalign={0}
-                    label={n.summary ?? ''}
-                    maxWidthChars={10}
+                    ellipsize={Pango.EllipsizeMode.END}
+                    label={capitalizeFirstLetter(n.appName ?? 'Unknown')}
                 />
-                {n.body && <label
-                    wrap
-                    xalign={0}
-                    label={n.body ?? ''}
-                    maxWidthChars={10}
-                />}
-                {n.get_actions().length > 0 && <box cssClasses={['actions']} spacing={5}>
-                    {n.get_actions().map(({ label, id }) =>
-                        <button
-                            hexpand
-                            cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            onClicked={() => {
-                                n.invoke(id);
-                                n.desktopEntry && execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]);
-                                setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
-                            }}>
-                            <label label={label.replace('Activate', 'Open') ?? ''} halign={CENTER}/>
-                        </button>
-                    )}
-                </box>}
+                <label hexpand halign={END} label={time(n.time)}/>
+            </box>
+            <box cssClasses={['content']}>
+                <box orientation={Gtk.Orientation.VERTICAL}>
+                    <label
+                        cssClasses={['summary']}
+                        halign={START}
+                        wrap
+                        xalign={0}
+                        label={n.summary ?? ''}
+                        maxWidthChars={10}
+                    />
+                    {n.body && <label
+                        wrap
+                        xalign={0}
+                        label={n.body ?? ''}
+                        maxWidthChars={10}
+                    />}
+                    {n.get_actions().length > 0 && <box cssClasses={['actions']} spacing={5}>
+                        {n.get_actions().map(({ label, id }) =>
+                            <button
+                                hexpand
+                                cursor={Gdk.Cursor.new_from_name('pointer', null)}
+                                onClicked={() => {
+                                    n.invoke(id);
+                                    n.desktopEntry && execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]);
+                                    setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
+                                }}>
+                                <label label={label.replace('Activate', 'Open') ?? ''} halign={CENTER}/>
+                            </button>
+                        )}
+                    </box>}
+                </box>
             </box>
         </box>
-    </box>
+    </OutTransition>

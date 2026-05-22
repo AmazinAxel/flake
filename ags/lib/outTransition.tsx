@@ -1,10 +1,10 @@
 import { Gtk } from "ags/gtk4"
 import type { Accessor } from "ags"
 
-export default ({ reveal, duration = 175, type = Gtk.RevealerTransitionType.SLIDE_RIGHT, onHidden, children }: {
+export default ({ reveal, duration, type, onHidden, children }: {
     reveal: Accessor<boolean>,
-    duration?: number,
-    type?: Gtk.RevealerTransitionType,
+    duration: number,
+    type: Gtk.RevealerTransitionType,
     onHidden?: () => void,
     children: JSX.Element
 }) =>
@@ -12,7 +12,7 @@ export default ({ reveal, duration = 175, type = Gtk.RevealerTransitionType.SLID
         revealChild={reveal}
         transitionDuration={reveal((r) => r ? duration : 0)}
         transitionType={type}
-        $={(self) => 
+        $={(self) =>
             self.connect('notify::child-revealed', () => (!self.childRevealed) && onHidden?.())
         }
     >

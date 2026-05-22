@@ -55,7 +55,7 @@ export default () =>
         defaultHeight={1} // gtk layer shell glitch workaround
         defaultWidth={1}
       >
-        <OutTransition reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false) }>
+        <OutTransition duration={150} reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false)} type={Gtk.RevealerTransitionType.SLIDE_RIGHT}>
           <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement']}>
             {[...Array(9).keys()].map((i) => i + 1).map((id) =>
               <box cssClasses={workspaces((ws) => {
