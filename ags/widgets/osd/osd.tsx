@@ -1,20 +1,22 @@
 import { createState, createBinding, For, This } from 'ags';
 import { timeout } from 'ags/time';
-import { Astal } from 'ags/gtk4';
+import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import Wp from 'gi://AstalWp';
 import { brightness } from '../../lib/brightness';
 import { monitors } from '../../lib/monitors';
+import OutTransition from '../../lib/outTransition';
 
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 let dontShow = true;
 let count = 0;
 export const [ icon, setIcon ] = createState('');
 export const [ val, setVal ] = createState(0);
-const [ visible, setVisible ] = createState(false);
+const [ windowVisible, setWindowVisible ] = createState(false);
+const [ reveal, setReveal ] = createState(false);
 const volumeBind = createBinding(speaker, 'volume')
 
-timeout(3000, () => dontShow = false);
+timeout(2000, () => dontShow = false);
 
 export default () =>
     <For each={monitors}>
@@ -25,7 +27,9 @@ export default () =>
                 application={app}
                 layer={Astal.Layer.OVERLAY}
                 gdkmonitor={monitor}
-                visible={visible}
+                visible={windowVisible}
+                defaultHeight={1} // fix bug
+                defaultWidth={1}
                 $={() => {
                     brightness.subscribe(() =>
                         osdChange('display-brightness-symbolic', brightness.peek())
@@ -35,10 +39,12 @@ export default () =>
                     );
                 }}
             >
-                <box cssClasses={['osd']}>
-                    <image iconName={icon}/>
-                    <levelbar value={val} widthRequest={400}/>
-                </box>
+                <OutTransition duration={125} reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false)} type={Gtk.RevealerTransitionType.SLIDE_UP}>
+                    <box cssClasses={['osd']}>
+                        <image iconName={icon}/>
+                        <levelbar value={val} widthRequest={400}/>
+                    </box>
+                </OutTransition>
             </window>
         </This>}
     </For>
@@ -49,11 +55,12 @@ const osdChange = (iconType: string, value: number) => {
 
     setIcon(iconType);
     setVal(value);
-    setVisible(true);
+    setWindowVisible(true);
+    setReveal(true);
 
     count++;
-    timeout(1000, () => {
+    timeout(500, () => {
         if (--count === 0)
-            setVisible(false);
+            setReveal(false);
     });
 };
