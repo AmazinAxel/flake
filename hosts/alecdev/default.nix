@@ -23,6 +23,7 @@
     imports = [
       ../../home-manager/kakoune.nix
       ../../home-manager/fish.nix
+      ../../home-manager/starship.nix
     ];
     home.stateVersion = "26.05";
   };
