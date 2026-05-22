@@ -10,6 +10,13 @@ in {
         sudo systemctl stop minecraft-server
       fi
 
+      # stash only in case of something bad
+      sudo -u minecraft git -C ${serverDir} stash clear
+      sudo -u minecraft git stash
+
+
+      #sudo -u minecraft git -C ${serverDir} reset --hard HEAD
+      #sudo -u minecraft git -C ${serverDir} clean -fd
       sudo -u minecraft git -C ${serverDir} pull --rebase
 
       sudo systemctl start minecraft-server
