@@ -116,6 +116,7 @@
       #output."*".adaptive_sync = "on"; # VRR
 
       startup = [
+        #{ command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway"; }
         { command = "fcitx5 -d"; }
         { command = "wl-gammarelay-rs"; }
         { command = "ags run"; }

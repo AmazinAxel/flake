@@ -65,6 +65,7 @@
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # For Electron
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
+      XDG_CURRENT_DESKTOP = "sway";
     };
     etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
   };
@@ -161,6 +162,10 @@
     enable = true;
     wlr.enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = "*";
+    config.sway = {
+      default = [ "gtk" "wlr" ];
+      "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+    };
   };
 }
