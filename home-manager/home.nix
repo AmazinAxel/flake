@@ -80,6 +80,9 @@
     userDirs = {
       enable = true;
       createDirectories = true; # Auto-creates all directories
+      desktop = null;
+      publicShare = null;
+      templates = null;
       extraConfig = {
         PROJECTS = "/home/alec/Projects";
         CAPTURES = "/home/alec/Videos/Captures";
