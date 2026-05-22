@@ -11,7 +11,7 @@
   ]; # no power or act LEDs
 
   environment.systemPackages = [
-    (writeScriptBin "fetch" (builtins.readFile ../../scripts/fetch.fish)) # called by fish
+    (pkgs.writeScriptBin "fetch" (builtins.readFile ../../scripts/fetch.fish)) # called by fish
   ];
 
   users.users.alec.shell = pkgs.fish; # default ssh shell
