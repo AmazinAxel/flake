@@ -9,7 +9,6 @@
     ./kakoune.nix
     ./mpd.nix
     ./swappy.nix
-    ./starship.nix
     ./vscode.nix
     ./zen.nix
 
