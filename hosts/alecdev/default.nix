@@ -16,7 +16,6 @@
 
   users.users.alec.shell = pkgs.fish; # default ssh shell
   programs.fish.enable = true; # fix eval ^
-  #environment.shells = [ pkgs.fish ];
 
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {

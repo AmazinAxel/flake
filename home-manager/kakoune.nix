@@ -41,7 +41,17 @@ in {
     ];
     extraConfig = ''
       # UI
-      colorscheme nord
+      # todo use nord-kak??????
+      hook global WinDisplay .* %{
+          set-face global Default            "%opt{nord6},default"
+          set-face global BufferPadding      "%opt{nord3},default"
+          set-face global LineNumbers        "%opt{nord3},default"
+          set-face global LineNumberCursor   "%opt{nord13},default+b"
+          set-face global StatusLine         "%opt{nord4},default"
+          set-face global StatusLineMode     "%opt{nord0},%opt{nord14}"
+          set-face global StatusLineInfo     "%opt{nord8},default"
+          set-face global StatusLineValue    "%opt{nord14},default"
+      }
       add-highlighter global/ number-lines -hlcursor
       add-highlighter global/ show-matching
       add-highlighter global/ wrap -word -indent
@@ -56,28 +66,31 @@ in {
       hook global ModuleLoaded kakboard %{
           kakboard-enable
       }
+      map global normal <c-c> '<a-|>wl-copy<ret>' -docstring 'copy selection to system clipboard'
+      map global normal <c-v> '!wl-paste --no-newline<ret>' -docstring 'paste from system clipboard'
+      map global insert <c-v> '<esc>!wl-paste --no-newline<ret>i' -docstring 'paste from system clipboard'
 
-      # ---------- Auto pairs ----------
+      # Auto pairs
       enable-auto-pairs
 
-      # ---------- LSP ----------
+      # LSP
       eval %sh{kak-lsp --kakoune -s $kak_session}
       hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp|nix|html|css|json|sh) %{
           lsp-enable-window
       }
 
-      # ---------- Save with <c-s> ----------
+      # Save with <c-s>
       map global normal <c-s> ': write<ret>'
       map global insert <c-s> '<esc>: write<ret>i'
 
-      # ---------- fzf-kak: file/buffer/recent pickers via <space> leader ----------
+      # fzf-kak
       # <space> already triggers user mode by default.
       map global user f ': fzf-mode<ret>f' -docstring 'fzf: files'
       map global user b ': fzf-mode<ret>b' -docstring 'fzf: buffers'
       map global user r ': fzf-mode<ret>F' -docstring 'fzf: recent (modified) files'
       map global user / ': fzf-mode<ret>s' -docstring 'fzf: ripgrep'
 
-      # ---------- Buffer switcher (jabs replacement) ----------
+      # Buffer switcher (jabs replacement)
       # Ctrl-Tab opens a numbered info box of buffers; <a-tab> toggles to last.
       map global normal <c-tab>   ': enter-user-mode buffers<ret>b'
       map global normal <c-s-tab> ': enter-user-mode buffers<ret>b'
@@ -85,32 +98,47 @@ in {
       map global user   k         ': enter-user-mode buffers<ret>' -docstring 'buffers menu'
 
       # ---------- kaktree (file tree sidebar) ----------
-      set-option global kaktreeclient kaktree
-      set-option global kaktree_split vertical
-      set-option global kaktree_side left
-      set-option global kaktree_size 30
-      set-option global kaktree_show_hidden true
-      set-option global kaktree_sort true
-      set-option global kaktree_double_click_duration '0.3'
-      set-option global kaktree_indentation 1
-      set-option global kaktree_dir_icon_open  '▾ '
-      set-option global kaktree_dir_icon_close '▸ '
-      set-option global kaktree_file_icon      '  '
+
+      hook global ModuleLoaded kaktree %{
+          set-option global kaktree_split horizontal
+          set-option global kaktree_side left
+          set-option global kaktree_size 30
+          set-option global kaktree_show_hidden true
+          set-option global kaktree_sort true
+          set-option global kaktree_double_click_duration '0.3'
+          set-option global kaktree_indentation 1
+          set-option global kaktree_dir_icon_open  '▾ '
+          set-option global kaktree_dir_icon_close '▸ '
+          set-option global kaktree_file_icon      '  '
+      }
+
+      declare-option -hidden bool kaktree_started false
+      hook global ClientCreate .* %{
+          evaluate-commands %sh{
+              [ "$kak_hook_param" = "kaktreeclient" ] && exit 0
+              # Always point jumpclient at the most recent real client.
+              printf 'try %%{ set-option global kaktree__jumpclient %s }\n' "$kak_hook_param"
+              if [ "$kak_opt_kaktree_started" = "false" ]; then
+                  printf 'set-option global kaktree_started true\n'
+                  printf 'try %%{ kaktree-enable }\n'
+                  printf 'try %%{ set-option global kaktree__jumpclient %s }\n' "$kak_hook_param"
+                  printf 'try %%{ kaktree--display }\n'
+              fi
+          }
+      }
 
       hook global WinSetOption filetype=kaktree %{
-          remove-highlighter buffer/numbers
-          remove-highlighter buffer/matching
-          remove-highlighter buffer/wrap
-          remove-highlighter buffer/show-whitespaces
+          try %{ remove-highlighter window/number-lines }
+          try %{ remove-highlighter window/show-matching }
+          try %{ remove-highlighter window/wrap }
+          try %{ remove-highlighter buffer/numbers }
+          try %{ remove-highlighter buffer/matching }
+          try %{ remove-highlighter buffer/wrap }
+          try %{ remove-highlighter buffer/show-whitespaces }
       }
 
       # Toggle tree
       map global normal <c-b> ': kaktree-toggle<ret>' -docstring 'toggle file tree'
-
-      # Auto-enable kaktree on startup (requires tmux/zellij multiplexer)
-      hook global KakBegin .* %{
-          try %{ kaktree-enable }
-      }
 
       # Skript
       hook global BufCreate .*\.sk %{ set-option buffer filetype skript }
@@ -128,7 +156,8 @@ in {
                   fi
                   printf 'change-directory %%{%s}\n' "$path"
                   printf 'try %%{ workspace-load }\n'
-                  printf 'try %%{ kaktree-refresh }\n'
+                  printf 'try %%{ kaktree-disable }\n'
+              printf 'try %%{ kaktree-enable; kaktree--display; kaktree--refresh }\n'
               }
           }
       alias global P Project
@@ -165,7 +194,8 @@ EOF
               printf 'set-option global workspace_index 0\n'
               esc_first=$(printf %s "$first" | sed "s/'/'''/g")
               printf "change-directory '%s'\n" "$esc_first"
-              printf 'try %%{ kaktree-refresh }\n'
+              printf 'try %%{ kaktree-disable }\n'
+              printf 'try %%{ kaktree-enable; kaktree--display; kaktree--refresh }\n'
           }
       }
 
@@ -182,7 +212,8 @@ EOF
               esc=$(printf %s "$folder" | sed "s/'/'''/g")
               printf 'set-option global workspace_index %d\n' "$next"
               printf "change-directory '%s'\n" "$esc"
-              printf 'try %%{ kaktree-refresh }\n'
+              printf 'try %%{ kaktree-disable }\n'
+              printf 'try %%{ kaktree-enable; kaktree--display; kaktree--refresh }\n'
               printf "echo -markup '{Information}workspace: %s'\n" "$esc"
           }
       }
@@ -202,6 +233,5 @@ EOF
     bat # fzf-kak previews
     jq # workspace-load JSON parsing
     perl # kaktree dependency
-    tmux # todo... hm
   ];
 }
