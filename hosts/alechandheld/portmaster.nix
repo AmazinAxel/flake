@@ -8,6 +8,7 @@ let
   };
 
   # Unpack the release zip into the Nix store (read-only reference copy)
+  # todo necessary?
   portmasterStore = pkgs.runCommand "portmaster-${portmasterVersion}-src" {
     nativeBuildInputs = [ pkgs.unzip ];
   } ''
@@ -16,16 +17,13 @@ let
     unzip ${portmasterZip}
   '';
 
-  # AlecHandheld platform mod — sourced automatically by PortMaster when CFW_NAME=AlecHandheld
   alecHandheldMod = pkgs.writeText "mod_AlecHandheld.txt" ''
     #!/bin/bash
-    # AlecHandheld-specific PortMaster configuration
-    # Auto-sourced by PortMaster.sh when CFW_NAME=AlecHandheld
 
-    # Store ports on the SD card
+    # ports on SD card
     export directory="mnt/AlecContent"
 
-    # No sudo — running as user alec
+    # No sudo, todo necessary?
     export ESUDO=""
     export ESUDOKILL="-1"
     export ESUDOKILL2="-1"

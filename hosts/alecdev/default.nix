@@ -12,6 +12,7 @@
 
   environment.systemPackages = [
     (pkgs.writeScriptBin "fetch" (builtins.readFile ../../scripts/fetch.fish)) # called by fish
+    (pkgs.writeScriptBin "nx-gc" (builtins.readFile ../../scripts/nx-gc.fish))
   ];
 
   users.users.alec.shell = pkgs.fish; # default ssh shell

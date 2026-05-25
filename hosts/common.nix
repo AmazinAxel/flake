@@ -60,6 +60,7 @@
     wait-online = {
       anyInterface = true; # only need one interface up, todo probably redundant
       timeout = 10; # dont prolong boot for too long
+      extraArgs = [ "--operational-state=routable" ];
     };
   };
 

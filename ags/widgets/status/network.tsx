@@ -2,53 +2,92 @@ import { createState, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 import Gdk from 'gi://Gdk';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
 
-type WifiNet = { ssid: string; security: string; strength: number; connected: boolean; path: string };
+type WifiNet = { ssid: string; security: string; icon: string; connected: boolean; known: boolean; path: string };
 
-const STATION = 'wlan0';
-const IWD_BUS = 'net.connman.iwd';
-const DEVICE_IFACE = 'net.connman.iwd.Device';
-const STATION_IFACE = 'net.connman.iwd.Station';
-const NETWORK_IFACE = 'net.connman.iwd.Network';
+// iwd config thingys
+const station = 'wlan0';
+const iwdBus = 'net.connman.iwd';
+const deviceInterface = 'net.connman.iwd.Device';
+const stationInterface = 'net.connman.iwd.Station';
+const networkInterface = 'net.connman.iwd.Network';
+
+const unwrap = (v: any): any => (v && typeof v === 'object' && 'data' in v) ? v.data : v;
 
 const [ networks, setNetworks ] = createState<WifiNet[]>([]);
 const [ scanning, setScanning ] = createState(false);
-const [ pendingSSID, setPendingSSID ] = createState<string | null>(null);
 const [ wifiOn, setWifiOn ] = createState(true);
 
-const sigIcon = (n: number) => [
-    'network-wireless-signal-none-symbolic',
-    'network-wireless-signal-weak-symbolic',
-    'network-wireless-signal-ok-symbolic',
-    'network-wireless-signal-good-symbolic',
-    'network-wireless-signal-excellent-symbolic',
-][Math.min(Math.max(n, 0), 4)];
+const openPopovers = new Set<Gtk.Popover>();
+const closeAllPopovers = () => { for (const p of openPopovers) p.popdown(); };
 
-// Signal is in 100*dBm units from iwd (e.g. -7000 = -70 dBm)
-const dbmToStrength = (mbm: number) => {
+const sigIcon = (mbm: number) => {
     const dbm = mbm / 100;
-    return dbm >= -50 ? 4 : dbm >= -65 ? 3 : dbm >= -75 ? 2 : dbm >= -85 ? 1 : 0;
+    const n = dbm >= -50 ? 4 : dbm >= -65 ? 3 : dbm >= -75 ? 2 : dbm >= -85 ? 1 : 0; // Signal is in 100*dBm units from iwd
+    return `network-wireless-signal-${['none', 'weak', 'ok', 'good', 'excellent'][n]}-symbolic`;
 };
 
-// busctl --json=short wraps variant values as {type, data}; unwrap to the plain value
-const unwrap = (v: any): any => (v && typeof v === 'object' && 'data' in v) ? v.data : v; // todo clean
-
-// busctl call returning parsed JSON data
-// busctl always wraps the return value in an outer array; unwrap both layers
 const busctlJSON = (...args: string[]): Promise<any> =>
-    execAsync(['busctl', '--json=short', 'call', IWD_BUS, ...args])
+    execAsync(['busctl', '--json=short', 'call', iwdBus, ...args])
         .then(out => {
             const v = unwrap(JSON.parse(out.trim()));
             return Array.isArray(v) ? v[0] : v;
         });
 
-// busctl call with no return value needed (scan, disconnect, connect)
 const busctlAct = (...args: string[]) =>
-    execAsync(['busctl', 'call', IWD_BUS, ...args]);
+    execAsync(['busctl', 'call', iwdBus, ...args]);
 
 let stationPath = '';
 let devicePath = '';
+
+const systemBus = Gio.DBus.system;
+let scanSubId = 0;
+let scanTimeoutId = 0;
+
+const clearScanTimeout = () => {
+    if (scanTimeoutId) {
+        GLib.source_remove(scanTimeoutId);
+        scanTimeoutId = 0;
+    };
+};
+
+const unsubscribeScan = () => {
+    if (scanSubId) {
+        systemBus.signal_unsubscribe(scanSubId);
+        scanSubId = 0;
+    };
+    clearScanTimeout();
+};
+
+const finishScan = () => {
+    unsubscribeScan();
+    refresh().finally(() => setScanning(false));
+};
+
+const watchScanFinish = () => {
+    unsubscribeScan();
+    scanSubId = systemBus.signal_subscribe(
+        iwdBus,
+        'org.freedesktop.DBus.Properties',
+        'PropertiesChanged',
+        stationPath,
+        stationInterface,
+        Gio.DBusSignalFlags.NONE,
+        (_bus, _sender, _path, _iface, _signal, params) => {
+            const [, changed] = params.deep_unpack() as [string, Record<string, any>, string[]];
+            if ('Scanning' in changed && changed.Scanning === false) finishScan();
+        },
+    );
+    // Safety net
+    scanTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 8000, () => {
+        scanTimeoutId = 0;
+        finishScan();
+        return GLib.SOURCE_REMOVE;
+    });
+};
 
 type ObjMap = Record<string, Record<string, Record<string, any>>>;
 
@@ -74,13 +113,13 @@ const refresh = async () => {
 
         // Locate device and station paths
         for (const [path, ifaces] of Object.entries(objects)) {
-            if (ifaces[DEVICE_IFACE]?.['Name'] === STATION) {
+            if (ifaces[deviceInterface]?.['Name'] === station) {
                 devicePath = path;
-                if (STATION_IFACE in ifaces) stationPath = path;
+                if (stationInterface in ifaces) stationPath = path;
             }
         }
 
-        const powered: boolean = objects[devicePath]?.[DEVICE_IFACE]?.['Powered'] ?? true;
+        const powered: boolean = objects[devicePath]?.[deviceInterface]?.['Powered'] ?? true;
         setWifiOn(powered);
 
         if (!powered || !stationPath) {
@@ -88,19 +127,20 @@ const refresh = async () => {
             return;
         }
 
-        // GetOrderedNetworks → a(on): [[objectPath, signalMbm], ...]
-        const ordered: [string, number][] = await busctlJSON(stationPath, STATION_IFACE, 'GetOrderedNetworks');
+        const ordered: [string, number][] = await busctlJSON(stationPath, stationInterface, 'GetOrderedNetworks');
 
         setNetworks(
             ordered
                 .map(([netPath, signalMbm]): WifiNet | null => {
-                    const p = objects[netPath]?.[NETWORK_IFACE];
+                    const p = objects[netPath]?.[networkInterface];
                     if (!p?.['Name']) return null;
+                    const kn = p['KnownNetwork'];
                     return {
                         ssid: p['Name'] as string,
                         security: p['Type'] as string,
-                        strength: dbmToStrength(signalMbm),
+                        icon: sigIcon(signalMbm),
                         connected: p['Connected'] as boolean,
+                        known: typeof kn === 'string' && kn !== '' && kn !== '/',
                         path: netPath,
                     };
                 })
@@ -117,9 +157,9 @@ const toggleWifi = async () => {
         if (!devicePath) await refresh();
         const next = !wifiOn();
         await execAsync([
-            'busctl', 'call', IWD_BUS, devicePath,
+            'busctl', 'call', iwdBus, devicePath,
             'org.freedesktop.DBus.Properties', 'Set',
-            'ssv', DEVICE_IFACE, 'Powered', 'b', next ? 'true' : 'false',
+            'ssv', deviceInterface, 'Powered', 'b', next ? 'true' : 'false',
         ]);
         setWifiOn(next);
         if (!next) setNetworks([]);
@@ -134,23 +174,26 @@ const scan = async () => {
     setScanning(true);
     try {
         if (!stationPath) await refresh();
-        await busctlAct(stationPath, STATION_IFACE, 'Scan');
-        setTimeout(() => { refresh().finally(() => setScanning(false)); }, 3000);
+        watchScanFinish();
+        await busctlAct(stationPath, stationInterface, 'Scan').catch((e) => {
+            if (!String(e).includes('Operation already in progress')) throw e;
+        });
     } catch(e) {
         console.error('Scan error:', e);
+        unsubscribeScan();
         setScanning(false);
     }
 };
 
 export default () =>
-    <box orientation={Gtk.Orientation.VERTICAL}>
+    <box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
         <box spacing={4} marginBottom={7}>
             <button
                 hexpand halign={Gtk.Align.START}
                 cssClasses={wifiOn.as(on => on ? ['active'] : [])}
                 onClicked={toggleWifi}
 		cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                $={(self) => { self.connect('map', scan); }}
+                $={(self) => { self.connect('map', refresh); }}
             >
                 <image iconName={wifiOn.as(on =>
                     on ? 'network-wireless-symbolic' : 'network-wireless-offline-symbolic'
@@ -174,61 +217,67 @@ export default () =>
         <For each={networks}>
             {(net: WifiNet) => {
                 let entry: Gtk.Entry | null = null;
-                return <box orientation={Gtk.Orientation.VERTICAL}>
-                    <button
-                        cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                        cssClasses={net.connected ? ['active'] : []}
-                        onClicked={() => {
-                            if (net.connected) {
-                                busctlAct(stationPath, STATION_IFACE, 'Disconnect')
-                                    .then(refresh).catch(() => {});
-                            } else if (net.security !== 'open') {
-                                setPendingSSID(pendingSSID() === net.ssid ? null : net.ssid);
-                            } else {
-                                busctlAct(net.path, NETWORK_IFACE, 'Connect')
-                                    .then(refresh).catch(() => {});
+                let popover: Gtk.Popover | null = null;
+                const submit = () => {
+                    const pw = entry?.text ?? '';
+                    const args = pw
+                        ? ['iwctl', '--passphrase', pw, 'station', station, 'connect', net.ssid]
+                        : ['iwctl', 'station', station, 'connect', net.ssid];
+                    execAsync(args).then(() => { refresh(); popover?.popdown(); }).catch(() => {});
+                };
+                return <button
+                    cursor={Gdk.Cursor.new_from_name('pointer', null)}
+                    cssClasses={net.connected ? ['active'] : []}
+                    onClicked={() => {
+                        if (net.connected) {
+                            busctlAct(stationPath, stationInterface, 'Disconnect')
+                                .then(refresh).catch(() => {});
+                        } else if (net.security !== 'open' && !net.known) {
+                            if (!popover) return;
+                            if (popover.get_visible()) popover.popdown();
+                            else {
+                                closeAllPopovers();
+                                popover.popup();
+                                entry?.grab_focus();
                             }
-                        }}
-                    >
-                        <box spacing={8}>
-                            <image iconName={sigIcon(net.strength)}/>
-                            <label hexpand halign={Gtk.Align.START} label={net.ssid} ellipsize={3}/>
-                            {net.security !== 'open' && <image iconName="network-wireless-encrypted-symbolic"/>}
-                        </box>
-                    </button>
-                    <box cssClasses={['passwordRow']} spacing={6} visible={false}
-                        $={(self) => {
-                            pendingSSID.subscribe(() => { self.visible = pendingSSID() === net.ssid; });
-                        }}
-                    >
-                        <Gtk.Entry
-                            hexpand
-                            visibility={false}
-                            placeholderText="Password"
-                            $={(self) => {
-                                entry = self;
-                                self.connect('activate', () => {
-                                    const args = self.text
-                                        ? ['iwctl', '--passphrase', self.text, 'station', STATION, 'connect', net.ssid]
-                                        : ['iwctl', 'station', STATION, 'connect', net.ssid];
-                                    execAsync(args).then(() => { refresh(); setPendingSSID(null); }).catch(() => {});
-                                });
-                            }}
-                        />
-                        <button
-                            cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            onClicked={() => {
-                                const pw = entry?.text ?? '';
-                                const args = pw
-                                    ? ['iwctl', '--passphrase', pw, 'station', STATION, 'connect', net.ssid]
-                                    : ['iwctl', 'station', STATION, 'connect', net.ssid];
-                                execAsync(args).then(() => { refresh(); setPendingSSID(null); }).catch(() => {});
-                            }}
-                        >
-                            <label label="Connect"/>
-                        </button>
+                        } else {
+                            busctlAct(net.path, networkInterface, 'Connect')
+                                .then(refresh).catch(() => {});
+                        }
+                    }}
+                    $={(self) => {
+                        popover = new Gtk.Popover();
+                        popover.add_css_class('passwordRow');
+
+                        entry = new Gtk.Entry({ hexpand: true, visibility: false, placeholderText: 'Password' });
+                        entry.connect('activate', submit);
+
+                        const connectBtn = new Gtk.Button({ cursor: Gdk.Cursor.new_from_name('pointer', null) });
+                        connectBtn.set_child(new Gtk.Label({ label: 'Connect' }));
+                        connectBtn.connect('clicked', submit);
+
+                        const row = new Gtk.Box({ spacing: 6 });
+                        row.append(entry);
+                        row.append(connectBtn);
+                        popover.set_child(row);
+                        popover.set_parent(self);
+
+                        const p = popover;
+                        p.connect('show', () => openPopovers.add(p));
+                        p.connect('closed', () => openPopovers.delete(p));
+
+                        self.connect('unrealize', () => {
+                            openPopovers.delete(p);
+                            p.unparent();
+                        });
+                    }}
+                >
+                    <box spacing={8}>
+                        <image iconName={net.icon}/>
+                        <label hexpand halign={Gtk.Align.START} label={net.ssid} ellipsize={3}/>
+                        {net.security !== 'open' && <image iconName="network-wireless-encrypted-symbolic"/>}
                     </box>
-                </box>;
+                </button>;
             }}
         </For>
     </box>
