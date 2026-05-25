@@ -22,7 +22,7 @@ let
   '';
 
   baseKernel = pkgs.linuxManualConfig {
-    inherit (pkgs.linux_6_19) version src modDirVersion;
+    inherit (pkgs.linux_7_0) version src modDirVersion;
     configfile = ./rocknix-linux.conf;
     kernelPatches = map (p: {
       name = builtins.baseNameOf p;
