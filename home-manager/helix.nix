@@ -39,6 +39,7 @@
             hidden = false; # show hidden files
             git-global = false; # not necessary, we dont modify this
             git-exclude = false; # ^
+            ignore = false; # ^
           };
           search.smart-case = false; # do NOT be case sensitive no matter what
 
@@ -48,13 +49,18 @@
           gutters = [ "diagnostics" "spacer" "line-numbers" "spacer" "diff" ];
           soft-wrap.enable = true;
         };
-        keys = {
-          normal = {
+        keys = let
+          keybinds = {
             C-z = "undo"; # control+Z
             C-S-z = "redo"; # control+shift+Z
             A-tab = "goto_last_accessed_file"; # alt-tab, goto_last_modified_file
             C-tab = "buffer_picker"; # ctrl+tab
+            C-s = ":write"; # ctrl+S save
           };
+        in {
+          normal = keybinds;
+          insert = keybinds;
+          select = keybinds;
         };
       };
       themes.nord = {
@@ -63,8 +69,11 @@
       };
 
       languages = {
-
         # if you are building this please remove the following language, its not bundled in this flake as it is private for now
+        # cd into skript-syntax-highlighting
+        # nix-shell -p tree-sitter nodejs --run "tree-sitter generate"
+        # hx --grammar fetch
+        # nix-shell -p gcc --run "hx --grammar build"
         language = [{
           name = "skript";
           scope = "source.skript";
