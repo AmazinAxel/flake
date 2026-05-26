@@ -5,6 +5,7 @@ import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
+import { streamingMode } from '../notifications/notifications';
 
 type WifiNet = { ssid: string; security: string; icon: string; connected: boolean; known: boolean; path: string };
 
@@ -186,14 +187,26 @@ const scan = async () => {
 };
 
 export default () =>
-    <box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
-        <box spacing={4} marginBottom={7}>
+    <box orientation={Gtk.Orientation.VERTICAL}>
+        <label
+            visible={streamingMode}
+            label="Streaming mode enabled"
+            halign={Gtk.Align.CENTER}
+        />
+        <box visible={streamingMode.as(d => !d)} orientation={Gtk.Orientation.VERTICAL}>
+        <box>
             <button
                 hexpand halign={Gtk.Align.START}
-                cssClasses={wifiOn.as(on => on ? ['active'] : [])}
+                cssClasses={wifiOn.as(on => on ? ['active', 'wifiButton'] : ['unpowered', 'wifiButton'])}
                 onClicked={toggleWifi}
-		cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                $={(self) => { self.connect('map', refresh); }}
+                cursor={Gdk.Cursor.new_from_name('pointer', null)}
+                $={(self) => {
+                    self.connect('map', refresh);
+                    currentAsideWindow.subscribe(() => {
+                        if (currentAsideWindow.peek() === 'wifi' && !wifiOn())
+                            self.grab_focus();
+                    });
+                }}
             >
                 <image iconName={wifiOn.as(on =>
                     on ? 'network-wireless-symbolic' : 'network-wireless-offline-symbolic'
@@ -202,10 +215,12 @@ export default () =>
             <button
                 onClicked={scan}
                 sensitive={scanning.as(s => !s)}
+                visible={wifiOn}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
+                cssClasses={scanning.as(s => s ? ['active'] : [])}
                 $={(self) => {
                     currentAsideWindow.subscribe(() => {
-                        if (currentAsideWindow.peek() === 'wifi')
+                        if (currentAsideWindow.peek() === 'wifi' && wifiOn())
                             self.grab_focus();
                     });
                 }}
@@ -252,13 +267,9 @@ export default () =>
                         entry = new Gtk.Entry({ hexpand: true, visibility: false, placeholderText: 'Password' });
                         entry.connect('activate', submit);
 
-                        const connectBtn = new Gtk.Button({ cursor: Gdk.Cursor.new_from_name('pointer', null) });
-                        connectBtn.set_child(new Gtk.Label({ label: 'Connect' }));
-                        connectBtn.connect('clicked', submit);
-
-                        const row = new Gtk.Box({ spacing: 6 });
+                        // todo jsx components
+                        const row = new Gtk.Box();
                         row.append(entry);
-                        row.append(connectBtn);
                         popover.set_child(row);
                         popover.set_parent(self);
 
@@ -272,7 +283,7 @@ export default () =>
                         });
                     }}
                 >
-                    <box spacing={8}>
+                    <box spacing={10}>
                         <image iconName={net.icon}/>
                         <label hexpand halign={Gtk.Align.START} label={net.ssid} ellipsize={3}/>
                         {net.security !== 'open' && <image iconName="network-wireless-encrypted-symbolic"/>}
@@ -280,4 +291,5 @@ export default () =>
                 </button>;
             }}
         </For>
+        </box>
     </box>

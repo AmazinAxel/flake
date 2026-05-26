@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4'
 import { createBinding, createState } from "ags"
-import { DND } from '../../notifications/notifications';
+import { streamingMode } from '../../notifications/notifications';
 import { focus }  from '../../launcher/launcher';
 import Bluetooth from 'gi://AstalBluetooth';
 import Wp from 'gi://AstalWp';
@@ -31,8 +31,8 @@ const volumeIconBind = createBinding(speaker, 'volumeIcon')
 const VolumeIcon = () =>
   <image iconName={volumeIconBind}/>
 
-const DNDIcon = () =>
-  <image visible={DND} iconName='notifications-disabled-symbolic'/>
+const StreamingModeIcon = () =>
+  <image visible={streamingMode} iconName='notifications-disabled-symbolic'/>
 
 const FocusIcon = () =>
   <image visible={focus} iconName='emoji-flags-symbolic'/>
@@ -41,7 +41,6 @@ let [ networkIcon, setNetworkIcon ] = createState('');
 
 const updateNetworkIcon = () => {
   const state = readFile('/sys/class/net/wlan0/operstate').trim();
-  //console.log('changed', state)
 
   setNetworkIcon(
       state === 'up'
@@ -62,6 +61,6 @@ export const Status = () =>
     <BatteryWidget/>
     <NetworkIcon/>
     <BluetoothIcon/>
-    <DNDIcon/>
+    <StreamingModeIcon/>
     <FocusIcon/>
   </box>

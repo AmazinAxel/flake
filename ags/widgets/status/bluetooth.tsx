@@ -41,7 +41,7 @@ const nameSubstitute = (name: string) => {
 
 export default () =>
     <box orientation={Gtk.Orientation.VERTICAL}>
-        <box spacing={4} marginBottom={7}>
+        <box>
             <button
                 hexpand halign={Gtk.Align.START}
                 cursor={Gdk.Cursor.new_from_name('pointer', null)}
@@ -64,6 +64,12 @@ export default () =>
                 }}
                 visible={bluetoothOn}
                 cssClasses={discovering.as((d) => d ? ['active'] : [])}
+                $={(self) => {
+                    currentAsideWindow.subscribe(() => {
+                        if (currentAsideWindow.peek() === 'bluetooth' && bluetooth.isPowered)
+                            self.grab_focus();
+                    });
+                }}
             >
                 <image iconName="view-refresh-symbolic"/>
             </button>

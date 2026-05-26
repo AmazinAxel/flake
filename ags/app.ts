@@ -21,7 +21,7 @@ import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
 import recordMenu from './widgets/record/record';
-import { notifications, clearOldestNotification, DND, setDND } from './widgets/notifications/notifications';
+import { notifications, clearOldestNotification, streamingMode, setStreamingMode } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/status/quicksettings/quicksettings';
@@ -60,7 +60,7 @@ app.start({
         initMedia();
         reminders();
 
-        launcher(); // ran late so it has more time to add all apps
+        setTimeout(launcher, 1000); // ran late so it has more time to add all apps
         startClippingService(); // Run last so if not installed it wont impact start
     },
     requestHandler(req, res) {
@@ -112,8 +112,8 @@ app.start({
                 setStatusMargin(app.get_window('status')?.visible ? 0 : 41);
                 app.toggle_window('status');
                 break;
-            case "toggleDND":
-                setDND(!DND.peek())
+            case "toggleStreamingMode":
+                setStreamingMode(!streamingMode.peek())
                 break;
             case "toggleFocus":
                 setIsFocused(!focus.peek());

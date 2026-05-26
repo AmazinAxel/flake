@@ -41,10 +41,10 @@
     margin: 0.5rem;
     -gtk-icon-size: 3rem;
 }
-.bluetoothButton { transition: none; }
+.bluetoothButton, .wifiButton { transition: none; }
 
-/* Network */
-#bluetooth button, #network button { margin: 4px; }
+/* Aside lists */
+#asideStatus button { margin: 0.22rem; }
 
 /* Recording indicator */
 .recIndicator {

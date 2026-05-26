@@ -5,7 +5,7 @@ import { notificationItem } from './notificationItem';
 import { createState, For, type Accessor } from 'ags';
 
 const { TOP, RIGHT } = Astal.WindowAnchor;
-export const [ DND, setDND ] = createState(false);
+export const [ streamingMode, setStreamingMode ] = createState(false);
 
 const map: Map<number, Notifd.Notification> = new Map();
 const reveals: Map<number, { reveal: Accessor<boolean>, setReveal: (v: boolean) => void }> = new Map();
@@ -17,7 +17,7 @@ const notify = () =>
 	setNotificationList([...map.values()].reverse());
 
 const setKey = (key: number, value: Notifd.Notification) => {
-	if (!DND.peek()) {
+	if (!streamingMode.peek()) {
 		map.set(key, value);
 		if (!reveals.has(key)) {
 			const [reveal, setReveal] = createState(true);

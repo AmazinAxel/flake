@@ -81,7 +81,7 @@ in {
       "control+${mod}+c" = "exec ags request toggleWifi";
       "${mod}+A" = "exec ags toggle chat";
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
-      "${mod}+S" = "exec ags request toggleDND";
+      "${mod}+S" = "exec ags request toggleStreamingMode";
       "${mod}+L" = "exec ${toggleTheme}";
       "${mod}+T" = "exec ags request toggleFocus";
       "${mod}+Z" = "exec ags request toggleInfoArea";

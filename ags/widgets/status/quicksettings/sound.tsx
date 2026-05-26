@@ -40,7 +40,7 @@ const nameSubstitute = (name: string) => {
 const speakersBind = createBinding(audio, 'speakers');
 
 export const SinkSelector = () =>
-    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['sinkSelector']} spacing={5}
+    <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['sinkSelector']}
         $={(self) => { self.connect('map', () => self.get_first_child()?.grab_focus()); }}
     >
         <For each={speakersBind}>
