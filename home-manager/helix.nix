@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  #xdg.configFile."helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries;
+
   programs = {
     helix = {
       enable = true;
@@ -59,17 +61,33 @@
         "inherits" = "nord";
         "ui.background" = { }; # transparent background
       };
-      #languages.language = [
-      #  { name = "javascript"; auto-format = true; }
-      #  { name = "typescript"; auto-format = true; }
-      #  { name = "tsx"; auto-format = true; }
-      #];
-    };
-    nnn = {
-      enable = true;
-      bookmarks = {
-        d = "~/Downloads";
+
+      languages = {
+
+        # if you are building this please remove the following language, its not bundled in this flake as it is private for now
+        language = [{
+          name = "skript";
+          scope = "source.skript";
+          file-types = [ "sk" ];
+          roots = [ ];
+          comment-token = "#";
+          indent = {
+            tab-width = 4;
+            unit = "\t";
+          };
+          grammar = "skript";
+        }];
+        grammar = [{
+          name = "skript";
+          source.path = "${./skript-syntax-highlighting}";
+        }];
       };
     };
+    #nnn = {
+    #  enable = true;
+    #  bookmarks = {
+    #    d = "~/Downloads";
+    #  };
+    #};
   };
 }

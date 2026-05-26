@@ -7,7 +7,6 @@
     ./foot.nix
     ./gtk.nix
     ./helix.nix
-    ./kakoune.nix
     ./mpd.nix
     ./swappy.nix
     ./vscode.nix

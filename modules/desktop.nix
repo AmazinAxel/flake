@@ -44,16 +44,10 @@
       })
       claude-code
 
-      # vim
-      ripgrep # grep
-      yazi # search
-      viu # neovide images
-
       # Helix packages
       marksman # markdown
       typescript-language-server # some LSP stuff
       vscode-langservers-extracted # more lSP stuff
-
 
       inputs.planning.packages.${pkgs.stdenv.hostPlatform.system}.default
 
