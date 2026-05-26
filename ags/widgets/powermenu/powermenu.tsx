@@ -19,7 +19,7 @@ export default () => inputControl('powermenu', () =>
          app.get_window('powermenu')?.hide();
          switch (key) {
             case 115: // S - sleep
-               setIsLocked(true);
+               //setIsLocked(true); // todo make more reliable
                execAsync('systemctl suspend');
                break;
             case 113: // Q - power off

@@ -2,6 +2,10 @@
 
 let
   retroarchCustom = pkgs.retroarch-bare.overrideAttrs (old: {
+    # dbus is needed so retroarch's bluez D-Bus bluetooth driver compiles in
+    # (the alternative — bluetoothctl driver — screen-scrapes CLI output and
+    # broke when bluez 5.86 changed non-interactive output flushing).
+    buildInputs = (old.buildInputs or []) ++ [ pkgs.dbus ];
     configureFlags = old.configureFlags ++ [
       "--enable-opengles" # Mali GPU on H700 supports GLES, not full desktop GL
       "--enable-opengles3"
@@ -11,6 +15,7 @@ let
       "--enable-threads" # audio
       "--enable-wifi" # wifi menu
       "--enable-bluetooth" # bt menu
+      "--enable-dbus" # enables the bluez D-Bus bluetooth driver (avoids fragile bluetoothctl scraping)
 
       # unused
       "--disable-v4l2" # camera
@@ -76,11 +81,23 @@ in {
       alsa.enable = true;
       pulse.enable = true;
     };
+    # todo modularize
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
+    };
   };
 
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
+    settings.General.Experimental = true;
   };
 
   security.polkit.extraConfig = ''
@@ -130,6 +147,31 @@ in {
     "nowatchdog"
     "nmi_watchdog=0"
   ];
+  # rtw88 deep low-power state causes intermittent WiFi drops on RTL8821CS.
+  boot.extraModprobeConfig = ''
+    options rtw88_core disable_lps_deep=Y
+  '';
+
+  # RTL8821CS WiFi+BT combo: firmware LPS entry causes coex h2c timeouts spamming dmesg
+  # ("coex request time out", "failed to send h2c command", "firmware failed to leave lps state").
+  # disable_lps_deep alone isn't enough — regular LPS still triggers the bug. Force power_save off
+  # via iw once wlan0 exists. Restart on wlan0 (re)appearance so it sticks across rfkill toggles.
+  systemd.services.wifi-no-powersave = {
+    description = "Disable WiFi power_save (RTL8821CS BT-coex workaround)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" "NetworkManager.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "wifi-no-powersave" ''
+        for _i in 1 2 3 4 5 6 7 8 9 10; do
+          [ -d /sys/class/net/wlan0 ] && break
+          sleep 1
+        done
+        ${pkgs.iw}/bin/iw dev wlan0 set power_save off || true
+      '';
+    };
+  };
   boot.kernel.sysctl = {
     "kernel.sched_autogroup_enabled" = 0;
     "vm.dirty_ratio" = 20;

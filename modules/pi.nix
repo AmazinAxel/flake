@@ -22,12 +22,7 @@
       enable = true;
       wifi.powersave = false; # Stop network drops
     };
-    wireless = {
-      iwd.enable = lib.mkForce false;
-      enable = true;
-    };
-    dhcpcd.enable = lib.mkForce true; # for wpa_supplicant
-    #iwd.settings.General.AddressRandomization = "disabled"; # not needed on private network
+    wireless.iwd.enable = lib.mkForce false;
   };
 
   hardware = {

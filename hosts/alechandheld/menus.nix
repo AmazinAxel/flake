@@ -187,7 +187,7 @@ in {
 
   # ── alechandheld service (replaces cage.service) ─────────────────────────
   systemd.services.alechandheld = {
-    description = "Alechandheld Gaming Session (KMS/DRM)";
+    description = "alechandheld";
     after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "systemd-logind.service" ];
     wants     = [ "systemd-logind.service" ];
     wantedBy  = [ "multi-user.target" ];

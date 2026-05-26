@@ -317,12 +317,38 @@ let
       fi
 
       # ── Launch ────────────────────────────────────────────────────────────
+      # Ensure helper scripts that ship with PortMaster are executable on every
+      # launch (the first-run chmod block is gated on a version marker, so newly
+      # added helpers in port releases would otherwise stay unexecutable).
+      for f in batocera_say.sh muos_say.sh \
+               PortMaster.sh pugwash harbourmaster oga_controls; do
+        [ -f "$PMDIR/$f" ] && chmod +x "$PMDIR/$f" 2>/dev/null || true
+      done
+
+      # Replace PortMaster's ask_password with a no-op stub. The bundled script
+      # calls systemd-ask-password, which inotify-watches
+      # /run/user/1001/systemd/ask-password/ — that path doesn't exist inside
+      # the bwrap sandbox, so the watch fails and the port script aborts. With
+      # ESUDO="" no password is ever needed, so a stub is safe.
+      cat > "$PMDIR/ask_password" <<'EOF'
+      #!/bin/sh
+      exit 0
+      EOF
+      chmod +x "$PMDIR/ask_password"
+
       # Put mount/umount shims first so port scripts' squashfs mounts go
       # through squashfuse instead of mount(8) (which requires root).
       export PATH="${mountShimDir}/bin:$PATH"
+      # Also expose the PortMaster dir on PATH so port scripts that call
+      # `ask_password` (or other PM helpers) without a full path can find it.
+      export PATH="$PMDIR:$PATH"
       export HOME=/home/alec
       export XDG_RUNTIME_DIR=/run/user/1001
       export PULSE_SERVER=unix:/run/user/1001/pulse/native
+      # Force SDL through PulseAudio so games follow the default sink (incl. Bluetooth).
+      # Without this, SDL2 may pick the ALSA backend and bind directly to hw:0,
+      # bypassing PipeWire's BT routing.
+      export SDL_AUDIODRIVER=pulseaudio
       export SDL_VIDEODRIVER=kmsdrm
       export SDL_VIDEO_DRIVER=kmsdrm
       export LIBSEAT_BACKEND=direct
