@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  #xdg.configFile."helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries;
+  xdg.configFile."helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries; # needed for skript highlighting
 
   programs = {
     helix = {
