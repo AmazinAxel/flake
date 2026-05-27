@@ -7,6 +7,7 @@ import GLib from 'gi://GLib';
 import { ClipboardItem } from './clipboardItem';
 import BackgroundSection from '../../lib/backgroundSection';
 import inputControl from '../../lib/inputControl';
+import { streamingMode } from '../notifications/notifications';
 
 const list = new Gtk.ListBox;
 
@@ -28,21 +29,26 @@ monitorFile('/home/alec/.cache/cliphist/db', (_, event) =>
     (event == Gio.FileMonitorEvent.CHANGES_DONE_HINT) && refreshItems()
 );
 
+streamingMode.subscribe(() => refreshItems()); // condense/uncondense list when streamer mode changes
+
 const refreshItems = async () => {
     const entries = await execAsync('cliphist list')
-        .then((str) => str.split('\n')
-            .map((entry) => {
-                const [id, content] = entry.split('\t');
-                return { id: id, content: content };
-            })
-        ).catch(() => []);
+    .then((str) => str.split('\n')
+        .map((entry) => {
+            const [id, content] = entry.split('\t');
+            return { id: id, content: content };
+        })
+    ).catch(() => []);
 
-        list.remove_all();
+    // only show first two entries if streaming mode enabled
+    const visibleEntries = streamingMode.peek() ? entries.slice(0, 2) : entries;
 
-        if (entries[0].content) // Only remap if there is clipboard history to show
-            entries.forEach((entry) =>
-                list.append(ClipboardItem(entry.id, entry.content) as Gtk.Widget)
-            );
+    list.remove_all();
+
+    if (visibleEntries[0]?.content) // Only remap if there is clipboard history to show
+        visibleEntries.forEach((entry) =>
+            list.append(ClipboardItem(entry.id, entry.content) as Gtk.Widget)
+        );
 };
 refreshItems();
 
