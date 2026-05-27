@@ -60,7 +60,7 @@ app.start({
         initMedia();
         reminders();
 
-        setTimeout(launcher, 1000); // ran late so it has more time to add all apps
+        launcher();
         startClippingService(); // Run last so if not installed it wont impact start
     },
     requestHandler(req, res) {
