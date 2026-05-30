@@ -103,8 +103,8 @@ const getObjects = async (): Promise<ObjMap> => {
             result[path][iface] = Object.fromEntries(
                 Object.entries(props as Record<string, unknown>).map(([k, v]) => [k, unwrap(v)])
             );
-        }
-    }
+        };
+    };
     return result;
 };
 
@@ -117,8 +117,8 @@ const refresh = async () => {
             if (ifaces[deviceInterface]?.['Name'] === station) {
                 devicePath = path;
                 if (stationInterface in ifaces) stationPath = path;
-            }
-        }
+            };
+        };
 
         const powered: boolean = objects[devicePath]?.[deviceInterface]?.['Powered'] ?? true;
         setWifiOn(powered);
@@ -126,7 +126,7 @@ const refresh = async () => {
         if (!powered || !stationPath) {
             setNetworks([]);
             return;
-        }
+        };
 
         const ordered: [string, number][] = await busctlJSON(stationPath, stationInterface, 'GetOrderedNetworks');
 
@@ -150,7 +150,7 @@ const refresh = async () => {
         );
     } catch(e) {
         console.error('Network refresh error:', e);
-    }
+    };
 };
 
 const toggleWifi = async () => {
@@ -167,7 +167,7 @@ const toggleWifi = async () => {
         else await refresh();
     } catch(e) {
         console.error('WiFi toggle error:', e);
-    }
+    };
 };
 
 const scan = async () => {
@@ -183,7 +183,7 @@ const scan = async () => {
         console.error('Scan error:', e);
         unsubscribeScan();
         setScanning(false);
-    }
+    };
 };
 
 export default () =>

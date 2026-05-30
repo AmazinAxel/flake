@@ -15,7 +15,7 @@ let
 in {
   systemd = {
     services = {
-      # requires /etc/homelab/webserver.env with AIRNOW_TOKEN=
+      # /etc/homelab/webserver.env with AIRNOW_TOKEN=
       webserver = service // {
         path = [ pkgs.util-linux ];
         serviceConfig = service.serviceConfig // privileges // {
@@ -25,7 +25,6 @@ in {
       };
       homelabDisplay = service // {
         serviceConfig = service.serviceConfig // privileges // {
-          #ExecStartPre = "/bin/sh -c 'until test -c /dev/spidev0.0; do sleep 1; done'";
           ExecStart = "${homelabDisplay}/bin/homelabDisplay";
         };
       };

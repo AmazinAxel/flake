@@ -17,7 +17,7 @@
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000a", MODE="0666"
     SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000a", MODE="0666"
-  '';
+  ''; # todo tty needed?
 
   users.extraGroups.gpio = { };
   users.users.alec.extraGroups = [ "gpio" ];
@@ -44,7 +44,7 @@
     };
   };
 
-  boot.kernelModules = [ "cdc_acm" ];  # dwc2 will autoload now
+  boot.kernelModules = [ "cdc_acm" ]; # dwc2 TODO needed?
 
   # Networking
   networking = {

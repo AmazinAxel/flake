@@ -32,7 +32,7 @@
         wireplumber
 
         pkgs.gtksourceview5 # Chat code syntax highlighting
-        pkgs.glib-networking # AI chat
+        pkgs.glib-networking # AI chat todo remove
         pkgs.brightnessctl
         pkgs.sway # swaymsg IPC
         pkgs.iwd # wifi control

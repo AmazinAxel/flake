@@ -1,7 +1,4 @@
 { pkgs, lib, modulesPath, ... }: {
-  # nix build .#nixosConfigurations.alechomelab.config.system.build.sdImage
-  #imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
-
   boot = {
     loader = { # Raspi boot
       systemd-boot.enable = false;
@@ -12,7 +9,7 @@
       };
     };
 
-    initrd.systemd.enable = false; # necessary for boot, fail to start closure otherwise!!
+    initrd.systemd.enable = false; # necessary for boot, fail to start closure otherwise
     supportedFilesystems = lib.mkForce [ "ext4" ]; # dont build zfs!!
     initrd.supportedFilesystems = lib.mkForce [ "ext4" ];
   };

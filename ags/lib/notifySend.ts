@@ -4,7 +4,7 @@ interface NotifyAction {
     id: number,
     label: string,
     command: string
-}
+};
 
 interface NotifySendProps {
     title: string,
@@ -12,7 +12,7 @@ interface NotifySendProps {
     appName?: string,
     category?: string,
     actions?: NotifyAction[]
-}
+};
 
 const escapeShellArg = (arg: string): string => `'${arg?.replace(/'/g, '\'\\\'\'')}'`;
 

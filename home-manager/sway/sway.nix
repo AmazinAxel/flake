@@ -101,7 +101,6 @@
           { window_type = "utility"; }
           { window_type = "toolbar"; }
           { window_type = "splash"; }
-#          { app_id = "xdg-desktop-portal-gtk"; }
           { app_id = "nemo"; } # file browser
           { app_id = "foot-float"; } # terminal
           { app_id = "org.gnome.FileRoller"; } # file extraction dialogs
@@ -113,7 +112,6 @@
         border = 3;
         titlebar = false;
       };
-      #output."*".adaptive_sync = "on"; # VRR
 
       startup = [
         { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_DATA_DIRS PATH"; } # todo needed?

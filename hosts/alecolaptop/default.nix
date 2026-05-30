@@ -126,15 +126,6 @@
         SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000a", MODE="0666"
         SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000a", MODE="0666"
       '';
-      #packages = [ # micro:bit
-      #  (pkgs.writeTextFile {
-      #    name = "microbit_udev";
-      #    text = ''
-      #      SUBSYSTEM=="usb", ATTR{idVendor}=="0d28", MODE="0664", TAG+="uaccess"
-      #    '';
-      #    destination = "/etc/udev/rules.d/50-microbit.rules";
-      #  })
-      #];
     };
   };
 }

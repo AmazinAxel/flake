@@ -1,5 +1,5 @@
-import app from "ags/gtk4/app"
-import { Gdk, Gtk } from "ags/gtk4";
+import app from "ags/gtk4/app";
+import { Gtk } from "ags/gtk4";
 import { exec, execAsync } from 'ags/process';
 import { createState } from 'ags';
 
@@ -10,7 +10,7 @@ export const [ playlistName, setPlaylistName ] = createState('');
 
 // These playlists match with the folder names in ~/Music
 const playlists =      ['Study',  'Focus',  'Synthwave', 'SynthAmbient', 'Ambient'];
-const playlistColors = ['bf616a', '5e81ac', 'b48ead',    'ebcb8b',       '81a1c1']
+const playlistColors = ['bf616a', '5e81ac', 'b48ead',    'ebcb8b',       '81a1c1'];
 
 export const updTrack = (direction: musicAction) => {
     exec('mpc pause');
@@ -74,7 +74,7 @@ export const Media = () =>
                 #status #media {
                     border: 0.15rem shade(#${color}, 1.15) solid;
                 }
-            `)
+            `);
         })
     }>
     <Gtk.EventControllerScroll

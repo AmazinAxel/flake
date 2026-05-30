@@ -1,6 +1,6 @@
 { lib, ... }: {
   programs = {
-    tmux = { 
+    tmux = {  # TODO?
       enable = true;
       prefix = "C-a";
       keyMode = "vi";

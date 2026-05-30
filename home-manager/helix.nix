@@ -1,7 +1,5 @@
 { pkgs, ... }:
 {
-  xdg.configFile."helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries; # needed for skript highlighting
-
   programs = {
     helix = {
       enable = true;
@@ -99,4 +97,5 @@
     #  };
     #};
   };
+  xdg.configFile."helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries; # needed for skript highlighting
 }

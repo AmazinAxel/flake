@@ -13,5 +13,5 @@ rawMonitors.subscribe(() => {
     } else {
         // debounce monitor additions to fix bug
         timeout(1000, () => setMonitors([...rawMonitors.peek()]));
-    }
+    };
 });

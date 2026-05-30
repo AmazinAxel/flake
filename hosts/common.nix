@@ -2,7 +2,7 @@
   users.users.alec = { # Default user
     isNormalUser = true;
     extraGroups = [ "wheel" "audio" "video" "dialout" ];
-    initialPassword = "nixos";
+    initialPassword = "nixos"; # must be changed implicitly with passwd!!!
   };
 
   boot = {
@@ -19,7 +19,9 @@
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     kernelParams = [ "nowatchdog" "nmi_watchdog=0" ];
     kernelModules = [ "tcp_bbr" ];
-    kernel.sysctl = { # faster network
+
+    # faster networking
+    kernel.sysctl = {
       "net.ipv4.tcp_congestion_control" = "bbr";
       "net.core.default_qdisc" = "fq"; # goes with BBR
       "net.ipv4.tcp_fastopen" = 3; # saves a round-trip
@@ -41,7 +43,6 @@
         Network.NameResolvingService = "systemd";
         Scan.InitialPeriodicScanInterval = 10;
         Scan.MaximumPeriodicScanInterval = 30;
-        #Scan.DisablePeriodicScan = true; # not needed
       };
     };
   };
@@ -71,7 +72,7 @@
       config = {
         init.defaultBranch = "main";
         color.ui = true;
-        core.editor = "code";
+        core.editor = "hx";
         credential.helper = "store";
         github.user = "AmazinAxel"; # Github
         user.name = "AmazinAxel"; # Git
@@ -87,7 +88,6 @@
   nixpkgs.config.allowUnfree = true;
   nix = {
     channel.enable = false; # we only use flakes
-    #nixPath = lib.mkForce [ "nixpkgs=${pkgs.path}" ];
 
     settings = {
       experimental-features = "nix-command flakes";
@@ -105,7 +105,6 @@
       settings.Resolve = {
         MulticastDNS = "no"; # avahi handles mDNS
         DNS = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com";
-        #FallbackDNS = "8.8.8.8#dns.google 8.8.4.4#dns.google";
         DNSOverTLS = "opportunistic";
         Domains = "~."; # override DHCP-provided DNS (ISP)
       };

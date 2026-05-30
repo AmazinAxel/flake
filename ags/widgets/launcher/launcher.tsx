@@ -1,13 +1,13 @@
 import Apps from 'gi://AstalApps'
-import { Gtk, Gdk } from 'ags/gtk4';
+import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { createState, For } from 'ags';
 import BackgroundSection from "../../lib/backgroundSection";
 import inputControl from '../../lib/inputControl';
 
-const apps = new Apps.Apps()
+const apps = new Apps.Apps();
 let textBox: Gtk.Entry;
-const [ appsList, setAppsList ] = createState(new Array<Apps.Application>())
+const [ appsList, setAppsList ] = createState(new Array<Apps.Application>());
 setAppsList(apps.fuzzy_query('').slice(0, 5));
 
 export const [ focus, setIsFocused ] = createState(false);
@@ -20,7 +20,10 @@ const search = (text: string) => setAppsList(
     apps.fuzzy_query(text).filter(a => !isBlocked(a)).slice(0, 5)
 );
 
-const hide = () => app.toggle_window("launcher");
+const launchApp = (selectedApp: Apps.Application) => {
+    selectedApp.launch()
+    app.toggle_window("launcher");
+};
 
 export default () => inputControl('launcher', () =>
     <BackgroundSection
@@ -29,10 +32,7 @@ export default () => inputControl('launcher', () =>
             $type="overlay"
             primaryIconName="system-search-symbolic"
             placeholderText="Search"
-            onActivate={() => {
-                apps.fuzzy_query(textBox.text)?.[0].launch();
-                hide();
-            }}
+            onActivate={() => launchApp(apps.fuzzy_query(textBox.text)?.[0])}
             onNotifyText={({ text }) => search(text)}
             $={self => {
                 textBox = self;
@@ -44,17 +44,9 @@ export default () => inputControl('launcher', () =>
             <For each={appsList}>
                 {(app) => (
                     <button
-                        onClicked={() => { app.launch(); hide(); }}
+                        onClicked={() => launchApp(app)}
                         cssClasses={["button"]}
                     >
-                        <Gtk.EventControllerKey
-                            onKeyPressed={(_, key) => {
-                                if (key == Gdk.KEY_Return) {
-                                    app.launch();
-                                    hide();
-                                }
-                            }}
-                        />
                         <box>
                             <image iconName={app.iconName} />
                             <box valign={Gtk.Align.CENTER}>

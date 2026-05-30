@@ -23,6 +23,8 @@ const clearChat = () => {
   app.get_window('chat')?.set_default_size(width.peek(), -1)
 };
 
+// MAJOR TODO embed webview instead
+
 // Check for enter key but allow newlines
 const handleKeyPress = (keyval: number, state: Gdk.ModifierType) => {
   const shiftHeld = (state & Gdk.ModifierType.SHIFT_MASK) !== 0;

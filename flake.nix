@@ -74,13 +74,12 @@
         ];
       };
 
-      # Servers, build using
+      # headless devices, build using
       # nixos-rebuild switch --flake .#<hostname> --sudo --ask-sudo-password --target-host alec@<hostname>.local
       # OR nix build .#nixosConfigurations.<hostname>.config.system.build.sdImage
 
       # Homelab (Zero 2W)
       "alechomelab" = nixpkgs.lib.nixosSystem {
-        #specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alechomelab/default.nix
           {
@@ -98,9 +97,17 @@
         ];
       };
 
+      # VPS
+      "alecvps" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/alecvps/default.nix
+          home-manager.nixosModules.home-manager
+        ];
+      };
+
       # Permablot (custom printerblot printer, Zero 2W)
       "permablot" = nixpkgs.lib.nixosSystem {
-        #specialArgs = { inherit inputs; };
         modules = [
           ./hosts/permablot/default.nix
         ];
