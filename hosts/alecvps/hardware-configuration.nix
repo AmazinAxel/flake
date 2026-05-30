@@ -5,6 +5,7 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
+  boot.zfs.forceImportRoot = false; # SET TO TRUE TODO
   fileSystems."/" = {
     device = "rpool/data/subvol-112-disk-0";
     fsType = "zfs";

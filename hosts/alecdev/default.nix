@@ -16,15 +16,7 @@
   ];
 
   users.users.alec.shell = pkgs.fish; # default ssh shell
-  programs = {
-    fish.enable = true; # fix eval on default shell
-
-    # needed for ssh keys?? not sure
-    programs.gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
-  };
+  programs.fish.enable = true; # ^
 
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {
