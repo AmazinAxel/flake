@@ -1,7 +1,8 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   imports = [
-    ./scripts.nix
+    #./scripts.nix # todo add some helper scripts to change server and pull/push
     ../common.nix
+    ./hardware-configuration.nix
   ];
 
   environment.systemPackages = [
@@ -15,7 +16,7 @@
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {
     imports = [
-      ./helix.nix
+      ../../home-manager/helix.nix
       ../../home-manager/fish.nix
     ];
     home.stateVersion = "26.05";
@@ -33,5 +34,5 @@
 
   # Networking
   networking.hostName = "alecvps";
-  system.stateVersion = "26.05";
+  system.stateVersion = "25.11";
 }
