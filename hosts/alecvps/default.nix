@@ -23,28 +23,24 @@ in {
   networking.wireless.iwd.enable = lib.mkForce false; # no wifi in a container todo use mkdefault
 
   boot.loader.systemd-boot.enable = false; # fix boot eval
-  #boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
   zramSwap.enable = false; # cant use in proxmox
 
   services.openssh = {
     enable = true; # todo remove its redundant
     openFirewall = true;
     settings = {
-      #PermitRootLogin = "prohibit-password"; # for normal user??
+      PermitRootLogin = "prohibit-password";
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
     };
   };
-  users.users = {
-    alec.openssh.authorizedKeys.keys = [ key ];
-    root.openssh.authorizedKeys.keys = [ key ]; # todo dont need?
-  };
+  users.users.root.openssh.authorizedKeys.keys = [ key ];
 
   services.minecraft-server = {
     enable = true;
     dataDir = "/var/lib/mcserver";
     package = pkgs.papermc;
-    jvmOpts = "-Xms2048M -Xmx2048M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"; # jar is ran with --nogui
+    jvmOpts = "-Xmx1567M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"; # jar is ran with --nogui
     openFirewall = true;
     eula = true;
   };
