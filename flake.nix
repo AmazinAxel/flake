@@ -99,10 +99,8 @@
 
       # VPS
       "alecvps" = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alecvps/default.nix
-          home-manager.nixosModules.home-manager
         ];
       };
 

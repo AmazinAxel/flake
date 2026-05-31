@@ -14,24 +14,13 @@ in {
     manageHostName = true; # keep networking.hostName
   };
 
-  environment.systemPackages = [
-    (pkgs.writeScriptBin "fetch" (builtins.readFile ../../scripts/fetch.fish)) # called by fish
-    (pkgs.writeScriptBin "nx-gc" (builtins.readFile ../../scripts/nx-gc.fish))
-  ];
-
-  users.users.alec.shell = pkgs.fish; # default ssh shell
-  programs = {
-    fish.enable = true; # fix eval on default shell
-
-    # needed for ssh keys?? not sure
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
+  # needed for ssh keys?? not sure
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
   };
 
-  networking.wireless.iwd.enable = lib.mkForce false; # no wifi in a container
-
+  networking.wireless.iwd.enable = lib.mkForce false; # no wifi in a container todo use mkdefault
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
@@ -49,15 +38,6 @@ in {
   users.users = {
     alec.openssh.authorizedKeys.keys = [ key ];
     root.openssh.authorizedKeys.keys = [ key ]; # todo dont need?
-  };
-
-  # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
-  home-manager.users.alec = {
-    imports = [
-      ../../home-manager/helix.nix
-      ../../home-manager/fish.nix
-    ];
-    home.stateVersion = "26.05";
   };
 
   services.minecraft-server = {
