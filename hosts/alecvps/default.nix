@@ -22,7 +22,7 @@ in {
 
   networking.wireless.iwd.enable = lib.mkForce false; # no wifi in a container todo use mkdefault
 
-  #boot.loader.systemd-boot.enable = false;
+  boot.loader.systemd-boot.enable = false; # fix boot eval
   #boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
   zramSwap.enable = false; # cant use in proxmox
 
