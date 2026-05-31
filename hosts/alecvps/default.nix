@@ -1,9 +1,18 @@
-{ pkgs, lib, ... }: {
+{ modulesPath, pkgs, lib, ... }:
+let
+  key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICh1nH79rMAd7qEySygClFNsnGRsHRabisFZCD7nKYEz axel@amazinaxel.com";
+in {
   imports = [
     #./scripts.nix # todo add some helper scripts to change server and pull/push
     ../common.nix
-    ./hardware-configuration.nix
+    (modulesPath + "/virtualisation/proxmox-lxc.nix")
   ];
+
+  proxmoxLXC = {
+    privileged = false; # unprivileged container
+    manageNetwork = false; # Proxmox handles network
+    manageHostName = true; # keep networking.hostName
+  };
 
   environment.systemPackages = [
     (pkgs.writeScriptBin "fetch" (builtins.readFile ../../scripts/fetch.fish)) # called by fish
@@ -19,6 +28,27 @@
       enable = true;
       enableSSHSupport = true;
     };
+  };
+
+  networking.wireless.iwd.enable = lib.mkForce false; # no wifi in a container
+
+
+  #boot.loader.systemd-boot.enable = false;
+  #boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+  zramSwap.enable = false; # cant use in proxmox
+
+  services.openssh = {
+    enable = true; # todo remove its redundant
+    openFirewall = true;
+    settings = {
+      #PermitRootLogin = "prohibit-password"; # for normal user??
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
+  };
+  users.users = {
+    alec.openssh.authorizedKeys.keys = [ key ];
+    root.openssh.authorizedKeys.keys = [ key ]; # todo dont need?
   };
 
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
@@ -39,6 +69,25 @@
     eula = true;
   };
   environment.sessionVariables.LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.systemd ]; # fix MC startup warning
+
+  # cache DNS lookups TODO add to common.nix??
+  services.resolved.settings.Resolve = {
+    Cache = "yes";
+    CacheFromLocalhost = true;
+  };
+
+  boot.kernel.sysctl."net.ipv4.tcp_notsent_lowat" = 16384; # lower latency?
+
+  nix.settings = {
+    download-buffer-size = 268435456; # 256 MiB TODO move to common.nix
+    sandbox = false;
+  };
+
+  services.fstrim.enable = lib.mkForce false; # Proxmox handles this
+
+  fileSystems = lib.mkForce {};
+
+  nixpkgs.hostPlatform = "x86_64-linux";
 
   # Networking
   networking.hostName = "alecvps";
