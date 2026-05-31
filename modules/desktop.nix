@@ -39,9 +39,7 @@
       discord
       slack
       filezilla
-      (prismlauncher.override {
-        additionalLibs = [ pkgs.libxkbcommon ]; # TODO remove temp fix
-      })
+      prismlauncher
       claude-code
 
       # Helix packages

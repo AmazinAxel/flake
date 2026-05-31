@@ -18,6 +18,7 @@
     tmp.useTmpfs = true;
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     kernelParams = [ "nowatchdog" "nmi_watchdog=0" ];
+    blacklistedKernelModules = [ "sp5100_tco" ]; # speeds up shutdown on amd stop since it doesnt wait for watchdog
     kernelModules = [ "tcp_bbr" ];
 
     # faster networking
