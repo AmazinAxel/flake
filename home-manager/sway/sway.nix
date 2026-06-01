@@ -114,7 +114,7 @@
       };
 
       startup = [
-        { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_DATA_DIRS PATH"; } # todo needed?
+        { command = "ags run"; }
         { command = "fcitx5 -d"; }
         { command = "wl-gammarelay-rs"; }
         { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }

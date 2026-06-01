@@ -20,7 +20,7 @@
     ags = {
       enable = true;
       configDir = ../ags;
-      systemd.enable = true;
+      #systemd.enable = true; # disabled to fix launcher
 
       extraPackages = with inputs.astal.packages.x86_64-linux; [
         apps # App launcher

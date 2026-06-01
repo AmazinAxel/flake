@@ -21,7 +21,7 @@ const search = (text: string) => setAppsList(
 );
 
 const launchApp = (selectedApp: Apps.Application) => {
-    selectedApp.launch()
+    selectedApp.launch();
     app.toggle_window("launcher");
 };
 

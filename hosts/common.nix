@@ -28,6 +28,7 @@
       "net.ipv4.tcp_fastopen" = 3; # saves a round-trip
       "net.ipv4.tcp_slow_start_after_idle" = 0; # don't reset cwnd after idle
       "net.ipv4.tcp_mtu_probing" = 1; # reduces fragmentation
+      "net.ipv4.tcp_notsent_lowat" = 16384; # reduce latency
     };
     initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
   };
@@ -94,13 +95,14 @@
       experimental-features = "nix-command flakes";
       auto-optimise-store = true;
       warn-dirty = false;
+      download-buffer-size = 268435456; # 256 MiB
       trusted-users = [ "alec" ]; # for remote deployments
     };
   };
 
   services = {
     journald.extraConfig = "SystemMaxUse=20M";
-    fstrim.enable = true; # weekly SSD trim
+    fstrim.enable = lib.mkDefault true; # weekly SSD trim
     resolved = {
       enable = true;
       settings.Resolve = {

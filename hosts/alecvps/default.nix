@@ -14,55 +14,35 @@ in {
     manageHostName = true; # keep networking.hostName
   };
 
-  # needed for ssh keys?? not sure
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-  networking.wireless.iwd.enable = lib.mkForce false; # no wifi in a container todo use mkdefault
-
+  networking.wireless.iwd.enable = false; # no wifi in a container
   boot.loader.systemd-boot.enable = false; # fix boot eval
   zramSwap.enable = false; # cant use in proxmox
 
-  services.openssh = {
-    enable = true; # todo remove its redundant
-    openFirewall = true;
-    settings = {
-      PermitRootLogin = "prohibit-password";
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
+  services = {
+    fstrim.enable = false; # Proxmox handles this
+    minecraft-server = {
+      enable = true;
+      dataDir = "/var/lib/mcserver";
+      package = pkgs.papermc;
+      jvmOpts = "-Xmx1567M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"; # jar is ran with --nogui
+      openFirewall = true;
+      eula = true;
+    };
+    openssh = {
+      openFirewall = true;
+      settings = {
+        PermitRootLogin = "prohibit-password";
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+      };
     };
   };
-  users.users.root.openssh.authorizedKeys.keys = [ key ];
 
-  services.minecraft-server = {
-    enable = true;
-    dataDir = "/var/lib/mcserver";
-    package = pkgs.papermc;
-    jvmOpts = "-Xmx1567M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"; # jar is ran with --nogui
-    openFirewall = true;
-    eula = true;
-  };
+  users.users.root.openssh.authorizedKeys.keys = [ key ];
   environment.sessionVariables.LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.systemd ]; # fix MC startup warning
 
-  # cache DNS lookups TODO add to common.nix??
-  services.resolved.settings.Resolve = {
-    Cache = "yes";
-    CacheFromLocalhost = true;
-  };
-
-  boot.kernel.sysctl."net.ipv4.tcp_notsent_lowat" = 16384; # lower latency?
-
-  nix.settings = {
-    download-buffer-size = 268435456; # 256 MiB TODO move to common.nix
-    sandbox = false;
-  };
-
-  services.fstrim.enable = lib.mkForce false; # Proxmox handles this
-
-  fileSystems = lib.mkForce {};
-
+  nix.settings.sandbox = false; # fix builds on the vps
+  fileSystems = lib.mkForce {}; # no need for noatime
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # Networking
