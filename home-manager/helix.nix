@@ -11,7 +11,7 @@
           middle-click-paste = false;
           scroll-lines = 10; # mouse scroll
           shell = ["fish" "-c"]; # default is bash
-          auto-info = false; # todo enable
+          auto-info = true;
           default-line-ending = "lf";
           trim-final-newlines = true; # only trims extra newlines
           trim-trailing-whitespace = true;

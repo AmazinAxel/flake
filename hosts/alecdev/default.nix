@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   imports = [
-    ./scripts.nix
+    ../mcscripts.nix
     ../common.nix
     ../../modules/pi.nix
   ];
@@ -21,8 +21,9 @@
   # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.users.alec = {
     imports = [
-      ../../home-manager/helix.nix
       ../../home-manager/fish.nix
+      ../../home-manager/helix.nix
+      ../../home-manager/tmux.nix
     ];
     home.stateVersion = "26.05";
   };

@@ -922,7 +922,7 @@ index 00000000000..a4da1fd2e1e
 +					 &mipi->bus_format, 1);
 +
 +	/*
-+	 * TODO: Remove once all drm drivers call
++	 * TO-DO: Remove once all drm drivers call
 +	 * drm_connector_set_orientation_from_panel()
 +	 */
 +	drm_connector_set_panel_orientation(connector, mipi->orientation);

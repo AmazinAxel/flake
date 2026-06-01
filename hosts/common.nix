@@ -61,7 +61,6 @@
       dhcpV4Config.UseMTU = true; # honor MTU from router to avoid fragmentation
     };
     wait-online = {
-      anyInterface = true; # only need one interface up, todo probably redundant
       timeout = 10; # dont prolong boot for too long
       extraArgs = [ "--operational-state=routable" ];
     };

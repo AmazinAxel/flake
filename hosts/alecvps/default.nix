@@ -3,7 +3,7 @@ let
   key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICh1nH79rMAd7qEySygClFNsnGRsHRabisFZCD7nKYEz axel@amazinaxel.com";
 in {
   imports = [
-    #./scripts.nix # todo add some helper scripts to change server and pull/push
+    ../mcscripts.nix
     ../common.nix
     (modulesPath + "/virtualisation/proxmox-lxc.nix")
   ];

@@ -22,7 +22,7 @@
     openjdk25
     bun
     claude-code
-    platformio
+    platformio-core
   ];
   programs.kdeconnect.enable = true;
 

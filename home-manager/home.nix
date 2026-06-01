@@ -9,6 +9,7 @@
     ./helix.nix
     ./mpd.nix
     ./swappy.nix
+    ./tmux.nix
     ./vscode.nix
     ./zen.nix
 

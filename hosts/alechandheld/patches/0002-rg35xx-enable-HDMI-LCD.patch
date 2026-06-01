@@ -21,7 +21,7 @@ index 40008c38003d..baa240c4bb82 100644
  };
  
 +/*
-+ * TODO: DE33 VI planes naturally support YUV formats but
++ * TO-DO: DE33 VI planes naturally support YUV formats but
 + * driver needs improvements in order to support them.
 + */
 +static const u32 sun8i_vi_layer_de33_formats[] = {
@@ -396,7 +396,7 @@ index 000000000000..a99c01122990
 +	.cfg = {
 +		.de_type	= SUN8I_MIXER_DE33,
 +		/*
-+		 * TODO: All planes support scaling, but driver needs
++		 * TO-DO: All planes support scaling, but driver needs
 +		 * improvements to properly support it.
 +		 */
 +		.scaler_mask    = 0,
