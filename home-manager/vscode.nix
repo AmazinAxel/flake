@@ -72,7 +72,7 @@
         markdownlint.focusMode = 5; # Don't show nearby Markdown warnings when typing
 
         # fix vsc from showing settings.json
-        claudeCode.preferredLocation = "panel";
+        "claudeCode.preferredLocation" = "panel"; # do not unwrap quotes
       };
     };
   };
