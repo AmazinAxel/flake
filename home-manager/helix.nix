@@ -1,4 +1,12 @@
 { pkgs, ... }:
+let
+  # if you are building this please remove the following language, its not bundled in this flake as it is private for now
+  skriptHighlighting = pkgs.tree-sitter.buildGrammar {
+    language = "skript";
+    version = "local";
+    src = ./skript-syntax-highlighting;
+  };
+in
 {
   programs = {
     helix = {
@@ -67,11 +75,6 @@
       };
 
       languages = {
-        # if you are building this please remove the following language, its not bundled in this flake as it is private for now
-        # cd into skript-syntax-highlighting
-        # nix-shell -p tree-sitter nodejs --run "tree-sitter generate"
-        # hx --grammar fetch
-        # nix-shell -p gcc --run "hx --grammar build"
         language = [{
           name = "skript";
           scope = "source.skript";
@@ -97,5 +100,8 @@
     #  };
     #};
   };
-  xdg.configFile."helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries; # needed for skript highlighting
+  xdg.configFile = {
+    "helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries; # needed for skript highlighting
+    "helix/runtime/grammars/skript.so".source = "${skriptHighlighting}/parser"; # needed for skript syntax highlighting
+  };
 }
