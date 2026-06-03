@@ -1,73 +1,90 @@
-import { Astal, Gtk } from 'ags/gtk4';
+import { Astal } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import Notifd from 'gi://AstalNotifd';
+import GLib from 'gi://GLib';
 import { notificationItem } from './notificationItem';
-import { createState, For, type Accessor } from 'ags';
+import { createState, createRoot, type Accessor } from 'ags';
+import { monitors } from '../../lib/monitors';
 
 const { TOP, RIGHT } = Astal.WindowAnchor;
 export const [ streamingMode, setStreamingMode ] = createState(false);
 
-const map: Map<number, Notifd.Notification> = new Map();
-const reveals: Map<number, { reveal: Accessor<boolean>, setReveal: (v: boolean) => void }> = new Map();
-export const [ notificationlist, setNotificationList] = createState(
-    new Array<Notifd.Notification>()
-)
+const notificationlist: Map<number, Entry> = new Map();
 
-const notify = () =>
-	setNotificationList([...map.values()].reverse());
-
-const setKey = (key: number, value: Notifd.Notification) => {
-	if (!streamingMode.peek()) {
-		map.set(key, value);
-		if (!reveals.has(key)) {
-			const [reveal, setReveal] = createState(true);
-			reveals.set(key, { reveal, setReveal });
-		}
-		notify();
-	}
+type Entry = {
+    setReveal: (v: boolean) => void;
+    reveal: Accessor<boolean>;
+    height: number;
+    windows: Astal.Window[];
+    dispose: () => void;
 };
 
-const deleteKey = (key: number) => {
-	map.delete(key);
-	reveals.delete(key);
-	notify();
+const orderedlist = () => [...notificationlist.keys()].sort((a, b) => b - a);
+
+const calcHeight = () => { // otherwise they will overlap
+    let topMarginTotal = 0;
+    for (const id of orderedlist()) {
+        const notification = notificationlist.get(id)!;
+        for (const win of notification.windows) win.marginTop = topMarginTotal; // applies to all monitors
+        topMarginTotal += notification.height;
+    };
 };
 
-const startHide = (key: number) => {
-	const r = reveals.get(key);
-	if (r) r.setReveal(false);
-	else deleteKey(key);
+const removeEntry = (id: number) => {
+    const e = notificationlist.get(id);
+    if (!e) return; // spams with warnings for some reason?
+    notificationlist.delete(id);
+    for (const win of e.windows) win.destroy(); // for all monitors
+    e.dispose(); // tear down the reactive scope / subscriptions
+    calcHeight();
 };
 
-export const notifications = () =>
-	<window
-		name="notifications"
-		anchor={TOP | RIGHT}
-		application={app}
-		layer={Astal.Layer.TOP}
-		defaultHeight={1} // gtk layer shell glitch workaround
-        defaultWidth={1}
+const startHide = (id: number) => notificationlist.get(id)?.setReveal(false);
 
-		// This prop gives broken accounting warning but fixes allocation size
-		visible={notificationlist.as(n => (n.length != 0) ? true : false)}
-		$={() => {
-			const notifd = Notifd.get_default();
-			notifd.connect("notified", (_, id) => {
-				const notif = notifd.get_notification(id)!;
-				if (!notif.body.startsWith('Failed to connect to server')) // Hide annoying message
-					setKey(id, notif)
-			});
-			notifd.connect("resolved", (_, id) =>
-				startHide(id)
-			);
-		}}
-	>
-		<box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.END}>
-			<For each={notificationlist}>
-				{(item) => notificationItem(item, reveals.get(item.id)!.reveal, () => deleteKey(item.id))}
-			</For>
-		</box>
-	</window>
+const createNotificationWindow = (notif: Notifd.Notification) => {
+    const [ reveal, setReveal ] = createState(true);
+    const id = notif.id;
 
-export const clearOldestNotification = () =>
-	startHide([...map][0][0]);
+    createRoot((dispose) => { // wrapped to fix dispose error
+        const entry: Entry = { reveal, setReveal, height: 0, windows: [], dispose };
+
+        // for all monitors
+        notificationlist.set(id, entry);
+        entry.windows = monitors.peek().map((monitor) => <window
+            name={'notification-' + id}
+            anchor={TOP | RIGHT}
+            application={app}
+            gdkmonitor={monitor}
+            layer={Astal.Layer.TOP}
+            defaultHeight={1} // needed or else it will glitch
+            defaultWidth={1}
+            visible
+            $={(self) => self.add_tick_callback(() => {
+                const h = self.get_height();
+                if (h <= 1) return GLib.SOURCE_CONTINUE; // wait, but this is not very performant
+                const entry = notificationlist.get(id);
+                entry!.height = h;
+                calcHeight();
+                return GLib.SOURCE_REMOVE; // stops the loop
+            })}
+        >
+            {notificationItem(notif, reveal, () => removeEntry(id))}
+        </window> as Astal.Window);
+        return entry.windows;
+    });
+};
+
+export const notifications = () => {
+    const notifd = Notifd.get_default();
+    notifd.connect("notified", (_, id) => {
+        if (streamingMode.peek()) return;
+        if (notificationlist.has(id)) return;
+        createNotificationWindow(notifd.get_notification(id)!);
+    });
+    notifd.connect("resolved", (_, id) => startHide(id));
+};
+
+export const clearOldestNotification = () => {
+    const ids = orderedlist();
+    if (ids.length > 0) startHide(ids[ids.length - 1]);
+};

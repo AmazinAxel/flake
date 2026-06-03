@@ -49,7 +49,7 @@
         yellow = "#ebcb8b";
         orange = "#d08770";
         red = "#bf616a";
-      in {        
+      in {
         focused = { # focused window
           background = blue0;
           border = blue0;
@@ -63,7 +63,7 @@
           border = blue0;
           childBorder = blue0;
           indicator = blue0;
-          text = white1;     
+          text = white1;
         };
 
         placeholder = {
@@ -95,12 +95,6 @@
         titlebar = false;
         border = 3;
         commands = map (criteria: { inherit criteria; command = "floating enable"; }) [
-          { window_role = "dialog"; }
-          { window_role = "pop-up"; }
-          { window_type = "dialog"; }
-          { window_type = "utility"; }
-          { window_type = "toolbar"; }
-          { window_type = "splash"; }
           { app_id = "nemo"; } # file browser
           { app_id = "foot-float"; } # terminal
           { app_id = "org.gnome.FileRoller"; } # file extraction dialogs
@@ -114,7 +108,7 @@
       };
 
       startup = [
-        { command = "ags run"; }
+        { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_DATA_DIRS PATH"; }
         { command = "fcitx5 -d"; }
         { command = "wl-gammarelay-rs"; }
         { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
