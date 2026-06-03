@@ -62,7 +62,7 @@ in
             A-tab = "goto_last_accessed_file"; # alt-tab, goto_last_modified_file
             C-tab = "buffer_picker"; # ctrl+tab
             C-s = [ "normal_mode" ":write" ]; # ctrl+S save
-            C+r = [ ":reload" ]; # reload file
+            C-r = [ ":reload" ]; # reload file
           };
         in {
           normal = keybinds // {
