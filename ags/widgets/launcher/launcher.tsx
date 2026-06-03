@@ -22,7 +22,7 @@ const search = (text: string) => setAppsList(
 );
 
 const launchApp = (selectedApp: Apps.Application) => {
-    execAsync(['bash', '-c', selectedApp.executable]);
+    selectedApp.launch();
     app.toggle_window("launcher");
 };
 
