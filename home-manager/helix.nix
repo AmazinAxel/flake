@@ -61,10 +61,16 @@ in
             C-S-z = "redo"; # control+shift+Z
             A-tab = "goto_last_accessed_file"; # alt-tab, goto_last_modified_file
             C-tab = "buffer_picker"; # ctrl+tab
-            C-s = ":write"; # ctrl+S save
+            C-s = [ "normal_mode" ":write" ]; # ctrl+S save
+            C+r = [ ":reload" ]; # reload file
           };
         in {
-          normal = keybinds;
+          normal = keybinds // {
+            space.D = [
+              ":sh git diff -U99999 HEAD -- %{buffer_name} | sed '1,/^@@/d' > /tmp/hx-diff-show.diff"
+              ":vsplit /tmp/hx-diff-show.diff"
+            ];
+          };
           insert = keybinds;
           select = keybinds;
         };

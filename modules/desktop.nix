@@ -3,6 +3,7 @@
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];
+    backupFileExtension = "backup2";
     useGlobalPkgs = true; # Faster eval
   };
 
