@@ -2,6 +2,7 @@ import Apps from 'gi://AstalApps'
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { createState, For } from 'ags';
+import { execAsync } from 'ags/process';
 import BackgroundSection from "../../lib/backgroundSection";
 import inputControl from '../../lib/inputControl';
 
@@ -21,7 +22,7 @@ const search = (text: string) => setAppsList(
 );
 
 const launchApp = (selectedApp: Apps.Application) => {
-    selectedApp.launch();
+    execAsync(['bash', '-c', selectedApp.executable]);
     app.toggle_window("launcher");
 };
 
