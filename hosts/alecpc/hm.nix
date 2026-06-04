@@ -1,5 +1,6 @@
 {
   wayland.windowManager.sway = {
+    extraOptions = [ "--my-next-gpu-wont-be-nvidia" ]; #"--unsupported-gpu" ];
     config = {
       output = {
         "DP-1".position = "1920 0";

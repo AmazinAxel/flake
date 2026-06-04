@@ -26,16 +26,37 @@
   ];
   programs.kdeconnect.enable = true;
 
+  hardware = {
+    graphics.extraPackages = with pkgs; [
+      libva
+      libva-utils
+      libvdpau-va-gl
+      libva-vdpau-driver
+      rocmPackages.clr.icd
+    ];
+    bluetooth.settings.General = { # TODO MOVE TO DESKTOP.NIX WITH OTHER BT ENHANCEMENTS
+      Experimental = true; # battery reporting
+      FastConnectable = true;
+    };
+  };
+
   boot = {
     initrd = {
       kernelModules = [ "amdgpu" ];
       includeDefaultModules = false;
     };
     binfmt.emulatedSystems = [ "aarch64-linux" ];
-    kernelParams = [ "amd_pstate=active" "mem_sleep_default=deep" ];
+    kernelParams = [
+      "amd_pstate=active"
+      "mem_sleep_default=deep"
+      "amdgpu.abmlevel=2" # adaptive backlight for display power saving
+    ];
 
     # Batch dirty page flushes
-    kernel.sysctl."vm.dirty_writeback_centisecs" = 6000;
+    kernel.sysctl = {
+      "vm.dirty_writeback_centisecs" = 6000;
+      "vm.laptop_mode" = 5;
+    };
   };
 
   services = {

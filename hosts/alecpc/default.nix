@@ -27,12 +27,7 @@
   ];
   programs.kdeconnect.enable = true;
 
-  services = {
-    xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
-
-    # Allow Sway to boot on nvidia
-    greetd.settings.default_session.command = lib.mkForce "sway --unsupported-gpu";
-  };
+  services.xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
 
   # Faster builds for alechandheld and alechomelab
   nix.settings = {
@@ -41,11 +36,7 @@
   };
 
   # Nvidia options --
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [ nvidia-vaapi-driver libva-vdpau-driver libvdpau-va-gl ];
-  };
+  hardware.graphics.extraPackages = with pkgs; [ nvidia-vaapi-driver libva-vdpau-driver libvdpau-va-gl ];
 
   boot = {
     initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
