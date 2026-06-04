@@ -66,13 +66,20 @@ in
           };
         in {
           normal = keybinds // {
+            C-c = "yank_main_selection_to_clipboard";
+            c = "toggle_comments";
+            space.m = "@:o <C-r>%<C-w>"; # mv file TODO also remove current entry and then switch to new file.
+            space.x = "@:sh rm <C-r>%"; # rm file TODO also rm current file since its deleted now
             space.D = [
               ":sh git diff -U99999 HEAD -- %{buffer_name} | sed '1,/^@@/d' > /tmp/hx-diff-show.diff"
               ":vsplit /tmp/hx-diff-show.diff"
             ];
           };
           insert = keybinds;
-          select = keybinds;
+          select = keybinds // {
+            C-c = "yank_main_selection_to_clipboard";
+            c = "toggle_comments";
+          };
         };
       };
       themes.nord = {

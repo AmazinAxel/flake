@@ -9,6 +9,8 @@
         ga = "git add -A";
         gl = "git pull";
         gp = "git push";
+        gs = "git stash";
+        gd = "git diff";
       };
       functions.gc = ''git commit -m "$argv"'';
       interactiveShellInit = ''

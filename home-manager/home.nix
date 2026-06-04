@@ -4,7 +4,6 @@
     ./sway/sway.nix
 
     ./fish.nix
-    ./foot.nix
     ./gtk.nix
     ./helix.nix
     ./mpd.nix
@@ -32,8 +31,9 @@
         notifd
         wireplumber
 
-        pkgs.gtksourceview5 # Chat code syntax highlighting
-        pkgs.glib-networking # AI chat todo remove
+        pkgs.webkitgtk_6_0 # webview
+        pkgs.glib-networking # TLS stuff for webview
+        pkgs.gst_all_1.gst-plugins-base # webview media
         pkgs.brightnessctl
         pkgs.sway # swaymsg IPC
         pkgs.iwd # wifi control

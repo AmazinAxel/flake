@@ -79,8 +79,10 @@ in {
       "control+${mod}+v" = "exec ags request toggleCalendar";
       "control+${mod}+x" = "exec ags request toggleBluetooth";
       "control+${mod}+c" = "exec ags request toggleWifi";
-      "${mod}+A" = "exec ags toggle chat";
+      "${mod}+A" = "exec ags request toggleChat";
+      "${mod}+G" = "exec ags request toggleChatSize"; # Toggle chat between small/large
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
+      "${mod}+N" = "exec ags request invokeOldestNotif"; # Activates first action of the oldest notification
       "${mod}+S" = "exec ags request toggleStreamingMode";
       "${mod}+L" = "exec ${toggleTheme}";
       "${mod}+T" = "exec ags request toggleFocus";

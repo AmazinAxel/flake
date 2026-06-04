@@ -10,6 +10,14 @@ const time = (time: number) => GLib.DateTime.new_from_unix_local(time).format("%
 
 const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+export const invokeFirstAction = (n: Notifd.Notification) => {
+    const action = n.get_actions()[0];
+    if (!action) return;
+    n.invoke(action.id);
+    n.desktopEntry && execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]);
+    setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
+};
+
 export const notificationItem = (n: Notifd.Notification) =>
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['notification']}>
         <box cssClasses={['header']}>

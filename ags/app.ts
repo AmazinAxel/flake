@@ -1,7 +1,6 @@
 import style from './style.css';
 import lancherStyle from './widgets/launcher/launcher.css';
 import clipboardStyle from './widgets/clipboard/clipboard.css';
-import chatStyle from './widgets/chat/chat.css';
 import statusStyle from './widgets/status/status.css';
 import notificationStyle from './widgets/notifications/notifications.css';
 import osdStyle from './widgets/osd/osd.css';
@@ -15,13 +14,13 @@ import astalIO from "gi://AstalIO"
 import status, { setStatusMargin } from './widgets/status/status';
 import bluetooth from './widgets/status/bluetooth';
 import wifi from './widgets/status/network';
-import chat from './widgets/chat/chat';
+import chat, { toggleChatSize, toggleChat } from './widgets/chat/chat';
 import calendar from './widgets/status/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
 import recordMenu from './widgets/record/record';
-import { notifications, clearOldestNotification, streamingMode, setStreamingMode } from './widgets/notifications/notifications';
+import { notifications, clearOldestNotification, invokeOldestNotification, streamingMode, setStreamingMode } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/status/quicksettings/quicksettings';
@@ -37,7 +36,7 @@ import asideStatusWindow, { setAsideWindow, closeAsideWindow } from './lib/aside
 let blueLightFilter = false;
 
 app.start({
-    css: style + lancherStyle + clipboardStyle + chatStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
+    css: style + lancherStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
         status();
         chat();
@@ -68,6 +67,15 @@ app.start({
         switch(reqArgs[0]) {
             case "hideNotif":
                 clearOldestNotification();
+                break;
+            case "invokeOldestNotif":
+                invokeOldestNotification();
+                break;
+            case "toggleChatSize":
+                toggleChatSize();
+                break;
+            case "toggleChat":
+                toggleChat();
                 break;
             case "record":
                 (isRec.peek() == true)

@@ -28,8 +28,15 @@
 @define-color blue3 #5e81ac;
 @define-color blue4 #8fbcbb;
 
-button:focus { outline: @blue2 solid 2px; outline-offset: 1px; }
-.notification button:focus { outline: none; }
+button:focus {
+  outline: @blue2 solid 2px;
+  outline-offset: 1px;
+}
+
+.notification button:focus {
+  outline: none;
+}
+
 window {
   background: transparent;
   font-family: 'Sora';
@@ -43,31 +50,61 @@ window {
   padding: 0.8rem;
 }
 
-calendar { padding: 0; margin: 0; border-radius: 0 0.5rem 0 0; }
-separator { margin: 10px 0 10px 0; min-height: 2px; }
+calendar {
+  padding: 0;
+  margin: 0;
+  border-radius: 0 0.5rem 0 0;
+}
 
-.backgroundDim { background-color: rgba(0, 0, 0, 0.3); }
+separator {
+  margin: 10px 0 10px 0;
+  min-height: 2px;
+}
+
+.backgroundDim {
+  background-color: rgba(0, 0, 0, 0.3);
+}
 
 /* Sink selector */
-popover { min-width: 20rem; }
+popover {
+  min-width: 20rem;
+}
 
 #emojiPicker entry {
   background-color: @dark3;
   border-radius: 7px 7px 0 0;
 }
 
-button { border: 1px solid @dark4; }
+button {
+  border: 1px solid @dark4;
+}
 
-button.active, .button:focus, .button:hover, list row:focus, list row:hover, calendar button:focus, calendar .today {
+button.active,
+.button:focus,
+.button:hover,
+list row:focus,
+list row:hover,
+calendar button:focus,
+calendar .today {
   background-color: @blue2;
   box-shadow: 0 0 5px 3px @blue3;
   border: 1px solid @blue1;
 }
-calendar .today { color: @light1; opacity: 0.8; }
 
-#bluetooth, #network { padding-right: 1.1rem; }
+calendar .today {
+  color: @light1;
+  opacity: 0.8;
+}
 
-list row:focus, list row:hover, #launcher button:focus, #launcher button:hover {
+#bluetooth,
+#network {
+  padding-right: 1.1rem;
+}
+
+list row:focus,
+list row:hover,
+#launcher button:focus,
+#launcher button:hover {
   transform: translateY(-2px) scale(1.01);
 }
 
@@ -91,7 +128,8 @@ list row:focus, list row:hover, #launcher button:focus, #launcher button:hover {
   line-height: 1.2rem;
 }
 
-#launcher entry, window .backgroundSection .header:first-child {
+#launcher entry,
+window .backgroundSection .header:first-child {
   background: transparent;
   color: @light3;
   outline-offset: -3px;
@@ -99,28 +137,50 @@ list row:focus, list row:hover, #launcher button:focus, #launcher button:hover {
   font-family: 'Hammersmith One';
   border-radius: 0.4rem;
 }
+
 .backgroundSection .header:first-child {
   text-shadow: 0 0 10px @light3;
   font-size: 2rem;
 }
 
 /* Record menu */
-#recordMenu label { font-size: 2.2rem; }
-#recordMenu image { -gtk-icon-shadow: 0 0 10px @light3; }
+#recordMenu label {
+  font-size: 2.2rem;
+}
+
+#recordMenu image {
+  -gtk-icon-shadow: 0 0 10px @light3;
+}
 
 /* Workspace preview */
-#workspaces .statusElement { padding: 0.2rem 0; margin: 0.45rem 0.4rem; }
+#workspaces .statusElement {
+  padding: 0.2rem 0;
+  margin: 0.45rem 0.4rem;
+}
+
 #workspaces .workspace {
-    background-color: @dark2;
-    min-width: 1.32rem;
-    min-height: 1.6rem;
-    border-radius: 5px;
-    transition: 0.1s;
-    margin: 0.3rem 0.5rem;
+  background-color: @dark2;
+  min-width: 1.32rem;
+  min-height: 1.6rem;
+  border-radius: 5px;
+  transition: 0.1s;
+  margin: 0.3rem 0.5rem;
 }
+
 #workspaces .workspace.active {
-    background-color: @blue2;
-    box-shadow: 0 0 5px @blue3;
-    min-height: 2.1rem;
+  background-color: @blue2;
+  box-shadow: 0 0 5px @blue3;
+  min-height: 2.1rem;
 }
-#workspaces .workspace.occupied { background-color: @dark4; min-height: 1.9rem; }
+
+#workspaces .workspace.occupied {
+  background-color: @dark4;
+  min-height: 1.9rem;
+}
+
+/* AI Chat */
+
+#chat {
+  margin: 0.333rem -1px 0.546rem 0rem;
+  border: 0.2rem solid @blue3;
+}
