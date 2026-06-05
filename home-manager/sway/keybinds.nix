@@ -48,11 +48,11 @@
     if [ "$($gs get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
       $gs set org.gnome.desktop.interface color-scheme 'prefer-light'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Light-nord'
-      $pk -USR2 -f "foot --server" || true # light foot theme
+      $pk -USR1 -f "foot --server" || true # light foot theme
     else
       $gs set org.gnome.desktop.interface color-scheme 'prefer-dark'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Dark-nord'
-      $pk -USR1 -f "foot --server" || true # dark foot theme
+      $pk -USR2 -f "foot --server" || true # dark foot theme
     fi
   '';
 in {
@@ -82,6 +82,7 @@ in {
       "control+${mod}+x" = "exec ags request toggleBluetooth";
       "control+${mod}+c" = "exec ags request toggleWifi";
       "${mod}+A" = "exec ags request toggleChat";
+      "${mod}+P" = "exec ags request togglePlan";
       "${mod}+G" = "exec ags request toggleChatSize"; # Toggle chat between small/large
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+N" = "exec ags request invokeOldestNotif"; # Activates first action of the oldest notification

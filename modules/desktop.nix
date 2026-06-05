@@ -48,8 +48,6 @@
       typescript-language-server # some LSP stuff
       vscode-langservers-extracted # more lSP stuff
 
-      inputs.planning.packages.${pkgs.stdenv.hostPlatform.system}.default
-
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))

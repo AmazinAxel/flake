@@ -14,7 +14,8 @@ import astalIO from "gi://AstalIO"
 import status, { setStatusMargin } from './widgets/status/status';
 import bluetooth from './widgets/status/bluetooth';
 import wifi from './widgets/status/network';
-import chat, { toggleChatSize, toggleChat } from './widgets/chat/chat';
+import chat, { toggleChatSize } from './widgets/chat/chat';
+import plan from './widgets/plan';
 import calendar from './widgets/status/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
@@ -39,7 +40,8 @@ app.start({
     css: style + lancherStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
         status();
-        chat();
+        chat.Window();
+        plan.Window();
         clipboard();
         emojiPicker();
         recordMenu();
@@ -75,7 +77,12 @@ app.start({
                 toggleChatSize();
                 break;
             case "toggleChat":
-                toggleChat();
+                if (app.get_window('plan')?.visible) app.toggle_window('plan');
+                chat.toggle();
+                break;
+            case "togglePlan":
+                if (app.get_window('chat')?.visible) app.toggle_window('chat');
+                plan.toggle();
                 break;
             case "record":
                 (isRec.peek() == true)

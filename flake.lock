@@ -43,6 +43,27 @@
         "type": "github"
       }
     },
+    "helix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1780642964,
+        "narHash": "sha256-GJU6FNPEf5CkJxsHa+1FIjQ3lWBH77DmcrVDeDgsk9g=",
+        "owner": "helix-editor",
+        "repo": "helix",
+        "rev": "7eb1a2874af919caab8e69cf8bb6222d32fa6445",
+        "type": "github"
+      },
+      "original": {
+        "owner": "helix-editor",
+        "repo": "helix",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -99,35 +120,36 @@
         "type": "github"
       }
     },
-    "planning": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1778705131,
-        "narHash": "sha256-9FyfYk9rC3jVhDyXErYo4PiIOSW2dosAYRXkU43NIXs=",
-        "owner": "AmazinAxel",
-        "repo": "Planning",
-        "rev": "be2bf33dfc1148c87988bf1a1bded7a8536598a4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AmazinAxel",
-        "repo": "Planning",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "ags": "ags",
         "astal": "astal",
+        "helix": "helix",
         "home-manager": "home-manager",
         "homelab": "homelab",
         "nixpkgs": "nixpkgs",
-        "planning": "planning",
         "zen-browser": "zen-browser"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "helix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775358767,
+        "narHash": "sha256-f2eC+WIfhjevCPQILuV08i/kmKZzYZpUvkom/33VxCA=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "20fd44bc663daa53a2575e01293e24e681d62244",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "zen-browser": {

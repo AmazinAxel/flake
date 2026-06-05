@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 let
   # if you are building this please remove the following language, its not bundled in this flake as it is private for now
   skriptHighlighting = pkgs.tree-sitter.buildGrammar {
@@ -12,8 +12,12 @@ in
     helix = {
       enable = true;
       defaultEditor = true;
+      package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.default;
       settings = {
-        theme = "nord";
+        theme = {
+          light = "nord-night";
+          dark = "nord_light";
+        };
 
         editor = {
           middle-click-paste = false;
@@ -82,10 +86,10 @@ in
           };
         };
       };
-      themes.nord = {
-        "inherits" = "nord";
-        "ui.background" = { }; # transparent background
-      };
+      themes."nord-night" = {
+        "inherits" = "nord-night";
+        "ui.background" = { };
+      }; # we cant set background of nord-light to nothing since then the background wont change due to a bug
 
       languages = {
         language = [{

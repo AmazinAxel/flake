@@ -25,17 +25,18 @@
       };
     };
 
-    planning = {
-      url = "github:AmazinAxel/Planning";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     homelab = {
       url = "github:AmazinAxel/homelab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    helix = {
+      url = "github:helix-editor/helix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { home-manager, nixpkgs, planning, homelab, ... }@inputs: {
+  outputs = { home-manager, nixpkgs, homelab, ... }@inputs: {
     nixosConfigurations = {
 
       # Primary laptop

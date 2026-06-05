@@ -36,8 +36,8 @@ in {
       };
 
       colors-light = nordColors // {
-        alpha = 0.8;
-        foreground = nordColors.regular7; # white
+        alpha = 0.6;
+        foreground = "d8dee9"; # darkest white
         background = nordColors.regular0; # black
       };
     };
