@@ -99,6 +99,7 @@
           { app_id = "foot-float"; } # terminal
           { app_id = "org.gnome.FileRoller"; } # file extraction dialogs
           { app_id = "org.gnome.SystemMonitor"; }
+          { app_id = "zen-beta"; title = ".*PassFF.*"; } # PassFF popup
         ];
       };
 
@@ -108,7 +109,7 @@
       };
 
       startup = [
-        { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_DATA_DIRS PATH"; }
+        { command = "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_DATA_DIRS PATH"; }
         { command = "fcitx5 -d"; }
         { command = "wl-gammarelay-rs"; }
         { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }

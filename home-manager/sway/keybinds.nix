@@ -19,13 +19,12 @@
   '';
   openFoot = pkgs.writeShellScript "open-foot" ''
     if ${shouldFloat}; then
-      exec foot --app-id foot-float
+      exec footclient --app-id foot-float
     else
-      exec foot
+      exec footclient
     fi
   '';
-  # nemo has no --app-id like foot, so the sway rule always floats it;
-  # in the tile case, subscribe and un-float the new nemo window via IPC.
+  # todo is there a better way to do this? nemo has no app_id
   openNemo = pkgs.writeShellScriptBin "nemo" ''
     if ${shouldFloat}; then
       exec ${pkgs.nemo-with-extensions}/bin/nemo "$@"
@@ -45,12 +44,15 @@
   '';
   toggleTheme = pkgs.writeShellScript "toggle-theme" ''
     gs=${pkgs.glib}/bin/gsettings
+    pk=${pkgs.procps}/bin/pkill
     if [ "$($gs get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
       $gs set org.gnome.desktop.interface color-scheme 'prefer-light'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Light-nord'
+      $pk -USR2 -f "foot --server" || true # light foot theme
     else
       $gs set org.gnome.desktop.interface color-scheme 'prefer-dark'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Dark-nord'
+      $pk -USR1 -f "foot --server" || true # dark foot theme
     fi
   '';
 in {
@@ -70,7 +72,7 @@ in {
       # Apps
       "${mod}+E" = "exec zen-beta";
       "${mod}+return" = "exec ${openFoot}";
-      
+
       # Ags
       "${mod}+space" = "exec ags toggle launcher";
       "${mod}+period" = "exec ags toggle emojiPicker";
@@ -96,7 +98,7 @@ in {
 
       "XF86PowerOff" = "exec ags toggle powermenu";
       "${mod}+shift+S" = "exec ags toggle powermenu";
-      # S = sleep, Q = shutdown, L = lock, R = restart 
+      # S = sleep, Q = shutdown, L = lock, R = restart
 
       # Mpris
       "control+${mod}+S" = "exec playerctl play-pause"; # toggle play/pause

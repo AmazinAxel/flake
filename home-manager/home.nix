@@ -4,6 +4,7 @@
     ./sway/sway.nix
 
     ./fish.nix
+    ./foot.nix
     ./gtk.nix
     ./helix.nix
     ./mpd.nix

@@ -78,26 +78,6 @@
       pinentryPackage = pkgs.pinentry-gtk2;
     };
 
-    foot = {
-      enable = true;
-      theme = "nord";
-      settings = {
-        main = {
-          title = "Terminal";
-          shell = "fish";
-          pad = "5x5";
-          font = "Iosevka Nerd Font Mono:size=9";
-        };
-        cursor = {
-          style = "beam";
-          unfocused-style = "unchanged";
-          blink = true;
-          beam-thickness = 1;
-        };
-        colors-dark.alpha = 0.9;
-        key-bindings.clipboard-paste = "Control+v XF86Paste";
-      };
-    };
   };
 
   # Chinese input support
