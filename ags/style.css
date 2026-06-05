@@ -178,9 +178,10 @@ window .backgroundSection .header:first-child {
   min-height: 1.9rem;
 }
 
-/* AI Chat */
+/* Sidebar widgets */
 
-#chat {
+#chat,
+#plan {
   margin: 0.333rem -1px 0.546rem 0rem;
   border: 0.2rem solid @blue3;
 }
