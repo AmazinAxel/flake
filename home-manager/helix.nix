@@ -1,10 +1,15 @@
 { pkgs, inputs, ... }:
 let
-  # if you are building this please remove the following language, its not bundled in this flake as it is private for now
-  skriptHighlighting = pkgs.tree-sitter.buildGrammar {
+  skriptTreesitterSrc = pkgs.fetchFromGitHub {
+    owner = "AmazinAxel";
+    repo = "skript-treesitter";
+    rev = "d22fee87c5b383bb9039ba30df6d28b2f98ade3d";
+    hash = "sha256-q7OQedbJ9PAMN3l3J/u410BO0qNkccJaDdro+br65D0=";
+  };
+  skriptTreesitter = pkgs.tree-sitter.buildGrammar {
     language = "skript";
-    version = "local";
-    src = ./skript-syntax-highlighting;
+    version = "1.0.0";
+    src = skriptTreesitterSrc;
   };
 in
 {
@@ -106,7 +111,7 @@ in
         }];
         grammar = [{
           name = "skript";
-          source.path = "${./skript-syntax-highlighting}";
+          source.path = "${skriptTreesitterSrc}";
         }];
       };
     };
@@ -118,7 +123,7 @@ in
     #};
   };
   xdg.configFile = {
-    "helix/runtime/queries/skript".source = ./skript-syntax-highlighting/queries; # needed for skript highlighting
-    "helix/runtime/grammars/skript.so".source = "${skriptHighlighting}/parser"; # needed for skript syntax highlighting
+    "helix/runtime/queries/skript".source = "${skriptTreesitterSrc}/queries"; # needed for skript highlighting
+    "helix/runtime/grammars/skript.so".source = "${skriptTreesitter}/parser"; # needed for skript syntax highlighting
   };
 }
