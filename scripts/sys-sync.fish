@@ -9,7 +9,7 @@ sudo mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
 
 echo \n"[Sync] Pulling music from NAS"
 sudo rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/
-mpc update > /dev/null
+mpc update >/dev/null
 sudo umount $mntPoint
 
 echo \n"[Sync] Pulling passwords"
@@ -28,8 +28,8 @@ if test -n "$isDirty"
     echo \n"[Sync] System flake is dirty - not updating system"
 else
     git pull
-    sudo nixos-rebuild boot --flake /home/alec/Projects/flake/
+    sudo nixos-rebuild boot --flake 'path:/home/alec/Projects/flake/'
 end
 
 # Astal
-date +%s%3N > /home/alec/Projects/flake/ags/lastSync.txt
+date +%s%3N >/home/alec/Projects/flake/ags/lastSync.txt

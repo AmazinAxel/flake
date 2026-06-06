@@ -30,15 +30,15 @@ in {
       key-bindings.clipboard-paste = "Control+v XF86Paste";
 
       colors-dark = nordColors // {
-        alpha = 0.9;
-        foreground = nordColors.regular0; # black
-        background = nordColors.regular7; # white
-      };
-
-      colors-light = nordColors // {
         alpha = 0.6;
         foreground = "d8dee9"; # darkest white
         background = nordColors.regular0; # black
+      };
+
+      colors-light = nordColors // {
+        alpha = 0.9;
+        foreground = nordColors.regular0; # black
+        background = nordColors.regular7; # white
       };
     };
   };
