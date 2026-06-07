@@ -57,7 +57,7 @@ export default (name: string, url: string, width: any = 400) => {
         network_session={networkSession}
         $={(self: any) => {
           self.get_settings().set_user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"); // or else it causes security errors
-          self.set_zoom_level(self.get_scale_factor() * 0.95);
+          self.set_zoom_level(0.95);
           webviewRef = self;
         }}
       />

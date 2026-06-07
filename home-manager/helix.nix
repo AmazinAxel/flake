@@ -20,8 +20,8 @@ in
       package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.default;
       settings = {
         theme = {
-          light = "nord-night";
-          dark = "nord_light";
+          light = "nord_light";
+          dark = "nord-night";
         };
 
         editor = {
