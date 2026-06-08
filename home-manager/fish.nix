@@ -13,6 +13,7 @@
         gd = "git diff";
         gc = "git commit -v";
       };
+      functions.gcm = ''git commit -m "$argv"'';
       interactiveShellInit = ''
         set fish_greeting
         fetch
