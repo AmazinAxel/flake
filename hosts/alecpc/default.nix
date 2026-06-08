@@ -27,7 +27,10 @@
   ];
   programs.kdeconnect.enable = true;
 
-  services.xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
+  services = {
+    xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
+    openssh.enable = true;  # for remote builds
+  };
 
   # Faster builds for alechandheld and alechomelab
   nix.settings = {

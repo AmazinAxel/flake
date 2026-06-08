@@ -6,6 +6,7 @@
     backupFileExtension = "backup2";
     useGlobalPkgs = true; # Faster eval
   };
+  users.users.alec.shell = pkgs.fish; # default shell for ssh and foot
 
   environment = {
     systemPackages = with pkgs; [
@@ -43,18 +44,13 @@
       prismlauncher
       claude-code
 
-      # Helix packages
-      marksman # markdown
-      typescript-language-server # some LSP stuff
-      vscode-langservers-extracted # more lSP stuff
-
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
     ];
     sessionVariables = {
-      NIXOS_OZONE_WL = "1"; # For Electron
+      NIXOS_OZONE_WL = "1"; # Electron apps still need this
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
     };
     etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
@@ -69,6 +65,7 @@
     dconf.enable = true; # For hm
     nix-ld.enable = true; # For dynamic executables
     gpu-screen-recorder.enable = true; # Clipping & recording software
+    fish.enable = true; # Managed by hm but need this for path
     gnupg.agent = {
       enable = true;
       pinentryPackage = pkgs.pinentry-gtk2;

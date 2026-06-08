@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{ lib, pkgs, ... }: {
   programs = {
     fish = {
       enable = true;
@@ -11,8 +11,8 @@
         gp = "git push";
         gs = "git stash";
         gd = "git diff";
+        gc = "git commit -v";
       };
-      functions.gc = ''git commit -m "$argv"'';
       interactiveShellInit = ''
         set fish_greeting
         fetch

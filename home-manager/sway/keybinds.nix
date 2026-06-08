@@ -1,4 +1,4 @@
-{ pkgs, ... }: let
+{ pkgs, config, ... }: let
   mod = "Mod4";
   currentWorkspace = "$(swaymsg -p -t get_workspaces | grep focused | grep -oE '[0-9]+')";
   workspace = direction: "exec sh -c 'current=${currentWorkspace}; target=$((current ${direction} 1)); [ $target -lt 1 ] && target=1; [ $target -gt 9 ] && target=9; [ $target -eq $current ] || swaymsg workspace number $target'";
@@ -45,14 +45,18 @@
   toggleTheme = pkgs.writeShellScript "toggle-theme" ''
     gs=${pkgs.glib}/bin/gsettings
     pk=${pkgs.procps}/bin/pkill
+    themes=${config.gtk.theme.package}/share/themes
+    gtk4css=$HOME/.config/gtk-4.0/gtk.css
     if [ "$($gs get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
       $gs set org.gnome.desktop.interface color-scheme 'prefer-light'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Light-nord'
-      $pk -USR1 -f "foot --server" || true # light foot theme
+      ln -sfn "$themes/Graphite-Light-nord/gtk-4.0/gtk.css" "$gtk4css"
+      $pk -USR2 -f "foot --server" || true # SIGUSR2 = [colors-light]
     else
       $gs set org.gnome.desktop.interface color-scheme 'prefer-dark'
       $gs set org.gnome.desktop.interface gtk-theme 'Graphite-Dark-nord'
-      $pk -USR2 -f "foot --server" || true # dark foot theme
+      ln -sfn "$themes/Graphite-Dark-nord/gtk-4.0/gtk.css" "$gtk4css"
+      $pk -USR1 -f "foot --server" || true # SIGUSR1 = [colors-dark]
     fi
   '';
 in {

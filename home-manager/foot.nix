@@ -17,7 +17,6 @@ in {
     settings = {
       main = {
         title = "Terminal";
-        shell = "fish";
         pad = "5x5";
         font = "Iosevka Nerd Font Mono:size=9";
       };
@@ -30,7 +29,7 @@ in {
       key-bindings.clipboard-paste = "Control+v XF86Paste";
 
       colors-dark = nordColors // {
-        alpha = 0.6;
+        alpha = 0.8;
         foreground = "d8dee9"; # darkest white
         background = nordColors.regular0; # black
       };

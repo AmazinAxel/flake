@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, lib, inputs, ... }:
 let
   skriptTreesitterSrc = pkgs.fetchFromGitHub {
     owner = "AmazinAxel";
@@ -11,13 +11,21 @@ let
     version = "1.0.0";
     src = skriptTreesitterSrc;
   };
+  helixPkg = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   programs = {
     helix = {
       enable = true;
       defaultEditor = true;
-      package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      package = helixPkg;
+      extraPackages = with pkgs; [
+        marksman # markdown
+        harper # grammar checker
+        prettier # formatter
+        typescript-language-server # some LSP stuff
+        vscode-langservers-extracted # more lSP stuff
+      ];
       settings = {
         theme = {
           light = "nord_light";
@@ -77,8 +85,9 @@ in
           normal = keybinds // {
             C-c = "yank_main_selection_to_clipboard";
             c = "toggle_comments";
-            space.m = "@:o <C-r>%<C-w>"; # mv file TODO also remove current entry and then switch to new file.
-            space.x = "@:sh rm <C-r>%"; # rm file TODO also rm current file since its deleted now
+            space.m = "@:move <C-r>%<C-w>";
+            space.x = [ ":sh rm '%{buffer_name}'"  ":buffer-close!" ];
+            space.o = [ ":sh cp '%{buffer_name}' ./"  ":open %sh{basename '%{buffer_name}'}" ];
             space.D = [
               ":sh git diff -U99999 HEAD -- %{buffer_name} | sed '1,/^@@/d' > /tmp/hx-diff-show.diff"
               ":vsplit /tmp/hx-diff-show.diff"
@@ -126,4 +135,17 @@ in
     "helix/runtime/queries/skript".source = "${skriptTreesitterSrc}/queries"; # needed for skript highlighting
     "helix/runtime/grammars/skript.so".source = "${skriptTreesitter}/parser"; # needed for skript syntax highlighting
   };
+
+  home.activation.helix-grammars =
+    let
+      hx = lib.getExe helixPkg;
+    in
+    lib.hm.dag.entryAfter [ "linkGeneration" ]
+      ''
+        export HELIX_RUNTIME=/home/alec/.config/helix/runtime
+        export PATH="${pkgs.git}/bin/:$PATH" # for pulling
+        export PATH="${pkgs.gcc}/bin:$PATH" # for compiling
+        run ${hx} --grammar fetch || true
+        run ${hx} --grammar build || true
+      '';
 }

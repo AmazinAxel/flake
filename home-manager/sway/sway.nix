@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
-    checkConfig = false;
+    systemd.dbusImplementation = "broker"; # this needs to match the new nixos default
     wrapperFeatures.gtk = true;
 
     config = {

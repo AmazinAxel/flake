@@ -70,7 +70,7 @@ in {
   zramSwap.enable = false; # Breaks boot if enabled
 
   services = {
-    sshd.enable = true;
+    openssh.enable = true;
     libinput.enable = true; # todo
     earlyoom = {
       enable = true;
