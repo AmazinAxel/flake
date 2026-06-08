@@ -54,6 +54,12 @@ in
             display-inlay-hints = true;
             inlay-hints-length-limit = 20;
           };
+          idle-timeout = 500; # delay while typing
+          inline-diagnostics = {
+            cursor-line = "error";
+            other-lines = "error";
+          };
+          end-of-line-diagnostics = "error";
           cursor-shape = {
             insert = "bar";
             select = "underline";
@@ -106,6 +112,20 @@ in
       }; # we cant set background of nord-light to nothing since then the background wont change due to a bug
 
       languages = {
+        language-server.harper-ls = {
+          command = "harper-ls";
+          args = [ "--stdio" ];
+          config.harper-ls.linters = {
+            UseTitleCase = false;
+            UseEllipsisCharacter = false;
+            Excellent = false;
+            LongSentences = false;
+            DiscourseMarkers = false;
+            SplitWords = false;
+            ExpandMemoryShorthand = false;
+            NumericRangeEnDash = false;
+          };
+        };
         language = [{
           name = "skript";
           scope = "source.skript";
@@ -117,6 +137,14 @@ in
             unit = "\t";
           };
           grammar = "skript";
+        } {
+          name = "markdown";
+          language-servers = [ "marksman" "harper-ls" ];
+          auto-format = true;
+          formatter = {
+            command = "prettier";
+            args = [ "--parser" "markdown" ];
+          };
         }];
         grammar = [{
           name = "skript";
@@ -124,12 +152,6 @@ in
         }];
       };
     };
-    #nnn = {
-    #  enable = true;
-    #  bookmarks = {
-    #    d = "~/Downloads";
-    #  };
-    #};
   };
   xdg.configFile = {
     "helix/runtime/queries/skript".source = "${skriptTreesitterSrc}/queries"; # needed for skript highlighting
