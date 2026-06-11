@@ -25,6 +25,7 @@
         "type:touchpad" = {
           tap = "enabled";
           drag_lock = "disable";
+          dwt = "disabled"; # disabled while typing
         };
         "type:keyboard" = {
           repeat_delay = "300";

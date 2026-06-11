@@ -14,8 +14,7 @@ import astalIO from "gi://AstalIO"
 import status, { setStatusMargin } from './widgets/status/status';
 import bluetooth from './widgets/status/bluetooth';
 import wifi from './widgets/status/network';
-import chat, { toggleChatSize } from './widgets/chat/chat';
-import plan from './widgets/plan';
+import sideview, { showPage, closeSideview, hideSideview, toggleSideviewFocus, toggleSideviewSize } from './widgets/sideview';
 import calendar from './widgets/status/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
@@ -40,8 +39,7 @@ app.start({
     css: style + lancherStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
         status();
-        chat.Window();
-        plan.Window();
+        sideview();
         clipboard();
         emojiPicker();
         recordMenu();
@@ -73,16 +71,26 @@ app.start({
             case "invokeOldestNotif":
                 invokeOldestNotification();
                 break;
-            case "toggleChatSize":
-                toggleChatSize();
+            case "toggleSideviewSize":
+                toggleSideviewSize();
                 break;
-            case "toggleChat":
-                if (app.get_window('plan')?.visible) app.toggle_window('plan');
-                chat.toggle();
+            case "sideviewPlan":
+                showPage('plan');
                 break;
-            case "togglePlan":
-                if (app.get_window('chat')?.visible) app.toggle_window('chat');
-                plan.toggle();
+            case "sideviewClaude":
+                showPage('claude');
+                break;
+            case "sideviewCustom":
+                showPage('custom');
+                break;
+            case "closeSideview":
+                closeSideview();
+                break;
+            case "hideSideview":
+                hideSideview();
+                break;
+            case "toggleSideviewFocus":
+                toggleSideviewFocus();
                 break;
             case "record":
                 (isRec.peek() == true)

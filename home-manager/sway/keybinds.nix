@@ -85,9 +85,14 @@ in {
       "control+${mod}+v" = "exec ags request toggleCalendar";
       "control+${mod}+x" = "exec ags request toggleBluetooth";
       "control+${mod}+c" = "exec ags request toggleWifi";
-      "${mod}+A" = "exec ags request toggleChat";
-      "${mod}+P" = "exec ags request togglePlan";
-      "${mod}+G" = "exec ags request toggleChatSize"; # Toggle chat between small/large
+      # Sideview (single window, switch between webkit pages)
+      "control+${mod}+Q" = "exec ags request sideviewPlan";
+      "control+${mod}+W" = "exec ags request sideviewClaude";
+      "control+${mod}+E" = "exec ags request sideviewCustom";
+      "${mod}+K" = "exec ags request closeSideview"; # Hide + destroy sideview webviews
+      "${mod}+A" = "exec ags request toggleSideviewFocus"; # Toggle exclusive keyboard grab on the sideview
+      "control+${mod}+Tab" = "exec ags request hideSideview"; # Hide sideview but keep webviews loaded
+      "${mod}+G" = "exec ags request toggleSideviewSize"; # Toggle sideview width small/large
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+N" = "exec ags request invokeOldestNotif"; # Activates first action of the oldest notification
       "${mod}+S" = "exec ags request toggleStreamingMode";

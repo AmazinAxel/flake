@@ -8,6 +8,7 @@
     ./gtk.nix
     ./helix.nix
     ./mpd.nix
+    ./spicetify.nix
     ./swappy.nix
     ./vscode.nix
     ./zen.nix

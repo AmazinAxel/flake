@@ -178,10 +178,13 @@ window .backgroundSection .header:first-child {
   min-height: 1.9rem;
 }
 
-/* Sidebar widgets */
+/* Sideview widgets */
 
-#chat,
-#plan {
+#sideview {
   margin: 0.333rem -1px 0.546rem 0rem;
-  border: 0.2rem solid @blue3;
+  border: 0.2rem solid @dark4;
+}
+
+#sideview:focus-within {
+  border-color: @blue3;
 }
