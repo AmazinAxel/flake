@@ -26,12 +26,13 @@
       samba # Planning app sync
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
-      playerctl
+      playerctl # mpris control from shell
       killall
       pass # password management
       gnupg # GPG for passkeys
 
       # Desktop applications
+      vimb # Browser
       gthumb
       gnome-text-editor
       gnome-system-monitor
