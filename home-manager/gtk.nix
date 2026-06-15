@@ -41,17 +41,6 @@
         gtk-theme = "Graphite-Dark-nord";
       };
       "org/gnome/SoundRecorder".audio-profile = "mp3";
-
-      # Gnome text editor config
-      "org/gnome/TextEditor" = {
-        custom-font = "Iosevka Nerd Font Mono 12";
-        highlight-current-line = true;
-        restore-session = true;
-        show-line-numbers = true;
-        style-scheme = "Adwaita";
-        style-variant = "dark";
-        use-system-font = false;
-      };
     };
   };
   xdg.configFile."gtk-4.0/gtk.css".force = true; # wont build otherwise

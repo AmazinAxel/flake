@@ -10,6 +10,7 @@
     ./mpd.nix
     ./spicetify.nix
     ./swappy.nix
+    ./vimb.nix
     ./vscode.nix
     ./zen.nix
 
@@ -71,6 +72,8 @@
   };
 
   xdg = {
+    configFile."xdg-terminals.list".text = "foot.desktop\n"; # open in Terminal
+
     dataFile."fonts" = { # Symlink fonts
       target = "./fonts";
       source = ./fonts;

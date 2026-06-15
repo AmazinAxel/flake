@@ -103,13 +103,13 @@ calendar .today {
 
 list row:focus,
 list row:hover,
-#launcher button:focus,
-#launcher button:hover {
+.searchableDialog button:focus,
+.searchableDialog button:hover {
   transform: translateY(-2px) scale(1.01);
 }
 
 .widgetBackground {
-  background-color: @theme_bg_color;
+  background-color: @dark1;
   border-radius: 0.5rem;
   padding: 1rem;
 }
@@ -128,7 +128,7 @@ list row:hover,
   line-height: 1.2rem;
 }
 
-#launcher entry,
+.searchableDialog entry,
 window .backgroundSection .header:first-child {
   background: transparent;
   color: @light3;

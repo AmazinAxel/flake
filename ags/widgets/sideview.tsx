@@ -13,7 +13,7 @@ export type PageName = 'plan' | 'claude' | 'custom';
 const urls: Record<PageName, string> = {
   plan: 'https://plan.amazinaxel.com/',
   claude: 'https://claude.ai/new',
-  custom: 'https://customWebsite.net/docs'
+  custom: 'https://skripthub.net/docs'
 };
 
 // Mirrors dark/light mode

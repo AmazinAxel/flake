@@ -1,5 +1,5 @@
 .statusElement {
-    background: @theme_bg_color;
+    background: @dark1;
     margin: 0.4rem;
     border: 0.15rem @dark4 solid;
 }

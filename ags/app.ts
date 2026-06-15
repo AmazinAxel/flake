@@ -1,5 +1,5 @@
 import style from './style.css';
-import lancherStyle from './widgets/launcher/launcher.css';
+import searchableDialogStyle from './lib/searchableDialog.css';
 import clipboardStyle from './widgets/clipboard/clipboard.css';
 import statusStyle from './widgets/status/status.css';
 import notificationStyle from './widgets/notifications/notifications.css';
@@ -19,6 +19,7 @@ import calendar from './widgets/status/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
+import pass from './widgets/pass/pass';
 import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, invokeOldestNotification, streamingMode, setStreamingMode } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
@@ -36,7 +37,7 @@ import asideStatusWindow, { setAsideWindow, closeAsideWindow } from './lib/aside
 let blueLightFilter = false;
 
 app.start({
-    css: style + lancherStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
+    css: style + searchableDialogStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
         status();
         sideview();
@@ -60,6 +61,7 @@ app.start({
         reminders();
 
         launcher();
+        pass();
         startClippingService(); // Run last so if not installed it wont impact start
     },
     requestHandler(req, res) {

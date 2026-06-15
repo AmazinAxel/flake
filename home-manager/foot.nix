@@ -29,7 +29,7 @@ in {
       key-bindings.clipboard-paste = "Control+v XF86Paste";
 
       colors-dark = nordColors // {
-        alpha = 0.8;
+        alpha = 0.95;
         foreground = "d8dee9"; # darkest white
         background = nordColors.regular0; # black
       };

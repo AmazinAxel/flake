@@ -33,6 +33,7 @@ in
         };
 
         editor = {
+          insecure = true; # auto-trust all workspaces
           middle-click-paste = false;
           scroll-lines = 10; # mouse scroll
           shell = ["fish" "-c"]; # default is bash

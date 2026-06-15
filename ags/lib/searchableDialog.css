@@ -1,0 +1,33 @@
+.searchableDialog entry {
+  padding-left: 2rem;
+  font-size: 1.5rem;
+  outline: none;
+}
+
+.searchableDialog button,
+.searchableDialog row {
+  padding: 0.5rem;
+  border: 1px solid @dark4;
+}
+
+.searchableDialog button:focus,
+.searchableDialog button:hover,
+.searchableDialog row:selected,
+.searchableDialog row:focus,
+.searchableDialog row:hover {
+  border: 1px solid @blue1;
+}
+
+.searchableDialog button image {
+  -gtk-icon-size: 2rem;
+  margin-right: 0.5rem;
+}
+
+.searchableDialog label.name {
+  color: @light3;
+  font-weight: bold;
+}
+
+.searchableDialog button label.description {
+  color: @light3;
+}

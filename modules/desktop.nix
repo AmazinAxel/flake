@@ -30,11 +30,10 @@
       killall
       pass # password management
       gnupg # GPG for passkeys
+      # xdg-terminal-exec # open in terminals
 
       # Desktop applications
-      vimb # Browser
       gthumb
-      gnome-text-editor
       gnome-system-monitor
       nemo-with-extensions
       nemo-fileroller
@@ -53,6 +52,7 @@
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Electron apps still need this
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
+      # GTK_A11Y = "none"; # hides warnings and does not attempt to use this bus
     };
     etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
   };
@@ -69,9 +69,13 @@
     fish.enable = true; # Managed by hm but need this for path
     gnupg.agent = {
       enable = true;
-      pinentryPackage = pkgs.pinentry-gtk2;
+      pinentryPackage = pkgs.pinentry-gnome3;
     };
+    seahorse.enable = true; # keyring GUI
   };
+
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
 
   # Chinese input support
   i18n.inputMethod = {

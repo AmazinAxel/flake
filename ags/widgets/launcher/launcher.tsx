@@ -62,4 +62,4 @@ export default () => inputControl('launcher', () =>
                 )}
             </For>
         </box>}
-        />, () => textBox.text = '');
+        />, () => textBox.text = '', true);
