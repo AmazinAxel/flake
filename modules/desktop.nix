@@ -30,7 +30,7 @@
       killall
       pass # password management
       gnupg # GPG for passkeys
-      # xdg-terminal-exec # open in terminals
+      xdg-terminal-exec # open in terminals
 
       # Desktop applications
       gthumb
@@ -116,12 +116,6 @@
       freeMemThreshold = 5; # 5%
     };
 
-    # .local resolution for homelab
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-    };
-
     # Sound
     pipewire = {
       enable = true;
@@ -147,6 +141,10 @@
     bluetooth = {
       enable = true;
       powerOnBoot = false; # Don't start bluetooth until its needed
+      settings.General = {
+        Experimental = true; # battery reporting
+        FastConnectable = true;
+      };
     };
   };
 

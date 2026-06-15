@@ -154,21 +154,8 @@ in
       };
     };
   };
-  xdg.configFile = {
-    "helix/runtime/queries/skript".source = "${skriptTreesitterSrc}/queries"; # needed for skript highlighting
-    "helix/runtime/grammars/skript.so".source = "${skriptTreesitter}/parser"; # needed for skript syntax highlighting
+  xdg.configFile = { # needed for Skript highlighting
+    "helix/runtime/queries/skript".source = "${skriptTreesitterSrc}/queries";
+    "helix/runtime/grammars/skript.so".source = "${skriptTreesitter}/parser";
   };
-
-  home.activation.helix-grammars =
-    let
-      hx = lib.getExe helixPkg;
-    in
-    lib.hm.dag.entryAfter [ "linkGeneration" ]
-      ''
-        export HELIX_RUNTIME=/home/alec/.config/helix/runtime
-        export PATH="${pkgs.git}/bin/:$PATH" # for pulling
-        export PATH="${pkgs.gcc}/bin:$PATH" # for compiling
-        run ${hx} --grammar fetch || true
-        run ${hx} --grammar build || true
-      '';
 }

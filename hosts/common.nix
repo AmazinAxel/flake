@@ -101,11 +101,10 @@
 
   services = {
     journald.extraConfig = "SystemMaxUse=20M";
-    fstrim.enable = lib.mkDefault true; # weekly SSD trim
     resolved = {
       enable = true;
       settings.Resolve = {
-        MulticastDNS = "no"; # avahi handles mDNS
+        MulticastDNS = "resolve"; # for .local lookups
         DNS = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com";
         DNSOverTLS = "opportunistic";
         Domains = "~."; # override DHCP-provided DNS (ISP)
