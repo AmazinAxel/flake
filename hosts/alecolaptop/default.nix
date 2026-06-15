@@ -12,7 +12,6 @@
 
   environment.systemPackages = with pkgs; [
     gimp3
-    teams-for-linux
     libreoffice
     thunderbird
     kicad-small

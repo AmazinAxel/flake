@@ -12,12 +12,10 @@
 
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive
-    blockbench
     gimp3
     libreoffice
     gnome-sound-recorder
     gnome-disk-utility
-    flashprint
     thunderbird
 
     bun

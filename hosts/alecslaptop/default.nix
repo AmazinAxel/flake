@@ -11,16 +11,13 @@
 
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive
-    blockbench
     godot
     gimp3
-    teams-for-linux
     libreoffice
     gnome-sound-recorder
     gnome-disk-utility
     flashprint
     thunderbird
-    worldpainter
     kicad
 
     bun
