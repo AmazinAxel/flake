@@ -74,7 +74,7 @@ in {
       "XF86MonBrightnessDown" = "exec brightnessctl set 15%-";
 
       # Apps
-      "${mod}+E" = "exec vimb";
+      "${mod}+E" = "exec rosenrot";
       "${mod}+return" = "exec ${openFoot}";
 
       # Ags

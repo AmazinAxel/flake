@@ -56,20 +56,46 @@ let
     }
   '';
 
-  # wyebadblock ported to webkitgtk-6.0. Upstream targets webkit2gtk-4.x;
-  # the webextension-side renames `WebKitWebExtension` to `WebKitWebProcessExtension`
-  # and switches headers/pkg-config. The standalone `wyebab` server (loads
-  # easylist via ephy-uri-tester, answers block/allow over a unix socket) is
-  # webkit-independent and unchanged.
+  # Filter list ingredients. Fetched without a hash via `builtins.fetchurl` so
+  # we don't have to chase the upstream every few hours. Requires `--impure`
+  # evaluation, which this flake already uses.
+  filterLists = lib.mapAttrs (_: url: builtins.fetchurl url) {
+    easylist        = "https://easylist.to/easylist/easylist.txt";
+    easyprivacy     = "https://easylist.to/easylist/easyprivacy.txt";
+    ublock-filters  = "https://ublockorigin.github.io/uAssets/filters/filters.txt";
+    ublock-badware  = "https://ublockorigin.github.io/uAssets/filters/badware.txt";
+    ublock-privacy  = "https://ublockorigin.github.io/uAssets/filters/privacy.txt";
+    ublock-unbreak  = "https://ublockorigin.github.io/uAssets/filters/unbreak.txt";
+  };
+
+  # uBO-bypass + ad-skipper userscript by TheRealJoelmatic (6 k★, MIT).
+  # Loaded by `scripts.js` only on youtube.com (the userscript's IIFE checks
+  # location internally; we ALSO wrap it so unrelated pages skip entirely).
+  ytAdblockScript = builtins.fetchurl
+    "https://raw.githubusercontent.com/TheRealJoelmatic/RemoveAdblockThing/main/Youtube-Ad-blocker-Reminder-Remover.user.js";
+
+  # EasyList + EasyPrivacy + the uBO core filter set, concatenated into one
+  # blob. ephy-uri-tester reads a single file at a time; this is the file.
+  combinedFilters = pkgs.runCommand "wyebadblock-combined.txt" {} ''
+    cat ${lib.concatMapStringsSep " " (n: filterLists.${n}) [
+      "easylist" "easyprivacy"
+      "ublock-filters" "ublock-badware" "ublock-privacy" "ublock-unbreak"
+    ]} > $out
+  '';
+
+  # wyebadblock ported to webkitgtk-6.0. Upstream targets webkit2gtk-4.x; the
+  # webextension-side renames `WebKitWebExtension` to `WebKitWebProcessExtension`
+  # and switches headers/pkg-config. We ALSO hardcode the filter-list path to
+  # the immutable nix store location of `combinedFilters` — WebKit 6 enforces
+  # a sandbox on the web process (no API to disable in 6.0), which silently
+  # remaps $HOME and breaks ephy-uri-tester's `$XDG_CONFIG_HOME/wyebadblock/
+  # easylist.txt` lookup. /nix/store is bind-mounted into the sandbox for
+  # libwebkitgtk dlopen, so it's reachable from the sandboxed wyebab too.
   wyebadblock = pkgs.stdenv.mkDerivation {
     pname = "wyebadblock";
     version = "unstable-2026-05-30-webkit6";
-    src = pkgs.fetchFromGitHub {
-      owner = "jun7";
-      repo = "wyebadblock";
-      rev = "529a5eedafacca9cd4ba78bf15d3a2bb565b821a";
-      hash = "sha256-Ux7n0I+ixKF1BRrVb7991QpRYZ8d5d+EBCU/UCeVbS4=";
-    };
+    src = builtins.fetchTarball
+      "https://github.com/jun7/wyebadblock/archive/529a5eedafacca9cd4ba78bf15d3a2bb565b821a.tar.gz";
     nativeBuildInputs = [ pkgs.pkg-config ];
     buildInputs = [ pkgs.glib pkgs.webkitgtk_6_0 ];
     postPatch = ''
@@ -82,14 +108,48 @@ let
 		WebKitWebExtension *ex, const GVariant *v)' \
                        'G_MODULE_EXPORT void webkit_web_process_extension_initialize_with_user_data(
 		WebKitWebProcessExtension *ex, const GVariant *v)'
+
+      # BLOCK-only stderr diagnostic. Quiet on allowed requests so the log
+      # isn't a wall of noise. Run `vimb 2>&1 | grep wyebab` while browsing —
+      # you should see one line per blocked request. No output at all on a
+      # page that ought to have ads means wyebab isn't being called.
+      substituteInPlace ab.c \
+        --replace-fail 'if (check(webkit_uri_request_get_uri(req),
+				webkit_web_page_get_uri(kp))) return false;
+	return true;' \
+                       '{
+		const char *u = webkit_uri_request_get_uri(req);
+		if (check(u, webkit_web_page_get_uri(kp))) return false;
+		g_printerr("[wyebab] BLOCK %s\n", u);
+		return true;
+	}'
+
+      # Replace the XDG-based filter-list lookup with a fixed /nix/store path.
+      # Falls back to the original XDG search only if the hardcoded file is
+      # somehow missing (it can't be, since the path lives in the closure).
+      substituteInPlace ab.c \
+        --replace-fail 'static void init()
+{
+	DD(wyebad init)
+	if (tryload(g_get_user_config_dir())) return;' \
+                       'static void init()
+{
+	const char *hardpath = "${combinedFilters}";
+	if (g_file_test(hardpath, G_FILE_TEST_EXISTS)) {
+		filter_file = g_file_new_for_path(hardpath);
+		tester = ephy_uri_tester_new("/foo/bar");
+		initt = g_thread_new("init", inittcb, NULL);
+		return;
+	}
+	if (tryload(g_get_user_config_dir())) return;'
     '';
     buildPhase = ''
       runHook preBuild
       $CC $CFLAGS -c -o librun.o wyebrun.c -fPIC \
         $(pkg-config --cflags --libs glib-2.0)
-      # Absolute path: WebKit's web process doesn't inherit the user's PATH,
-      # so G_SPAWN_SEARCH_PATH against the bare name "wyebab" fails. $out is
-      # set during buildPhase, so the store path lands directly in EXENAME.
+      # Absolute path baked in: WebKit's web process doesn't inherit the user's
+      # PATH, so G_SPAWN_SEARCH_PATH against bare "wyebab" fails. $out is set
+      # during buildPhase, so the store path lands in EXENAME.
       $CC $CFLAGS -o adblock.so ab.c librun.o -shared -fPIC \
         $(pkg-config --cflags --libs webkitgtk-web-process-extension-6.0 glib-2.0) \
         -DISEXT -DEXENAME="\"$out/bin/wyebab\""
@@ -123,14 +183,11 @@ let
   '';
 
   # Extract every cosmetic / element-hiding rule that ephy-uri-tester parses
-  # from the combined list. wyebadblock parses these but the extension never
-  # applies them — vimb's user-stylesheet does, which is what gets us back
-  # the visibility-blocking half of uBO's coverage.
+  # from the combined list. The extension never applies these in-process;
+  # vimb's user-stylesheet does — that gets us back the visibility-blocking
+  # half of uBO's coverage.
   cosmeticStylesheet = pkgs.runCommand "vimb-adblock.css" {} ''
-    mkdir -p tmphome/.config/wyebadblock
-    cp ${combinedFilters} tmphome/.config/wyebadblock/easylist.txt
-    HOME=$PWD/tmphome XDG_CONFIG_HOME=$PWD/tmphome/.config \
-      ${wyebadblock}/bin/wyebab --css > $out
+    ${wyebadblock}/bin/wyebab --css > $out
   '';
 
   vimb-master = (pkgs.vimb-unwrapped.override {
@@ -138,18 +195,14 @@ let
     webkitgtk_4_1 = pkgs.webkitgtk_6_0;
   }).overrideAttrs (old: {
     version = "master";
-    src = pkgs.fetchFromGitHub {
-      owner = "fanglingsu";
-      repo = "vimb";
-      rev = "30b61203649010066d1cbd438b0c630d6d44c1a4";
-      hash = "sha256-ci0+fnIGqHw93z6qX0WsxQ8FUypSCC+boXFnYt7jvxc=";
-    };
+    src = builtins.fetchTarball
+      "https://github.com/fanglingsu/vimb/archive/30b61203649010066d1cbd438b0c630d6d44c1a4.tar.gz";
 
     patches = (old.patches or []) ++ [
-      (pkgs.fetchpatch {
-        url = "https://github.com/fanglingsu/vimb/commit/b873b0dd0fab931f48158ee9b61c277f10012d48.patch";
-        hash = "sha256-yFyBZ18mFIMJEiwSTs0T7gHT1h6BIvZZc0G1vGpxyC8=";
-      })
+      # Upstream PR #810: webviews must be created with network-session,
+      # otherwise cookies aren't persisted across runs.
+      (builtins.fetchurl
+        "https://github.com/fanglingsu/vimb/commit/b873b0dd0fab931f48158ee9b61c277f10012d48.patch")
     ];
 
     buildInputs = (old.buildInputs or []) ++ (with pkgs.gst_all_1; [
@@ -338,48 +391,20 @@ in {
   xdg.configFile = {
     "vimb/config".text = lib.concatStringsSep "\n" configLines + "\n";
 
-    # Filter list that wyebab loads at startup — concatenation of EasyList,
-    # EasyPrivacy and the uBlock Origin core lists. Network blocking happens
-    # here; cosmetic element-hiding rules from the same lists get extracted
-    # into style.css (below) and applied via vimb's user-stylesheet.
-    "wyebadblock/easylist.txt".source = combinedFilters;
+    # Cosmetic element-hiding rules extracted from the filter lists, applied
+    # globally as vimb's user-stylesheet. wyebab serves the network-blocking
+    # half; this serves the visibility half.
     "vimb/style.css".source = cosmeticStylesheet;
 
     "vimb/scripts.js".text = ''
-      (function () {
-        'use strict';
-        if (!/(^|\.)youtube\.com$/.test(location.hostname)) return;
-
-        const css = document.createElement('style');
-        css.id = 'vimb-yt-css';
-        css.textContent = [
-          '#masthead-ad',
-          'ytd-banner-promo-renderer',
-          'ytd-statement-banner-renderer',
-          'ytd-mealbar-promo-renderer',
-          '.ytp-ad-overlay-container',
-          '.ytp-ad-module',
-          '.ytp-ad-image-overlay',
-        ].join(',') + '{display:none!important;}';
-        (document.head || document.documentElement).appendChild(css);
-
-        const skip = () => {
-          try {
-            const player = document.querySelector('.html5-video-player.ad-showing');
-            if (!player) return;
-            const btn = player.querySelector(
-              '.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button'
-            );
-            if (btn) { btn.click(); return; }
-            const v = player.querySelector('video');
-            if (v && isFinite(v.duration) && v.duration > 0) {
-              v.muted = true;
-              v.currentTime = v.duration;
-            }
-          } catch (e) {}
-        };
-        setInterval(skip, 250);
-      })();
+      // ---- YouTube ad / anti-adblock bypass --------------------------------
+      // Imported verbatim from TheRealJoelmatic/RemoveAdblockThing (6 k★).
+      // It's a Tampermonkey userscript whose IIFE assumes the page already
+      // matches youtube.com; vimb runs scripts.js on every page, so we gate
+      // it by hostname here.
+      if (/(^|\.)youtube\.com$/.test(location.hostname)) {
+        ${builtins.readFile ytAdblockScript}
+      }
     '';
     "vimb/homepage.html".text = "<!DOCTYPE html><html style=background:#2e3440><title>Homepage</title>";
   };

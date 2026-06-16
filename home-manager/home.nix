@@ -8,9 +8,9 @@
     ./gtk.nix
     ./helix.nix
     ./mpd.nix
+    ./rosenrot.nix
     ./spicetify.nix
     ./swappy.nix
-    ./vimb.nix
     ./vscode.nix
     ./zen.nix
 

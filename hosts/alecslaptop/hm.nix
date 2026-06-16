@@ -11,7 +11,7 @@
     };
 
     startup = [
-      { command = ''swaymsg "workspace 3; exec vimb"''; }
+      { command = ''swaymsg "workspace 3; exec rosenrot"''; }
       { command = ''swaymsg "workspace 5; exec thunderbird"''; }
     ];
 
