@@ -30,6 +30,9 @@
     openssh.enable = true;  # for remote builds
   };
 
+  # Desktop is always on AC — run CPU at full tilt
+  powerManagement.cpuFreqGovernor = "performance";
+
   # Faster builds for alechandheld and alechomelab
   nix.settings = {
     max-jobs = "auto";
@@ -44,7 +47,7 @@
     kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1" "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
     extraModprobeConfig=''
       options nvidia_drm modeset=1 fbdev=1
-      options nvidia NVreg_RegistryDwords="PowerMizerEnable=0x1; PerfLevelSrc=0x2222; PowerMizerLevel=0x3; PowerMizerDefault=0x3; PowerMizerDefaultAC=0x3"
+      options nvidia NVreg_RegistryDwords="PowerMizerEnable=0x1; PerfLevelSrc=0x2222; PowerMizerLevel=0x1; PowerMizerDefault=0x1; PowerMizerDefaultAC=0x1"
     '';
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # Arch64 cross compliation
   };

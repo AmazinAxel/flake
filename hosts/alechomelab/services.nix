@@ -34,12 +34,22 @@ in {
         };
       };
 
-      daily.script = ''
-        ${pkgs.fish}/bin/fish ${./scripts}/githubBackup.fish
-        ${pkgs.fish}/bin/fish ${./scripts}/spotifySync.fish
+      daily = {
+        path = with pkgs; [ util-linux curl jq gawk spotdl toybox fish git ];
+        script = ''
+          fish ${./scripts}/githubBackup.fish
+          fish ${./scripts}/spotifySync.fish
 
-        ${pkgs.toybox}/bin/date +%s > /home/alec/lastSynced
-      '';
+          date +%s > /home/alec/lastSynced
+        '';
+        serviceConfig = {
+          MemoryHigh = "250M";
+          CPUWeight = 10;
+          IOWeight = 10;
+          IOSchedulingClass = "idle";
+          Nice = 19;
+        };
+      };
     };
 
     timers."daily" = { # Every morning at 3AM PT

@@ -19,7 +19,7 @@ set playlists \
 for playlist in $playlists
     set name (echo $playlist | awk '{print $1}')
     set url (echo $playlist | awk '{print $2}')
-    spotdl download "$url" --output /media/Music/$name
+    spotdl download "$url" --output /media/Music/$name --threads 1
 end
 
 log "S: pulled music"

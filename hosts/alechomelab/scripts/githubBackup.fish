@@ -10,6 +10,9 @@ end
 
 mkdir -p /media/Projects
 set token (cat /home/alec/GithubToken | string trim -r -c '\n')
+set -x GIT_CONFIG_COUNT 1
+set -x GIT_CONFIG_KEY_0 safe.directory
+set -x GIT_CONFIG_VALUE_0 '*'
 
 # Download & sync all repositories
 for repo in (curl -s -H "Authorization: token $token" https://api.github.com/user/repos?per_page=100 | jq -r '.[].full_name')

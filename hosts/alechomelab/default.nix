@@ -4,7 +4,7 @@
     ../common.nix
     ../../modules/pi.nix
   ];
-  environment.systemPackages = with pkgs; [ bun jq fish ];
+
   systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
 
   users.extraGroups = {
@@ -63,6 +63,11 @@
     fsType = "ext4";
     options = [ "nofail" ];
   };
+
+  swapDevices = [{
+    device = "/media/swapfile";
+    size = 1024; # MB; lives on USB drive, not SD card
+  }];
   system.stateVersion = "25.11";
 
   /*
