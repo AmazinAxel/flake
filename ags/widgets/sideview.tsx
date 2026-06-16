@@ -2,6 +2,7 @@ import { Astal, Gtk } from "ags/gtk4";
 import { createState } from "ags";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
+import Gdk from "gi://Gdk";
 // @ts-expect-error
 import WebKit from "gi://WebKit?version=6.0";
 import app from "ags/gtk4/app";
@@ -106,5 +107,9 @@ export default () =>
     layer={Astal.Layer.OVERLAY}
     widthRequest={width}
   >
+    <Gtk.EventControllerKey onKeyPressed={(_, key, __, state) => {
+      if (key === 114 && (state & Gdk.ModifierType.CONTROL_MASK) && currentPage)
+        webviews[currentPage]?.reload(); // ctrl+R to reload page
+    }}/>
     {stack}
   </window>;
