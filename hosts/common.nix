@@ -57,8 +57,18 @@
         DHCP = "yes";
         IPv6AcceptRA = true;
         IgnoreCarrierLoss = "5s";
+        MulticastDNS = true; # .local resolution and hostname publishing
       };
       dhcpV4Config.UseMTU = true; # honor MTU from router to avoid fragmentation
+    };
+    networks."20-wired" = { # ethernet
+      matchConfig.Type = "ether";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = true;
+        MulticastDNS = true; # .local resolution and hostname publishing
+      };
+      dhcpV4Config.UseMTU = true;
     };
     wait-online = {
       timeout = 10; # dont prolong boot for too long
@@ -104,7 +114,7 @@
     resolved = {
       enable = true;
       settings.Resolve = {
-        MulticastDNS = "resolve"; # for .local lookups
+        MulticastDNS = "yes"; # resolve and publish hostname on .local
         DNS = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com";
         DNSOverTLS = "opportunistic";
         Domains = "~."; # override DHCP-provided DNS (ISP)
