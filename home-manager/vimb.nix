@@ -106,29 +106,18 @@ let
     '';
   };
 
-  # Filter list ingredients. These update upstream every few hours; hashes
-  # will drift. Refresh any single one with `nix-prefetch-url <url>` when
-  # the build complains of a hash mismatch.
-  filterLists = lib.mapAttrs (_: { url, hash }: pkgs.fetchurl { inherit url hash; }) {
-    easylist        = { url = "https://easylist.to/easylist/easylist.txt";
-                        hash = "sha256-UJxwQTV+cE68dGFhB+lean73NxZXP7zTH2Vtm/HCSrc="; };
-    easyprivacy     = { url = "https://easylist.to/easylist/easyprivacy.txt";
-                        hash = "sha256-NyP453mKOaaH1/LaN6LZszmga0DlAN+4Bw2HtF/E940="; };
-    ublock-filters  = { url = "https://ublockorigin.github.io/uAssets/filters/filters.txt";
-                        hash = "sha256-wVXZyyey370tIaXcJpfBiZH6aLzrBhm3LcQHuuG2YEk="; };
-    ublock-badware  = { url = "https://ublockorigin.github.io/uAssets/filters/badware.txt";
-                        hash = "sha256-rzK4pkBEWcqnlS/a+Z0oygikV7/uPEG5gT7ZtI0Gdj4="; };
-    ublock-privacy  = { url = "https://ublockorigin.github.io/uAssets/filters/privacy.txt";
-                        hash = "sha256-ipfRln2cAVALFA5qDqq7ROsM4GGwpmOLwrAXrbmsao4="; };
-    ublock-unbreak  = { url = "https://ublockorigin.github.io/uAssets/filters/unbreak.txt";
-                        hash = "sha256-He50HM+H/gQsQu5j+cBoZujXVux5aeeJhgIknj3vZ6s="; };
+  filterLists = lib.mapAttrs (_: { url, ... }: builtins.fetchurl url) {
+    ublock-filters  = { url = "https://ublockorigin.github.io/uAssets/filters/filters.txt"; };
+    ublock-badware  = { url = "https://ublockorigin.github.io/uAssets/filters/badware.txt"; };
+    ublock-privacy  = { url = "https://ublockorigin.github.io/uAssets/filters/privacy.txt"; };
+    ublock-unbreak  = { url = "https://ublockorigin.github.io/uAssets/filters/unbreak.txt"; };
   };
 
   # wyebab only opens the single file named `easylist.txt` (LISTNAME), so
   # the additional lists are concatenated into one blob it reads as a whole.
   combinedFilters = pkgs.runCommand "wyebadblock-combined.txt" {} ''
     cat ${lib.concatMapStringsSep " " (n: filterLists.${n}) [
-      "easylist" "easyprivacy"
+      # "easylist" "easyprivacy"
       "ublock-filters" "ublock-badware" "ublock-privacy" "ublock-unbreak"
     ]} > $out
   '';
@@ -159,7 +148,7 @@ let
     patches = (old.patches or []) ++ [
       (pkgs.fetchpatch {
         url = "https://github.com/fanglingsu/vimb/commit/b873b0dd0fab931f48158ee9b61c277f10012d48.patch";
-        hash = "sha256-RTpGnbeoGI6B3YciBh5rCkEhWDfgseFgzgDwIoOCWMM=";
+        hash = "sha256-yFyBZ18mFIMJEiwSTs0T7gHT1h6BIvZZc0G1vGpxyC8=";
       })
     ];
 
@@ -268,7 +257,7 @@ let
     webaudio = true;
     webgl = true;
     webinspector = false;
-    scroll-step = 50;
+    scroll-step = 80;
     home-page = "file:///home/alec/.config/vimb/homepage.html";
     history-max-items = 100;
     editor-command = "hx '%s'";
@@ -342,8 +331,6 @@ in {
       "text/html" = v;
       "x-scheme-handler/http" = v;
       "x-scheme-handler/https" = v;
-      "x-scheme-handler/about" = v;
-      "x-scheme-handler/unknown" = v;
     };
   };
 

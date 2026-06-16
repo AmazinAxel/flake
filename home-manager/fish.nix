@@ -3,7 +3,7 @@
     fish = {
       enable = true;
       shellAliases = {
-        nx-switch = "sudo nixos-rebuild switch --flake 'path:/home/alec/Projects/flake/'";
+        nx-switch = "sudo nixos-rebuild switch --flake 'path:/home/alec/Projects/flake/' --impure";
         homelab-update = "cd /home/alec/Projects/flake && git pull && nixos-rebuild boot --flake .#alechomelab --sudo --ask-sudo-password --target-host alec@alechomelab.local";
         g = "git";
         ga = "git add -A";

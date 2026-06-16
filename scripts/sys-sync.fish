@@ -49,7 +49,7 @@ if test -n "$isDirty"
     echo \n"[Sync] System flake is dirty - not updating system"
 else
     git pull
-    s nixos-rebuild boot --flake 'path:/home/alec/Projects/flake/'
+    s nixos-rebuild boot --flake 'path:/home/alec/Projects/flake/' --impure
 end
 
 # Astal

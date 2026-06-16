@@ -10,7 +10,7 @@
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   environment.systemPackages = with pkgs; [
-    kdePackages.kdenlive
+    flowblade
     godot
     gimp3
     libreoffice
