@@ -10,7 +10,7 @@
 #define ZOOM_STEPSIZE .1
 #define MAX_NUM_TABS 8 // false for inf tabs
 #define SEARCH "https://bing.com/search?q=%s"
-#define HOME "file:///home/alec/.config/vimb/homepage.html"
+#define HOME "file:///home/alec/.config/rosenrot-homepage.html"
 
 /* Plugins */
 #define LIBRE_REDIRECT_ENABLED false

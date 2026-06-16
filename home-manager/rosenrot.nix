@@ -100,7 +100,7 @@ in {
   home.packages = [ rosenrot ];
 
 
-  xdg.configFile."vimb/homepage.html".text = "<!DOCTYPE html><html style=background:#2e3440><title>Homepage</title>";
+  xdg.configFile."rosenrot-homepage.html".text = "<!DOCTYPE html><html style=background:#2e3440><title>Homepage</title>";
 
 
   # Cache + uris.txt must exist before rosenrot is launched; the binary opens
