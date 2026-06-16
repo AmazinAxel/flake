@@ -261,6 +261,7 @@ let
     home-page = "file:///home/alec/.config/vimb/homepage.html";
     history-max-items = 100;
     editor-command = "hx '%s'";
+    user-agent = "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0";
     show-titlebar = false;
     spell-checking = true;
 

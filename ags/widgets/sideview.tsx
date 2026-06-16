@@ -47,7 +47,7 @@ const getWindow = () => app.get_window('sideview') as any; // wish i didnt have 
 const ensurePage = (name: PageName) => {
   if (webviews[name]) return;
   const webview = new WebKit.WebView({ network_session: networkSession });
-  webview.get_settings().set_user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"); // fix security captchas
+  webview.get_settings().set_user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"); // fix security captchas TODO be consistent with vimb
   webview.set_zoom_level(0.95);
   webview.load_uri(urls[name]);
   webviews[name] = webview;

@@ -18,7 +18,10 @@
     gnome-disk-utility
     flashprint
     thunderbird
-    kicad
+    (symlinkJoin {
+      name = "kicad-small"; paths = [ kicad-small ]; nativeBuildInputs = [ makeWrapper ];
+      postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
+    })
 
     bun
     openjdk25

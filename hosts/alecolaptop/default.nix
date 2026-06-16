@@ -14,7 +14,10 @@
     gimp3
     libreoffice
     thunderbird
-    kicad-small
+    (symlinkJoin {
+      name = "kicad-small"; paths = [ kicad-small ]; nativeBuildInputs = [ makeWrapper ];
+      postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
+    })
 
     arduino-ide
     python3
