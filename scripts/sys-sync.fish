@@ -34,6 +34,21 @@ if test (pass git rev-list '@{u}..HEAD' --count) -gt 0
     setsid -w pass git push </dev/null
 end
 
+echo \n"[Sync] Syncing bookmarks"
+set bookmarksDir /home/alec/.config/lightbrowse/bookmarks
+set bookmarksRemote ssh://alec@alechomelab.local/media/bookmarks
+
+if not test -d $bookmarksDir/.git
+    echo "[Sync] Cloning bookmarks..."
+    setsid -w git clone $bookmarksRemote $bookmarksDir </dev/null
+else
+    setsid -w git -C $bookmarksDir pull --rebase </dev/null
+    git -C $bookmarksDir add -A
+    git -C $bookmarksDir diff --cached --quiet
+    or git -C $bookmarksDir commit -q -m "sync: "(date '+%Y-%m-%d %H:%M')
+    setsid -w git -C $bookmarksDir push </dev/null
+end
+
 rm $askpass
 set -e SYS_SYNC_PASS
 set -e GIT_ASKPASS

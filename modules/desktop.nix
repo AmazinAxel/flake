@@ -44,7 +44,7 @@
       prismlauncher
       claude-code
 
-      inputs.lightbrowse.packages.${pkgs.system}.default
+      inputs.lightbrowse.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
