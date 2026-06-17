@@ -58,6 +58,9 @@
         set fish_pager_color_progress $nord12
         set fish_pager_color_secondary $nord1
 
+        if test "$TERM" = linux
+            set -gx STARSHIP_CONFIG ~/.config/starship-tty.toml
+        end
         starship init fish | source
       '';
     };
@@ -86,4 +89,21 @@
       };
     };
   };
+
+  # TTY prompt
+  xdg.configFile."starship-tty.toml".text = ''
+    format = "$hostname $directory ($git_branch) > "
+
+    [hostname]
+    ssh_only = false
+    format = "$hostname"
+
+    [directory]
+    format = "$path"
+    truncation_length = 4
+    truncation_symbol = "../"
+
+    [git_branch]
+    format = " ($branch)"
+  '';
 }

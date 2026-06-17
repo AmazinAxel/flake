@@ -106,7 +106,7 @@
   };
 
   console.colors = [
-    "3b4252" # black
+    "000000" # black (background)
     "bf616a" # red
     "a3be8c" # green
     "ebcb8b" # yellow
