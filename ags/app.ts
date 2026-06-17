@@ -162,7 +162,7 @@ const reminders = async () => {
             actions: [{
                 id: 1,
                 label: 'Update & Sync',
-                command: `foot -e fish -c 'sys-sync; echo "Press a key to exit"; read --nchars=1'`
+                command: `footclient -e fish -c 'sys-sync; echo "Press a key to exit"; read --nchars=1'`
             }]
         });
         return;

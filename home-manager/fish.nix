@@ -15,6 +15,11 @@
         gd = "git diff";
         gdh = "git diff HEAD";
         gc = "git commit -v";
+
+        n = "nix";
+        nfu = "nix flake update";
+        nb = "nix build";
+        nd = "nix develop";
       };
       functions.gcm = ''git commit -m "$argv"'';
       interactiveShellInit = ''

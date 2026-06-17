@@ -17,12 +17,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # TODO Remove
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         home-manager.follows = "home-manager";
       };
+    };
+
+    lightbrowse = {
+      url = "github:AmazinAxel/lightbrowse";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     homelab = {

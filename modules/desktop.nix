@@ -44,6 +44,8 @@
       prismlauncher
       claude-code
 
+      inputs.lightbrowse.packages.${pkgs.system}.default
+
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
@@ -52,7 +54,6 @@
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Electron apps still need this
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
-      # GTK_A11Y = "none"; # hides warnings and does not attempt to use this bus
     };
     etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
   };

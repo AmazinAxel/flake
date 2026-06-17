@@ -8,7 +8,6 @@
     ./gtk.nix
     ./helix.nix
     ./mpd.nix
-    ./rosenrot.nix
     ./spicetify.nix
     ./swappy.nix
     ./vscode.nix
@@ -72,7 +71,16 @@
   };
 
   xdg = {
-    configFile."xdg-terminals.list".text = "foot.desktop\n"; # open in Terminal
+    configFile."xdg-terminals.list".text = "footclient.desktop\n"; # open in Terminal
+    mimeApps = {
+      enable = true;
+      defaultApplications = { # open in lightbrowse by default
+        "x-scheme-handler/http" = "com.amazinaxel.lightbrowse.desktop";
+        "x-scheme-handler/https" = "com.amazinaxel.lightbrowse.desktop";
+        "text/html" = "com.amazinaxel.lightbrowse.desktop";
+      };
+    };
+
 
     dataFile."fonts" = { # Symlink fonts
       target = "./fonts";
