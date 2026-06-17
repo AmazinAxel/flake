@@ -8,9 +8,12 @@
         g = "git";
         ga = "git add -A";
         gl = "git pull";
+        glr = "git pull --rebase";
         gp = "git push";
         gs = "git stash";
+        gsp = "git stash pop";
         gd = "git diff";
+        gdh = "git diff HEAD";
         gc = "git commit -v";
       };
       functions.gcm = ''git commit -m "$argv"'';

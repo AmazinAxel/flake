@@ -36,6 +36,7 @@
   networking = {
     dhcpcd.enable = false;
     useNetworkd = true; # newer
+    firewall.allowedUDPPorts = [ 5353 ]; # .local resolution
     wireless.iwd = {
       enable = lib.mkDefault true;
       settings = {
