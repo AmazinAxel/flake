@@ -83,6 +83,7 @@
       };
     };
     command-not-found.enable = false;
+    nano.enable = false; # use Helix
   };
 
   time.timeZone = "America/Los_Angeles"; # lang also set to en_US

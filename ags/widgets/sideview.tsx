@@ -38,6 +38,31 @@ networkSession.get_cookie_manager().set_persistent_storage(
   WebKit.CookiePersistentStorage.SQLITE
 );
 
+
+// Since we spoof a macOS user agenct, sites bind their shortcuts to the Command
+// key (metaKey) and ignore Ctrl. Re-emit Ctrl presses as Command presses so the
+// site's handlers fire; native Ctrl behavior (copy/paste/reload) is left intact.
+// const ctrlToCommandSource = `
+// (function() {
+//   window.addEventListener("keydown", function(e) {
+//     if (!e.ctrlKey || e.metaKey || !e.isTrusted) return;
+//     e.target.dispatchEvent(new KeyboardEvent("keydown", {
+//       key: e.key, code: e.code, location: e.location,
+//       ctrlKey: false, metaKey: true, shiftKey: e.shiftKey, altKey: e.altKey,
+//       repeat: e.repeat, isComposing: e.isComposing,
+//       keyCode: e.keyCode, which: e.which, bubbles: true, cancelable: true
+//     }));
+//   }, true);
+// })();
+// `;
+// const userContentManager = new WebKit.UserContentManager();
+// userContentManager.add_script(WebKit.UserScript.new(
+//   ctrlToCommandSource,
+//   WebKit.UserContentInjectedFrames.ALL_FRAMES,
+//   WebKit.UserScriptInjectionTime.START,
+//   null, null
+// ));
+
 const stack = new Gtk.Stack();
 const webviews: Partial<Record<PageName, any>> = {};
 let currentPage: PageName | null = null;
@@ -46,8 +71,31 @@ const getWindow = () => app.get_window('sideview') as any; // wish i didnt have 
 
 const ensurePage = (name: PageName) => {
   if (webviews[name]) return;
-  const webview = new WebKit.WebView({ network_session: networkSession });
-  webview.get_settings().set_user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"); // fix security captchas TODO be consistent with rosenrot
+  const webview = new WebKit.WebView({
+    network_session: networkSession
+  });
+
+  webview.get_settings().set_user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15");
+
+  // GTK grabs ctrl+. / ctrl+; for its emoji picker before the web content sees
+  // them, so the ctrlToCommandSource script never gets a chance to remap them.
+  // Intercept here in the CAPTURE phase: swallow both (no emoji picker), and for
+  // ctrl+. re-emit a synthetic command+. into the page so the site's mac-style
+  // shortcut (e.g. claude.ai's sidebar) fires.
+  // const keyController = new Gtk.EventControllerKey();
+  // keyController.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
+  // keyController.connect("key-pressed", (_c, keyval, _code, state) => {
+  //   if (!(state & Gdk.ModifierType.CONTROL_MASK)) return false;
+  //   if (keyval !== Gdk.KEY_period && keyval !== Gdk.KEY_semicolon) return false;
+
+  //   if (keyval === Gdk.KEY_period)
+  //     webview.evaluate_javascript(
+  //       `(document.activeElement||document.body).dispatchEvent(new KeyboardEvent("keydown",{key:".",code:"Period",keyCode:190,which:190,metaKey:true,bubbles:true,cancelable:true}))`,
+  //       -1, null, null, null, null);
+  //   return true; // consume so GTK's emoji picker never opens
+  // });
+  // webview.add_controller(keyController);
+
   webview.set_zoom_level(0.95);
   webview.load_uri(urls[name]);
   webviews[name] = webview;
