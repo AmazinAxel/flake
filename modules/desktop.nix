@@ -105,6 +105,25 @@
     };
   };
 
+  console.colors = [
+    "3b4252" # black
+    "bf616a" # red
+    "a3be8c" # green
+    "ebcb8b" # yellow
+    "81a1c1" # blue
+    "b48ead" # magenta
+    "88c0d0" # cyan
+    "e5e9f0" # white
+    "4c566a" # bright black
+    "bf616a" # bright red
+    "a3be8c" # bright green
+    "ebcb8b" # bright yellow
+    "81a1c1" # bright blue
+    "b48ead" # bright magenta
+    "8fbcbb" # bright cyan
+    "eceff4" # bright white
+  ];
+
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
