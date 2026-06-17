@@ -51,27 +51,18 @@
 
   systemd.network = {
     enable = true;
-    networks."20-wireless" = {
-      matchConfig.Type = "wlan";
+    networks."20-default" = {
+      matchConfig.Type = "ether wlan";
       networkConfig = {
         DHCP = "yes";
         IPv6AcceptRA = true;
-        IgnoreCarrierLoss = "5s";
+        IgnoreCarrierLoss = "5s"; # tolerate short wifi drops
         MulticastDNS = true; # .local resolution and hostname publishing
       };
-      dhcpV4Config.UseMTU = true; # honor MTU from router to avoid fragmentation
-    };
-    networks."20-wired" = { # ethernet
-      matchConfig.Type = "ether";
-      networkConfig = {
-        DHCP = "yes";
-        IPv6AcceptRA = true;
-        MulticastDNS = true; # .local resolution and hostname publishing
-      };
-      dhcpV4Config.UseMTU = true;
+      dhcpV4Config.UseMTU = true; # avoid fragmentation
     };
     wait-online = {
-      timeout = 10; # dont prolong boot for too long
+      timeout = 10; # Dont prolong boot for too long
       extraArgs = [ "--operational-state=routable" ];
     };
   };

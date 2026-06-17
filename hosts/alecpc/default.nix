@@ -5,7 +5,10 @@
     ../../modules/desktop.nix
   ];
 
-  networking.hostName = "alecpc";
+  networking = {
+    hostName = "alecpc";
+    firewall.allowedUDPPorts = [ 5353 ]; # .local resolution
+  };
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   swapDevices = [{ device = "/swapfile"; size = 2048; }];
