@@ -4,6 +4,8 @@
     ../../modules/pi.nix
   ];
 
+  systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
+
   # TODO remove this block after development is over
   environment.systemPackages = with pkgs; [
     (python3.withPackages (ps: with ps; [
