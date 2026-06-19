@@ -3,6 +3,8 @@
     ../common.nix
     ../../modules/pi.nix
   ];
+
+  # TODO remove this block after development is over
   environment.systemPackages = with pkgs; [
     (python3.withPackages (ps: with ps; [
       pyserial
@@ -12,6 +14,7 @@
       scikit-image
     ]))
     poppler-utils
+    bun
   ];
 
   services.udev.extraRules = ''
@@ -26,7 +29,7 @@
     deviceTree = {
       enable = true;
       overlays = [{
-        name = "dwc2-host";
+        name = "dwc2-host"; # what does this even do???????????
         dtsText = ''
           /dts-v1/;
           /plugin/;

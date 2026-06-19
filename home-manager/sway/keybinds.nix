@@ -82,6 +82,7 @@ in {
       "${mod}+P" = "exec ags toggle pass";
       "${mod}+period" = "exec ags toggle emojiPicker";
       "${mod}+X" = "exec ags request closeAsideStatusMenuWidget";
+      "control+${mod}+P" = "exec ags toggle passSave";
       "control+${mod}+z" = "exec ags request toggleQuicksettings";
       "control+${mod}+v" = "exec ags request toggleCalendar";
       "control+${mod}+x" = "exec ags request toggleBluetooth";

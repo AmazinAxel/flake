@@ -20,6 +20,7 @@ import clipboard from './widgets/clipboard/clipboard';
 import emojiPicker from './widgets/emojiPicker';
 import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
 import pass from './widgets/pass/pass';
+import passSave from './widgets/pass/passSave';
 import recordMenu from './widgets/record/record';
 import { notifications, clearOldestNotification, invokeOldestNotification, streamingMode, setStreamingMode } from './widgets/notifications/notifications';
 import osd from './widgets/osd/osd';
@@ -62,6 +63,7 @@ app.start({
 
         launcher();
         pass();
+        passSave();
         startClippingService(); // Run last so if not installed it wont impact start
     },
     requestHandler(req, res) {
