@@ -33,7 +33,6 @@ in
         };
 
         editor = {
-          insecure = true; # auto-trust all workspaces
           middle-click-paste = false;
           scroll-lines = 10; # mouse scroll
           shell = ["fish" "-c"]; # default is bash
@@ -49,6 +48,8 @@ in
             center = [];
             right = [ "read-only-indicator" "file-modification-indicator" "version-control" ];
           };
+
+          workspace-trust.prompt = false; # this is annoying
 
           lsp = {
             display-messages = false; # ??

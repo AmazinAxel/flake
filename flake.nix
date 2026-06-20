@@ -36,6 +36,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    printerblot = {
+      url = "github:AmazinAxel/printerblot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     helix = {
       url = "github:helix-editor/helix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +51,7 @@
     };
   };
 
-  outputs = { home-manager, nixpkgs, homelab, ... }@inputs: {
+  outputs = { home-manager, nixpkgs, homelab, printerblot, ... }@inputs: {
     nixosConfigurations = {
 
       # Primary laptop
@@ -119,6 +124,9 @@
       "permablot" = nixpkgs.lib.nixosSystem {
         modules = [
           ./hosts/permablot/default.nix
+          {
+            _module.args.printerblot = printerblot.packages.aarch64-linux;
+          }
         ];
       };
     };

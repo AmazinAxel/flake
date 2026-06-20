@@ -1,33 +1,47 @@
-{ pkgs, ... }: {
+{ printerblot, ... }: {
   imports = [
     ../common.nix
     ../../modules/pi.nix
   ];
 
-  systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
-
-  # TODO remove this block after development is over
-  environment.systemPackages = with pkgs; [
-    (python3.withPackages (ps: with ps; [
-      pyserial
-      prompt-toolkit
-      numpy
-      pillow
-      scikit-image
-    ]))
-    poppler-utils
-    bun
+  systemd.tmpfiles.rules = [
+    "w /sys/class/leds/ACT/trigger - - - - none" # no LED
+    "d /var/lib/blotd 2775 alec users -"
   ];
+
+  systemd.services = {
+    blotd = {
+      wantedBy = [ "multi-user.target" ];
+      after = [ "multi-user.target" ];
+      environment.BLOT_DATA_DIR = "/var/lib/blotd";
+      serviceConfig = {
+        ExecStart = "${printerblot.blotd}/bin/blotd";
+        RuntimeDirectory = "blot-socket"; # /run/blot-socket socket
+        Restart = "always";
+        RestartSec = 2;
+      };
+    };
+
+    blot-web = {
+      wantedBy = [ "multi-user.target" ];
+      after = [ "blotd.service" "network.target" ];
+      environment.BLOT_DATA_DIR = "/var/lib/blotd";
+      serviceConfig = {
+        ExecStart = "${printerblot.blot-web}/bin/blot-web";
+        User = "alec";
+        AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
+        Restart = "always";
+        RestartSec = 2;
+      };
+    };
+  };
 
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="000a", MODE="0666"
     SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000a", MODE="0666"
-  ''; # todo tty needed?
+  '';
 
-  users.extraGroups.gpio = { };
-  users.users.alec.extraGroups = [ "gpio" ];
   hardware = {
-    i2c.enable = true;
     deviceTree = {
       enable = true;
       overlays = [{

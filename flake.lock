@@ -51,11 +51,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1781935222,
-        "narHash": "sha256-vKvtAxB1KInxO8lGACN2MjPfNeuc4+0nGYXJu2akle0=",
+        "lastModified": 1781952106,
+        "narHash": "sha256-e/H84n4vBWBA6M2pzEWkHJGTJ02Quyw+eJU+SdlKlQc=",
         "owner": "helix-editor",
         "repo": "helix",
-        "rev": "29052de765a318c66dcdb80888b2e46ea086eec3",
+        "rev": "2d903f82ba83b5345888acc8461e8837c6b24668",
         "type": "github"
       },
       "original": {
@@ -111,11 +111,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781935212,
-        "narHash": "sha256-HqcdUEhDbYwbTw6/8gqg1SnCV2ZuzaTStixqzSqqzVE=",
+        "lastModified": 1781969285,
+        "narHash": "sha256-EwVUpZE8AUgNPCmjk3Z1k+GjOtgMI7m89n432Tb6I2Q=",
         "owner": "AmazinAxel",
         "repo": "lightbrowse",
-        "rev": "ce75b0cb38abea0571ac189c67fb133c44d7ebc0",
+        "rev": "6659379488615bff1fc7a8e7760a84359392c970",
         "type": "github"
       },
       "original": {
@@ -140,6 +140,26 @@
         "type": "github"
       }
     },
+    "printerblot": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781980683,
+        "narHash": "sha256-Xopnjc97M4YAuTUc0LPeYMaPNINiFg4aUe96/mwUVcM=",
+        "owner": "AmazinAxel",
+        "repo": "printerblot",
+        "rev": "fba88d82b92c1ce384f230860d1b90190994d3cf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AmazinAxel",
+        "repo": "printerblot",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "ags": "ags",
@@ -149,6 +169,7 @@
         "homelab": "homelab",
         "lightbrowse": "lightbrowse",
         "nixpkgs": "nixpkgs",
+        "printerblot": "printerblot",
         "spicetify-nix": "spicetify-nix",
         "zen-browser": "zen-browser"
       }
