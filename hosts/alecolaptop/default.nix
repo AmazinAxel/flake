@@ -8,7 +8,8 @@
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  swapDevices = [{ device = "/swapfile"; size = 2048; }];
+  swapDevices = [{ device = "/swapfile"; size = 4096; }];
+  zramSwap.memoryPercent = 100;
 
   environment.systemPackages = with pkgs; [
     gimp3
@@ -48,9 +49,13 @@
       "mem_sleep_default=deep"
       "amdgpu.abmlevel=2" # adaptive backlight for display power saving
     ];
-
-    # performance setting
-    kernel.sysctl."vm.dirty_writeback_centisecs" = 6000;
+    kernel.sysctl = {
+      "vm.dirty_writeback_centisecs" = 6000; # batch disk writes
+      "vm.swappiness" = 180; # kernel max
+      "vm.page-cluster" = 0;
+      "vm.watermark_boost_factor" = 0;
+      "vm.watermark_scale_factor" = 125;
+    };
   };
 
   services = {
