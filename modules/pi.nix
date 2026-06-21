@@ -15,6 +15,7 @@
   };
 
   networking = {
+    firewall.allowedTCPPorts = [ 9000 8000 ];
     networkmanager = {
       enable = true;
       wifi.powersave = false; # Stop network drops

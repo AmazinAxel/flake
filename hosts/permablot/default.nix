@@ -45,7 +45,7 @@
     deviceTree = {
       enable = true;
       overlays = [{
-        name = "dwc2-host"; # what does this even do???????????
+        name = "dwc2-host";
         dtsText = ''
           /dts-v1/;
           /plugin/;
@@ -63,7 +63,7 @@
     };
   };
 
-  boot.kernelModules = [ "cdc_acm" ]; # dwc2 TODO needed?
+  boot.kernelModules = [ "cdc_acm" ]; # USB driver for /dev/ttyACM0
 
   # Networking
   networking = {

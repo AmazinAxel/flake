@@ -34,7 +34,7 @@
   # Networking
   networking = {
     hostName = "alechomelab";
-    firewall.allowedTCPPorts = [ 80 9000 8000 ];
+    firewall.allowedTCPPorts = [ 80 ];
   };
 
   # must run 'sudo smbpasswd -a alec' to log in!!
