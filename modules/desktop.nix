@@ -75,7 +75,6 @@
     seahorse.enable = true; # keyring GUI
   };
 
-  services.gnome.gnome-keyring.enable = true;
   security.pam.services.greetd.enableGnomeKeyring = true;
 
   # Chinese input support
@@ -129,6 +128,8 @@
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
+    gnome.gnome-keyring.enable = true;
+    # dbus.packages = [ pkgs.gcr ]; # fix prompt ui
 
     # Prevent crashes
     earlyoom = {

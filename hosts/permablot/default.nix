@@ -5,7 +5,7 @@
   ];
 
   systemd.tmpfiles.rules = [
-    "w /sys/class/leds/ACT/trigger - - - - none" # no LED
+    # "w /sys/class/leds/ACT/trigger - - - - none" # no LED
     "d /var/lib/blotd 2775 alec users -"
   ];
 
