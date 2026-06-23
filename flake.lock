@@ -147,11 +147,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782195174,
-        "narHash": "sha256-Pz6glJBmmsnTsL3z5c9mZ+flZf1shyWGzoSKe61fpOY=",
+        "lastModified": 1782253785,
+        "narHash": "sha256-6mLBNvqpx+mn0Jrlw6Qzn4tUH+7oqdJbciRS6aF2+L0=",
         "owner": "AmazinAxel",
         "repo": "printerblot",
-        "rev": "4289c23858cbf327e348de352393df62d4e03361",
+        "rev": "d47d1e9428c066f13a71d7ffbf648696a2b36938",
         "type": "github"
       },
       "original": {

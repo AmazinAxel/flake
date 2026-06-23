@@ -127,6 +127,7 @@ in {
   '';
 
   networking = {
+    useNetworkd = false;
     networkmanager = {
       enable = true;
       wifi = {
@@ -137,6 +138,8 @@ in {
     hostName = "alechandheld";
     firewall.enable = false; # causes errors
   };
+  systemd.network.enable = false; # no networkd
+  services.resolved.settings.Resolve.MulticastDNS = "no"; # use avahi
 
   hardware.graphics.enable = true; # Mesa/OpenGL
   security.rtkit.enable = true; # realtime priority for pw

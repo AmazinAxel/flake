@@ -35,7 +35,7 @@
 
   networking = {
     dhcpcd.enable = false;
-    useNetworkd = true; # newer
+    useNetworkd = lib.mkDefault true; # newer
     firewall.allowedUDPPorts = [ 5353 ]; # .local resolution
     wireless.iwd = {
       enable = lib.mkDefault true;
@@ -51,7 +51,7 @@
   };
 
   systemd.network = {
-    enable = true;
+    enable = lib.mkDefault true;
     networks."20-default" = {
       matchConfig.Type = "ether wlan";
       networkConfig = {
@@ -107,7 +107,7 @@
     resolved = {
       enable = true;
       settings.Resolve = {
-        MulticastDNS = "yes"; # resolve and publish hostname on .local
+        MulticastDNS = lib.mkDefault "yes"; # resolve and publish hostname on .local
         DNS = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com";
         DNSOverTLS = "opportunistic";
         Domains = "~."; # override DHCP-provided DNS (ISP)

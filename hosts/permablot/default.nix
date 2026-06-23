@@ -12,7 +12,6 @@
   systemd.services = {
     blotd = {
       wantedBy = [ "multi-user.target" ];
-      after = [ "multi-user.target" ];
       environment.BLOT_DATA_DIR = "/var/lib/blotd";
       serviceConfig = {
         ExecStart = "${printerblot.blotd}/bin/blotd";
