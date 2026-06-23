@@ -3,6 +3,7 @@
     isNormalUser = true;
     extraGroups = [ "wheel" "audio" "video" "dialout" ];
     initialPassword = "nixos"; # must be changed implicitly with passwd!!!
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILNtO18H89dHbyP658hIDMeFZrjdWNUbWrdcL6URrthh alec" ];
   };
 
   boot = {
@@ -103,6 +104,7 @@
   };
 
   services = {
+    # openssh.settings.PasswordAuthentication = false; # todo fix homelab and sync-script then we can do this
     journald.extraConfig = "SystemMaxUse=20M";
     resolved = {
       enable = true;

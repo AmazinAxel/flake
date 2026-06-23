@@ -34,6 +34,18 @@ if test (pass git rev-list '@{u}..HEAD' --count) -gt 0
     setsid -w pass git push </dev/null
 end
 
+set sshDir /home/alec/.ssh
+mkdir -p $sshDir
+chmod 700 $sshDir
+set keyEntries /home/alec/.password-store/ssh/*.gpg # if this is empty it wont loop
+for f in $keyEntries
+    set name (basename $f .gpg)
+    test -e $sshDir/$name; and continue # skip if installed?
+    string match -q '*.pub' $name; and set mode 644; or set mode 600 # .pub is not secret
+    pass show ssh/$name | install -m $mode /dev/stdin $sshDir/$name
+    and echo "[Sync] Installed ssh key $name"
+end
+
 echo \n"[Sync] Syncing bookmarks"
 set bookmarksDir /home/alec/.config/lightbrowse/bookmarks
 set bookmarksRemote ssh://alec@alechomelab.local/media/bookmarks
