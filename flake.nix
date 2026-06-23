@@ -72,15 +72,6 @@
         ];
       };
 
-      # Gaming handheld (aarch64)
-      "alechandheld" = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/alechandheld/default.nix
-          home-manager.nixosModules.home-manager
-        ];
-      };
-
       # Desktop/compute server
       "alecpc" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -92,7 +83,6 @@
 
       # headless devices, build using
       # nixos-rebuild switch --flake .#<hostname> --sudo --ask-sudo-password --target-host alec@<hostname>.local
-      # OR nix build .#nixosConfigurations.<hostname>.config.system.build.sdImage
 
       # Homelab (Zero 2W)
       "alechomelab" = nixpkgs.lib.nixosSystem {
@@ -127,6 +117,15 @@
           {
             _module.args.printerblot = printerblot.packages.aarch64-linux;
           }
+        ];
+      };
+
+      # Gaming handheld (aarch64)
+      "alechandheld" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/alechandheld/default.nix
+          home-manager.nixosModules.home-manager
         ];
       };
     };

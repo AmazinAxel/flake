@@ -30,11 +30,7 @@ in {
     };
     openssh = {
       openFirewall = true;
-      settings = {
-        PermitRootLogin = "prohibit-password";
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-      };
+      # settings.PermitRootLogin = "prohibit-password";
     };
   };
 

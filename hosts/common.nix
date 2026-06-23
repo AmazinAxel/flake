@@ -104,7 +104,11 @@
   };
 
   services = {
-    # openssh.settings.PasswordAuthentication = false; # todo fix homelab and sync-script then we can do this
+    openssh.settings = {
+      PasswordAuthentication = false; # key auth only
+      KbdInteractiveAuthentication = false;
+    };
+
     journald.extraConfig = "SystemMaxUse=20M";
     resolved = {
       enable = true;
