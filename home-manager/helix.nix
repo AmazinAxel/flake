@@ -88,6 +88,7 @@ in
             C-tab = "buffer_picker"; # ctrl+tab
             C-s = [ "normal_mode" ":write" ]; # ctrl+S save
             C-r = [ ":reload" ]; # reload file
+            C-q = [ ":quit" ]; # ctrl+Q quit
           };
         in {
           normal = keybinds // {
