@@ -3,6 +3,7 @@
     ./hardware-configuration.nix
     ../common.nix
     ../../modules/desktop.nix
+    ../../modules/printing.nix
   ];
 
   networking.hostName = "alecolaptop";
