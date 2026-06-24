@@ -40,6 +40,7 @@
       enable = true;
       addresses = true;
     };
+  };
 
   fileSystems."/" = { # Device SD card
     device = "/dev/disk/by-label/NIXOS_SD";
