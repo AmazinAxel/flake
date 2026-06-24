@@ -35,8 +35,6 @@
   networking = {
     hostName = "alechomelab";
     firewall.allowedTCPPorts = [ 80 ];
-
-    networkmanager.connectionConfig."connection.mdns" = 0; # for avahi
   };
 
   # must run 'sudo smbpasswd -a alec' to log in!!
@@ -54,16 +52,8 @@
     };
     openssh.settings.Macs = [ "hmac-sha2-512" ]; # fix ios pass
     avahi = {
-      enable = true;
-      nssmdns4 = true; # let the Pi resolve other .local hosts too
-      openFirewall = true;
-      publish = {
-        enable = true;
-        addresses = true; # publish .local
-        userServices = true; # NAS
-      };
+      publish.userServices = true; # NAS
 
-      # todo?
       extraServiceFiles.smb = ''
         <?xml version="1.0" standalone='no'?>
         <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
@@ -76,21 +66,11 @@
         </service-group>
       '';
     };
-    resolved.settings.Resolve.MulticastDNS = "no";
     samba-wsdd = { # Auto-disovery
       enable = true;
       openFirewall = true;
     };
   };
-
-  # systemd.services.samba-wsdd = {
-  #   after = [ "network-online.target" ];
-  #   wants = [ "network-online.target" ];
-  #   serviceConfig = {
-  #     Restart = "on-failure";
-  #     RestartSec = 5;
-  #   };
-  # };
 
   fileSystems."/media" = { # Attached USB drive
     device = "/dev/disk/by-label/AlecHomelabDrive";

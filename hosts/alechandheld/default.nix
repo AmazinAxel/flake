@@ -81,17 +81,6 @@ in {
       alsa.enable = true;
       pulse.enable = true;
     };
-    # todo modularize
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      openFirewall = true;
-      publish = {
-        enable = true;
-        addresses = true;
-        workstation = true;
-      };
-    };
   };
 
   hardware.bluetooth = {
@@ -139,7 +128,6 @@ in {
     firewall.enable = false; # causes errors
   };
   systemd.network.enable = false; # no networkd
-  services.resolved.settings.Resolve.MulticastDNS = "no"; # use avahi
 
   hardware.graphics.enable = true; # Mesa/OpenGL
   security.rtkit.enable = true; # realtime priority for pw

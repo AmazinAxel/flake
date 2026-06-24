@@ -11,16 +11,10 @@
       openFirewall = true;
     };
 
-    avahi = {
+    avahi.publish = {
       enable = true;
-      nssmdns4 = true; # .local resolution
-      openFirewall = true;
-      publish = {
-        enable = true;
-        addresses = true; # publish .local
-        userServices = true;
-      };
+      addresses = true; # for .local
+      userServices = true; # CUPS queues
     };
-    resolved.settings.Resolve.MulticastDNS = "no"; # no resolved
   };
 }

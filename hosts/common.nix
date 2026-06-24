@@ -37,7 +37,6 @@
   networking = {
     dhcpcd.enable = false;
     useNetworkd = lib.mkDefault true; # newer
-    firewall.allowedUDPPorts = [ 5353 ]; # .local resolution
     wireless.iwd = {
       enable = lib.mkDefault true;
       settings = {
@@ -59,7 +58,6 @@
         DHCP = "yes";
         IPv6AcceptRA = true;
         IgnoreCarrierLoss = "5s"; # tolerate short wifi drops
-        MulticastDNS = true; # .local resolution and hostname publishing
       };
       dhcpV4Config.UseMTU = true; # avoid fragmentation
     };
@@ -110,10 +108,17 @@
     };
 
     journald.extraConfig = "SystemMaxUse=20M";
+
+    avahi = {
+      enable = true;
+      nssmdns4 = true; # .local resolution
+      nssmdns6 = true;
+      openFirewall = true; # UDP5353
+    };
     resolved = {
       enable = true;
       settings.Resolve = {
-        MulticastDNS = lib.mkDefault "yes"; # resolve and publish hostname on .local
+        MulticastDNS = "no"; # avahi owns mDNS; resolved does unicast DNS only
         DNS = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com";
         DNSOverTLS = "opportunistic";
         Domains = "~."; # override DHCP-provided DNS (ISP)

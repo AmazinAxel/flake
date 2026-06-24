@@ -21,7 +21,6 @@
       enable = true;
       wifi.powersave = false; # Stop network drops
       settings.connection."wifi.scan-rand-mac-address" = "no"; # helps with drops
-      connectionConfig."connection.mdns" = lib.mkDefault 2; # resolved does .local
     };
     wireless.iwd.enable = false; # use nm
   };
@@ -35,7 +34,12 @@
     firmware = [ pkgs.raspberrypiWirelessFirmware ]; # needed for wifi to work
   };
 
-  services.openssh.enable = true;
+  services = {
+    openssh.enable = true;
+    avahi.publish = { # needed for .local connection
+      enable = true;
+      addresses = true;
+    };
 
   fileSystems."/" = { # Device SD card
     device = "/dev/disk/by-label/NIXOS_SD";
