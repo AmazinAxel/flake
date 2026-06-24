@@ -1,4 +1,4 @@
-{ pkgs, lib, modulesPath, ... }: {
+{ pkgs, lib, ... }: {
   boot = {
     loader = { # Raspi boot
       systemd-boot.enable = false;

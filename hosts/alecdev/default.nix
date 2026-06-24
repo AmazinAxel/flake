@@ -36,7 +36,6 @@
     openFirewall = true;
     eula = true;
   };
-  #environment.sessionVariables.LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.systemd ]; # fix MC warning
 
   # Networking
   networking.hostName = "alecdev";
