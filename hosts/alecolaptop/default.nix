@@ -17,7 +17,7 @@
     libreoffice
     thunderbird
     (symlinkJoin {
-      name = "kicad-small"; paths = [ kicad-small ]; nativeBuildInputs = [ makeWrapper ];
+      name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
     })
 
