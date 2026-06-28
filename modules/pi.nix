@@ -34,6 +34,8 @@
     firmware = [ pkgs.raspberrypiWirelessFirmware ]; # needed for wifi to work
   };
 
+  # /etc/wpa_supplicant impermanance TODO
+
   services = {
     openssh.enable = true;
     avahi.publish = { # needed for .local connection

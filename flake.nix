@@ -49,6 +49,17 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lookout-nix = {
+      url = "github:cloudglides/lookout-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
   };
 
   outputs = { home-manager, nixpkgs, homelab, printerblot, ... }@inputs: {

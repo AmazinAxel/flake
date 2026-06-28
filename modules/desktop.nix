@@ -144,6 +144,15 @@
       alsa.support32Bit = true;
       pulse.enable = true;
       wireplumber.enable = true;
+
+      # extraConfig.pipewire."10-wired-quality"."context.properties" = {
+      #   "default.clock.allowed-rates" = [ 44100 48000 88200 96000 ];
+      # };
+
+      # wireplumber.extraConfig."10-wired-resample-quality"."monitor.alsa.rules" = [{
+      #   matches = [{ "node.name" = "~alsa_output.*"; }];
+      #   actions.update-props."resample.quality" = 15;
+      # }];
     };
 
     greetd = { # Autologin

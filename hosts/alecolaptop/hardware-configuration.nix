@@ -2,9 +2,11 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" ];
   boot.kernelModules = [ "kvm-amd" ];
 
-  fileSystems."/" = {
+  fileSystems."/persist" = {
     device = "/dev/disk/by-uuid/47638a3b-7a1b-4eeb-972e-a6c63769990c";
     fsType = "ext4";
+    neededForBoot = true;
+    options = [ "noatime" ];
   };
 
   fileSystems."/boot" = {
@@ -19,4 +21,3 @@
     cpu.amd.updateMicrocode = true;
   };
 }
-

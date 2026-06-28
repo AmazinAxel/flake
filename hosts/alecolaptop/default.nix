@@ -1,15 +1,38 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }: {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
     ../../modules/desktop.nix
     ../../modules/printing.nix
+     ../../modules/impermanence.nix
   ];
+
+  environment.persistence."/persist" = {
+    directories = [ "/var/lib/cups" ]; # printer config
+    users.alec.directories = [
+      ".thunderbird"
+      ".config/GIMP"
+      ".config/libreoffice"
+      ".config/kicad"
+      ".local/share/kicad"
+      ".arduino15"
+      ".arduinoIDE"
+      ".config/arduino-ide"
+      "Arduino"
+      ".platformio"
+      ".config/kdeconnect"
+      ".local/share/kdeconnect"
+      ".local/share/com.hackclub.lookout"
+      ".bun"
+      "qmk_firmware"
+      "blot-gcode"
+    ];
+  };
 
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  swapDevices = [{ device = "/swapfile"; size = 4096; }];
+  swapDevices = [{ device = "/persist/swapfile"; }];
   zramSwap.memoryPercent = 100;
 
   environment.systemPackages = with pkgs; [
@@ -21,6 +44,8 @@
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
     })
 
+    inputs.lookout-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
+
     arduino-ide
     python3
     openjdk25
@@ -31,6 +56,7 @@
   programs.kdeconnect.enable = true;
 
   hardware = {
+    keyboard.qmk.enable = true;
     graphics.extraPackages = with pkgs; [
       libva
       libva-utils
@@ -91,10 +117,9 @@
         USB_EXCLUDE_AUDIO = 1;
         USB_EXCLUDE_PRINTER = 1;
 
-        # Audio codec
-        SOUND_POWER_SAVE_ON_AC = 0;
-        SOUND_POWER_SAVE_ON_BAT = 1;
-        SOUND_POWER_SAVE_CONTROLLER = "Y";
+        # SOUND_POWER_SAVE_ON_AC = 0;
+        # SOUND_POWER_SAVE_ON_BAT = 0;
+        # SOUND_POWER_SAVE_CONTROLLER = "N";
 
         # Wake on LAN
         WOL_DISABLE = "Y";
@@ -110,10 +135,13 @@
           "node.description" = "Bluetooth combined output";
           "node.latency" = "2048/48000"; # 42ms buffer to absorb jitter
           "combine.latency-compensate" = false; # less jitter
-          "combine.props"."audio.position" = [ "FL" "FR" ];
+          "combine.props" = {
+            "audio.position" = [ "FL" "FR" ];
+            "audio.rate" = 48000; # pin the BT path to 48kHz so graph rate switches don't disrupt it
+          };
           "combine.on-demand-streams" = true;
           "combine.start-streams-on-load" = false;
-          #"stream.props" = {};
+          "stream.props"."audio.rate" = 48000;
           "stream.rules" = [{
             matches = [
               { "node.name" = "bluez_output.94_4B_F8_8F_85_28.1"; }
@@ -124,18 +152,12 @@
         };
         flags = [ "ifexists" "nofail" ];
       }];
-
-      "92-low-latency"."context.properties" = {
-        "default.clock.rate" = 48000;
-        "default.clock.allowed-rates" = [ 48000 ];
-      };
     };
 
     pipewire.wireplumber.extraConfig = {
       # might not be necessary
       "10-bluetooth"."monitor.bluez.properties" = {
         "bluez5.codecs" = [ "aac" "sbc_xq" "sbc" ];
-        "bluez5.enable-hw-volume" = true;
         "bluez5.enable-msbc" = false;
       };
     };

@@ -104,6 +104,29 @@
         "type": "github"
       }
     },
+    "impermanence": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769548169,
+        "narHash": "sha256-03+JxvzmfwRu+5JafM0DLbxgHttOQZkUtDWBmeUkN8Y=",
+        "owner": "nix-community",
+        "repo": "impermanence",
+        "rev": "7b1d382faf603b6d264f58627330f9faa5cba149",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "impermanence",
+        "type": "github"
+      }
+    },
     "lightbrowse": {
       "inputs": {
         "nixpkgs": [
@@ -111,11 +134,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782411453,
-        "narHash": "sha256-99TlrWfwpSYF2TAVAlHqseRpitBR4NiwcgxR1KrEsvg=",
+        "lastModified": 1782494907,
+        "narHash": "sha256-EQXnL+mrIxMefW1TO32fQOtJeyHeWPXRvr4NXLUQ/xc=",
         "owner": "AmazinAxel",
         "repo": "lightbrowse",
-        "rev": "d54c2e51e1cdc28e769f717aeed350622aaae113",
+        "rev": "9bb631360cba235b874dc4080da7a44cbbae0362",
         "type": "github"
       },
       "original": {
@@ -124,13 +147,33 @@
         "type": "github"
       }
     },
+    "lookout-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782150448,
+        "narHash": "sha256-iz1aGtm7VZFC458R1Z8SCeVVPsUmCbl0Zj3U52WVw54=",
+        "owner": "cloudglides",
+        "repo": "lookout-nix",
+        "rev": "151fa25683a050179095af6e51d4a62ddd2aa3d4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cloudglides",
+        "repo": "lookout-nix",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1781577229,
-        "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
+        "lastModified": 1782467914,
+        "narHash": "sha256-pGvFkM8N0xEkIIXDe5YYfbEAvHrk4IxBrjB/x8OomhE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "567a49d1913ce81ac6e9582e3553dd90a955875f",
+        "rev": "e73de5be04e0eff4190a1432b946d469c794e7b4",
         "type": "github"
       },
       "original": {
@@ -167,7 +210,9 @@
         "helix": "helix",
         "home-manager": "home-manager",
         "homelab": "homelab",
+        "impermanence": "impermanence",
         "lightbrowse": "lightbrowse",
+        "lookout-nix": "lookout-nix",
         "nixpkgs": "nixpkgs",
         "printerblot": "printerblot",
         "spicetify-nix": "spicetify-nix",
