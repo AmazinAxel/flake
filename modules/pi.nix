@@ -58,4 +58,8 @@
     algorithm = "zstd";
     memoryPercent = 100;
   };
+
+  environment.systemPackages = [
+    (pkgs.writeScriptBin "persist-prune" (builtins.readFile ../scripts/persist-prune.fish))
+  ];
 }

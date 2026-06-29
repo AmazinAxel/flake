@@ -9,7 +9,7 @@ function s --inherit-variable passwd
 end
 
 s mkdir -p $mntPoint
-s mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
+s mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd,vers=3.0
 
 echo \n"[Sync] Pulling music from NAS"
 s rsync -av --ignore-existing "$mntPoint/Music/" /home/alec/Music/

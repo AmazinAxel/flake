@@ -86,6 +86,7 @@ in
             C-S-z = "redo"; # control+shift+Z
             A-tab = "goto_last_accessed_file"; # alt-tab, goto_last_modified_file
             C-tab = "buffer_picker"; # ctrl+tab
+            S-tab = "unindent"; # shift+tab de-indent line/block
             C-s = [ "normal_mode" ":write" ]; # ctrl+S save
             C-r = [ ":reload" ]; # reload file
             C-q = [ ":quit" ]; # ctrl+Q quit

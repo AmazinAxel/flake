@@ -49,6 +49,7 @@
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
+      (writeScriptBin "persist-prune" (builtins.readFile ../scripts/persist-prune.fish))
     ];
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Electron apps still need this

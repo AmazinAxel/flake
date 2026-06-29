@@ -43,11 +43,17 @@
       enable = true;
       package = pkgs.samba4Full; # Autodiscovery support
       openFirewall = true;
-      settings."USB" = {
-        path = "/media";
-        writable = true;
-        "valid users" = [ "alec" ];
-        "admin users" = [ "alec" ]; # Full read/write access
+      settings = {
+        global = {
+          "server min protocol" = "SMB3";
+          "server max protocol" = "SMB3";
+        };
+        "USB" = {
+          path = "/media";
+          writable = true;
+          "valid users" = [ "alec" ];
+          "admin users" = [ "alec" ]; # Full read/write access
+        };
       };
     };
     openssh.settings.Macs = [ "hmac-sha2-512" ]; # fix ios pass
