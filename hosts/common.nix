@@ -75,7 +75,7 @@
         init.defaultBranch = "main";
         color.ui = true;
         core.editor = "hx";
-        credential.helper = "store --file=~/.local/share/git/credentials";
+        credential.helper = "store --file=/home/alec/.local/share/git/credentials";
         github.user = "AmazinAxel"; # Github
         user.name = "AmazinAxel"; # Git
         user.email = "87440159+AmazinAxel@users.noreply.github.com";
