@@ -31,19 +31,19 @@ export const notificationItem = (n: Notifd.Notification) =>
         </box>
         <box cssClasses={['content']}>
             <box orientation={Gtk.Orientation.VERTICAL}>
-                <label
+                {n.summary?.trim() && <label
                     cssClasses={['summary']}
                     halign={START}
                     wrap
                     xalign={0}
-                    label={n.summary ?? ''}
-                    maxWidthChars={10}
-                />
-                {n.body && <label
+                    label={n.summary}
+                    maxWidthChars={30}
+                />}
+                {n.body?.trim() && <label
                     wrap
                     xalign={0}
-                    label={n.body ?? ''}
-                    maxWidthChars={10}
+                    label={n.body}
+                    maxWidthChars={30}
                 />}
                 {n.get_actions().length > 0 && <box cssClasses={['actions']} spacing={5}>
                     {n.get_actions().map(({ label, id }) =>

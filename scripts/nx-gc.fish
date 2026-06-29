@@ -8,4 +8,4 @@ sudo nix-collect-garbage -d
 
 # Optimize/trim
 sudo nix-store --optimise
-fstrim -av
+sudo fstrim -av
