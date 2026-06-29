@@ -23,7 +23,6 @@
       wl-clipboard # Astal clipboard utils
       wl-gammarelay-rs # Blue light filter
       gpu-screen-recorder
-      samba # Planning app sync
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
       playerctl # mpris control from shell
@@ -55,7 +54,6 @@
       NIXOS_OZONE_WL = "1"; # Electron apps still need this
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
     };
-    etc."samba/smb.conf".text = "[global]"; # Workaround to make samba work without needing to enable the service
   };
 
   fonts.packages = with pkgs; [
@@ -72,10 +70,7 @@
       enable = true;
       pinentryPackage = pkgs.pinentry-gnome3;
     };
-    seahorse.enable = true; # keyring GUI
   };
-
-  security.pam.services.greetd.enableGnomeKeyring = true;
 
   # Chinese input support
   i18n.inputMethod = {
@@ -104,8 +99,13 @@
       };
     };
   };
+  # fix fcitx5 popup on boot
+  environment.etc."xdg/fcitx5/addon/cloudpinyin.conf".text = ''
+    [Addon]
+    Enabled=False
+  '';
 
-  console.colors = [
+  console.colors = [ # TTY
     "000000" # black (background)
     "bf616a" # red
     "a3be8c" # green
@@ -128,8 +128,6 @@
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
-    gnome.gnome-keyring.enable = true;
-    # dbus.packages = [ pkgs.gcr ]; # fix prompt ui
 
     # Prevent crashes
     earlyoom = {
@@ -144,15 +142,6 @@
       alsa.support32Bit = true;
       pulse.enable = true;
       wireplumber.enable = true;
-
-      # extraConfig.pipewire."10-wired-quality"."context.properties" = {
-      #   "default.clock.allowed-rates" = [ 44100 48000 88200 96000 ];
-      # };
-
-      # wireplumber.extraConfig."10-wired-resample-quality"."monitor.alsa.rules" = [{
-      #   matches = [{ "node.name" = "~alsa_output.*"; }];
-      #   actions.update-props."resample.quality" = 15;
-      # }];
     };
 
     greetd = { # Autologin
@@ -163,7 +152,11 @@
       };
     };
   };
-  security.rtkit.enable = true; # better audio latency
+
+  security = {
+    rtkit.enable = true; # better audio latency
+    sudo.extraConfig = "Defaults lecture=never"; # lectures are on by default
+  };
 
   # Bluetooth
   hardware = {
@@ -177,8 +170,6 @@
       };
     };
   };
-
-  security.pam.services.astal-auth = {}; # For astal lockscreen to work
 
   # Since we dont use the sway nix module we have to set the portal explicitly for things like flatpak and screensharing to work
   xdg.portal = {

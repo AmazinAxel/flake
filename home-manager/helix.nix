@@ -28,7 +28,7 @@ in
       ];
       settings = {
         theme = {
-          light = "nord_light";
+          light = "iceberg-light"; # tokoyonight_day catppuccin_latte solarized-light
           dark = "nord-night";
         };
 

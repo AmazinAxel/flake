@@ -9,7 +9,6 @@ import inputControl from '../../lib/inputControl';
 const apps = new Apps.Apps();
 let textBox: Gtk.Entry;
 const [ appsList, setAppsList ] = createState(new Array<Apps.Application>());
-setAppsList(apps.fuzzy_query('').slice(0, 5));
 
 export const [ focus, setIsFocused ] = createState(false);
 const focusBlockedAppNames = ['discord', 'slack'];
@@ -18,7 +17,7 @@ const isBlocked = (a: Apps.Application) =>
     focus.peek() && focusBlockedAppNames.some(b => a.name.toLowerCase().includes(b));
 
 const search = (text: string) => setAppsList(
-    apps.fuzzy_query(text).filter(a => !isBlocked(a)).slice(0, 5)
+    text.length < 2 ? [] : apps.fuzzy_query(text).filter(a => !isBlocked(a)).slice(0, 5)
 );
 
 const launchApp = (selectedApp: Apps.Application) => {

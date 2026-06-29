@@ -10,7 +10,7 @@
     loader = {
       systemd-boot = {
         enable = lib.mkDefault true;
-        configurationLimit = 2; # Save space in /boot
+        configurationLimit = 2;
         editor = false;
       };
       efi.canTouchEfiVariables = true;
@@ -75,9 +75,10 @@
         init.defaultBranch = "main";
         color.ui = true;
         core.editor = "hx";
-        credential.helper = "store";
+        credential.helper = "store --file=~/.local/share/git/credentials";
         github.user = "AmazinAxel"; # Github
         user.name = "AmazinAxel"; # Git
+        user.email = "87440159+AmazinAxel@users.noreply.github.com";
         push.autoSetupRemote = true;
       };
     };

@@ -33,6 +33,7 @@ const networkSession = new WebKit.NetworkSession({
   data_directory: dataDir,
   cache_directory: GLib.get_user_cache_dir() + '/ags-sideview'
 });
+networkSession.set_cache_model(WebKit.CacheModel.WEB_BROWSER);
 networkSession.get_cookie_manager().set_persistent_storage(
   dataDir + "/cookies.sqlite",
   WebKit.CookiePersistentStorage.SQLITE

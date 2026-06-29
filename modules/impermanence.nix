@@ -1,8 +1,14 @@
-{ inputs, ... }: {
+{ inputs, lib, ... }: {
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
   # sudo install -Dm600 <(grep '^alec:' /etc/shadow | cut -d: -f2) /persist/passwords/alec
-  users.users.alec.hashedPasswordFile = "/persist/passwords/alec";
+  users = {
+    users.alec = {
+      hashedPasswordFile = "/persist/passwords/alec";
+      initialPassword = lib.mkForce null; # todo will NEVER be necessary when we are finished with impermanence config
+    };
+    mutableUsers = false;
+  };
 
   fileSystems."/" = {
     device = "none";
@@ -19,14 +25,16 @@
 
   environment.persistence."/persist" = {
     hideMounts = true;
+    allowTrash = true;
 
     # System / machine state
     directories = [
       "/var/lib/nixos" # uid/gid map
       "/var/lib/systemd" # backlight
-      "/var/lib/bluetooth" # paired devices
-      "/var/lib/iwd" # wifi networks
+      "/var/lib/bluetooth" # bt paired devices
+      "/var/lib/iwd" # saved networks
       "/var/log" # journald history across reboots
+      "/root/.cache/nix" # flake cache
     ];
     files = [
       "/etc/machine-id" # stable id
@@ -34,15 +42,6 @@
 
     users.alec = {
       directories = [
-        ".ssh"
-        ".gnupg"
-        ".password-store"
-        ".local/share/keyrings" # gnome-keyring
-
-        # Desktop settings
-        ".config/dconf"
-
-        # XDG user data
         "Documents"
         "Downloads"
         "Pictures"
@@ -51,10 +50,17 @@
         "Desktop"
         "Projects"
         "Models"
+        # ".local/share/Trash"
 
-        # Shell
-        ".local/share/fish" # history
+        # keys
+        ".ssh"
+        ".gnupg"
+        ".password-store"
 
+        ".local/share/fish" # shell history
+        ".local/share/git" # github login
+
+        # apps
         ".config/discord"
         ".config/Slack"
         ".config/filezilla"
@@ -67,18 +73,16 @@
         ".cache/spotify"
         ".local/share/mpd"
         ".config/Code"
+        ".local/share/ags-sideview"
+        ".cache/ags-sideview"
 
+        # GPU cache
         ".cache/mesa_shader_cache"
         ".cache/mesa_shader_cache_db"
         ".cache/radv_builtin_shaders"
         ".cache/qtshadercache-x86_64-little_endian-lp64"
       ];
-      files = [
-        ".claude.json"
-        ".git-credentials"
-        ".gitconfig"
-        "Safe.kdbx"
-      ];
+      files = [ ".claude.json" ]; # claude login
     };
   };
 }

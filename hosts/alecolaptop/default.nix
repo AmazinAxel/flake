@@ -32,7 +32,7 @@
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  swapDevices = [{ device = "/persist/swapfile"; }];
+  swapDevices = [{ device = "/persist/swapfile"; size = 4096; }];
   zramSwap.memoryPercent = 100;
 
   environment.systemPackages = with pkgs; [

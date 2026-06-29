@@ -8,8 +8,7 @@ function s --inherit-variable passwd
     echo $passwd | sudo -S -p '' $argv
 end
 
-# Mount & sync from share
-mkdir -p $mntPoint
+s mkdir -p $mntPoint
 s mount.cifs //ALECHOMELAB.local/USB $mntPoint -o user=alec,password=$passwd
 
 echo \n"[Sync] Pulling music from NAS"
