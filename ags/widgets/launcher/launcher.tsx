@@ -21,16 +21,9 @@ const search = (text: string) => setAppsList(
 );
 
 const launchApp = (selectedApp: Apps.Application) => {
-    // Launch through the compositor so the app inherits sway's full session
-    // environment, exactly like an app started from a foot terminal. Launching
-    // as a child of ags (AstalApps' launch(), or systemd-run --scope) inherits
-    // ags's LD_PRELOAD (gtk4-layer-shell) and GI_TYPELIB_PATH pollution, which
-    // crashes apps. systemd-run --user avoids that but loses GDK_PIXBUF_MODULE_FILE
-    // and other session vars, so GTK apps coredump on icon load. swaymsg exec
-    // gets it right: sway's env has the right loaders without ags's pollution.
     const cmd = selectedApp.executable.replace(/ ?%[a-zA-Z]/g, '').trim();
-    execAsync(['swaymsg', 'exec', '--', cmd])
-        .catch(err => console.error(`Failed to launch ${selectedApp.name}:`, err));
+    execAsync(['swaymsg', 'exec', '--', cmd]);
+    // console.log(cmd);
     app.toggle_window("launcher");
 };
 
