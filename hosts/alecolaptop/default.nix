@@ -20,7 +20,6 @@
       ".local/share/kdeconnect"
       ".local/share/com.hackclub.lookout"
       ".bun"
-      "qmk_firmware"
     ];
   };
 

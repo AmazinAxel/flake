@@ -63,9 +63,7 @@
           "Pictures"
           "Videos"
           "Music"
-          "Desktop"
           "Projects"
-          "Models"
 
           # keys
           ".ssh"
