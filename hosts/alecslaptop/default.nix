@@ -59,7 +59,7 @@
     amdgpu.opencl.enable = true;
   };
 
-  swapDevices = [{ device = "/swapfile"; size = 4096; }];
+  swapDevices = [{ device = "/swapfile"; size = 18 * 1024; }];
 
   services = {
     flatpak.enable = true; # For running Sober

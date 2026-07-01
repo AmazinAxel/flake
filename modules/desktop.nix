@@ -1,5 +1,7 @@
 { inputs, pkgs, ... }: {
 
+  imports = [ ./impermanence.nix ];
+
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];

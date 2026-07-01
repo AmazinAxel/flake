@@ -1,7 +1,8 @@
 { inputs, lib, ... }: {
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
-  # sudo install -Dm600 <(grep '^alec:' /etc/shadow | cut -d: -f2) /persist/passwords/alec
+  # sudo install -Dm600 <(grep '^alec:' /etc/shadow | cut -d: -f2) /passwords/alec
+  # maybe install to /persist/passwords/alec
   users = {
     users.alec = {
       hashedPasswordFile = "/persist/passwords/alec";
@@ -32,6 +33,7 @@
       "/var/lib/nixos" # uid/gid map
       "/var/lib/iwd" # saved networks
       "/root/.cache/nix" # flake cache
+      "/etc/ssh" # stable host keys (remote builds)
     ];
     files = [
       "/etc/machine-id" # stable id

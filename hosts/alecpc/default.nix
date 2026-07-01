@@ -8,7 +8,7 @@
   networking.hostName = "alecpc";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  swapDevices = [{ device = "/swapfile"; size = 2048; }];
+  swapDevices = [{ device = "/persist/swapfile"; size = 18 * 1024; }];
 
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive
@@ -20,8 +20,6 @@
 
     bun
     openjdk25
-    nodejs_22
-    steam-run
   ];
   programs.kdeconnect.enable = true;
 
@@ -30,10 +28,9 @@
     openssh.enable = true;  # for remote builds
   };
 
-  # Desktop is always on AC — run CPU at full tilt
   powerManagement.cpuFreqGovernor = "performance";
 
-  # Faster builds for alechandheld and alechomelab
+  # Faster builds
   nix.settings = {
     max-jobs = "auto";
     cores = 0;

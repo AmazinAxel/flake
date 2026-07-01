@@ -27,7 +27,7 @@
   networking.hostName = "alecolaptop";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
-  swapDevices = [{ device = "/persist/swapfile"; size = 12288; }];
+  swapDevices = [{ device = "/persist/swapfile"; size = 10 * 1024; }];
   zramSwap.memoryPercent = 100;
 
   environment.systemPackages = with pkgs; [
@@ -45,8 +45,6 @@
     bun
     claude-code
     platformio-core
-
-    sbctl # TODO remove
   ];
   programs.kdeconnect.enable = true;
 
