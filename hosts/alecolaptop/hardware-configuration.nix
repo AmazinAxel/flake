@@ -3,6 +3,14 @@
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "hid_generic" ]; # MUST include usb modules for keyboard to work for LUKS
     kernelModules = [ "kvm-amd" ];
     initrd.luks.devices."cryptpersist".device = "/dev/disk/by-uuid/fd5a2a94-4459-4102-a07a-2ea504232b9d";
+
+    loader = { # Secure boot
+      systemd-boot.enable = lib.mkForce false;
+      loader.limine = {
+        enable = true;
+        secureBoot.enable = true;
+      };
+    };
   };
 
   fileSystems."/persist" = {

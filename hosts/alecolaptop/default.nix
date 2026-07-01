@@ -8,24 +8,19 @@
   ];
 
   environment.persistence."/persist" = {
-    directories = [ "/var/lib/cups" ]; # printer config
+    directories = [ "/var/lib/cups" "/var/lib/sbctl" ]; # printer config and secure boot keys
     users.alec.directories = [
       ".thunderbird"
       ".config/GIMP"
       ".config/libreoffice"
       ".config/kicad"
       ".local/share/kicad"
-      ".arduino15"
-      ".arduinoIDE"
-      ".config/arduino-ide"
-      "Arduino"
       ".platformio"
       ".config/kdeconnect"
       ".local/share/kdeconnect"
       ".local/share/com.hackclub.lookout"
       ".bun"
       "qmk_firmware"
-      "blot-gcode"
     ];
   };
 
@@ -46,12 +41,12 @@
 
     inputs.lookout-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
-    arduino-ide
-    python3
     openjdk25
     bun
     claude-code
     platformio-core
+
+    sbctl # TODO remove
   ];
   programs.kdeconnect.enable = true;
 
