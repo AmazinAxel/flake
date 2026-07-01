@@ -1,4 +1,4 @@
-{
+{ lib, ... }: {
   boot = {
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "hid_generic" ]; # MUST include usb modules for keyboard to work for LUKS
     kernelModules = [ "kvm-amd" ];
@@ -6,9 +6,11 @@
 
     loader = { # Secure boot
       systemd-boot.enable = lib.mkForce false;
-      loader.limine = {
+      limine = {
         enable = true;
         secureBoot.enable = true;
+        maxGenerations = 2;
+        efiInstallAsRemovable = true;
       };
     };
   };
