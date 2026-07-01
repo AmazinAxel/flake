@@ -37,6 +37,7 @@ networkSession.get_cookie_manager().set_persistent_storage(
   dataDir + "/cookies.sqlite",
   WebKit.CookiePersistentStorage.SQLITE
 );
+// networkSession.set_itp_enabled(false);
 
 const stack = new Gtk.Stack();
 const webviews: Partial<Record<PageName, any>> = {};

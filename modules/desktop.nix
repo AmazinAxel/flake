@@ -26,7 +26,7 @@
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
       playerctl # mpris control from shell
-      killall
+      # killall
       pass # password management
       gnupg # GPG for passkeys
       xdg-terminal-exec # open in terminals
@@ -51,10 +51,60 @@
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
       (writeScriptBin "persist-prune" (builtins.readFile ../scripts/persist-prune.fish))
     ];
+    persistence."/persist" = {
+      directories = [
+        "/var/lib/systemd" # backlight
+        "/var/lib/bluetooth" # bt paired devices
+      ];
+      users.alec = {
+        directories = [
+          "Documents"
+          "Downloads"
+          "Pictures"
+          "Videos"
+          "Music"
+          "Desktop"
+          "Projects"
+          "Models"
+
+          # keys
+          ".ssh"
+          ".gnupg"
+          ".password-store"
+
+          # apps
+          ".config/discord"
+          ".config/Slack"
+          ".config/filezilla"
+          ".local/share/PrismLauncher"
+          ".claude"
+          ".config/zen"
+          ".config/lightbrowse"
+          ".cache/lightbrowse"
+          ".config/spotify"
+          ".cache/spotify"
+          ".local/share/mpd"
+          ".config/Code"
+          ".local/share/ags-sideview"
+          ".cache/ags-sideview"
+
+          # GPU cache
+          ".cache/mesa_shader_cache"
+          ".cache/mesa_shader_cache_db"
+          ".cache/radv_builtin_shaders"
+          ".cache/qtshadercache-x86_64-little_endian-lp64"
+        ];
+        files = [ ".claude.json" ]; # claude login
+      };
+    };
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Electron apps still need this
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
     };
+    etc."xdg/fcitx5/addon/cloudpinyin.conf".text = ''
+      [Addon]
+      Enabled=False
+    '';
   };
 
   fonts.packages = with pkgs; [
@@ -96,15 +146,11 @@
         addons = {
           clipboard.globalSection."TriggerKey" = ""; # Disable clipboard
           classicui.globalSection."Theme" = "Nord-Dark";
+          pinyin.globalSection."FirstRun" = "False";
         };
       };
     };
   };
-  # fix fcitx5 popup on boot
-  environment.etc."xdg/fcitx5/addon/cloudpinyin.conf".text = ''
-    [Addon]
-    Enabled=False
-  '';
 
   console.colors = [ # TTY
     "000000" # black (background)
@@ -156,6 +202,7 @@
 
   security = {
     rtkit.enable = true; # better audio latency
+    pam.services.astal-auth = {}; # For astal lockscreen to work
     sudo.extraConfig = "Defaults lecture=never"; # lectures are on by default
   };
 

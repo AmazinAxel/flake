@@ -84,10 +84,10 @@
     options = [ "nofail" ];
   };
 
-  swapDevices = [{
-    device = "/media/swapfile";
-    size = 1024; # MB; lives on USB drive, not SD card
-  }];
+  # swapDevices = [{
+  #   device = "/media/swapfile";
+  #   size = 1024;
+  # }];
   system.stateVersion = "25.11";
 
   /*

@@ -31,6 +31,7 @@
         "type:keyboard" = {
           repeat_delay = "300";
           repeat_rate = "30";
+          xkb_options = "caps:none";
         };
       };
 

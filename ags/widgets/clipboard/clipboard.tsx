@@ -1,4 +1,3 @@
-import { monitorFile } from 'ags/file';
 import { execAsync } from 'ags/process';
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
@@ -25,9 +24,23 @@ list.set_sort_func((a, b) => {
     return row2id - row1id;
 });
 
-monitorFile('/home/alec/.cache/cliphist/db', (_, event) =>
-    (event == Gio.FileMonitorEvent.CHANGES_DONE_HINT) && refreshItems()
-);
+const dbPath = '/home/alec/.cache/cliphist/db';
+const watchDb = () => {
+    const monitor = Gio.File.new_for_path(dbPath)
+        .monitor_file(Gio.FileMonitorFlags.WATCH_MOVES, null);
+
+    monitor.connect('changed', (_, __, ___, event) => {
+        if (event == Gio.FileMonitorEvent.CHANGES_DONE_HINT
+            || event == Gio.FileMonitorEvent.DELETED)
+            refreshItems();
+
+        if (event == Gio.FileMonitorEvent.DELETED) {
+            monitor.cancel();
+            watchDb();
+        }
+    });
+};
+watchDb();
 
 streamingMode.subscribe(() => refreshItems()); // condense/uncondense list when streamer mode changes
 
