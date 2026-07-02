@@ -70,7 +70,7 @@
     kernelParams = [
       "mem_sleep_default=deep"
       "amdgpu.abmlevel=2" # adaptive backlight for display power saving
-      "amd_pstate=active"
+      "amd_pstate=active" # enable SPPC in the BIOS first!!!
     ];
     kernel.sysctl = {
       "vm.dirty_writeback_centisecs" = 6000; # batch disk writes
@@ -89,7 +89,7 @@
         CPU_SCALING_GOVERNOR_ON_AC = "performance";
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
 
         # no CPU boost on battery
@@ -113,10 +113,6 @@
         USB_EXCLUDE_AUDIO = 1;
         USB_EXCLUDE_PRINTER = 1;
 
-        # SOUND_POWER_SAVE_ON_AC = 0;
-        # SOUND_POWER_SAVE_ON_BAT = 0;
-        # SOUND_POWER_SAVE_CONTROLLER = "N";
-
         # Wake on LAN
         WOL_DISABLE = "Y";
       };
@@ -133,7 +129,7 @@
           "combine.latency-compensate" = false; # less jitter
           "combine.props" = {
             "audio.position" = [ "FL" "FR" ];
-            "audio.rate" = 48000; # pin the BT path to 48kHz so graph rate switches don't disrupt it
+            "audio.rate" = 48000;
           };
           "combine.on-demand-streams" = true;
           "combine.start-streams-on-load" = false;
