@@ -60,6 +60,10 @@
         home-manager.follows = "home-manager";
       };
     };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { home-manager, nixpkgs, homelab, printerblot, ... }@inputs: {

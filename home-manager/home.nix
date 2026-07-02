@@ -90,7 +90,7 @@
     userDirs = {
       enable = true;
       createDirectories = true; # Auto-creates all directories
-      desktop = null;
+      desktop = "/home/alec"; # don't want this folder
       publicShare = null;
       templates = null;
       extraConfig = {

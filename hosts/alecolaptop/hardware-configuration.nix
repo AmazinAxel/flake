@@ -1,17 +1,21 @@
 { lib, ... }: {
   boot = {
-    initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "i8042" "atkbd" "usbhid" "hid_generic" ]; # MUST include usb modules for keyboard to work for LUKS
+    initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "i8042" "atkbd" "usbhid" "hid_generic" ]; # MUST include these modules for keyboard to work for LUKS
     kernelModules = [ "kvm-amd" ];
-    initrd.luks.devices."cryptpersist".device = "/dev/disk/by-uuid/fd5a2a94-4459-4102-a07a-2ea504232b9d";
+    initrd.luks.devices."cryptpersist" = {
+      device = "/dev/disk/by-uuid/fd5a2a94-4459-4102-a07a-2ea504232b9d";
+      allowDiscards = true;
+      bypassWorkqueues = true;
+    };
 
     loader = { # Secure boot
-      systemd-boot.enable = lib.mkForce false;
-      limine = {
-        enable = true;
-        secureBoot.enable = true;
-        maxGenerations = 2;
-        efiInstallAsRemovable = true;
-      };
+      systemd-boot.enable = lib.mkForce false; # lanzaboote replaces systemd-boot
+      efi.canTouchEfiVariables = true;
+    };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl"; # reuse the already-enrolled sbctl keys
+      configurationLimit = 2;
     };
   };
 

@@ -5,6 +5,7 @@
     ../../modules/desktop.nix
     ../../modules/printing.nix
      ../../modules/impermanence.nix
+    inputs.lanzaboote.nixosModules.lanzaboote
   ];
 
   environment.persistence."/persist" = {
@@ -69,6 +70,7 @@
     kernelParams = [
       "mem_sleep_default=deep"
       "amdgpu.abmlevel=2" # adaptive backlight for display power saving
+      "amd_pstate=active"
     ];
     kernel.sysctl = {
       "vm.dirty_writeback_centisecs" = 6000; # batch disk writes

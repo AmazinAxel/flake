@@ -41,6 +41,8 @@
         gtk-theme = "Graphite-Dark-nord";
       };
       "org/gnome/SoundRecorder".audio-profile = "mp3";
+      "org/nemo/window-state".start-with-status-bar = false; # this info is inaccurate
+      "org/nemo/preferences".desktop-is-home-dir = true; # drop the dead ~/Desktop entry from the sidebar
     };
   };
   xdg.configFile."gtk-4.0/gtk.css".force = true; # wont build otherwise

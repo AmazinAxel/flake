@@ -105,6 +105,11 @@
     '';
   };
 
+  systemd.tmpfiles.rules = [
+    "Z /persist/home/alec/Music - alec users - -" # music proper owner
+    "R! /home/alec/*/.Trash-* - - - - -" # wipe trash in each persisted folder on boot
+  ];
+
   fonts.packages = with pkgs; [
     nerd-fonts.iosevka # Programming
     wqy_zenhei # Chinese
