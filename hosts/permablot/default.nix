@@ -64,6 +64,10 @@
 
   boot.kernelModules = [ "cdc_acm" ]; # USB driver for /dev/ttyACM0
 
+  environment.persistence."/persist".directories = [
+    "/var/lib/blotd" # printer gcode cache
+  ];
+
   # Networking
   networking = {
     hostName = "permablot";

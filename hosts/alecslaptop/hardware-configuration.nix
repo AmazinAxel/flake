@@ -2,9 +2,11 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usbhid" ];
   boot.kernelModules = [ "kvm-amd" ];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/ca0e7cbb-b202-4129-a821-ff5dcdbb8488";
+  fileSystems."/persist" = {
+    device = "/dev/disk/by-uuid/REPLACE-ME"; #!!!!!!!!!!!!!!!!!!!!
     fsType = "ext4";
+    neededForBoot = true;
+    options = [ "noatime" ];
   };
 
   fileSystems."/boot" = {

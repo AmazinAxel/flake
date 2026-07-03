@@ -1,4 +1,6 @@
 { pkgs, lib, ... }: {
+  imports = [ ./impermanence.nix ];
+
   boot = {
     loader = { # Raspi boot
       systemd-boot.enable = false;
@@ -34,8 +36,6 @@
     firmware = [ pkgs.raspberrypiWirelessFirmware ]; # needed for wifi to work
   };
 
-  # /etc/wpa_supplicant impermanance TODO
-
   services = {
     openssh.enable = true;
     avahi.publish = { # needed for .local connection
@@ -44,11 +44,23 @@
     };
   };
 
-  fileSystems."/" = { # Device SD card
+  fileSystems."/persist" = {
     device = "/dev/disk/by-label/NIXOS_SD";
     fsType = "ext4";
-    options = lib.mkForce [ "noatime" ]; # force to not include discard flag from common.nix
+    neededForBoot = true;
+    options = [ "noatime" ];
   };
+  fileSystems."/boot" = { # extlinux kernels
+    device = "/persist/boot";
+    fsType = "none";
+    options = [ "bind" ];
+    neededForBoot = true;
+    depends = [ "/persist" ];
+  };
+
+  environment.persistence."/persist".directories = [
+    "/etc/NetworkManager/system-connections" # networkmanager wifi
+  ];
 
   services.journald.extraConfig = "Storage=volatile";
   nixpkgs.hostPlatform = "aarch64-linux";

@@ -55,6 +55,7 @@
     ];
     persistence."/persist" = {
       directories = [
+        "/var/lib/iwd" # saved wifi networks
         "/var/lib/systemd" # backlight
         "/var/lib/bluetooth" # bt paired devices
       ];

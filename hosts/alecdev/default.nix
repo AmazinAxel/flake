@@ -37,6 +37,8 @@
     eula = true;
   };
 
+  environment.persistence."/persist".directories = [ "/var/lib/permafrost" ];
+
   # Networking
   networking.hostName = "alecdev";
   system.stateVersion = "26.05";

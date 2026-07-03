@@ -84,6 +84,14 @@
     options = [ "nofail" ];
   };
 
+  environment.persistence."/persist" = {
+    directories = [
+      "/var/lib/samba" # NAS login
+      "/etc/homelab" # Airnow token
+    ];
+    users.alec.files = [ "GithubToken" ]; # githubBackup
+  };
+
   # swapDevices = [{
   #   device = "/media/swapfile";
   #   size = 1024;

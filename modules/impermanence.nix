@@ -31,9 +31,8 @@
     # System / machine state
     directories = [
       "/var/lib/nixos" # uid/gid map
-      "/var/lib/iwd" # saved networks
       "/root/.cache/nix" # flake cache
-      "/etc/ssh" # stable host keys (remote builds)
+      "/etc/ssh" # host keys (stable ssh identity)
     ];
     files = [
       "/etc/machine-id" # stable id

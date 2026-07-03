@@ -59,7 +59,16 @@
     amdgpu.opencl.enable = true;
   };
 
-  swapDevices = [{ device = "/swapfile"; size = 18 * 1024; }];
+  swapDevices = [{ device = "/persist/swapfile"; size = 18 * 1024; }];
+
+  environment.persistence."/persist" = {
+    directories = [ "/var/lib/flatpak" ]; # Sober
+    users.alec.directories = [
+      ".local/share/Steam" ".steam" # Steam
+      ".thunderbird" # Thunderbird
+      ".config/kdeconnect" # kdeconnect
+    ];
+  };
 
   services = {
     flatpak.enable = true; # For running Sober

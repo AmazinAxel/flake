@@ -101,6 +101,7 @@
 
       # Homelab (Zero 2W)
       "alechomelab" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/alechomelab/default.nix
           {
@@ -127,6 +128,7 @@
 
       # Permablot (custom printerblot printer, Zero 2W)
       "permablot" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/permablot/default.nix
           {
