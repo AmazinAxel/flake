@@ -7,8 +7,8 @@ let
     hash = "sha256-AC0iqbSYWO/zYJ/PgOuOp1ucbPycY66gXDGJVlKS1KQ=";
   };
 
-  # Unpack the release zip into the Nix store (read-only reference copy)
-  # todo necessary?
+  # Unpack the release zip into the Nix store; first-run init copies it into
+  # the writable state dir at /var/lib/portmaster/PortMaster.
   portmasterStore = pkgs.runCommand "portmaster-${portmasterVersion}-src" {
     nativeBuildInputs = [ pkgs.unzip ];
   } ''
@@ -23,7 +23,7 @@ let
     # ports on SD card
     export directory="mnt/AlecContent"
 
-    # No sudo, todo necessary?
+    # No sudo inside the sandbox
     export ESUDO=""
     export ESUDOKILL="-1"
     export ESUDOKILL2="-1"
@@ -364,25 +364,17 @@ let
       # been built against Debian multiarch paths.  Expose both so they find libs
       # whether they use /usr/lib or /usr/lib/aarch64-linux-gnu RPATH.
       export LD_LIBRARY_PATH=/usr/lib:/usr/lib/aarch64-linux-gnu''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-      # Controller mappings for H700 Gamepad — two entries:
-      #   1. Physical device  (Bus=0x0019 VID=0x484b PID=0x14df)
-      #   2. Virtual device   (Bus=0x0006 BUS_VIRTUAL — created by evsieve; same VID/PID)
+      # Controller mapping for the physical H700 Gamepad
+      # (Bus=0x0019 VID=0x484b PID=0x14df).
       # SDL convention: A=South(confirm), B=East(cancel), X=West, Y=North.
       # Physical evdev indices: b0=East, b1=South, b2=North, b3=West.
       # Therefore: a:b1, b:b0, x:b3, y:b2.
       # RetroArch uses raw udev button indices (hm.nix) so this only affects SDL apps
       # (PortMaster UI, gptokeyb2, Love2D, etc).
-      # SDL GUIDs for the H700 Gamepad, confirmed via sdl-jstest at runtime.
-      # SDL2 2.26+ GUID format: bus(LE16) | crc16(name)(LE16) | vendor... or name bytes
-      # Virtual device (evsieve output, bus=0, vendor=0, product=0):
-      #   GUID = 0000 f6a2 "H700 Gamepa\0" = 0000f6a2483730302047616d65706100
-      # Physical device (bus=0x0019, vendor=0x484b, product=0x14df):
+      # SDL2 2.26+ GUID format: bus(LE16) | crc16(name)(LE16) | vendor/product...
       #   GUID = 1900 f6a2 4b48 0000 df14 0000 0001 0000 = 1900f6a24b480000df14000000010000
       # Mapping confirmed by sdl-jstest auto-detection (BTN_SOUTH=b0, axes a0-a3).
-      # Both entries included: physical device may be visible via /dev/input/js* even
-      # though our udev rule suppresses its ID_INPUT_JOYSTICK via evdev enumeration.
-      export SDL_GAMECONTROLLERCONFIG="0000f6a2483730302047616d65706100,H700 Gamepad,platform:Linux,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,rightstick:b12,dpup:b13,dpdown:b14,dpleft:b15,dpright:b16,leftx:a0,lefty:a1,rightx:a2,righty:a3,
-1900f6a24b480000df14000000010000,H700 Gamepad,platform:Linux,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,rightstick:b12,dpup:b13,dpdown:b14,dpleft:b15,dpright:b16,leftx:a0,lefty:a1,rightx:a2,righty:a3,"
+      export SDL_GAMECONTROLLERCONFIG="1900f6a24b480000df14000000010000,H700 Gamepad,platform:Linux,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,rightstick:b12,dpup:b13,dpdown:b14,dpleft:b15,dpright:b16,leftx:a0,lefty:a1,rightx:a2,righty:a3,"
 
       # Patch control.txt so PortMaster.sh reads CFW_NAME=AlecHandheld.
       patch_ctrl() {

@@ -134,20 +134,10 @@ let
       printf '\033c'  # clear TTY so boot text doesn't show through
       scan_ports      # rebuild ports playlist from SD card before each RA launch
       rm -f /tmp/launch-request
-      retroarch >/tmp/retroarch.log 2>&1 &
-      RA_PID=$!
-      # Poll for a launch request; kill retroarch when one appears
-      while kill -0 "$RA_PID" 2>/dev/null; do
-        if [ -f /tmp/launch-request ]; then
-          echo -n "QUIT" > /dev/udp/127.0.0.1/55355 2>/dev/null || true
-          sleep 0.5
-          kill "$RA_PID" 2>/dev/null || true
-          wait "$RA_PID" 2>/dev/null
-          break
-        fi
-        sleep 0.2
-      done
-      wait "$RA_PID" 2>/dev/null
+      # The launcher core writes /tmp/launch-request and asks RetroArch to shut
+      # itself down (RETRO_ENVIRONMENT_SHUTDOWN), so RA just runs in the
+      # foreground — no polling loop needed.
+      retroarch >/tmp/retroarch.log 2>&1
       if [ -f /tmp/launch-request ]; then
         app=$(cat /tmp/launch-request)
         rm -f /tmp/launch-request
@@ -188,7 +178,7 @@ in {
   # ── alechandheld service (replaces cage.service) ─────────────────────────
   systemd.services.alechandheld = {
     description = "alechandheld";
-    after     = [ "multi-user.target" "gamepad-handler.service" "vol-handler.service" "systemd-logind.service" ];
+    after     = [ "multi-user.target" "systemd-logind.service" ];
     wants     = [ "systemd-logind.service" ];
     wantedBy  = [ "multi-user.target" ];
     conflicts = [ "getty@tty1.service" "autovt@tty1.service" ];

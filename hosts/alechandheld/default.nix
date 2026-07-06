@@ -66,12 +66,11 @@ in {
   ];
 
   home-manager.users.alec.imports = [ ./hm.nix ];
-  programs.gamemode.enable = true;
   zramSwap.enable = false; # Breaks boot if enabled
 
   services = {
     openssh.enable = true;
-    libinput.enable = true; # todo
+    fstrim.enable = true; # weekly TRIM — kinder to the SD card than continuous discard
     earlyoom = {
       enable = true;
       freeMemThreshold = 5;
@@ -98,8 +97,7 @@ in {
           action.id === "org.freedesktop.login1.suspend" ||
           action.id === "org.freedesktop.login1.hibernate" ||
           (action.id === "org.freedesktop.systemd1.manage-units" &&
-           (action.lookup("unit") === "oga_events.service" ||
-            action.lookup("unit") === "gamepad-handler.service"))) {
+           action.lookup("unit") === "oga_events.service")) {
         return polkit.Result.YES;
       }
     });
@@ -133,11 +131,8 @@ in {
   security.rtkit.enable = true; # realtime priority for pw
   powerManagement.cpuFreqGovernor = "schedutil";
   systemd.services.NetworkManager-wait-online.enable = false;
-  boot.kernelParams = [
-    "cma=256M" # default 32mb, for running more intensive games
-    "nowatchdog"
-    "nmi_watchdog=0"
-  ];
+  # nowatchdog/nmi_watchdog already set in common.nix
+  boot.kernelParams = [ "cma=256M" ]; # default 32mb, for running more intensive games
   # rtw88 deep low-power state causes intermittent WiFi drops on RTL8821CS.
   boot.extraModprobeConfig = ''
     options rtw88_core disable_lps_deep=Y
@@ -170,10 +165,16 @@ in {
     "vm.vfs_cache_pressure" = 50;
   };
 
-  users.users.alec.extraGroups = [ "input" "gpio" "i2c" "gamemode" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
-  nix.settings.trusted-users = [ "alec" ]; # Remote deployment
+  users.users.alec.extraGroups = [ "input" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
 
   services.journald.extraConfig = "Storage=volatile"; # Extend SD card lifespan
+
+  # Old system generations pile up fast with remote deploys; a full SD card
+  # wears faster (less room for wear leveling)
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 14d";
+  };
 
   # WirePlumber: prefer A2DP (high-quality stereo output, no mic) over HFP/HSP.
   # bluez5.auto-connect: request A2DP profile first, then HFP as fallback.

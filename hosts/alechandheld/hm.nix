@@ -37,7 +37,6 @@ in {
       input_max_users = "8";
       input_overlay_show_inputs = "2";
       log_dir = "/tmp";
-      network_cmd_enable = "true";
       pause_nonactive = "false";
       savestate_auto_load = "true";
       savestate_auto_save = "true";

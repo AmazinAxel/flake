@@ -10,9 +10,24 @@ end
 
 mkdir -p /media/Projects
 set token (cat /home/alec/GithubToken | string trim -r -c '\n')
-set -x GIT_CONFIG_COUNT 1
+set -x GIT_CONFIG_COUNT 8
 set -x GIT_CONFIG_KEY_0 safe.directory
 set -x GIT_CONFIG_VALUE_0 '*'
+# Keep git memory usage low enough for 512MB of RAM
+set -x GIT_CONFIG_KEY_1 pack.threads
+set -x GIT_CONFIG_VALUE_1 1
+set -x GIT_CONFIG_KEY_2 index.threads
+set -x GIT_CONFIG_VALUE_2 1
+set -x GIT_CONFIG_KEY_3 pack.windowMemory
+set -x GIT_CONFIG_VALUE_3 32m
+set -x GIT_CONFIG_KEY_4 pack.deltaCacheSize
+set -x GIT_CONFIG_VALUE_4 16m
+set -x GIT_CONFIG_KEY_5 core.packedGitLimit
+set -x GIT_CONFIG_VALUE_5 64m
+set -x GIT_CONFIG_KEY_6 core.packedGitWindowSize
+set -x GIT_CONFIG_VALUE_6 16m
+set -x GIT_CONFIG_KEY_7 gc.auto
+set -x GIT_CONFIG_VALUE_7 0
 
 # Download & sync all repositories
 for repo in (curl -s -H "Authorization: token $token" https://api.github.com/user/repos?per_page=100 | jq -r '.[].full_name')

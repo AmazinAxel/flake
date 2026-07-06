@@ -5,16 +5,20 @@ let
     cp ${./panels}/*.panel $out/lib/firmware/panels/
   '';
 in {
+  # commit=60: batch ext4 journal flushes (default 5s) — fewer SD writes, longer
+  # card idle periods.  Worst case on a crash is losing the last minute of writes.
   fileSystems."/" = {
     device = lib.mkForce "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
     fsType = "ext4";
+    options = [ "commit=60" ]; # noatime comes from common.nix
   };
 
-  # external microSD card for more games
+  # external microSD card for more games.  No continuous "discard" — synchronous
+  # erase commands hurt SD latency/wear; services.fstrim does periodic TRIM instead.
   fileSystems."/mnt/AlecContent" = {
     device = "/dev/disk/by-label/AlecContent";
     fsType = "ext4";
-    options = [ "nofail" "x-systemd.automount" "x-systemd.device-timeout=10s" "noatime" "discard" ];
+    options = [ "nofail" "x-systemd.automount" "x-systemd.device-timeout=10s" "noatime" "commit=60" ];
   };
 
   boot = {
@@ -40,9 +44,7 @@ in {
     enableRedistributableFirmware = true;
     firmware = [ pkgs.linux-firmware anbernicPanelFirmware ];
 
-    # For gamepad/joystick?
-    i2c.enable = true;
-    uinput.enable = true;
+    uinput.enable = true; # gptokeyb (PortMaster) creates a virtual keyboard via /dev/uinput
   };
   nixpkgs.hostPlatform = "aarch64-linux";
   system.stateVersion = "25.05";

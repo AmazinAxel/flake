@@ -31,7 +31,8 @@ let
     allowImportFromDerivation = true;
   };
 
-  # fix? todo
+  # NixOS asserts on kernel options that don't exist on ARM (e.g. DMIID is
+  # x86-only); pretend they're enabled so the assertions pass.
   customKernel = baseKernel.overrideAttrs (old: {
     passthru = old.passthru // {
       config = old.passthru.config // {
