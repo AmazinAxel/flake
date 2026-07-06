@@ -19,7 +19,7 @@
   fileSystems."/nix" = {
     device = "/persist/nix";
     fsType = "none";
-    options = [ "bind" ];
+    options = [ "bind" "x-initrd.mount" ];
     neededForBoot = true;
     depends = [ "/persist" ];
   };

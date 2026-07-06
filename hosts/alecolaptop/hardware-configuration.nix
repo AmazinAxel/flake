@@ -23,7 +23,7 @@
     device = "/dev/mapper/cryptpersist";
     fsType = "ext4";
     neededForBoot = true;
-    options = [ "noatime" ];
+    options = [ "noatime" "x-initrd.mount" ];
   };
 
   fileSystems."/boot" = {
