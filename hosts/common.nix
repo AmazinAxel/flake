@@ -1,6 +1,7 @@
 { pkgs, lib, ... }: {
   users.users.alec = { # Default user
     isNormalUser = true;
+    uid = 1000; # pin: a uid drift (1001→1000) once broke all on-disk ownership on alechandheld
     extraGroups = [ "wheel" "audio" "video" "dialout" ];
     initialPassword = "nixos"; # must be changed implicitly with passwd!!!
     openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILNtO18H89dHbyP658hIDMeFZrjdWNUbWrdcL6URrthh alec" ];
@@ -115,6 +116,10 @@
       nssmdns4 = true; # .local resolution
       nssmdns6 = true;
       openFirewall = true; # UDP5353
+      publish = { # announce our own hostname (off by default!) so <host>.local resolves
+        enable = true;
+        addresses = true;
+      };
     };
     resolved = {
       enable = true;

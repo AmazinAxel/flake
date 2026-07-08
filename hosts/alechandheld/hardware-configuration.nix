@@ -5,16 +5,28 @@ let
     cp ${./panels}/*.panel $out/lib/firmware/panels/
   '';
 in {
+  # Impermanent root: / is tmpfs (from modules/impermanence.nix; sized down for
+  # this 1 GB device), the primary SD's ext4 partition is mounted at /persist.
   # commit=60: batch ext4 journal flushes (default 5s) — fewer SD writes, longer
   # card idle periods.  Worst case on a crash is losing the last minute of writes.
-  fileSystems."/" = {
-    device = lib.mkForce "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
+  fileSystems."/".options = lib.mkForce [ "size=192M" "mode=755" ];
+  fileSystems."/persist" = {
+    device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
     fsType = "ext4";
-    options = [ "commit=60" ]; # noatime comes from common.nix
+    neededForBoot = true;
+    options = [ "noatime" "commit=60" ];
+  };
+  fileSystems."/boot" = { # extlinux kernels
+    device = "/persist/boot";
+    fsType = "none";
+    options = [ "bind" ];
+    neededForBoot = true;
+    depends = [ "/persist" ];
   };
 
-  # external microSD card for more games.  No continuous "discard" — synchronous
-  # erase commands hurt SD latency/wear; services.fstrim does periodic TRIM instead.
+  # external microSD card — ALL game data lives here (ports, PortMaster state,
+  # RetroArch saves, game homes).  No continuous "discard" — synchronous erase
+  # commands hurt SD latency/wear; services.fstrim does periodic TRIM instead.
   fileSystems."/mnt/AlecContent" = {
     device = "/dev/disk/by-label/AlecContent";
     fsType = "ext4";

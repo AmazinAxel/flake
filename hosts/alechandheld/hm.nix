@@ -31,7 +31,7 @@ in {
       autosave_interval = "60";
       auto_overrides_enable = "false";
       auto_remaps_enable = "false";
-      core_info_cache_enable = "false";
+      core_info_cache_enable = "true"; # skip re-parsing core .info files on every start
       input_autodetect_enable = "false";
       input_hotkey_block_delay = "5";
       input_max_users = "8";
@@ -142,8 +142,12 @@ in {
       input_toggle_fast_forward_btn = "7";
       fastforward_ratio = "1.500000";
 
-      # paths
-      input_remapping_directory = "~/.config/retroarch/remaps";
+      # paths — all writable data on the game card; home is ephemeral tmpfs
+      savefile_directory = "/mnt/AlecContent/retroarch/saves";
+      savestate_directory = "/mnt/AlecContent/retroarch/states";
+      system_directory = "/mnt/AlecContent/retroarch/system"; # BIOS files
+      input_remapping_directory = "/mnt/AlecContent/retroarch/remaps";
+      screenshot_directory = "/mnt/AlecContent/retroarch/screenshots";
       # fix cores not being found
       libretro_directory = "/run/current-system/sw/lib/retroarch/cores";
       libretro_info_path = "${pkgs.libretro-core-info}/share/retroarch/cores";

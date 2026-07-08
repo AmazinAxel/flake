@@ -1,90 +1,13 @@
 { pkgs, ... }:
 let
-  # ── Launcher libretro core (C) ──────────────────────────────────────────
-  launcherCSrc = pkgs.writeText "launcher_libretro.c" ''
-    #include <stdio.h>
-    #include <string.h>
-    #include <libgen.h>
-    #include <stdint.h>
-    #include <stddef.h>
-    #include <stdbool.h>
-
-    #define RETRO_API_VERSION 1
-    #define RETRO_ENVIRONMENT_SHUTDOWN 7
-
-    struct retro_game_info   { const char *path; const void *data; size_t size; const char *meta; };
-    struct retro_system_info { const char *library_name; const char *library_version;
-                               const char *valid_extensions; bool need_fullpath; bool block_extract; };
-    struct retro_game_geometry { unsigned base_width, base_height, max_width, max_height; float aspect_ratio; };
-    struct retro_system_av_info { struct retro_game_geometry geometry;
-                                  struct { double fps; double sample_rate; } timing; };
-
-    typedef void (*retro_environment_t)(unsigned, void*);
-    typedef void (*retro_video_refresh_t)(const void*, unsigned, unsigned, size_t);
-    typedef void (*retro_audio_sample_t)(int16_t, int16_t);
-    typedef size_t (*retro_audio_sample_batch_t)(const int16_t*, size_t);
-    typedef void (*retro_input_poll_t)(void);
-    typedef int16_t (*retro_input_state_t)(unsigned, unsigned, unsigned, unsigned);
-
-    static retro_environment_t env_cb;
-    static char content_path[4096];
-
-    void retro_set_environment(retro_environment_t cb) { env_cb = cb; }
-    void retro_set_video_refresh(retro_video_refresh_t cb) {}
-    void retro_set_audio_sample(retro_audio_sample_t cb) {}
-    void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) {}
-    void retro_set_input_poll(retro_input_poll_t cb) {}
-    void retro_set_input_state(retro_input_state_t cb) {}
-    void retro_init(void) { content_path[0] = 0; }
-    void retro_deinit(void) {}
-    unsigned retro_api_version(void) { return RETRO_API_VERSION; }
-    void retro_get_system_info(struct retro_system_info *info) {
-      *info = (struct retro_system_info){ .library_name = "Launcher", .library_version = "1.0",
-                                          .valid_extensions = "launch", .need_fullpath = true };
-    }
-    void retro_get_system_av_info(struct retro_system_av_info *info) {
-      *info = (struct retro_system_av_info){
-        .geometry = { .base_width=320, .base_height=240, .max_width=320, .max_height=240,
-                      .aspect_ratio=4.0f/3.0f },
-        .timing   = { .fps=60.0, .sample_rate=44100.0 } };
-    }
-    void retro_set_controller_port_device(unsigned p, unsigned d) {}
-    void retro_reset(void) {}
-    bool retro_load_game(const struct retro_game_info *game) {
-      if (game && game->path)
-        strncpy(content_path, game->path, sizeof(content_path)-1);
-      return true;
-    }
-    void retro_run(void) {
-      if (!content_path[0]) return;
-      FILE *f = fopen("/tmp/launch-request", "w");
-      if (f) {
-        char tmp[4096]; strncpy(tmp, content_path, sizeof(tmp)-1);
-        char *base = basename(tmp);
-        char *dot  = strrchr(base, '.');
-        if (dot) *dot = 0;
-        fputs(base, f); fclose(f);
-      }
-      content_path[0] = 0;
-      env_cb(RETRO_ENVIRONMENT_SHUTDOWN, (void*)0);
-    }
-    size_t retro_serialize_size(void) { return 0; }
-    bool retro_serialize(void *d, size_t s) { return false; }
-    bool retro_unserialize(const void *d, size_t s) { return false; }
-    void retro_cheat_reset(void) {}
-    void retro_cheat_set(unsigned i, bool e, const char *c) {}
-    bool retro_load_game_special(unsigned t, const struct retro_game_info *i, size_t n) { return false; }
-    void retro_unload_game(void) {}
-    unsigned retro_get_region(void) { return 0; }
-    void *retro_get_memory_data(unsigned id) { return NULL; }
-    size_t retro_get_memory_size(unsigned id) { return 0; }
-  '';
-
+  # ── Launcher libretro core (launcher_libretro.c) ─────────────────────────
+  # Loading a .launch playlist entry writes its basename to /tmp/launch-request;
+  # the session loop below picks it up and runs the real program.
   launcherCore = pkgs.stdenv.mkDerivation {
     pname = "libretro-launcher";
     version = "1.0";
     dontUnpack = true;
-    buildPhase = "$CC -shared -fPIC -O2 -o launcher_libretro.so ${launcherCSrc}";
+    buildPhase = "$CC -shared -fPIC -O2 -o launcher_libretro.so ${./launcher_libretro.c}";
     installPhase = "install -Dm755 launcher_libretro.so $out/lib/retroarch/cores/launcher_libretro.so";
   };
 
@@ -97,10 +20,17 @@ let
   # ── Main session loop script ─────────────────────────────────────────────
   gameLauncher = pkgs.writeShellScript "game-launcher" ''
     export PATH=/run/current-system/sw/bin:$PATH
+    # UID is not stable across installs — never hardcode /run/user/<uid>
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
     LAUNCHER_CORE="${launcherCore}/lib/retroarch/cores/launcher_libretro.so"
     LAUNCHERS_DIR="$HOME/.config/retroarch/launchers/ports"
     PORTS_PLAYLIST="$HOME/.config/retroarch/playlists/ports.lpl"
+
+    # RetroArch's writable dirs live on the game card (retroarch.cfg, hm.nix)
+    mkdir -p /mnt/AlecContent/retroarch/saves /mnt/AlecContent/retroarch/states \
+             /mnt/AlecContent/retroarch/system /mnt/AlecContent/retroarch/remaps \
+             /mnt/AlecContent/retroarch/screenshots
 
     # Scan /mnt/AlecContent/ports/*.sh and write a RetroArch playlist so
     # installed ports appear as direct launcher entries (no PortMaster UI needed).
@@ -124,7 +54,7 @@ let
     # before WirePlumber finishes its restore it will override us with the
     # saved (off) state.
     for _i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-      [ -S /run/user/1001/pipewire-0 ] && break
+      [ -S "$XDG_RUNTIME_DIR/pipewire-0" ] && break
       sleep 1
     done
     sleep 3
@@ -134,10 +64,32 @@ let
       printf '\033c'  # clear TTY so boot text doesn't show through
       scan_ports      # rebuild ports playlist from SD card before each RA launch
       rm -f /tmp/launch-request
-      # The launcher core writes /tmp/launch-request and asks RetroArch to shut
-      # itself down (RETRO_ENVIRONMENT_SHUTDOWN), so RA just runs in the
-      # foreground — no polling loop needed.
-      retroarch >/tmp/retroarch.log 2>&1
+      retroarch >/tmp/retroarch.log 2>&1 &
+      RA_PID=$!
+      # Block until a launch request appears (or RA exits on its own).
+      # inotifywait can exit spuriously in the service context, so re-arm it
+      # with a timeout — the file check on each pass makes missed events harmless.
+      while kill -0 "$RA_PID" 2>/dev/null && [ ! -f /tmp/launch-request ]; do
+        ${pkgs.inotify-tools}/bin/inotifywait -qq -t 5 -e close_write,moved_to \
+          --include 'launch-request' /tmp || true
+      done
+      if [ -f /tmp/launch-request ]; then
+        # RA eats a SIGTERM that lands during its core-unload transition
+        # (the quit flag is lost when it falls back to the menu), so keep
+        # signalling until it actually dies.
+        for _i in 1 2 3 4 5 6 7 8 9 10; do
+          kill "$RA_PID" 2>/dev/null || true
+          sleep 0.3
+          case "$(ps -o stat= -p "$RA_PID" 2>/dev/null)" in
+            ""|Z*) break ;;
+          esac
+        done
+        case "$(ps -o stat= -p "$RA_PID" 2>/dev/null)" in
+          ""|Z*) ;;
+          *) kill -9 "$RA_PID" 2>/dev/null || true ;;
+        esac
+      fi
+      wait "$RA_PID" 2>/dev/null
       if [ -f /tmp/launch-request ]; then
         app=$(cat /tmp/launch-request)
         rm -f /tmp/launch-request
@@ -178,14 +130,14 @@ in {
   # ── alechandheld service (replaces cage.service) ─────────────────────────
   systemd.services.alechandheld = {
     description = "alechandheld";
-    after     = [ "multi-user.target" "systemd-logind.service" ];
-    wants     = [ "systemd-logind.service" ];
+    # after handheld-inputd so the virtual gamepad exists when RetroArch starts
+    after     = [ "multi-user.target" "systemd-logind.service" "handheld-inputd.service" ];
+    wants     = [ "systemd-logind.service" "handheld-inputd.service" ];
     wantedBy  = [ "multi-user.target" ];
     conflicts = [ "getty@tty1.service" "autovt@tty1.service" ];
     environment = {
       HOME             = "/home/alec";
       USER             = "alec";
-      XDG_RUNTIME_DIR  = "/run/user/1001";
       XDG_SEAT         = "seat0";
       XDG_VTNR         = "1";
       EGL_PLATFORM          = "gbm"; # KMS/GBM path for GLES on Mali GPU

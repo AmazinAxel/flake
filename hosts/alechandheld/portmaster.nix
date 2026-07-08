@@ -2,6 +2,15 @@
 let
   portmasterVersion = "2026.03.09-2312";
 
+  # Nintendo-layout mapping (A=east/confirm) for the handheld-inputd uinput
+  # clone.  Two GUID spellings of the same device: SDL >= 2.26 includes a
+  # crc16 of the name (f6a2) in bytes 2-3; older SDLs statically linked into
+  # port binaries (gmloadernext, gptokeyb) leave them zero.
+  sdlButtonMap = "H700 Gamepad,platform:Linux,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,rightstick:b12,dpup:b13,dpdown:b14,dpleft:b15,dpright:b16,leftx:a0,lefty:a1,rightx:a2,righty:a3,";
+  sdlControllerConfig = ''
+    0000f6a2483730302047616d65706100,${sdlButtonMap}
+    00000000483730302047616d65706100,${sdlButtonMap}'';
+
   portmasterZip = pkgs.fetchurl {
     url = "https://github.com/PortsMaster/PortMaster-GUI/releases/download/${portmasterVersion}/PortMaster.zip";
     hash = "sha256-AC0iqbSYWO/zYJ/PgOuOp1ucbPycY66gXDGJVlKS1KQ=";
@@ -27,6 +36,20 @@ let
     export ESUDO=""
     export ESUDOKILL="-1"
     export ESUDOKILL2="-1"
+
+    # Port scripts run `export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"`
+    # with whatever control.txt's get_controls detected — clobbering the
+    # environment set by the FHS run script (which is how Undertale ended up
+    # with Xbox layout while pure-SDL games were fine).  This file is sourced
+    # after control.txt, so redefine get_controls to force our mapping.
+    get_controls() {
+      ANALOGSTICKS=2
+      LOWRES="N"
+      DEVICE="0000f6a2483730302047616d65706100"
+      param_device="alechandheld"
+      sdl_controllerconfig="${sdlControllerConfig}"
+      export SDL_GAMECONTROLLERCONFIG_FILE="$controlfolder/alec_controls.txt"
+    }
   '';
 
   # mount/umount shims — port scripts call mount(8) to attach .squashfs runtimes.
@@ -48,7 +71,7 @@ let
     done
     case "$source" in
       *.squashfs|*.sqsh|*.sfs)
-        cache="/var/lib/portmaster/squash-cache/$(basename "$source")"
+        cache="/mnt/AlecContent/portmaster/squash-cache/$(basename "$source")"
         if [ ! -f "$cache/.ok" ]; then
           rm -rf "$cache"
           mkdir -p "$cache"
@@ -91,18 +114,12 @@ let
     ln -s ${umountShim} $out/bin/umount
   '';
 
-  # Mesa 26 ships a single monolithic libgallium-*.so that all DRI drivers
-  # (panfrost, swrast, etc.) link against.  libgallium has libLLVM.so as a hard
-  # DT_NEEDED for its llvmpipe/draw-llvm path.  On Cortex-A53 (ARMv8.0-A),
-  # LLVM 21.x crashes during TLS initialization when dlopen'd late into a Mono
-  # process (Stardew Valley / MonoGame) — SIGSEGV in mono code during
-  # gbm_create_device → libdril_dri.so → libgallium → libLLVM.
-  #
-  # Fix: build a copy of Mesa with -Dllvm=disabled so libgallium has no LLVM
-  # DT_NEEDED.  GBM_BACKENDS_PATH redirects libgbm's backend (dri_gbm.so) to the
-  # LLVM-free version; LIBGL_DRIVERS_PATH redirects EGL/GL DRI driver search.
-  # Panfrost hardware acceleration is preserved: Bifrost shader compiler is
-  # independent of LLVM.
+  # LLVM-free Mesa build.  Mesa 26's monolithic libgallium hard-links libLLVM,
+  # and LLVM crashes in TLS init when dlopen'd late into a Mono process on this
+  # Cortex-A53 (Stardew/Celeste SIGSEGV via gbm_create_device → libgallium →
+  # libLLVM).  Building with -Dllvm=disabled removes the DT_NEEDED entirely;
+  # Panfrost hardware acceleration is unaffected (Bifrost compiler ≠ LLVM).
+  # The run script points LIBGL_DRIVERS_PATH/GBM_BACKENDS_PATH at this build.
   mesaNoLLVM = pkgs.mesa.overrideAttrs (old: {
     # mesa-clc=system: provide pre-built mesa_clc/vtn_bindgen2 from the LLVM-enabled
     # mesa so panfrost can use them without needing LLVM in the build itself.
@@ -157,19 +174,11 @@ let
       ];
   });
 
-  # bwrap needs to run setuid so it can create mount namespaces WITHOUT a user
-  # namespace.  User namespaces trigger an LLVM/Panfrost crash on this AArch64
-  # system.  The NixOS security.wrappers setuid trick doesn't work because that
-  # wrapper calls execve(real_bwrap) without setresuid, so the real bwrap starts
-  # with rUID=eUID=1001 and bwrap's is_setuid check returns false.
-  #
-  # Solution: a root-owned oneshot service copies bwrap to /run/portmaster/bwrap
-  # and sets chmod 4755 (setuid root) directly on the binary.  /run is a tmpfs
-  # that supports suid, so Linux applies the setuid bit, giving bwrap eUID=0
-  # (is_setuid=true) → privileged mode → no user namespace → LLVM works.
-  #
-  # The shell-script shim below is what buildFHSEnv calls; it just redirects to
-  # the runtime-installed setuid binary.
+  # bwrap must run setuid-root so it can create mount namespaces WITHOUT a user
+  # namespace (user namespaces trigger the LLVM/Panfrost crash above).  NixOS
+  # security.wrappers can't do this (its wrapper execs the real bwrap without
+  # setresuid, so bwrap's is_setuid check fails), so a boot service installs a
+  # chmod-4755 copy at /run/portmaster/bwrap and this shim redirects to it.
   setuidBwrap = pkgs.writeShellScriptBin "bwrap" ''
     exec /run/portmaster/bwrap "$@"
   '';
@@ -244,6 +253,9 @@ let
       # udev socket — SDL2 joystick/gamecontroller subsystem calls udev_new()
       # which crashes (NULL deref) if /run/udev is missing inside the sandbox
       "--bind" "/run/udev" "/run/udev"
+      # D-Bus system bus — rtkit lives here; without it game audio threads
+      # can't get realtime priority and starve (stutter in GameMaker ports)
+      "--bind" "/run/dbus" "/run/dbus"
       # Input devices — must use --dev-bind (not --bind) for character devices;
       # plain --bind mounts the directory but blocks open() on device nodes
       "--dev-bind" "/dev/input" "/dev/input"
@@ -265,8 +277,6 @@ let
       # Without this bind, gptokeyb can't open uinput inside bwrap and produces
       # no output events, so gamepad buttons do nothing in port scripts.
       "--dev-bind" "/dev/uinput" "/dev/uinput"
-      # PortMaster state directory
-      "--bind" "/var/lib/portmaster" "/var/lib/portmaster"
       # /opt symlink (PortMaster.sh checks /opt/system/Tools/PortMaster)
       "--bind" "/opt" "/opt"
       # SD card — ports and game files live here
@@ -281,7 +291,10 @@ let
       executable = true;
       text = ''
         #!/bin/sh
-      PMDIR="/var/lib/portmaster/PortMaster"
+      # All PortMaster state lives on the game card (the root fs is ephemeral)
+      PMDIR="/mnt/AlecContent/portmaster/PortMaster"
+      mkdir -p "$PMDIR" /mnt/AlecContent/portmaster/squash-cache \
+               /mnt/AlecContent/home /mnt/AlecContent/ports /mnt/AlecContent/tools
 
       # ── First-run initialisation ───────────────────────────────────────────
       if [ ! -f "$PMDIR/.nix-initialized-${portmasterVersion}" ]; then
@@ -326,14 +339,14 @@ let
       done
 
       # Replace PortMaster's ask_password with a no-op stub. The bundled script
-      # calls systemd-ask-password, which inotify-watches
-      # /run/user/1001/systemd/ask-password/ — that path doesn't exist inside
-      # the bwrap sandbox, so the watch fails and the port script aborts. With
-      # ESUDO="" no password is ever needed, so a stub is safe.
-      cat > "$PMDIR/ask_password" <<'EOF'
-      #!/bin/sh
-      exit 0
-      EOF
+      # calls systemd-ask-password, which inotify-watches the ask-password dir
+      # under XDG_RUNTIME_DIR — that path doesn't exist inside the bwrap
+      # sandbox, so the watch fails and the port script aborts. With ESUDO=""
+      # no password is ever needed, so a stub is safe.
+      # (printf, not a heredoc: an indented heredoc terminator is not
+      # recognized by bash, and the unterminated heredoc used to swallow the
+      # entire rest of this script — no game ever launched.)
+      printf '#!/bin/sh\nexit 0\n' > "$PMDIR/ask_password"
       chmod +x "$PMDIR/ask_password"
 
       # Put mount/umount shims first so port scripts' squashfs mounts go
@@ -342,9 +355,13 @@ let
       # Also expose the PortMaster dir on PATH so port scripts that call
       # `ask_password` (or other PM helpers) without a full path can find it.
       export PATH="$PMDIR:$PATH"
-      export HOME=/home/alec
-      export XDG_RUNTIME_DIR=/run/user/1001
-      export PULSE_SERVER=unix:/run/user/1001/pulse/native
+      # Game saves/configs (Balatro, love, Mono/FNA dotfiles…) all land on the
+      # game card — the real home is on the ephemeral tmpfs root.
+      export HOME=/mnt/AlecContent/home
+      # Derive the runtime dir from the real UID — it is NOT stable across
+      # installs (currently 1000; an old hardcoded 1001 silently broke audio).
+      export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+      export PULSE_SERVER="unix:$XDG_RUNTIME_DIR/pulse/native"
       # Force SDL through PulseAudio so games follow the default sink (incl. Bluetooth).
       # Without this, SDL2 may pick the ALSA backend and bind directly to hw:0,
       # bypassing PipeWire's BT routing.
@@ -364,17 +381,22 @@ let
       # been built against Debian multiarch paths.  Expose both so they find libs
       # whether they use /usr/lib or /usr/lib/aarch64-linux-gnu RPATH.
       export LD_LIBRARY_PATH=/usr/lib:/usr/lib/aarch64-linux-gnu''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-      # Controller mapping for the physical H700 Gamepad
-      # (Bus=0x0019 VID=0x484b PID=0x14df).
-      # SDL convention: A=South(confirm), B=East(cancel), X=West, Y=North.
-      # Physical evdev indices: b0=East, b1=South, b2=North, b3=West.
-      # Therefore: a:b1, b:b0, x:b3, y:b2.
-      # RetroArch uses raw udev button indices (hm.nix) so this only affects SDL apps
-      # (PortMaster UI, gptokeyb2, Love2D, etc).
-      # SDL2 2.26+ GUID format: bus(LE16) | crc16(name)(LE16) | vendor/product...
-      #   GUID = 1900 f6a2 4b48 0000 df14 0000 0001 0000 = 1900f6a24b480000df14000000010000
-      # Mapping confirmed by sdl-jstest auto-detection (BTN_SOUTH=b0, axes a0-a3).
-      export SDL_GAMECONTROLLERCONFIG="1900f6a24b480000df14000000010000,H700 Gamepad,platform:Linux,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,rightstick:b12,dpup:b13,dpdown:b14,dpleft:b15,dpright:b16,leftx:a0,lefty:a1,rightx:a2,righty:a3,"
+      # Controller mapping — Nintendo layout (A=east/confirm, B=south) for ALL
+      # SDL apps: PortMaster UI, gptokeyb, Love2D, gmloader, FNA/MonoGame.
+      # Only the handheld-inputd uinput CLONE is mapped (zeroed input_id →
+      # GUID 0000f6a2483730302047616d65706100; f6a2 = crc16 of the name).
+      # The grabbed physical device (VID 0x484b PID 0x14df) is ignored outright:
+      # it emits no events, and SDL's bundled DB entry for it has the wrong
+      # layout — games binding it got inverted buttons (Undertale) or no input
+      # at all (Stardew).  RetroArch is unaffected (raw udev indices, hm.nix).
+      # Nintendo-layout mapping under both GUID spellings (see sdlButtonMap);
+      # ignore the grabbed physical device so only the clone is a controller.
+      # get_controls in mod_AlecHandheld.txt forces the same mapping for port
+      # scripts that overwrite this env var.
+      export SDL_GAMECONTROLLER_IGNORE_DEVICES="0x484b/0x14df"
+      export SDL_GAMECONTROLLERCONFIG="${sdlControllerConfig}"
+      # …and as a file, for port scripts that use SDL_GAMECONTROLLERCONFIG_FILE
+      printf '%s\n' "$SDL_GAMECONTROLLERCONFIG" > "$PMDIR/alec_controls.txt"
 
       # Patch control.txt so PortMaster.sh reads CFW_NAME=AlecHandheld.
       patch_ctrl() {
@@ -388,11 +410,9 @@ let
       [ -f "$PMDIR/control.txt" ] || touch "$PMDIR/control.txt"
       patch_ctrl CFW_NAME AlecHandheld
 
-      # Stardew Valley: force borderless windowed so FNA uses SDL_WINDOW_FULLSCREEN_DESKTOP.
-      # SDL2 kmsdrm returns the display size (640x480) from SDL_GetWindowSize() in this mode,
-      # so FNA sets PreferredBackBufferWidth/Height=640x480 and rendering matches the KMS buffer.
-      # Windowed mode (windowMode:0) skips this and uses FNA's internal 1280x720 default,
-      # clipping to the bottom-left corner of a 1280x720 canvas on a 640x480 display.
+      # Stardew Valley: borderless-windowed makes FNA use FULLSCREEN_DESKTOP so
+      # its backbuffer matches the 640x480 KMS display (plain windowed mode
+      # defaults to 1280x720 and clips to a corner of the screen).
       _prefs="/mnt/AlecContent/ports/stardewvalley/savedata/startup_preferences"
       if [ -d "/mnt/AlecContent/ports/stardewvalley" ]; then
         mkdir -p "$(dirname "$_prefs")"
@@ -506,20 +526,13 @@ in {
     };
   };
 
-  # ── Writable state directory for PortMaster ────────────────────────────────
-  # PortMaster needs to write logs, download runtimes, install ports, etc.
+  # PortMaster.sh checks /opt/system/Tools/PortMaster/ as one of its known
+  # controlfolder locations — symlink it to the state dir on the game card.
+  # (State/cache dirs themselves are mkdir'd by the run script so nothing
+  # touches the automounted card at boot.)
   systemd.tmpfiles.rules = [
-    "d /var/lib/portmaster                0755 alec users -"
-    "d /var/lib/portmaster/PortMaster     0755 alec users -"
-    "d /var/lib/portmaster/squash-cache   0755 alec users -"
-    # PortMaster.sh checks /opt/system/Tools/PortMaster/ as one of its known
-    # controlfolder locations — symlink it to our writable state dir.
-    "d /opt/system                        0755 root root  -"
-    "d /opt/system/Tools                  0755 root root  -"
-    "L /opt/system/Tools/PortMaster       -    -    -     - /var/lib/portmaster/PortMaster"
-    # SD card content directory — ensure alec owns it so PortMaster can write ports/
-    "d /mnt/AlecContent                   0755 alec users -"
-    "d /mnt/AlecContent/ports             0755 alec users -"
-    "d /mnt/AlecContent/tools             0755 alec users -"
+    "d /opt/system                  0755 root root -"
+    "d /opt/system/Tools            0755 root root -"
+    "L /opt/system/Tools/PortMaster -    -    -    - /mnt/AlecContent/portmaster/PortMaster"
   ];
 }

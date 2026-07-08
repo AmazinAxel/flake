@@ -51,11 +51,19 @@ in {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
+    ../../modules/impermanence.nix
 
     ./customKernel.nix
     ./inputHandlers.nix
     ./menus.nix
     ./portmaster.nix
+  ];
+
+  # Host state worth surviving the tmpfs root (game data lives on the game
+  # card instead — see portmaster.nix/hm.nix)
+  environment.persistence."/persist".directories = [
+    "/etc/NetworkManager/system-connections" # wifi credentials
+    "/var/lib/bluetooth" # earbud pairings
   ];
 
   environment.systemPackages = with pkgs; [
@@ -66,6 +74,7 @@ in {
   ];
 
   home-manager.users.alec.imports = [ ./hm.nix ];
+  programs.gamemode.enable = true; # RetroArch requests priority boosts via gamemode D-Bus
   zramSwap.enable = false; # Breaks boot if enabled
 
   services = {
@@ -111,7 +120,32 @@ in {
   powerManagement.resumeCommands = ''
     ${pkgs.systemd}/bin/systemctl --user -M alec@ restart wireplumber pipewire pipewire-pulse
     ${pkgs.systemd}/bin/systemctl restart mnt-AlecContent.automount 2>/dev/null || true
+    ${pkgs.systemd}/bin/systemctl restart mmc1-rescue.service 2>/dev/null || true
   '';
+
+  # The TF2 (game card) slot controller intermittently fails init at boot:
+  # "sunxi-mmc 4022000.mmc: fatal err update clk timeout" — the card then never
+  # enumerates and /mnt/AlecContent can't mount.  Unbinding and rebinding the
+  # controller re-runs the whole init, which (unlike the failed first attempt)
+  # happens with clocks/power already settled.  Retry a few times.
+  systemd.services.mmc1-rescue = {
+    description = "Re-init TF2 slot if the game card failed to enumerate";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "mmc1-rescue" ''
+        for _try in 1 2 3 4 5; do
+          [ -b /dev/disk/by-label/AlecContent ] && exit 0
+          echo 4022000.mmc > /sys/bus/platform/drivers/sunxi-mmc/unbind 2>/dev/null || true
+          sleep 1
+          echo 4022000.mmc > /sys/bus/platform/drivers/sunxi-mmc/bind 2>/dev/null || true
+          sleep 3
+        done
+        [ -b /dev/disk/by-label/AlecContent ] # exit status reflects success
+      '';
+    };
+  };
 
   networking = {
     useNetworkd = false;
@@ -165,7 +199,7 @@ in {
     "vm.vfs_cache_pressure" = 50;
   };
 
-  users.users.alec.extraGroups = [ "input" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
+  users.users.alec.extraGroups = [ "input" "gamemode" "bluetooth" "networkmanager" "video" "uinput" "tty" ];
 
   services.journald.extraConfig = "Storage=volatile"; # Extend SD card lifespan
 
@@ -180,6 +214,15 @@ in {
   # bluez5.auto-connect: request A2DP profile first, then HFP as fallback.
   # Removing the wireplumber.settings block — bluetooth.autoswitch-to-headset-profile
   # is not a valid key in this WirePlumber version and causes the file to be ignored.
+  # GameMaker ports (Undertale/Deltarune) request tiny audio buffers and
+  # underrun (pops/crackle) on this CPU; force a sane floor server-side.
+  # ~21ms — going higher (43ms) made the latency audible without curing the
+  # stutter; the real starvation fix is rtkit access inside the sandbox
+  # (see the /run/dbus bind in portmaster.nix).
+  services.pipewire.extraConfig.pipewire-pulse."20-min-quantum" = {
+    "pulse.properties"."pulse.min.quantum" = "1024/48000";
+  };
+
   services.pipewire.wireplumber.extraConfig."10-bluetooth" = {
     "monitor.bluez.properties" = {
       "bluez5.roles"            = [ "a2dp_sink" "a2dp_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];

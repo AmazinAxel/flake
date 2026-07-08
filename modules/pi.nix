@@ -21,7 +21,7 @@
     firewall.allowedTCPPorts = [ 9000 8000 ];
     networkmanager = {
       enable = true;
-      wifi.powersave = false; # Stop network drops
+      wifi.powersave = false; # Stops network drops
       settings.connection."wifi.scan-rand-mac-address" = "no"; # helps with drops
     };
     wireless.iwd.enable = false; # use nm
@@ -36,19 +36,14 @@
     firmware = [ pkgs.raspberrypiWirelessFirmware ]; # needed for wifi to work
   };
 
-  services = {
-    openssh.enable = true;
-    avahi.publish = { # needed for .local connection
-      enable = true;
-      addresses = true;
-    };
-  };
+  # avahi .local publishing comes from common.nix
+  services.openssh.enable = true;
 
   fileSystems."/persist" = {
     device = "/dev/disk/by-label/NIXOS_SD";
     fsType = "ext4";
     neededForBoot = true;
-    options = [ "noatime" ];
+    options = [ "noatime" "commit=60" ];
   };
   fileSystems."/boot" = { # extlinux kernels
     device = "/persist/boot";
@@ -69,6 +64,13 @@
     enable = true;
     algorithm = "zstd";
     memoryPercent = 100;
+  };
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 180;
+    "vm.page-cluster" = 0;
+    "vm.watermark_boost_factor" = 0;
+    "vm.watermark_scale_factor" = 125;
+    "vm.dirty_writeback_centisecs" = 6000;
   };
 
   environment.systemPackages = [

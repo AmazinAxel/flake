@@ -91,7 +91,7 @@
                 ? await fetch("/getdataFrom7Days")
                 : await fetch("/getdata");
             
-            const airnowResponse = await fetch("https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=98226&distance=1&API_KEY=AIRNOW_TOKEN");
+            const airnowResponse = await fetch("https://www.airnowapi.org/aq/observation/current/ziplatlong/?format=application/json&zipcode=98226&api_key=AIRNOW_TOKEN");
 
             if (!response.ok && !airnowResponse.ok) {
                 throw new Error("Failed to fetch local data");
@@ -104,7 +104,7 @@
             };
             const data = await response.json();
             const airnowData = await airnowResponse.json();
-            const airnowAQI = Math.max(...airnowData.map(entry => entry.AQI));
+            const airnowAQI = Math.max(...airnowData.map(entry => entry.nowcastAQI));
 
             const latestData = data.at(-1)
             const date = new Date(Number(latestData.timestamp)).toLocaleString('en-US', {
