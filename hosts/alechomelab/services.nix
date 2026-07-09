@@ -1,4 +1,4 @@
-{ pkgs, homelabDisplay, ... }:
+{ pkgs, inputs, ... }:
 
 let
   service = { # basic service config
@@ -25,7 +25,7 @@ in {
       };
       homelabDisplay = service // {
         serviceConfig = service.serviceConfig // privileges // {
-          ExecStart = "${homelabDisplay}/bin/homelabDisplay";
+          ExecStart = "${inputs.homelab.packages.aarch64-linux.homelabDisplay}/bin/homelabDisplay";
         };
       };
       # lofi = service // {

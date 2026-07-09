@@ -9,8 +9,9 @@
       restore_paused "no"
       metadata_to_use	"artist,title,track,name,date"
       audio_output {
-        type "pulse"
+        type "pipewire"
         name "Main Output"
+        always_on "yes"
       }
     '';
   };

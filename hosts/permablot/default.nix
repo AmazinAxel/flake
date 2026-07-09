@@ -1,4 +1,7 @@
-{ printerblot, ... }: {
+{ inputs, ... }:
+let
+  printerblot = inputs.printerblot.packages.aarch64-linux;
+in {
   imports = [
     ../common.nix
     ../../modules/pi.nix

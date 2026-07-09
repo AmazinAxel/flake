@@ -42,6 +42,47 @@ window {
   font-family: 'Sora';
 }
 
+window,
+window image {
+  color: @light1;
+}
+
+list,
+list row {
+  background-color: transparent;
+  color: @light1;
+}
+
+window button,
+window button label,
+window calendar,
+window scale {
+  color: @light1;
+}
+
+window scale trough {
+  background: @light1;
+  min-height: 5px;
+  border-radius: 5px;
+}
+
+window scale highlight {
+  background: @blue2;
+}
+
+window scale slider {
+  background: @dark3;
+  border: 2px solid @blue2;
+}
+
+.clipboardScroll scrollbar {
+  opacity: 0;
+}
+
+.clipboardScroll list {
+  padding: 0.6rem;
+}
+
 .asideStatusWidget {
   border: 0.15em solid @blue2;
   border-radius: 0 0.5rem 0 0;
@@ -59,6 +100,7 @@ calendar {
 separator {
   margin: 10px 0 10px 0;
   min-height: 2px;
+  background-color: @light1;
 }
 
 .backgroundDim {

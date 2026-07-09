@@ -64,7 +64,7 @@
     };
   };
 
-  outputs = { home-manager, nixpkgs, homelab, printerblot, ... }@inputs: {
+  outputs = { home-manager, nixpkgs, ... }@inputs: {
     nixosConfigurations = {
 
       # Primary laptop
@@ -100,10 +100,7 @@
       # Homelab (Zero 2W)
       "alechomelab" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/alechomelab/default.nix
-          { _module.args.homelabDisplay = homelab.packages.aarch64-linux.homelabDisplay; }
-        ];
+        modules = [ ./hosts/alechomelab/default.nix ];
       };
 
       # Localhost development server (Pi 4B)
@@ -125,10 +122,7 @@
       # Permablot (custom printerblot printer, Zero 2W)
       "permablot" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/permablot/default.nix
-          { _module.args.printerblot = printerblot.packages.aarch64-linux; }
-        ];
+        modules = [ ./hosts/permablot/default.nix ];
       };
 
       # Gaming handheld (aarch64)

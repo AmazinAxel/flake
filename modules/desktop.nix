@@ -101,11 +101,23 @@
     sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Electron apps still need this
       MOZ_DBUS_REMOTE = "1"; # fix zen screensharing
+      NO_AT_BRIDGE = "1"; # suppress warnings
+      GTK_A11Y = "none";
     };
     etc."xdg/fcitx5/addon/cloudpinyin.conf".text = ''
       [Addon]
       Enabled=False
     '';
+  };
+
+  # Never pipe cores to systemd-coredump: Electron's ~1.4TB virtual address
+  # space takes ~90s to drain, freezing the crashed app that whole time (and
+  # retries stack multiple drains -> memory pressure -> more crashes). A cap
+  # doesn't help — the VM size always exceeds it, so we'd freeze AND get no
+  # backtrace. Storage=none + ProcessSizeMax=0 makes crashes die instantly.
+  systemd.coredump.settings.Coredump = {
+    Storage = "none";
+    ProcessSizeMax = "0";
   };
 
   systemd.tmpfiles.rules = [
@@ -200,7 +212,7 @@
     greetd = { # Autologin
       enable = true;
       settings.default_session = {
-        command = "sway";
+        command = "fish -lc 'exec sway'";
         user = "alec";
       };
     };

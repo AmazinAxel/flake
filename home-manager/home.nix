@@ -16,6 +16,10 @@
     inputs.ags.homeManagerModules.default
   ];
 
+  # WebKit's a11y bus probe has no disable knob (GTK_A11Y/NO_AT_BRIDGE don't
+  # reach it); drop the harmless connect warnings at the journal instead
+  # systemd.user.services.ags.Service.LogFilterPatterns = "~Can't connect to a11y bus";
+
   programs = {
     home-manager.enable = true;
     ags = {

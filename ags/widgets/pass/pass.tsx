@@ -49,6 +49,15 @@ const copyUsername = async (name: string) => {
 
 loadEntries();
 
+const handleKeys = (_ctrl: any, key: number) => {
+    if (key === Gdk.KEY_u || key === Gdk.KEY_U) {
+        const top = results.peek()[0];
+        if (top) copyUsername(top);
+        return true; // consume so 'u' isn't typed into the search entry
+    }
+    return false;
+};
+
 export default () => inputControl('pass', () =>
     <BackgroundSection
         height={700} width={500}
@@ -63,16 +72,6 @@ export default () => inputControl('pass', () =>
             }}
             $={self => {
                 textBox = self;
-                const ctl = new Gtk.EventControllerKey();
-                ctl.connect('key-pressed', (_c, keyval) => {
-                    if (keyval === Gdk.KEY_u || keyval === Gdk.KEY_U) {
-                        const top = results.peek()[0];
-                        if (top) copyUsername(top);
-                        return true;
-                    }
-                    return false;
-                });
-                self.add_controller(ctl);
                 app.connect('window-toggled', () => {
                     if (app.get_window('pass')?.visible) {
                         loadEntries();
@@ -103,5 +102,6 @@ export default () => inputControl('pass', () =>
         </box>}
     />,
     () => { if (textBox) { textBox.text = ''; } setResults([]); },
-    true
+    true,
+    handleKeys
 );

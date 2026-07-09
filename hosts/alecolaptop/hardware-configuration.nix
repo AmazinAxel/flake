@@ -6,6 +6,7 @@
       device = "/dev/disk/by-uuid/fd5a2a94-4459-4102-a07a-2ea504232b9d";
       allowDiscards = true;
       bypassWorkqueues = true;
+      crypttabExtraOpts = [ "password-echo=no" ];
     };
 
     loader = { # Secure boot
