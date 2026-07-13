@@ -114,6 +114,44 @@ let
     ln -s ${umountShim} $out/bin/umount
   '';
 
+  # Classic SDL2, built from source (nixpkgs' pkgs.SDL2 is now sdl2-compat, an
+  # SDL3-based shim).  Port binaries that link libSDL2 dynamically — Undertale
+  # and other gmloadernext GameMaker ports — got sdl2-compat's audio path,
+  # which stutters badly on this CPU; games bundling real SDL2 (Love2D,
+  # dotnet/FNA runtimes) were unaffected.  This goes first in targetPkgs so
+  # /usr/lib/libSDL2-2.0.so.0 is the real thing.
+  sdl2Classic = pkgs.stdenv.mkDerivation {
+    pname = "SDL2-classic";
+    version = "2.32.8";
+    src = pkgs.fetchurl {
+      url = "https://github.com/libsdl-org/SDL/releases/download/release-2.32.8/SDL2-2.32.8.tar.gz";
+      hash = "sha256-DKg+nJsx4YKIx+yBEQjli6wfG7XsZXetOGgw6sUceH4=";
+    };
+    nativeBuildInputs = with pkgs; [ cmake pkg-config ];
+    # kmsdrm video (libdrm+gbm via mesa), ALSA+Pulse audio, udev joysticks,
+    # dbus for rtkit realtime audio threads.  No X11/Wayland on this device.
+    # libglvnd: provides egl.pc — cmake silently disables KMSDRM without it
+    buildInputs = with pkgs; [ alsa-lib libpulseaudio systemdLibs libdrm mesa libgbm libglvnd dbus ];
+    cmakeFlags = [
+      "-DSDL_X11=OFF"
+      "-DSDL_WAYLAND=OFF"
+      "-DSDL_KMSDRM=ON"
+      "-DSDL_ALSA=ON"
+      "-DSDL_PULSEAUDIO=ON"
+      "-DSDL_HIDAPI_LIBUSB=OFF"
+      # Link backends directly (SDL dlopens them by default; libdrm/libgbm
+      # aren't in the sandbox's /usr/lib, so dlopen fails → "kmsdrm not
+      # available" crash).  Direct DT_NEEDED entries resolve via the Nix
+      # store RPATH regardless of the sandbox environment.
+      "-DSDL_KMSDRM_SHARED=OFF"
+      "-DSDL_ALSA_SHARED=OFF"
+      "-DSDL_PULSEAUDIO_SHARED=OFF"
+    ];
+    # Only the runtime lib is needed; the dev files trip nixpkgs' absolute-path
+    # check on SDL's .pc/.cmake templates (nixpkgs#144170)
+    postInstall = "rm -rf $out/lib/cmake $out/lib/pkgconfig $out/bin";
+  };
+
   # LLVM-free Mesa build.  Mesa 26's monolithic libgallium hard-links libLLVM,
   # and LLVM crashes in TLS init when dlopen'd late into a Mono process on this
   # Cortex-A53 (Stardew/Celeste SIGSEGV via gbm_create_device → libgallium →
@@ -188,8 +226,10 @@ let
     name = "portmaster";
 
     targetPkgs = pkgs: with pkgs; [
-      # SDL2 stack — pugwash UI and most port games use SDL2
-      SDL2
+      # SDL2 stack — pugwash UI and most port games use SDL2.
+      # sdl2Classic FIRST so /usr/lib/libSDL2-2.0.so.0 is real SDL2, not
+      # sdl2-compat (see comment above — audio stutter in GameMaker ports).
+      sdl2Classic
       SDL2_image
       SDL2_mixer
       SDL2_ttf

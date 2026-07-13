@@ -43,7 +43,9 @@ in {
           date +%s > /home/alec/lastSynced
         '';
         serviceConfig = {
-          MemoryHigh = "250M";
+          MemoryHigh = "150M";
+          MemoryMax = "250M"; # hard cap
+          OOMScoreAdjust = 500; # kill first
           CPUWeight = 10;
           IOWeight = 10;
           IOSchedulingClass = "idle";
