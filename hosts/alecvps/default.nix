@@ -32,10 +32,15 @@ in {
       openFirewall = true;
       # settings.PermitRootLogin = "prohibit-password";
       settings.AllowTcpForwarding = true; # VSC Remote-SSH support
+      extraConfig = ''
+        Match User alec
+          PasswordAuthentication yes
+      '';
     };
   };
 
   users.users.root.openssh.authorizedKeys.keys = [ key ];
+  users.users.alec.openssh.authorizedKeys.keys = [ key ]; # login key for fast access
   environment.sessionVariables.LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.systemd ]; # fix MC startup warning
 
   programs.nix-ld.enable = true; # for vsc
