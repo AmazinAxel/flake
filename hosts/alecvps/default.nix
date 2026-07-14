@@ -47,19 +47,7 @@ in {
   programs.nix-ld.enable = true; # for vsc
   users.users.alec.extraGroups = lib.mkForce [ "minecraft" ];
 
-  # claude:
-  # 1. Generate + link the agent to your playit.gg account:
-  # nix run github:pedorich-n/playit-nixos-module#playit -- claim generate
-  # 1. It prints a claim code and a https://playit.gg/claim/<code> URL — open it, sign in, approve. Then:
-  # nix run github:pedorich-n/playit-nixos-module#playit -- claim exchange <code>
-  # 1. That outputs a hex secret key.
-  # 2. Write it as TOML, locked down:
-  # sudo install -d -m 700 /etc/playit
-  # printf 'secret_key = "%s"\n' '<hex-secret>' | sudo tee /etc/playit/secret.toml >/dev/null
-  # sudo chmod 0400 /etc/playit/secret.toml
-  # 3. Start it and add the tunnel:
-  # sudo systemctl restart playit
-  # systemctl status playit --no-pager
+  # https://github.com/pedorich-n/playit-nixos-module
   services.playit = {
     enable = true;
     secretPath = "/etc/playit/secret.toml";
