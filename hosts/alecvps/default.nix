@@ -47,5 +47,6 @@ in {
 
   # Networking
   networking.hostName = "alecvps";
+  systemd.network.networks."20-default".matchConfig.Type = lib.mkForce "wlan";
   system.stateVersion = "25.11";
 }
