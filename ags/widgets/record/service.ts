@@ -20,6 +20,10 @@ const getFocusedMonitor = () => JSON.parse(exec(['swaymsg', '-t', 'get_outputs',
 export const startClippingService = () =>
 	execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${getFocusedMonitor()} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`)
 
+	// execAsync("bash -c 'pkill -SIGINT -f gpu-screen-recorder; sleep 1'")
+	// 	.catch(() => {}) // nothing was running
+	// 	.then(() => execAsync(`gpu-screen-recorder -a 'default_output|default_input' -q medium -w ${getFocusedMonitor()} -o /home/alec/Videos/Clips/ -f 30 -r 30 -c mp4`))
+
 export const startRec = () => {
 	execAsync("pkill -SIGINT -f gpu-screen-recorder") // Stops screen clipping, otherwise exits
 

@@ -51,7 +51,7 @@ in {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
-    ../../modules/impermanence.nix
+    ../../modules/tmpfs-root.nix
 
     ./customKernel.nix
     ./inputHandlers.nix

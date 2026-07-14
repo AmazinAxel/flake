@@ -8,6 +8,7 @@ import powermenuStyle from './widgets/powermenu/powermenu.css';
 import lockscreenStyle from './widgets/lockscreen/lockscreen.css';
 
 import app from "ags/gtk4/app"
+import { Gtk } from "ags/gtk4"
 import { execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
@@ -26,7 +27,6 @@ import { notifications, clearOldestNotification, invokeOldestNotification, strea
 import osd from './widgets/osd/osd';
 import powermenu from './widgets/powermenu/powermenu';
 import quickSettings from './widgets/status/quicksettings/quicksettings';
-import lockscreen from './widgets/lockscreen/lockscreen';
 import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
@@ -40,6 +40,8 @@ let blueLightFilter = false;
 app.start({
     css: style + searchableDialogStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
     main() {
+        Gtk.Settings.get_default()!.gtkImModule = "simple"; // fix launcher errors
+
         status();
         sideview();
         clipboard();
@@ -53,7 +55,6 @@ app.start({
             wifi,
             calendar
         });
-        lockscreen();
         workspaces();
 
         monitorBrightness();

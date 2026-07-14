@@ -1,7 +1,7 @@
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { execAsync } from 'ags/process';
-import { setIsLocked } from '../lockscreen/lockscreen';
+import { lockScreen } from '../lockscreen/lockscreen';
 import inputControl from '../../lib/inputControl';
 
 const handleKeys = (_ctrl: any, key: number) => {
@@ -14,7 +14,7 @@ const handleKeys = (_ctrl: any, key: number) => {
          execAsync('systemctl poweroff')
          break;
       case 108: // L - lock
-         setIsLocked(true);
+         lockScreen();
          break;
       case 114: // R - reboot
          execAsync('systemctl reboot');

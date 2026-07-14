@@ -28,6 +28,6 @@
     ];
 
     # Side mouse key screenshot
-    keybindings."Mod4+D" = ''exec wayfreeze --hide-cursor --after-freeze-cmd 'grim -g "$(slurp)" - | wl-copy; killall wayfreeze' '';
+    keybindings."Mod4+D" = ''exec wayfreeze --hide-cursor --after-freeze-cmd 'grim -g "$(slurp)" - | wl-copy; pkill wayfreeze' '';
   };
 }

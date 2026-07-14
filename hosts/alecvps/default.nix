@@ -37,6 +37,11 @@ in {
   users.users.root.openssh.authorizedKeys.keys = [ key ];
   environment.sessionVariables.LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.systemd ]; # fix MC startup warning
 
+  programs.nix-ld.enable = true; # for vsc
+  users.users.alec.extraGroups = [ "minecraft" ];
+  systemd.services.minecraft-server.serviceConfig.UMask = lib.mkForce "0007"; # sudo chmod -R g+rwX /var/lib/mcserver
+  environment.persistence."/persist".directories = [ "/var/lib/minecraft" ];
+
   nix.settings.sandbox = false; # fix builds on the vps
   fileSystems = lib.mkForce {}; # no need for noatime
   nixpkgs.hostPlatform = "x86_64-linux";

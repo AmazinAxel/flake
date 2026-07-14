@@ -22,12 +22,8 @@ const search = (text: string) => setAppsList(
 
 const launchApp = (selectedApp: Apps.Application) => {
     const cmd = selectedApp.executable.replace(/ ?%[a-zA-Z]/g, '').trim();
-    // Transient user service: gets the user-manager env (same as foot.service,
-    // not ags's or sway's) and its stderr lands in the journal for crash triage.
-    // ELECTRON_ENABLE_LOGGING is temporary while debugging the boot-time crash
-    execAsync(['systemd-run', '--user', '--quiet', '--collect',
-        '--setenv=ELECTRON_ENABLE_LOGGING=1', '--', ...cmd.split(' ')]);
     app.toggle_window("launcher");
+    execAsync(['swaymsg', 'exec', '--', cmd]);
 };
 
 export default () => inputControl('launcher', () =>

@@ -1,8 +1,6 @@
 import { execAsync } from 'ags/process';
-import { createState } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
-import Gio from 'gi://Gio'
 import GLib from 'gi://GLib';
 import { ClipboardItem } from './clipboardItem';
 import BackgroundSection from '../../lib/backgroundSection';
@@ -10,8 +8,6 @@ import inputControl from '../../lib/inputControl';
 import { streamingMode } from '../notifications/notifications';
 
 const list = new Gtk.ListBox();
-
-const [ hasEntries, setHasEntries ] = createState(false);
 
 list.connect('row-activated', async (_, row) => {
     app.get_window('clipboard')?.set_visible(false);
@@ -21,28 +17,13 @@ list.connect('row-activated', async (_, row) => {
 });
 
 list.set_sort_func((a, b) => {
-    const row1id = Number(a.name);
-    const row2id = Number(b.name);
+    const row1id = Number(a.child.name);
+    const row2id = Number(b.child.name);
 
     return row2id - row1id;
 });
 
-const dbDir = '/home/alec/.cache/cliphist';
-const watchDb = () => {
-    GLib.mkdir_with_parents(dbDir, 0o700);
-    const monitor = Gio.File.new_for_path(dbDir)
-        .monitor_directory(Gio.FileMonitorFlags.WATCH_MOVES, null);
-
-    monitor.connect('changed', (_, __, ___, event) => {
-        if (event == Gio.FileMonitorEvent.CHANGES_DONE_HINT
-            || event == Gio.FileMonitorEvent.CREATED
-            || event == Gio.FileMonitorEvent.DELETED)
-            refreshItems();
-    });
-};
-watchDb();
-
-streamingMode.subscribe(() => refreshItems()); // condense/uncondense list when streamer mode changes
+streamingMode.subscribe(() => refreshItems());
 
 const refreshItems = async () => {
     const entries = await execAsync('cliphist list')
@@ -53,14 +34,10 @@ const refreshItems = async () => {
         })
     ).catch(() => []);
 
-    setHasEntries(!!entries[0]?.content);
-
-    const visibleEntries = streamingMode.peek() ? [] : entries;
-
     list.remove_all();
 
-    if (visibleEntries[0]?.content) // Only remap if there is clipboard history to show
-        visibleEntries.forEach((entry) =>
+    if (entries[0]?.content) // has entries
+        entries.forEach((entry) =>
             list.append(ClipboardItem(entry.id, entry.content) as Gtk.Widget)
         );
 };
@@ -98,7 +75,6 @@ export default () => inputControl('clipboard', () =>
         header={<label $type="overlay" label="Clipboard"/>}
         content={
         <Gtk.ScrolledWindow
-            visible={hasEntries}
             cssClasses={['clipboardScroll']}
             hscrollbarPolicy={Gtk.PolicyType.NEVER}
             vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
@@ -109,7 +85,8 @@ export default () => inputControl('clipboard', () =>
             {list}
         </Gtk.ScrolledWindow>}
     />,
-    () => {
+    async () => {
+        await refreshItems();
         list.get_first_child()?.grab_focus();
     },
     undefined,

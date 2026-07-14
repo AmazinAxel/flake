@@ -10,6 +10,8 @@ list row {
     margin-bottom: 0.5rem;
 }
 
+list row:last-child { margin-bottom: 0; }
+
 list .image {
     border-radius: 0.3rem;
     background-size: cover;

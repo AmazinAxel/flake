@@ -18,6 +18,7 @@
     gnome-disk-utility
     flashprint
     thunderbird
+    zettlr
     (symlinkJoin {
       name = "kicad-small"; paths = [ kicad-small ]; nativeBuildInputs = [ makeWrapper ];
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
@@ -104,9 +105,9 @@
         USB_EXCLUDE_AUDIO = 1;
         USB_EXCLUDE_PRINTER = 1;
 
-        # SOUND_POWER_SAVE_ON_AC = 0;
-        # SOUND_POWER_SAVE_ON_BAT = 0;
-        # SOUND_POWER_SAVE_CONTROLLER = "N";
+        SOUND_POWER_SAVE_ON_AC = 0;
+        SOUND_POWER_SAVE_ON_BAT = 0;
+        SOUND_POWER_SAVE_CONTROLLER = "N";
 
         # Wake on LAN
         WOL_DISABLE = "Y";

@@ -1,9 +1,9 @@
 { pkgs, ... }:
 let
-  serverDir = "/var/lib/permafrost";
+  serverDir = "/var/lib/minecraft";
 in {
   environment.systemPackages = [
-    (pkgs.writeShellScriptBin "pf-sync" ''
+    (pkgs.writeShellScriptBin "mc-sync" ''
       set -euo pipefail
 
       if systemctl is-active --quiet minecraft-server; then
@@ -21,7 +21,7 @@ in {
       sudo systemctl start minecraft-server
     '')
 
-    (pkgs.writeShellScriptBin "pf-stop" ''
+    (pkgs.writeShellScriptBin "mc-stop" ''
       set -euo pipefail
 
       if systemctl is-active --quiet minecraft-server; then
@@ -30,7 +30,7 @@ in {
 
       sudo -u minecraft git -C ${serverDir} pull --rebase || true
       sudo -u minecraft git -C ${serverDir} add -A
-      sudo -u minecraft git -C ${serverDir} reset -q -- 'Permafrost' 'Permafrost/*' 'server.properties' 2>/dev/null || true
+      sudo -u minecraft git -C ${serverDir} reset -q -- 'Permafrost' 'Permafrost/*' 'world' 'world/*' 'server.properties' 2>/dev/null || true
 
       # commit message
       if ! sudo -u minecraft git -C ${serverDir} diff --cached --quiet; then
@@ -49,12 +49,10 @@ in {
           | sort -rn \
           | cut -f2-)
 
-        msg="feat: sync $date_str $top_files"
+        msg="sync $date_str $top_files"
 
         sudo -u minecraft git -C ${serverDir} commit -m "$msg" -m "$description"
         sudo -u minecraft git -C ${serverDir} push
-      else
-        echo "[permafrost stop] No major tracked changes"
       fi
 
       sudo systemctl poweroff

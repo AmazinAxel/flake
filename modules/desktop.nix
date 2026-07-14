@@ -1,6 +1,6 @@
 { inputs, pkgs, ... }: {
 
-  imports = [ ./impermanence.nix ];
+  imports = [ ./tmpfs-root.nix ];
 
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
@@ -42,7 +42,6 @@
       discord
       slack
       filezilla
-      prismlauncher
       claude-code
 
       inputs.lightbrowse.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -110,11 +109,7 @@
     '';
   };
 
-  # Never pipe cores to systemd-coredump: Electron's ~1.4TB virtual address
-  # space takes ~90s to drain, freezing the crashed app that whole time (and
-  # retries stack multiple drains -> memory pressure -> more crashes). A cap
-  # doesn't help — the VM size always exceeds it, so we'd freeze AND get no
-  # backtrace. Storage=none + ProcessSizeMax=0 makes crashes die instantly.
+  # if an app crashes dont keep it open
   systemd.coredump.settings.Coredump = {
     Storage = "none";
     ProcessSizeMax = "0";
@@ -195,10 +190,10 @@
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
     # Prevent crashes
-    earlyoom = {
-      enable = true;
-      freeMemThreshold = 5; # 5%
-    };
+    # earlyoom = {
+    #   enable = true;
+    #   freeMemThreshold = 5; # 5%
+    # };
 
     # Sound
     pipewire = {
@@ -221,7 +216,6 @@
   security = {
     rtkit.enable = true; # better audio latency
     pam.services.astal-auth = {}; # For astal lockscreen to work
-    sudo.extraConfig = "Defaults lecture=never"; # lectures are on by default
   };
 
   # Bluetooth

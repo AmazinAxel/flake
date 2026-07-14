@@ -4,7 +4,6 @@
     ../common.nix
     ../../modules/desktop.nix
     ../../modules/printing.nix
-     ../../modules/impermanence.nix
     inputs.lanzaboote.nixosModules.lanzaboote
   ];
 
@@ -34,6 +33,7 @@
     gimp3
     libreoffice
     thunderbird
+    zettlr
     (symlinkJoin {
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
@@ -110,6 +110,10 @@
         USB_AUTOSUSPEND = 1;
         USB_EXCLUDE_AUDIO = 1;
         USB_EXCLUDE_PRINTER = 1;
+
+        SOUND_POWER_SAVE_ON_AC = 0;
+        SOUND_POWER_SAVE_ON_BAT = 0;
+        SOUND_POWER_SAVE_CONTROLLER = "N";
 
         # Wake on LAN
         WOL_DISABLE = "Y";

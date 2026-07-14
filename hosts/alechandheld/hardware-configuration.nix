@@ -5,7 +5,7 @@ let
     cp ${./panels}/*.panel $out/lib/firmware/panels/
   '';
 in {
-  # Impermanent root: / is tmpfs (from modules/impermanence.nix; sized down for
+  # Impermanent root: / is tmpfs (from modules/tmpfs-root.nix; sized down for
   # this 1 GB device), the primary SD's ext4 partition is mounted at /persist.
   # commit=60: batch ext4 journal flushes (default 5s) — fewer SD writes, longer
   # card idle periods.  Worst case on a crash is losing the last minute of writes.

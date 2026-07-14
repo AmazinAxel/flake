@@ -1,4 +1,6 @@
 { pkgs, lib, ... }: {
+  imports = [ ../modules/impermanence.nix ];
+
   users.users.alec = { # Default user
     isNormalUser = true;
     extraGroups = [ "wheel" "audio" "video" "dialout" ];
@@ -31,7 +33,6 @@
       "net.ipv4.tcp_mtu_probing" = 1; # reduces fragmentation
       "net.ipv4.tcp_notsent_lowat" = 16384; # reduce latency
     };
-    initrd.systemd.enable = lib.mkDefault true; # Faster parallel boot
   };
 
   networking = {
@@ -85,6 +86,7 @@
     command-not-found.enable = false;
     nano.enable = false; # use Helix
   };
+  security.sudo.extraConfig = "Defaults lecture=never"; # lectures are on by default
 
   time.timeZone = "America/Los_Angeles"; # lang also set to en_US
   zramSwap.enable = lib.mkDefault true; # Compress ram for better performance

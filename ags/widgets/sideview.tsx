@@ -29,15 +29,20 @@ interfaceSettings.connect("changed::color-scheme", applyColorScheme);
 const [ width, setWidth ] = createState(400);
 
 const dataDir = GLib.get_user_data_dir() + '/ags-sideview';
-const networkSession = new WebKit.NetworkSession({
-  data_directory: dataDir,
-  cache_directory: GLib.get_user_cache_dir() + '/ags-sideview'
-});
-networkSession.get_cookie_manager().set_persistent_storage(
-  dataDir + "/cookies.sqlite",
-  WebKit.CookiePersistentStorage.SQLITE
-);
-// networkSession.set_itp_enabled(false);
+let networkSession: any;
+const getNetworkSession = () => {
+  if (networkSession) return networkSession;
+  networkSession = new WebKit.NetworkSession({
+    data_directory: dataDir,
+    cache_directory: GLib.get_user_cache_dir() + '/ags-sideview'
+  });
+  networkSession.get_cookie_manager().set_persistent_storage(
+    dataDir + "/cookies.sqlite",
+    WebKit.CookiePersistentStorage.SQLITE
+  );
+  // networkSession.set_itp_enabled(false);
+  return networkSession;
+};
 
 const stack = new Gtk.Stack();
 const webviews: Partial<Record<PageName, any>> = {};
@@ -48,7 +53,7 @@ const getWindow = () => app.get_window('sideview') as any; // wish i didnt have 
 const ensurePage = (name: PageName) => {
   if (webviews[name]) return;
   const webview = new WebKit.WebView({
-    network_session: networkSession
+    network_session: getNetworkSession()
   });
 
   webview.get_settings().set_user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15");

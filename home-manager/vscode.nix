@@ -11,6 +11,7 @@
         github.vscode-github-actions
         dbaeumer.vscode-eslint
         ms-vscode.live-server
+        # ms-vscode-remote
         svelte.svelte-vscode
         ms-vsliveshare.vsliveshare
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{

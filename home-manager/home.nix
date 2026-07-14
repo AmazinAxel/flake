@@ -7,7 +7,9 @@
     ./foot.nix
     ./gtk.nix
     ./helix.nix
+    ./mimeapps.nix
     ./mpd.nix
+    ./prismlauncher.nix
     ./spicetify.nix
     ./swappy.nix
     ./vscode.nix
@@ -15,10 +17,6 @@
 
     inputs.ags.homeManagerModules.default
   ];
-
-  # WebKit's a11y bus probe has no disable knob (GTK_A11Y/NO_AT_BRIDGE don't
-  # reach it); drop the harmless connect warnings at the journal instead
-  # systemd.user.services.ags.Service.LogFilterPatterns = "~Can't connect to a11y bus";
 
   programs = {
     home-manager.enable = true;
@@ -60,6 +58,7 @@
 
     # Global cursor
     pointerCursor = {
+      enable = true;
       name = "Bibata-Modern-Ice";
       package = pkgs.bibata-cursors;
       size = 24;
@@ -76,15 +75,6 @@
 
   xdg = {
     configFile."xdg-terminals.list".text = "footclient.desktop\n"; # open in Terminal
-    mimeApps = {
-      enable = true;
-      defaultApplications = { # open in lightbrowse by default
-        "x-scheme-handler/http" = "com.amazinaxel.lightbrowse.desktop";
-        "x-scheme-handler/https" = "com.amazinaxel.lightbrowse.desktop";
-        "text/html" = "com.amazinaxel.lightbrowse.desktop";
-      };
-    };
-
 
     dataFile."fonts" = { # Symlink fonts
       target = "./fonts";

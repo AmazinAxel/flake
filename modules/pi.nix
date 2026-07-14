@@ -1,5 +1,5 @@
 { pkgs, lib, ... }: {
-  imports = [ ./impermanence.nix ];
+  imports = [ ./tmpfs-root.nix ];
 
   boot = {
     loader = { # Raspi boot

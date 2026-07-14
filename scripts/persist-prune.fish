@@ -1,10 +1,6 @@
 #!/usr/bin/env fish
 
-# persist-prune — delete data on /persist that the running system no longer
-# persists. The kept set is read from the live bind mounts (impermanence binds
-# /persist/<path> onto /<path>), so after a rebuild + reboot it matches your
-# current environment.persistence; everything else is cruft. The store, swapfile
-# and password file aren't bind mounts, so they're kept explicitly.
+# sudo chattr -i /persist/var/empty && sudo rm -rf /persist/var/empty
 
 set -l persist /persist
 set -l dev (awk -v m=$persist '$5==m && $4=="/" {print $3; exit}' /proc/self/mountinfo)

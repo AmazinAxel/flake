@@ -2,6 +2,7 @@ import { exec } from 'ags/process';
 import GLib from "gi://GLib";
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
+import { streamingMode } from '../notifications/notifications';
 
 export const ClipboardItem = (id: string, content: string) => {
     const matches = content.match(/\[\[ binary data (\d+) (B|KiB|MiB) (\w+) (\d+)x(\d+) \]\]/);
@@ -15,6 +16,9 @@ export const ClipboardItem = (id: string, content: string) => {
             exec('mkdir -p /tmp/ags/cliphist/');
             exec(`bash -c 'cliphist decode ${id} > ${path}'`);
         };
+        if (streamingMode.peek())
+            return <label label={`Image (${width}x${height})`} xalign={0} name={id}/>
+
         const adjustedWidth = (width / height) * 150;
         const maxContainerWidth = 400;
         let maxHeight, maxWidth;
@@ -35,6 +39,9 @@ export const ClipboardItem = (id: string, content: string) => {
 
         return <box cssClasses={[`_${id}`, 'image']} name={id} valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}/>
     };
+
+    if (streamingMode.peek())
+        return <label label={`Text (${content.length} chars)`} xalign={0} name={id}/>
 
     return <label label={content} xalign={0} wrap name={id}/>
 };
