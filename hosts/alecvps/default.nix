@@ -31,6 +31,7 @@ in {
     openssh = {
       openFirewall = true;
       # settings.PermitRootLogin = "prohibit-password";
+      settings.AllowTcpForwarding = true; # VSC Remote-SSH support
     };
   };
 
