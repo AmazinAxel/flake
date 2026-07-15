@@ -6,6 +6,7 @@ import Gdk from "gi://Gdk";
 // @ts-expect-error
 import WebKit from "gi://WebKit?version=6.0";
 import app from "ags/gtk4/app";
+import inputControl from "../lib/inputControl";
 
 const { TOP, BOTTOM, RIGHT } = Astal.WindowAnchor;
 
@@ -40,7 +41,6 @@ const getNetworkSession = () => {
     dataDir + "/cookies.sqlite",
     WebKit.CookiePersistentStorage.SQLITE
   );
-  // networkSession.set_itp_enabled(false);
   return networkSession;
 };
 
@@ -49,6 +49,12 @@ const webviews: Partial<Record<PageName, any>> = {};
 let currentPage: PageName | null = null;
 
 const getWindow = () => app.get_window('sideview') as any; // wish i didnt have to type it as any
+
+const setFocused = (focused: boolean) => {
+  getWindow().keymode = focused ? Astal.Keymode.EXCLUSIVE : Astal.Keymode.ON_DEMAND;
+  const dim = app.get_window('sideviewDim') as any;
+  if (dim) dim.visible = focused;
+};
 
 const ensurePage = (name: PageName) => {
   if (webviews[name]) return;
@@ -72,20 +78,18 @@ export const showPage = (name: PageName) => {
   stack.set_visible_child_name(name);
   currentPage = name;
   window.visible = true;
-  window.keymode = Astal.Keymode.EXCLUSIVE;
+  setFocused(true);
 };
 
 export const toggleSideviewFocus = () => {
   const window = getWindow();
   if (!window?.visible) return;
-  window.keymode = (window.keymode === Astal.Keymode.EXCLUSIVE)
-    ? Astal.Keymode.ON_DEMAND
-    : Astal.Keymode.EXCLUSIVE;
+  setFocused(window.keymode !== Astal.Keymode.EXCLUSIVE);
 };
 
 export const hideSideview = () => {
-  const window = getWindow();
-  window.visible = false;
+  getWindow().visible = false;
+  setFocused(false);
 };
 
 // destroys all webviews
@@ -106,8 +110,10 @@ export const toggleSideviewSize = () => {
   getWindow()?.set_default_size(next, -1);
 };
 
-export default () =>
-  <window
+export default () => {
+  inputControl('sideviewDim', () => <box/>, undefined, false, undefined, Astal.Keymode.NONE, Astal.Layer.TOP);
+
+  return <window
     name="sideview"
     visible={false}
     exclusivity={Astal.Exclusivity.EXCLUSIVE}
@@ -123,3 +129,4 @@ export default () =>
     }}/>
     {stack}
   </window>;
+};

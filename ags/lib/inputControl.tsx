@@ -2,14 +2,14 @@ import app from "ags/gtk4/app"
 import { Astal, Gtk } from "ags/gtk4"
 const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
-export default (windowName: string, Child: () => JSX.Element, onShow?: any, searchableDialog?: boolean, onKeyPressed?: any) =>
+export default (windowName: string, Child: () => JSX.Element, onShow?: any, searchableDialog?: boolean, onKeyPressed?: any, keymode: Astal.Keymode = Astal.Keymode.EXCLUSIVE, layer: Astal.Layer = Astal.Layer.OVERLAY) =>
   <window
     name={windowName}
     namespace={windowName}
-    keymode={Astal.Keymode.EXCLUSIVE}
+    keymode={keymode}
     anchor={TOP | BOTTOM | LEFT | RIGHT}
     application={app}
-    layer={Astal.Layer.OVERLAY}
+    layer={layer}
     onShow={onShow}
     cssClasses={searchableDialog ? ['backgroundDim', 'searchableDialog'] : ['backgroundDim']}
   >
