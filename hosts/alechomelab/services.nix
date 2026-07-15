@@ -43,6 +43,8 @@ in {
           date +%s > /home/alec/lastSynced
         '';
         serviceConfig = {
+          User = "alec";
+          Group = "users";
           MemoryHigh = "150M";
           MemoryMax = "250M"; # hard cap
           OOMScoreAdjust = 500; # kill first

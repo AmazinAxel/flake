@@ -92,10 +92,12 @@
     users.alec.files = [ "GithubToken" ]; # githubBackup
   };
 
-  # swapDevices = [{
-  #   device = "/media/swapfile";
-  #   size = 1024;
-  # }];
+  swapDevices = [{
+    device = "/media/swapfile";
+    size = 1024;
+    priority = 0;
+    options = [ "nofail" ];
+  }];
   system.stateVersion = "25.11";
 
   /*

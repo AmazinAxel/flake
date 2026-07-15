@@ -6,7 +6,7 @@ function log
     # Set file contents to the new log and the past 5 logs
     begin
         printf "%s\n" "$argv"
-        cat $logFile
+        cat $logFile 2>/dev/null
     end | head -n 5 > $logFile.tmp
 
     mv $logFile.tmp $logFile
