@@ -91,7 +91,7 @@ in {
       "control+${mod}+Q" = "exec ags request sideviewPlan";
       "control+${mod}+W" = "exec ags request sideviewClaude";
       "control+${mod}+E" = "exec ags request sideviewCustom";
-      "${mod}+K" = "exec ags request closeSideview"; # destroy
+      "control+${mod}+R" = "exec ags request closeSideview"; # destroy
       "${mod}+A" = "exec ags request toggleSideviewFocus";
       "control+${mod}+Tab" = "exec ags request hideSideview"; # just hides
       "${mod}+G" = "exec ags request toggleSideviewSize";
@@ -99,7 +99,7 @@ in {
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
       "${mod}+N" = "exec ags request invokeOldestNotif"; # Activates first action of the oldest notification
       "${mod}+S" = "exec ags request toggleStreamingMode";
-      "${mod}+L" = "exec ${toggleTheme}";
+      "${mod}+O" = "exec ${toggleTheme}";
       "${mod}+T" = "exec ags request toggleFocus";
       "${mod}+Z" = "exec ags request toggleInfoArea";
 
@@ -135,18 +135,30 @@ in {
       "${mod}+right" = "focus right";
       "${mod}+up" = "focus up";
       "${mod}+down" = "focus down";
+      "${mod}+h" = "focus left";
+      "${mod}+l" = "focus right";
+      "${mod}+k" = "focus up";
+      "${mod}+j" = "focus down";
 
       # Move window in a workspace
       "${mod}+shift+left" = "move left";
       "${mod}+shift+right" = "move right";
       "${mod}+shift+up" = "move up";
       "${mod}+shift+down" = "move down";
+      "${mod}+shift+h" = "move left";
+      "${mod}+shift+l" = "move right";
+      "${mod}+shift+k" = "move up";
+      "${mod}+shift+j" = "move down";
 
       # Move through workspaces
       "control+${mod}+right" = workspace "+";
       "control+${mod}+left" = workspace "-";
+      "control+${mod}+l" = workspace "+";
+      "control+${mod}+h" = workspace "-";
       "control+${mod}+shift+right" = moveItemToWorkspace "+";
       "control+${mod}+shift+left" = moveItemToWorkspace "-";
+      "control+${mod}+shift+l" = moveItemToWorkspace "+";
+      "control+${mod}+shift+h" = moveItemToWorkspace "-";
 
       "${mod}+F" = "floating toggle";
       "F11" = "fullscreen toggle";

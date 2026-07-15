@@ -24,19 +24,27 @@ const save = async () => {
     const body = user ? `${password}\nlogin: ${user}\n` : `${password}\n`;
     app.get_window('passSave')?.set_visible(false);
 
-    // try {
-    await execAsync(['bash', '-c', `printf '%s' "$1" | pass insert -m -f "$2"`, 'bash', body, site]);
-    // } catch (e) {
-    //     notifySend({ appName: 'Pass', title: 'Unable to save password' });
-    //     return;
-    // }
+    try {
+        await execAsync(['bash', '-c', `printf '%s' "$1" | pass insert -m -f "$2"`, 'bash', body, site]);
+    } catch (e) {
+        notifySend({ appName: 'Pass', title: 'Unable to save password' });
+        return;
+    }
 
-    // Sync with homelab TODO switch to ssh keys instead of having a password
-    // try {
-    //     await execAsync(['bash', '-c', 'pass git pull && pass git push']);
-    // } catch (e) {
-    //     notifySend({ appName: 'Pass', title: 'Password saved locally, pass sync failed' });
-    // }
+    // Copy it
+    await execAsync(['bash', '-c',
+        `printf '%s' "$1" | wl-copy -n && sleep 0.15 && printf '%s' "$2" | wl-copy -n`,
+        'bash', user, password
+    ]);
+
+    // Sync with homelab
+    try {
+        await execAsync(['bash', '-c',
+            `pass git pull --rebase && { [ "$(pass git rev-list '@{u}..HEAD' --count)" -gt 0 ] && pass git push || true; }`
+        ]);
+    } catch (e) {
+        notifySend({ appName: 'Pass', title: 'Pass sync to homelab failed' });
+    }
 };
 
 export default () => inputControl('passSave', () =>

@@ -33,16 +33,10 @@ const search = (q: string) => {
 
 const copyPair = async (name: string) => {
     app.get_window('pass')?.set_visible(false);
-    // Username is the entry name's last path segment (e.g. site.com/user);
-    // fall back to a login:/username: field for entries with no path.
-    const user = name.includes('/') ? name.slice(name.lastIndexOf('/') + 1) : '';
-    const userCmd = user
-        ? `printf '%s' ${GLib.shell_quote(user)} | wl-copy -n`
-        : `pass show "${name}" | sed -n 's/^\\(login\\|user\\(name\\)\\?\\):[[:space:]]*//Ip' | head -n1 | tr -d '\\n' | wl-copy -n`;
+    const fallback = name.includes('/') ? name.slice(name.lastIndexOf('/') + 1) : name;
+    const userCmd = `u=$(pass show "${name}" | sed -n '2p' | sed -E 's/^[[:space:]]*(login|username|user|email):[[:space:]]*//I' | tr -d '\\n'); [ -z "$u" ] && u=${GLib.shell_quote(fallback)}; printf '%s' "$u" | wl-copy -n`;
     const passCmd = `pass show "${name}" | head -n1 | tr -d '\\n' | wl-copy -n`;
-    await execAsync(['bash', '-c', `${userCmd} && sleep 0.15 && ${passCmd}`])
-        .catch((e) => console.error('pass copy failed:', e));
-};
+        await execAsync(['bash', '-c', `${userCmd} && sleep 0.15 && ${passCmd}`])};
 
 loadEntries();
 
