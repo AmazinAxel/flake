@@ -20,7 +20,6 @@
         "*".xkb_variant = "nodeadkeys";
         "type:pointer" = {
           accel_profile = "flat";
-          scroll_factor = "3.0";
           pointer_accel = "-0.1";
         };
         "type:touchpad" = {

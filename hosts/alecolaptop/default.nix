@@ -18,7 +18,6 @@
       ".platformio"
       ".config/kdeconnect"
       ".local/share/kdeconnect"
-      ".local/share/com.hackclub.lookout"
       ".bun"
     ];
   };
@@ -38,8 +37,6 @@
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
     })
-
-    inputs.lookout-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     openjdk25
     bun

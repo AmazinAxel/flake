@@ -219,26 +219,6 @@
         "type": "github"
       }
     },
-    "lookout-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1782150448,
-        "narHash": "sha256-iz1aGtm7VZFC458R1Z8SCeVVPsUmCbl0Zj3U52WVw54=",
-        "owner": "cloudglides",
-        "repo": "lookout-nix",
-        "rev": "151fa25683a050179095af6e51d4a62ddd2aa3d4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "cloudglides",
-        "repo": "lookout-nix",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1784007870,
@@ -344,7 +324,6 @@
         "impermanence": "impermanence",
         "lanzaboote": "lanzaboote",
         "lightbrowse": "lightbrowse",
-        "lookout-nix": "lookout-nix",
         "nixpkgs": "nixpkgs",
         "playit": "playit",
         "printerblot": "printerblot",
