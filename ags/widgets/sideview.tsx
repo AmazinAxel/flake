@@ -79,6 +79,13 @@ export const showPage = (name: PageName) => {
   currentPage = name;
   window.visible = true;
   setFocused(true);
+
+  // grab focus
+  const webview = webviews[name]!;
+  GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+    if (currentPage === name && window.visible) webview.grab_focus();
+    return GLib.SOURCE_REMOVE;
+  });
 };
 
 export const toggleSideviewFocus = () => {
@@ -98,10 +105,16 @@ export const closeSideview = () => {
   for (const name of Object.keys(webviews) as PageName[]) {
     const webview = webviews[name]!;
     stack.remove(webview);
+    webview.terminate_web_process?.();
     webview.run_dispose?.();
     delete webviews[name];
   };
   currentPage = null;
+
+  if (networkSession) {
+    networkSession.run_dispose?.();
+    networkSession = null;
+  };
 };
 
 export const toggleSideviewSize = () => {
