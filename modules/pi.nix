@@ -36,6 +36,11 @@
     firmware = [ pkgs.raspberrypiWirelessFirmware ]; # needed for wifi to work
   };
 
+  nixpkgs.flake = { # faster rebuilds since we dont have to upload the nixpkgs source
+    setNixPath = false;
+    setFlakeRegistry = false;
+  };
+
   # avahi .local publishing comes from common.nix
   services.openssh.enable = true;
 
