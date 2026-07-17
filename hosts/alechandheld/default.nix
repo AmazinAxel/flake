@@ -108,6 +108,12 @@ in {
     settings.General.Experimental = true;
   };
 
+  nixpkgs.flake = { # faster rebuilds since we dont have to upload the nixpkgs source
+    setNixPath = false;
+    setFlakeRegistry = false;
+  };
+
+
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
       if (subject.user !== "alec") return;
