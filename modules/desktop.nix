@@ -2,6 +2,15 @@
 
   imports = [ ./tmpfs-root.nix ];
 
+  # Cachy kernel
+  nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+  boot = {
+    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+
+    # more ram on desktops so use more zram
+    kernel.sysctl."vm.swappiness" = 180;
+  };
+
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users.alec.imports = [ ../home-manager/home.nix ];

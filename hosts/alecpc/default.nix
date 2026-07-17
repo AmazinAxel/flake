@@ -40,6 +40,9 @@
   hardware.graphics.extraPackages = with pkgs; [ nvidia-vaapi-driver libva-vdpau-driver libvdpau-va-gl ];
 
   boot = {
+    #   kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-lts;
+    # kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
+
     initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
     kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1" "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
     extraModprobeConfig=''

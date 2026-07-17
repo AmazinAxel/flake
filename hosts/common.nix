@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, config, ... }: {
   users.users.alec = { # Default user
     isNormalUser = true;
     extraGroups = [ "wheel" "audio" "video" "dialout" ];
@@ -30,6 +30,14 @@
       "net.ipv4.tcp_slow_start_after_idle" = 0; # don't reset cwnd after idle
       "net.ipv4.tcp_mtu_probing" = 1; # reduces fragmentation
       "net.ipv4.tcp_notsent_lowat" = 16384; # reduce latency
+
+      "vm.dirty_writeback_centisecs" = 6000; # batch disk writes
+
+    # zram is enabled on a lot of hosts, this optimizes it
+    } // lib.optionalAttrs config.zramSwap.enable {
+      "vm.page-cluster" = 0;
+      "vm.watermark_boost_factor" = 0;
+      "vm.watermark_scale_factor" = 125;
     };
   };
 
@@ -87,7 +95,10 @@
   security.sudo.extraConfig = "Defaults lecture=never"; # lectures are on by default
 
   time.timeZone = "America/Los_Angeles"; # lang also set to en_US
-  zramSwap.enable = lib.mkDefault true; # Compress ram for better performance
+  zramSwap = {
+    enable = lib.mkDefault true;
+    memoryPercent = 100;
+  };
 
   nixpkgs.config.allowUnfree = true;
   nix = {
@@ -99,6 +110,16 @@
       warn-dirty = false;
       download-buffer-size = 268435456; # 256 MiB
       trusted-users = [ "alec" ]; # for remote deployments
+
+      # Binary caches
+      extra-substituters = [
+        "https://attic.xuyh0120.win/lantian" # cachyos kernel
+        "https://helix.cachix.org" # helix
+      ];
+      extra-trusted-public-keys = [
+        "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+        "helix.cachix.org-1:ejp9KQpR1FBI2onstMQ34yogDm4OgU2ru6lIwPvuCVs="
+      ];
     };
   };
 
