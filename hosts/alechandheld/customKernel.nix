@@ -21,8 +21,19 @@ let
     cp ${./panels}/anbernic,rg35xx-plus-rev6-panel.panel $out/panels/
   '';
 
+  # Pinned directly from kernel.org: nixpkgs dropped linux_7_0 at its upstream
+  # EOL, but the ROCKNIX patch set + config are validated against 7.0.y (their
+  # own tree is still on 6.15.x, so there is no newer upstream base to track).
+  # 7.0.14 is the final 7.0.y release.
+  kernelVersion = "7.0.14";
+
   baseKernel = pkgs.linuxManualConfig {
-    inherit (pkgs.linux_7_0) version src modDirVersion;
+    version = kernelVersion;
+    modDirVersion = kernelVersion;
+    src = pkgs.fetchurl {
+      url = "mirror://kernel/linux/kernel/v7.x/linux-${kernelVersion}.tar.xz";
+      hash = "sha256-3pmZt4TSKT8A05xi2PkqCKuKVLxOgP/SUKDAnLB6D5g=";
+    };
     configfile = ./rocknix-linux.conf;
     kernelPatches = map (p: {
       name = builtins.baseNameOf p;

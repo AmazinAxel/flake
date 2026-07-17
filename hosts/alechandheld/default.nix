@@ -145,11 +145,18 @@ in {
   # its rebind fails -EEXIST.  State is logged to /persist for verification.
   powerManagement.resumeCommands = ''
     exec > /persist/last-resume.log 2>&1
+    # Freeze forensics: most resume freezes power-cut before page cache hits
+    # disk, losing the log.  mark() appends to a synced trace file so the last
+    # completed step survives a hard power-off.
+    mark() { echo "$1 $(${pkgs.coreutils}/bin/date +%T)" >> /persist/resume-trace.log; ${pkgs.coreutils}/bin/sync /persist/resume-trace.log; }
+    echo "===== resume trace $(${pkgs.coreutils}/bin/date) =====" >> /persist/resume-trace.log
+    mark hook-start
     echo "===== resume $(${pkgs.coreutils}/bin/date) ====="
 
     echo "[usb] rebind ehci/ohci"
     for _d in 5101000.usb 5200000.usb; do echo "$_d" > /sys/bus/platform/drivers/ehci-platform/bind 2>/dev/null || true; done
     for _d in 5101400.usb 5200400.usb; do echo "$_d" > /sys/bus/platform/drivers/ohci-platform/bind 2>/dev/null || true; done
+    mark usb-done
 
     # Joypad: the H616 GPADC (5070000.adc) resumes dead — reads time out — and the
     # pad is a polled-ADC device, so the WHOLE pad (sticks + buttons) goes silent.
@@ -159,18 +166,43 @@ in {
     # deterministically re-grabs the fresh pad and republishes its uinput clone.
     # First joypad bind can hit a transient -EEXIST (leftover sysfs group), hence
     # the retry loop.
-    echo "[joypad] gpadc rebind"
-    ${pkgs.systemd}/bin/systemctl stop handheld-inputd 2>/dev/null || true
-    echo rocknix-singleadc-joypad > /sys/bus/platform/drivers/rocknix-singleadc-joypad/unbind 2>/dev/null || true
-    echo 5070000.adc > /sys/bus/platform/drivers/sun20i-gpadc/unbind 2>/dev/null || true
-    ${pkgs.coreutils}/bin/sleep 1
-    echo 5070000.adc > /sys/bus/platform/drivers/sun20i-gpadc/bind 2>/dev/null || echo "  gpadc bind FAILED"
-    for _try in 1 2 3; do
-      [ -e /sys/bus/platform/drivers/rocknix-singleadc-joypad/rocknix-singleadc-joypad ] && break
-      echo rocknix-singleadc-joypad > /sys/bus/platform/drivers/rocknix-singleadc-joypad/bind 2>/dev/null || true
+    echo "[joypad] gpadc check"
+    # Only run the risky rebind dance if the ADC is actually dead: a live probe
+    # read succeeding means the joypad survived this resume (the dead-GPADC
+    # evidence was gathered on 7.0.10; 7.0.14 may not need it) — and the dance
+    # itself has hazards (use-after-free oops with udev, and one hard kernel
+    # hang traced into this section 2026-07-17).
+    if ${pkgs.coreutils}/bin/timeout 3 ${pkgs.coreutils}/bin/cat /sys/bus/iio/devices/iio:device0/in_voltage0_raw >/dev/null 2>&1; then
+      mark gpadc-alive-skipping-rebind
+    else
+      mark gpadc-dead-rebinding
+      ${pkgs.systemd}/bin/systemctl stop handheld-inputd 2>/dev/null || true
+      mark jp-inputd-stopped
+      echo rocknix-singleadc-joypad > /sys/bus/platform/drivers/rocknix-singleadc-joypad/unbind 2>/dev/null || true
+      mark jp-joypad-unbound
+      # Let udev fully process the removal before re-registering: re-registering
+      # too fast reuses the same eventN minor while the old node is still being
+      # torn down, and a udev worker opening it mid-teardown oopses in
+      # joypad_open (use-after-free) and leaves the evdev mutex locked forever
+      # (every later open of the pad blocks until reboot).  Seen live 2026-07-17.
+      ${pkgs.systemd}/bin/udevadm settle -t 5 2>/dev/null || true
+      ${pkgs.coreutils}/bin/sleep 2
+      mark jp-settled
+      echo 5070000.adc > /sys/bus/platform/drivers/sun20i-gpadc/unbind 2>/dev/null || true
+      mark jp-gpadc-unbound
       ${pkgs.coreutils}/bin/sleep 1
-    done
-    ${pkgs.systemd}/bin/systemctl start handheld-inputd || echo "  inputd start FAILED"
+      echo 5070000.adc > /sys/bus/platform/drivers/sun20i-gpadc/bind 2>/dev/null || echo "  gpadc bind FAILED"
+      mark jp-gpadc-bound
+      for _try in 1 2 3; do
+        [ -e /sys/bus/platform/drivers/rocknix-singleadc-joypad/rocknix-singleadc-joypad ] && break
+        echo rocknix-singleadc-joypad > /sys/bus/platform/drivers/rocknix-singleadc-joypad/bind 2>/dev/null || true
+        ${pkgs.coreutils}/bin/sleep 1
+      done
+      mark jp-joypad-bound
+      ${pkgs.systemd}/bin/udevadm settle -t 5 2>/dev/null || true
+      ${pkgs.systemd}/bin/systemctl start handheld-inputd || echo "  inputd start FAILED"
+    fi
+    mark joypad-done
 
     # Audio: sun4i-codec (5096000.codec) also resumes dead (pw-cat "plays" into
     # silence).  Rebind it, then unmute the DAC switch — the fresh probe brings the
@@ -178,24 +210,64 @@ in {
     # Line Out come up on) and wireplumber's route-restore never touches it.
     # Verified live: rebind alone = still silent; rebind + DAC unmute = sound.
     # The pipewire restart below re-attaches to the recreated card.
+    # THE core audio fix: hibernate resets the CCU to bootloader defaults, but
+    # the clk framework's cached rates all still "match", so it never rewrites
+    # the hardware — PLL_AUDIO stays on a jittery SDM-less bootloader config
+    # with its output gated off, and the codec mux points at pll-audio-1x (half
+    # rate).  Result: silence or crunchy garbage that no codec-level poking can
+    # fix.  Verified live 2026-07-17 by reading the registers over /dev/mem:
+    # broken 0xB8142A01/0x00000000/0x80000000 vs kernel-intended values below.
+    # Values per ccu-sun50i-h616.c: PLL n=40 m=5 + SDM pattern (48k family),
+    # BIT(31) enable, BIT(29) lock-detect, BIT(27) OUTPUT enable (without it
+    # the PLL locks but outputs nothing), BIT(24) SDM.  Note: enable bit reads
+    # back 0 between streams (CCF gates the PLL when no stream is open) —
+    # that's normal, don't "fix" it.
+    echo "[audio] restore PLL_AUDIO + codec clk hardware regs"
+    _dm="${pkgs.busybox}/bin/busybox devmem"
+    $_dm 0x03001178 32 0xc001eb85 || echo "  SDM pattern write FAILED"
+    $_dm 0x03001078 32 0xA9042700 || echo "  PLL_AUDIO write FAILED"
+    ${pkgs.coreutils}/bin/sleep 1
+    echo "  PLL readback (want 0xB9042700): $($_dm 0x03001078 32)"
+    # mux=0: with SDM active the VCO is 196.608 MHz and the codec needs the /8
+    # tap (24.576 MHz); mux=1 fed it the /4 tap = exactly 2x fast (measured:
+    # 60 s of audio consumed in 30 s; pipewire starves half the time = chop).
+    $_dm 0x03001A50 32 0x80000000 || echo "  codec-1x clk write FAILED"
+    mark pll-done
+
     echo "[audio] codec rebind + DAC unmute"
+    # Stop pipewire BEFORE the rebind: unbinding the codec while the PCM is
+    # open tears the card down under a live stream and the re-probed codec
+    # comes back degraded (crunchy/low-quality output).
+    ${pkgs.systemd}/bin/systemctl --user -M alec@ stop wireplumber pipewire pipewire-pulse pipewire.socket pipewire-pulse.socket 2>/dev/null || true
+    ${pkgs.coreutils}/bin/sleep 1
     echo 5096000.codec > /sys/bus/platform/drivers/sun4i-codec/unbind 2>/dev/null || true
+    ${pkgs.coreutils}/bin/sleep 1
+    # DMA engine rebind while its only audio channel is free (codec unbound,
+    # pipewire stopped) — glitchy post-resume position reporting from the DMA
+    # controller starves the stream (choppy "doot doot" underruns).
+    echo 3002000.dma-controller > /sys/bus/platform/drivers/sun6i-dma/unbind 2>/dev/null || true
+    ${pkgs.coreutils}/bin/sleep 1
+    echo 3002000.dma-controller > /sys/bus/platform/drivers/sun6i-dma/bind 2>/dev/null || echo "  dma bind FAILED"
     ${pkgs.coreutils}/bin/sleep 1
     echo 5096000.codec > /sys/bus/platform/drivers/sun4i-codec/bind 2>/dev/null || echo "  codec bind FAILED"
     ${pkgs.coreutils}/bin/sleep 1
     ${pkgs.alsa-utils}/bin/amixer -c 0 -q sset 'DAC' unmute 2>/dev/null || echo "  DAC unmute FAILED"
     ${pkgs.alsa-utils}/bin/amixer -c 0 -q sset 'Speaker' on 2>/dev/null || true
     ${pkgs.alsa-utils}/bin/amixer -c 0 -q sset 'Line Out' on 2>/dev/null || true
+    mark codec-done
 
     echo "[userspace] pipewire/automount/mmc1"
-    ${pkgs.systemd}/bin/systemctl --user -M alec@ restart wireplumber pipewire pipewire-pulse || echo "  pipewire FAILED"
+    ${pkgs.systemd}/bin/systemctl --user -M alec@ restart pipewire.socket pipewire-pulse.socket wireplumber pipewire pipewire-pulse || echo "  pipewire FAILED"
     ${pkgs.systemd}/bin/systemctl restart mnt-AlecContent.automount 2>/dev/null || true
     ${pkgs.systemd}/bin/systemctl restart mmc1-rescue.service 2>/dev/null || true
 
-    ${pkgs.coreutils}/bin/sleep 3
     echo "[state] wlan0:"; ${pkgs.iproute2}/bin/ip -br link show wlan0 2>&1 || echo "  no wlan0"
     echo "[state] gamepad device count:"; ${pkgs.gnugrep}/bin/grep -c "H700 Gamepad" /proc/bus/input/devices 2>&1
     ${pkgs.util-linux}/bin/dmesg > /persist/last-resume-dmesg.txt 2>/dev/null || true
+    # Wake the parked DRM clients last, once the display stack is settled.
+    ${pkgs.procps}/bin/pkill -CONT retroarch 2>/dev/null || true
+    ${pkgs.coreutils}/bin/sync
+    mark hook-done
     echo "===== resume hook done ====="
   '';
 
@@ -203,8 +275,20 @@ in {
   # they resume detached instead of in the broken "root hub lost power" state that
   # freezes the kernel on the next plug; resumeCommands rebinds them.
   powerManagement.powerDownCommands = ''
+    # Park DRM clients before the snapshot: on thaw every process races the
+    # display stack's own resume, and RetroArch submitting a frame mid-restore
+    # corrupts DRM framebuffer refcounts (WARN storm → prime-import oops →
+    # screen frozen on last frame, kernel tainted).  A SIGSTOPped process is
+    # captured stopped in the image and can't race; resumeCommands CONTs it
+    # after the display has settled.
+    ${pkgs.procps}/bin/pkill -STOP retroarch 2>/dev/null || true
     for _d in 5101000.usb 5200000.usb; do echo "$_d" > /sys/bus/platform/drivers/ehci-platform/unbind 2>/dev/null || true; done
     for _d in 5101400.usb 5200400.usb; do echo "$_d" > /sys/bus/platform/drivers/ohci-platform/unbind 2>/dev/null || true; done
+    # Synced entry marker: if resume-trace.log's last line is "entering-hibernate"
+    # after a frozen resume, the freeze happened BEFORE the resume hook ran
+    # (image load / device resume phase), not in our hook.
+    echo "entering-hibernate $(${pkgs.coreutils}/bin/date)" >> /persist/resume-trace.log
+    ${pkgs.coreutils}/bin/sync
   '';
 
   # The TF2 (game card) slot controller intermittently fails init at boot:
