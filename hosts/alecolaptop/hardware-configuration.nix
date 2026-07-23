@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{
   boot = {
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "i8042" "atkbd" "usbhid" "hid_generic" ]; # MUST include these modules for keyboard to work for LUKS
     kernelModules = [ "kvm-amd" ];
@@ -7,16 +7,6 @@
       allowDiscards = true;
       bypassWorkqueues = true;
       crypttabExtraOpts = [ "password-echo=no" ];
-    };
-
-    loader = { # Secure boot
-      systemd-boot.enable = lib.mkForce false; # lanzaboote replaces systemd-boot
-      efi.canTouchEfiVariables = true;
-    };
-    lanzaboote = {
-      enable = true;
-      pkiBundle = "/var/lib/sbctl"; # reuse the already-enrolled sbctl keys
-      configurationLimit = 2;
     };
   };
 

@@ -1,15 +1,14 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, ... }: {
   imports = [
     ./hardware-configuration.nix
     ../common.nix
     ../../modules/desktop.nix
     ../../modules/laptop.nix
     ../../modules/printing.nix
-    inputs.lanzaboote.nixosModules.lanzaboote
   ];
 
   environment.persistence."/persist" = {
-    directories = [ "/var/lib/cups" "/var/lib/sbctl" ]; # printer config and secure boot keys
+    directories = [ "/var/lib/cups" ]; # printer config
     users.alec.directories = [
       ".thunderbird"
       ".config/GIMP"

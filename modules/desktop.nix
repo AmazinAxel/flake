@@ -1,14 +1,41 @@
-{ inputs, pkgs, ... }: {
+{ inputs, pkgs, lib, ... }: {
 
-  imports = [ ./tmpfs-root.nix ];
+  imports = [
+    ./tmpfs-root.nix
+    inputs.lanzaboote.nixosModules.lanzaboote
+  ];
 
   # Cachy kernel
-  nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+  nixpkgs.overlays = [
+    inputs.nix-cachyos-kernel.overlays.pinned
+
+    # https://github.com/emersion/xdg-desktop-portal-wlr/issues/395
+    (final: prev: {
+      xdg-desktop-portal-wlr = prev.xdg-desktop-portal-wlr.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace include/pipewire_screencast.h \
+            --replace-fail "#define XDPW_PWR_BUFFERS 2" "#define XDPW_PWR_BUFFERS 4" \
+            --replace-fail "#define XDPW_PWR_BUFFERS_MIN 2" "#define XDPW_PWR_BUFFERS_MIN 4"
+        '';
+      });
+    })
+  ];
+
   boot = {
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
 
     # more ram on desktops so use more zram
     kernel.sysctl."vm.swappiness" = 180;
+
+    loader = { # Secure boot
+      systemd-boot.enable = lib.mkForce false; # lanzaboote replaces systemd-boot
+      efi.canTouchEfiVariables = true;
+    };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
+      configurationLimit = 2;
+    };
   };
 
   home-manager = {
@@ -66,6 +93,7 @@
         "/var/lib/iwd" # saved wifi networks
         "/var/lib/systemd" # backlight
         "/var/lib/bluetooth" # bt paired devices
+        "/var/lib/sbctl" # secure boot keys
       ];
       users.alec = {
         directories = [
@@ -201,10 +229,10 @@
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
     # Prevent crashes
-    # earlyoom = {
-    #   enable = true;
-    #   freeMemThreshold = 5; # 5%
-    # };
+    earlyoom = {
+       enable = true;
+       freeMemThreshold = 5; # 5%
+    };
 
     # Sound
     pipewire = {
