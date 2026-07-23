@@ -1,7 +1,11 @@
-import app from "ags/gtk4/app";
 import { Gtk } from "ags/gtk4";
+import Gdk from "gi://Gdk";
 import { exec, execAsync } from 'ags/process';
 import { createState } from 'ags';
+
+const mediaCss = new Gtk.CssProvider();
+Gtk.StyleContext.add_provider_for_display(
+    Gdk.Display.get_default()!, mediaCss, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 export type musicAction = 'next' | 'prev';
 export const [ isPlaying, setIsPlaying ] = createState(false);
@@ -67,18 +71,15 @@ export const Media = () =>
     <box name={'mediaBtn'}
         $={() => playlistName.subscribe(() => {
             const color = playlistColors[playlist.peek() - 1];
-            app.apply_css(`
+            mediaCss.load_from_string(`
                 #status #mediaBtn {
                     background-color: #${color};
-                }
-                #status #media {
-                    border: 0.15rem shade(#${color}, 1.15) solid;
                 }
             `);
         })
     }>
     <Gtk.EventControllerScroll
-        flags={Gtk.EventControllerScrollFlags.VERTICAL} 
+        flags={Gtk.EventControllerScrollFlags.VERTICAL}
         onScroll={(_, __, y) => {
             execAsync('mpc volume ' + ((y < 0) ? '+5' : '-5'))
         }}/>

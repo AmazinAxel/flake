@@ -1,4 +1,4 @@
-import { createState, createBinding, For, This } from 'ags';
+import { createState, createBinding, For, This, onCleanup } from 'ags';
 import { timeout } from 'ags/time';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
@@ -32,14 +32,17 @@ export default () =>
                 defaultHeight={1} // fix bug
                 defaultWidth={1}
                 $={() => {
-                    brightness.subscribe(() =>
+                    // for when monitor is unplugged
+                    const unsubBrightness = brightness.subscribe(() =>
                         osdChange('display-brightness-symbolic', brightness.peek())
                     );
 
                     // volume changes for the mute bind as well
                     const volumeChanged = () => osdChange(speaker.volume_icon, speaker.volume);
-                    volumeBind.subscribe(volumeChanged);
-                    isMuted.subscribe(volumeChanged);
+                    const unsubVolume = volumeBind.subscribe(volumeChanged);
+                    const unsubMute = isMuted.subscribe(volumeChanged);
+
+                    onCleanup(() => { unsubBrightness(); unsubVolume(); unsubMute(); });
                 }}
             >
                 <OutTransition duration={125} reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false)} type={Gtk.RevealerTransitionType.SLIDE_UP}>

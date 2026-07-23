@@ -1,4 +1,3 @@
-import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import { execAsync } from 'ags/process';
 import { lockScreen } from '../lockscreen/lockscreen';
@@ -8,6 +7,10 @@ const handleKeys = (_ctrl: any, key: number) => {
    app.get_window('powermenu')?.hide();
    switch (key) {
       case 115: // S - sleep
+         lockScreen();
+         execAsync('systemctl suspend');
+         break;
+      case 104: // H - hibernate
          execAsync('systemctl hibernate');
          break;
       case 113: // Q - power off
@@ -22,17 +25,7 @@ const handleKeys = (_ctrl: any, key: number) => {
    };
 };
 
-export default () => inputControl('powermenu', () =>
-   <box
-      cssClasses={['widgetBackground']}
-      halign={Gtk.Align.CENTER}
-      valign={Gtk.Align.CENTER}
-   >
-      <image cssClasses={['sleep']} iconName="weather-clear-night-symbolic"/>
-      <image cssClasses={['shutdown']} iconName="system-shutdown-symbolic"/>
-      <image cssClasses={['lock']} iconName="system-lock-screen-symbolic"/>
-      <image cssClasses={['reboot']} iconName="system-reboot-symbolic"/>
-   </box>,
+export default () => inputControl('powermenu', () => <box/>,
    undefined,
    undefined,
    handleKeys

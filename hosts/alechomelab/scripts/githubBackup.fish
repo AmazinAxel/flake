@@ -32,20 +32,43 @@ set -x GIT_CONFIG_VALUE_7 0
 set -x GIT_CONFIG_KEY_8 maintenance.auto
 set -x GIT_CONFIG_VALUE_8 false
 
-# Download & sync all repositories
-for repo in (curl -s -H "Authorization: token $token" https://api.github.com/user/repos?per_page=100 | jq -r '.[].full_name')
-    if string match -q 'AmazinAxel/*' $repo
-        set repoName (string split '/' $repo)[2]
-        set targetDir "/media/Projects/$repoName"
+for row in (curl -s -H "Authorization: token $token" https://api.github.com/user/repos?per_page=100 | jq -r '.[] | "\(.id)\t\(.full_name)"')
+    set fields (string split \t $row)
+    set repoId $fields[1]
+    set repo $fields[2]
 
-        if test -d "$targetDir/.git"
-            echo "Pulling repo $repoName"
-            git -C "$targetDir" fetch https://AmazinAxel:$token@github.com/$repo.git
-            and git -C "$targetDir" reset --hard FETCH_HEAD
-            and git -C "$targetDir" clean -fd
-        else
-            echo "Cloning repo $repoName"
-            git clone https://AmazinAxel:$token@github.com/$repo.git "$targetDir"
+    string match -q 'AmazinAxel/*' $repo; or continue
+
+    set repoName (string split '/' $repo)[2]
+    set targetDir "/media/Projects/$repoName"
+    set cleanUrl "https://github.com/$repo.git" # origin
+    set authUrl "https://AmazinAxel:$token@github.com/$repo.git" # used only for the fetch
+
+    # renames
+    if not test -d "$targetDir/.git"
+        for dir in /media/Projects/*/
+            test -d "$dir/.git"; or continue
+            if test (git -C "$dir" config --local --get homelab.repoid 2>/dev/null) = "$repoId"
+                echo "Repo renamed: "(basename $dir)" -> $repoName, moving local copy"
+                mv "$dir" "$targetDir"
+                break
+            end
+        end
+    end
+
+    if test -d "$targetDir/.git"
+        echo "Pulling repo $repoName"
+        git -C "$targetDir" remote set-url origin "$cleanUrl" 2>/dev/null
+        or git -C "$targetDir" remote add origin "$cleanUrl"
+        git -C "$targetDir" config --local homelab.repoid "$repoId"
+        git -C "$targetDir" fetch "$authUrl"
+        and git -C "$targetDir" reset --hard FETCH_HEAD
+        and git -C "$targetDir" clean -fd
+    else
+        echo "Cloning repo $repoName"
+        if git clone "$authUrl" "$targetDir"
+            git -C "$targetDir" remote set-url origin "$cleanUrl" # no token
+            git -C "$targetDir" config --local homelab.repoid "$repoId"
         end
     end
 end

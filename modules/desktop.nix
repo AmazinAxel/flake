@@ -118,16 +118,18 @@
     '';
   };
 
-  # if an app crashes dont keep it open
-  systemd.coredump.settings.Coredump = {
-    Storage = "none";
-    ProcessSizeMax = "0";
-  };
 
-  systemd.tmpfiles.rules = [
-    "Z /persist/home/alec/Music - alec users - -" # music proper owner
-    "R! /home/alec/*/.Trash-* - - - - -" # wipe trash in each persisted folder on boot
-  ];
+  systemd = {
+    coredump.settings.Coredump = { # if an app crashes dont keep it open
+      Storage = "none";
+      ProcessSizeMax = "0";
+    };
+    tmpfiles.rules = [
+      "Z /persist/home/alec/Music - alec users - -" # music proper owner
+      "R! /home/alec/*/.Trash-* - - - - -" # wipe trash in each persisted folder on boot
+    ];
+    sleep.settings.Sleep.HibernateMode = "shutdown"; # better/faster hibernation
+  };
 
   fonts.packages = with pkgs; [
     nerd-fonts.iosevka # Programming

@@ -4,7 +4,6 @@ import clipboardStyle from './widgets/clipboard/clipboard.css';
 import statusStyle from './widgets/status/status.css';
 import notificationStyle from './widgets/notifications/notifications.css';
 import osdStyle from './widgets/osd/osd.css';
-import powermenuStyle from './widgets/powermenu/powermenu.css';
 import lockscreenStyle from './widgets/lockscreen/lockscreen.css';
 
 import app from "ags/gtk4/app"
@@ -38,7 +37,7 @@ import asideStatusWindow, { setAsideWindow, closeAsideWindow } from './lib/aside
 let blueLightFilter = false;
 
 app.start({
-    css: style + searchableDialogStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + powermenuStyle + lockscreenStyle,
+    css: style + searchableDialogStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + lockscreenStyle,
     main() {
         Gtk.Settings.get_default()!.gtkImModule = "simple"; // fix launcher errors
 

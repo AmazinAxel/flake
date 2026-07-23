@@ -1,5 +1,4 @@
 import { Gtk } from 'ags/gtk4';
-import app from 'ags/gtk4/app';
 import Auth from 'gi://AstalAuth';
 import SessionLock from 'gi://Gtk4SessionLock';
 import GLib from 'gi://GLib';
@@ -19,7 +18,10 @@ const hiddenCursor = Gdk.Cursor.new_from_texture( // no cursor
     0, 0, null,
 );
 
-playlistName.subscribe(() => app.apply_css(`#lockscreen entry { background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
+const lockCss = new Gtk.CssProvider();
+Gtk.StyleContext.add_provider_for_display(
+    Gdk.Display.get_default()!, lockCss, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+playlistName.subscribe(() => lockCss.load_from_string(`#lockscreen entry { background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
 
 const checkLogin = (entry: Gtk.Entry) => {
     const password = entry.get_text();

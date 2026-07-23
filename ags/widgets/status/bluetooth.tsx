@@ -1,5 +1,5 @@
 import BluetoothService from 'gi://AstalBluetooth';
-import { createBinding, createState, For } from 'ags';
+import { createBinding, createState, For, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Gdk from 'gi://Gdk';
 import Wp from 'gi://AstalWp';
@@ -9,10 +9,9 @@ const bluetooth = BluetoothService.get_default();
 const audio = Wp.get_default()?.audio; // for auto-sink switching
 const bluetoothOn = createBinding(bluetooth, 'isPowered');
 
-// adapter may be null at startup if BT firmware is still loading (binding directly on it crashes ags)
 const [ discovering, setDiscovering ] = createState(false);
 const wireAdapter = (adapter: BluetoothService.Adapter | null) => {
-    if (!adapter) return;
+    if (!adapter) return; // fix crash
     setDiscovering(adapter.discovering);
     adapter.connect('notify::discovering', () => setDiscovering(adapter.discovering));
 };
@@ -25,7 +24,7 @@ const devicesBind = createBinding(bluetooth, 'devices')((devs: BluetoothService.
 
 const nameSubstitute = (name: string) => {
 	if (!name) return '';
-	
+
 	if (name == 'S80A') {
 		return "Touchscreen Earbuds";
 	} else if (name == 'MINI_KEYBOARD') {
@@ -95,19 +94,26 @@ export default () =>
                         const connectingBind = createBinding(device, 'connecting');
                         const batteryBind = createBinding(device, 'batteryPercentage');
                         let btn: Gtk.Button;
+                        let pairHandler = 0; // pending notify::paired handler, if mid-pairing
                         return <button hexpand
                             sensitive={connectingBind(c => !c)}
 			    cursor={Gdk.Cursor.new_from_name('pointer', null)}
                             $={(self) => {
                                 btn = self;
 
-                                // use this workaround since we have two binds, TODO maybe theres a better way to combine these, forgot what its called
+                                // use this workaround since we have two binds, TODO use a derivable!!
                                 const update = () => {
                                     self.visible = device.paired || device.connected || (bluetooth.adapter?.discovering ?? false);
                                 };
-                                device.connect('notify::connected', update);
-                                bluetooth.adapter?.connect('notify::discovering', update);
+                                const adapter = bluetooth.adapter;
+                                const hConnected = device.connect('notify::connected', update);
+                                const hDiscovering = adapter?.connect('notify::discovering', update);
                                 update();
+                                onCleanup(() => {
+                                    device.disconnect(hConnected);
+                                    if (hDiscovering) adapter?.disconnect(hDiscovering);
+                                    if (pairHandler) device.disconnect(pairHandler); // pairing left incomplete
+                                });
                             }}
                             onClicked={() => {
                                 if (device.connected) {
@@ -127,9 +133,10 @@ export default () =>
                                 if (device.paired) {
                                     connectAndSwitch();
                                 } else {
-                                    const id = device.connect('notify::paired', () => {
+                                    pairHandler = device.connect('notify::paired', () => {
                                         if (device.paired) {
-                                            device.disconnect(id);
+                                            device.disconnect(pairHandler);
+                                            pairHandler = 0;
                                             connectAndSwitch();
                                         }
                                     });
@@ -152,9 +159,13 @@ export default () =>
                                     halign={Gtk.Align.START}
                                     $={(self) => {
                                         const update = () => { self.visible = device.connected && device.batteryPercentage >= 0; };
-                                        device.connect('notify::connected', update);
-                                        device.connect('notify::battery-percentage', update);
+                                        const hConnected = device.connect('notify::connected', update);
+                                        const hBattery = device.connect('notify::battery-percentage', update);
                                         update();
+                                        onCleanup(() => {
+                                            device.disconnect(hConnected);
+                                            device.disconnect(hBattery);
+                                        });
                                     }}
                                 />
                             </box>

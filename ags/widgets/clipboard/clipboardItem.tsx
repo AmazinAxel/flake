@@ -1,7 +1,8 @@
-import { exec } from 'ags/process';
+import { execAsync } from 'ags/process';
 import GLib from "gi://GLib";
+import GdkPixbuf from "gi://GdkPixbuf";
+import Gdk from "gi://Gdk";
 import { Gtk } from 'ags/gtk4';
-import app from 'ags/gtk4/app'
 import { streamingMode } from '../notifications/notifications';
 
 export const ClipboardItem = (id: string, content: string) => {
@@ -11,11 +12,6 @@ export const ClipboardItem = (id: string, content: string) => {
         const width = Number(matches[4]);
         const height = Number(matches[5]);
 
-        const path = `/tmp/ags/cliphist/${id}.${extension}`;
-        if (!GLib.file_test(path, GLib.FileTest.EXISTS)) {
-            exec('mkdir -p /tmp/ags/cliphist/');
-            exec(`bash -c 'cliphist decode ${id} > ${path}'`);
-        };
         if (streamingMode.peek())
             return <label label={`Image (${width}x${height})`} xalign={0} name={id}/>
 
@@ -31,13 +27,28 @@ export const ClipboardItem = (id: string, content: string) => {
             maxWidth = adjustedWidth;
         };
 
-        app.apply_css(`._${id} {
-            background-image: url("file://${path}");
-            min-height: ${maxHeight}px;
-            min-width: ${maxWidth}px;
-        }`);
+        const path = `/tmp/ags/cliphist/${id}.${extension}`;
 
-        return <box cssClasses={[`_${id}`, 'image']} name={id} valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}/>
+        const picture = new Gtk.Picture({ contentFit: Gtk.ContentFit.CONTAIN });
+        const load = () => {
+            try {
+                const pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, Math.round(maxWidth), Math.round(maxHeight), true);
+                picture.set_paintable(Gdk.Texture.new_for_pixbuf(pixbuf));
+            } catch (_) {}
+        };
+
+        if (GLib.file_test(path, GLib.FileTest.EXISTS))
+            load();
+        else
+            execAsync(`bash -c 'mkdir -p /tmp/ags/cliphist/ && cliphist decode ${id} > ${path}'`)
+                .then(load)
+                .catch(() => {});
+
+        return <box cssClasses={['image']} name={id} overflow={Gtk.Overflow.HIDDEN}
+            widthRequest={maxWidth} heightRequest={maxHeight}
+            valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
+            {picture}
+        </box>
     };
 
     if (streamingMode.peek())

@@ -229,6 +229,14 @@ export default () =>
             </button>
         </box>
         <Gtk.Separator visible={wifiOn}/>
+        <Gtk.ScrolledWindow
+            hscrollbarPolicy={Gtk.PolicyType.NEVER}
+            hexpand vexpand
+            propagateNaturalWidth propagateNaturalHeight
+            maxContentHeight={500}
+            visible={wifiOn}
+        >
+        <box orientation={Gtk.Orientation.VERTICAL}>
         <For each={networks}>
             {(net: WifiNet) => {
                 let entry: Gtk.Entry | null = null;
@@ -291,5 +299,7 @@ export default () =>
                 </button>;
             }}
         </For>
+        </box>
+        </Gtk.ScrolledWindow>
         </box>
     </box>

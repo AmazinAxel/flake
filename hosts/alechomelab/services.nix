@@ -43,11 +43,13 @@ in {
           date +%s > /home/alec/lastSynced
         '';
         serviceConfig = {
+          Type = "oneshot";
           User = "alec";
           Group = "users";
-          MemoryHigh = "150M";
-          MemoryMax = "250M"; # hard cap
-          OOMScoreAdjust = 500; # kill first
+          MemoryHigh = "210M";
+          MemoryMax = "280M"; # ceiling
+          MemorySwapMax = "300M";
+          OOMScoreAdjust = 800; # kill first
           CPUWeight = 10;
           IOWeight = 10;
           IOSchedulingClass = "idle";
@@ -58,8 +60,11 @@ in {
 
     timers."daily" = { # Every morning at 3AM PT
       wantedBy = [ "timers.target" ];
-      partOf = [ "daily.service" ];
-      timerConfig.OnCalendar = "*-*-* 03:00:00";
+      timerConfig = {
+        OnCalendar = "*-*-* 03:00:00";
+        Persistent = true;
+        RandomizedDelaySec = "5m";
+      };
     };
   };
 }

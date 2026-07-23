@@ -1,6 +1,6 @@
 import { Astal, Gtk } from 'ags/gtk4';
 import { createState, For, This } from "ags"
-import { createSubprocess, exec } from 'ags/process';
+import { createSubprocess, execAsync } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
@@ -14,16 +14,19 @@ let count = 0;
 const [ windowVisible, setWindowVisible ] = createState(false);
 const [ reveal, setReveal ] = createState(false);
 
-const updateWorkspaces = () => {
-  const active = JSON.parse(exec(['swaymsg', '-t', 'get_workspaces']));
-  setWorkspaces(
-    [...Array(9).keys()].map((i) => {
-      const id = i + 1;
-      const ws = active.find((w: { num: number }) => w.num === id);
-      return { id, focused: ws?.focused ?? false, occupied: !!ws?.representation };
+const updateWorkspaces = () =>
+  execAsync(['swaymsg', '-t', 'get_workspaces'])
+    .then((out) => {
+      const active = JSON.parse(out);
+      setWorkspaces(
+        [...Array(9).keys()].map((i) => {
+          const id = i + 1;
+          const ws = active.find((w: { num: number }) => w.num === id);
+          return { id, focused: ws?.focused ?? false, occupied: !!ws?.representation };
+        })
+      );
     })
-  );
-};
+    .catch(() => {});
 
 const eventStream = createSubprocess('', ['swaymsg', '-t', 'subscribe', '-m', '["workspace"]']);
 eventStream.subscribe(() => { // Show workspaces on workspace change

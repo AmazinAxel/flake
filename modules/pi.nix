@@ -22,7 +22,7 @@
     networkmanager = {
       enable = true;
       wifi.powersave = false; # Stops network drops
-      settings.connection."wifi.scan-rand-mac-address" = "no"; # helps with drops
+      settings.device."wifi.scan-rand-mac-address" = "no"; # helps with drops
     };
     wireless.iwd.enable = false; # use nm
   };

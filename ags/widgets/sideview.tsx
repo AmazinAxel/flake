@@ -47,11 +47,14 @@ const getNetworkSession = () => {
 const stack = new Gtk.Stack();
 const webviews: Partial<Record<PageName, any>> = {};
 let currentPage: PageName | null = null;
+let pushedAside = false; // better focus behavior
 
 const getWindow = () => app.get_window('sideview') as any; // wish i didnt have to type it as any
 
 const setFocused = (focused: boolean) => {
-  getWindow().keymode = focused ? Astal.Keymode.EXCLUSIVE : Astal.Keymode.ON_DEMAND;
+  const window = getWindow();
+  window.keymode = focused ? Astal.Keymode.EXCLUSIVE : Astal.Keymode.ON_DEMAND;
+  window.exclusivity = (focused && !pushedAside) ? Astal.Exclusivity.IGNORE : Astal.Exclusivity.EXCLUSIVE;
   const dim = app.get_window('sideviewDim') as any;
   if (dim) dim.visible = focused;
 };
@@ -74,11 +77,12 @@ export const showPage = (name: PageName) => {
   const window = getWindow();
   if (window.visible && currentPage === name) return hideSideview();
 
+  const freshOpen = !window.visible;
   ensurePage(name);
   stack.set_visible_child_name(name);
   currentPage = name;
   window.visible = true;
-  setFocused(true);
+  if (freshOpen) setFocused(true);
 
   // grab focus
   const webview = webviews[name]!;
@@ -91,10 +95,13 @@ export const showPage = (name: PageName) => {
 export const toggleSideviewFocus = () => {
   const window = getWindow();
   if (!window?.visible) return;
-  setFocused(window.keymode !== Astal.Keymode.EXCLUSIVE);
+  const focused = window.keymode === Astal.Keymode.EXCLUSIVE;
+  pushedAside = true; // first focus makes it take screen space only
+  setFocused(!focused);
 };
 
 export const hideSideview = () => {
+  pushedAside = false; // reset
   getWindow().visible = false;
   setFocused(false);
 };
@@ -129,7 +136,7 @@ export default () => {
   return <window
     name="sideview"
     visible={false}
-    exclusivity={Astal.Exclusivity.EXCLUSIVE}
+    exclusivity={Astal.Exclusivity.IGNORE}
     keymode={Astal.Keymode.ON_DEMAND}
     anchor={TOP | BOTTOM | RIGHT}
     application={app}
