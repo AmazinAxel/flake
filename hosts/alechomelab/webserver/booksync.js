@@ -125,10 +125,18 @@ export async function handleSync(req) {
   reply.get = compiledBooks().filter((n) => !have.includes(n) && !gone.has(n));
   reply.delete = deleted;
 
-  // Only positions where *we* are ahead — the device already has the rest, so
-  // sending them would be wasted bytes on every sync.
+  // Positions to send back: those we are strictly ahead on, plus every book the
+  // device is downloading right now.
+  //
+  // **The books in `get` are the point.** An earlier version iterated `have`
+  // alone, so a book arriving in this same sync got no position — and on a
+  // fresh card `have` is empty, so *nothing* did. Restoring a wiped device
+  // pulled every book back and started all of them at page one.
+  //
+  // A book being downloaded has no local position by definition, so there is
+  // nothing to compare against: send whatever we hold.
   reply.pos = {};
-  for (const name of have) {
+  for (const name of [...have, ...reply.get]) {
     const mine = state.pos[name];
     if (!mine) continue;
     const theirs = devicePos[name];
