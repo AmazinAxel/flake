@@ -138,14 +138,22 @@ export async function handleSync(req) {
   return Response.json(reply);
 }
 
-// POST /booksync/dropped/<dir> — the converter telling us it rebuilt a book,
-// so any stored position for it is stale. Local only: this is an internal hook,
-// not part of the device protocol.
-export function handleDropped(pathname) {
-  const parts = pathname.split("/").filter(Boolean); // ["booksync","dropped",dir]
-  if (parts.length !== 3 || !safeName(parts[2]))
+// POST /booksync/dropped, form-encoded `dir=<name>` — the converter telling us
+// it rebuilt a book, so any stored position for it is stale. Internal hook, not
+// part of the device protocol.
+//
+// The name is in the body rather than the path because book names contain
+// spaces and curl refuses to put those in a URL.
+export async function handleDropped(req) {
+  let dir;
+  try {
+    dir = (await req.formData()).get("dir");
+  } catch {
+    return new Response("bad body", { status: 400 });
+  }
+  if (!safeName(dir))
     return new Response("bad name", { status: 400 });
-  dropPos(parts[2]);
+  dropPos(dir);
   return new Response("ok");
 }
 

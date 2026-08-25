@@ -38,7 +38,13 @@ for epub in $BOOKS/*.epub $BOOKS/*.EPUB
         # Done through the webserver rather than by editing .sync.json here:
         # the server is the file's only writer, so there is no torn-write race
         # between two processes, and it already does this atomically.
-        curl -fsS -m 5 -X POST "http://localhost/booksync/dropped/$stem" >/dev/null
+        #
+        # The name goes in the body, not the path: book names contain spaces
+        # ("the hobbit"), and curl rejects those in a URL outright — every
+        # single call failed with "Malformed input to a URL function". Encoding
+        # them by hand in fish is worse than just not putting them in the URL.
+        curl -fsS -m 5 -X POST --data-urlencode "dir=$stem" \
+            http://localhost/booksync/dropped >/dev/null
         or echo "warn: could not drop stored position for $stem" >&2
 
         echo "converted $stem"

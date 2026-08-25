@@ -63,8 +63,8 @@ serve({
 
     if (pathname == "/booksync" && req.method === "POST")
       return handleSync(req);
-    else if (pathname.startsWith("/booksync/dropped/") && req.method === "POST")
-      return handleDropped(pathname);
+    else if (pathname == "/booksync/dropped" && req.method === "POST")
+      return handleDropped(req);
     else if (pathname.startsWith("/booksync/"))
       return handleBookFile(pathname);
 
