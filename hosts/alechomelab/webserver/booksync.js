@@ -158,8 +158,22 @@ export async function handleDropped(req) {
 }
 
 // GET /booksync/<dir>/<file> — one file out of a compiled book.
+//
+// The segments must be percent-decoded before validation: book names contain
+// spaces, so the device sends "/booksync/the%20odyssey/book.wgb" and
+// URL.pathname keeps the escape. Undecoded, safeName() rejected the "%" and
+// every book file 404'd — and because the router falls through to the dashboard
+// HTML, the device happily wrote *that* to the card as book.wgb.
+//
+// Decoding happens before validation, never after, so an encoded "..%2f" cannot
+// slip a traversal past safeName().
 export function handleBookFile(pathname) {
-  const parts = pathname.split("/").filter(Boolean); // ["booksync", dir, file]
+  let parts;
+  try {
+    parts = pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  } catch {
+    return new Response("not found", { status: 404 });  // malformed escape
+  }
   if (parts.length !== 3 || !safeName(parts[1]) || !safeName(parts[2]))
     return new Response("not found", { status: 404 });
 
