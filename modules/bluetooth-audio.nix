@@ -32,6 +32,7 @@
       # never use earbud mic
       # wpctl set-profile <card> headset-head-unit
       "wireplumber.settings"."bluetooth.autoswitch-to-headset-profile" = false;
+      "monitor.bluez.properties"."bluez5.codecs" = [ "sbc_xq" "sbc" ];
 
       "device.profile.priority.rules" = [{ # higher quality
         matches = [{ "device.name" = "~bluez_card.*"; }];

@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   imports = [
     ./services.nix
+    ./books.nix
     ../common.nix
     ../../modules/pi.nix
   ];

@@ -1,6 +1,7 @@
 import { serve } from "bun";
 import { Database } from 'bun:sqlite';
 import { execSync } from "child_process";
+import { handleSync, handleBookFile, handleDropped } from "./booksync.js";
 
 // is usb mounted?
 try { execSync("mountpoint -q /media"); }
@@ -60,7 +61,14 @@ serve({
     const url = new URL(req.url);
     const pathname = url.pathname;
 
-    if (req.method === "POST")
+    if (pathname == "/booksync" && req.method === "POST")
+      return handleSync(req);
+    else if (pathname.startsWith("/booksync/dropped/") && req.method === "POST")
+      return handleDropped(pathname);
+    else if (pathname.startsWith("/booksync/"))
+      return handleBookFile(pathname);
+
+    else if (req.method === "POST")
       return handlePost(req);
 
     else if (pathname == "/favicon.ico")

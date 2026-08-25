@@ -35,10 +35,7 @@ export default () => inputControl('launcher', () =>
             placeholderText="Search"
             onActivate={() => launchApp(apps.fuzzy_query(textBox.text)?.[0])}
             onNotifyText={({ text }) => search(text)}
-            $={self => {
-                textBox = self;
-                app.connect("window-toggled", () => app.get_window("launcher")?.visible && self.grab_focus());
-        }}>
+            $={self => { textBox = self; }}>
         </entry>}
 
         content={<box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
@@ -62,4 +59,4 @@ export default () => inputControl('launcher', () =>
                 )}
             </For>
         </box>}
-        />, () => textBox.text = '', true);
+        />, () => textBox.text = '', true, undefined, undefined, undefined, () => textBox);

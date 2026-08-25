@@ -52,15 +52,7 @@ export default () => inputControl('pass', () =>
                 const top = results.peek()[0];
                 if (top) copyPair(top);
             }}
-            $={self => {
-                textBox = self;
-                app.connect('window-toggled', () => {
-                    if (app.get_window('pass')?.visible) {
-                        loadEntries();
-                        self.grab_focus();
-                    }
-                });
-            }}
+            $={self => { textBox = self; }}
         />}
         content={<box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
             <For each={results}>
@@ -83,6 +75,6 @@ export default () => inputControl('pass', () =>
             </For>
         </box>}
     />,
-    () => { if (textBox) { textBox.text = ''; } setResults([]); },
-    true
+    () => { if (textBox) { textBox.text = ''; } setResults([]); loadEntries(); },
+    true, undefined, undefined, undefined, () => textBox
 );

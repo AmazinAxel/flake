@@ -46,6 +46,10 @@
       url = "github:AmazinAxel/printerblot";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    wintergreen = {
+      url = "github:AmazinAxel/wintergreen";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # apps
     helix = {

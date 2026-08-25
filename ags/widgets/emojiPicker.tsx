@@ -5,20 +5,15 @@ import inputControl from '../lib/inputControl';
 
 const hide = () => app.get_window('emojiPicker')?.hide();
 
+let textBox: Gtk.Entry;
+
 export default () => inputControl('emojiPicker', () =>
   <entry
     enableEmojiCompletion
     showEmojiIcon
     halign={Gtk.Align.CENTER}
     valign={Gtk.Align.CENTER}
-    $={(self) =>
-      app.connect('window-toggled', () => {
-        if (app.get_window('emojiPicker')?.visible == true) {
-          self.grab_focus();
-          self.text = '';
-        };
-      })
-    }
+    $={(self) => { textBox = self; }}
     onNotifyText={async (self) => {
       if (self.text != '' && !self.text.match(/[:a-z]/)) {
         hide();
@@ -26,5 +21,7 @@ export default () => inputControl('emojiPicker', () =>
       };
     }}
   >
-  </entry>
+  </entry>,
+  () => { if (textBox) textBox.text = ''; },
+  false, undefined, undefined, undefined, () => textBox
 );

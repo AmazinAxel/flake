@@ -20,12 +20,22 @@ const BluetoothIcon = () =>
 
 const batPercentageBind = createBinding(battery, 'percentage');
 const batteryIconName = createBinding(battery, 'batteryIconName')
+const batLowBind = batPercentageBind((p) => Math.round(p * 100) < 99);
 const BatteryWidget = () =>
-    <image
-      tooltipText={batPercentageBind((p) => Math.round(p * 100) + '%')}
-      iconName={batteryIconName}
+    <overlay
       visible={Boolean(battery.percentage)} // Hide if on desktop
-    />
+    >
+      <image
+        cssClasses={batLowBind((low) => low ? ['batteryIcon', 'dimmed'] : ['batteryIcon'])}
+        iconName={batteryIconName}
+      />
+      <label
+        $type='overlay'
+        cssClasses={['batteryPercent']}
+        visible={batLowBind}
+        label={batPercentageBind((p) => String(Math.round(p * 100)))}
+      />
+    </overlay>
 
 const volumeIconBind = createBinding(speaker, 'volumeIcon')
 const VolumeIcon = () =>
