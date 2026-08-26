@@ -67,11 +67,6 @@ in {
       MemoryMin = "16M";
     };
 
-    settings.Manager = { # wedge auto restart
-      RuntimeWatchdogSec = "14s"; # bcm2835_wdt caps at 15s
-      RebootWatchdogSec = "2min";
-    };
-
     timers."daily" = { # Every morning at 3AM PT
       wantedBy = [ "timers.target" ];
       timerConfig = {

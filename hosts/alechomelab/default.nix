@@ -2,11 +2,18 @@
   imports = [
     ./services.nix
     ./books.nix
+    ./sd-image.nix
     ../common.nix
     ../../modules/pi.nix
   ];
 
-  systemd.tmpfiles.rules = [ "w /sys/class/leds/ACT/trigger - - - - none" ]; # no LED
+  systemd.tmpfiles.rules = [
+    "w /sys/class/leds/ACT/trigger - - - - none" # no LED
+
+    "d /run/samba/lock 0755 root root -"
+    "d /run/samba/cache 0755 root root -"
+    "d /run/samba/state 0755 root root -"
+  ];
 
   users.extraGroups = {
     gpio = { };
@@ -48,6 +55,13 @@
         global = {
           "server min protocol" = "SMB3";
           "server max protocol" = "SMB3";
+
+          "lock directory" = "/run/samba/lock";
+          "cache directory" = "/run/samba/cache";
+          "state directory" = "/run/samba/state";
+
+          "log level" = "0";
+          "logging" = "syslog"; # on RAM
         };
         "USB" = {
           path = "/media";

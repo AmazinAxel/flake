@@ -50,7 +50,7 @@
     device = "/dev/disk/by-label/NIXOS_SD";
     fsType = "ext4";
     neededForBoot = true;
-    options = [ "noatime" "commit=60" ];
+    options = [ "noatime" "nodiratime" "commit=600" "data=ordered" "errors=remount-ro" ];
   };
   fileSystems."/boot" = { # extlinux kernels
     device = "/persist/boot";
@@ -66,6 +66,32 @@
 
   services.journald.extraConfig = "Storage=volatile";
   nixpkgs.hostPlatform = "aarch64-linux";
+
+  boot.kernel.sysctl = {
+    "vm.dirty_background_bytes" = 32 * 1024 * 1024; # start background writeback
+    "vm.dirty_bytes" = 96 * 1024 * 1024; # only block the writer here
+    "vm.dirty_expire_centisecs" = 6000; # a page may sit dirty 60s before forced out
+    "vm.swappiness" = 180;
+    "vm.vfs_cache_pressure" = 50; # keep dentry/inode cache, avoids re-reads
+  };
+
+  services.fstrim = {
+    enable = true;
+    interval = "weekly";
+  };
+
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
+      randomizedDelaySec = "30m";
+    };
+    optimise = {
+      automatic = true;
+      dates = [ "weekly" ];
+    };
+  };
 
   environment.systemPackages = [
     (pkgs.writeScriptBin "persist-prune" (builtins.readFile ../scripts/persist-prune.fish))
