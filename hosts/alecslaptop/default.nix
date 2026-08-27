@@ -66,5 +66,12 @@
     ];
   };
 
-  services.flatpak.enable = true; # For running Sober
+  services = {
+    flatpak.enable = true; # For running Sober
+    scx = { # scheduler for less active cores
+      enable = true;
+      package = pkgs.scx.rustscheds;
+      scheduler = "scx_lavd";
+    };
+  };
 }

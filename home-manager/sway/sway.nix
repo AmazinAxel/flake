@@ -104,6 +104,7 @@
           { app_id = "zen-beta"; title = ".*PassFF.*"; } # PassFF popup
           { app_id = "PrismLauncher"; } # Minecraft launcher
           { app_id = "org.kde.kdeconnect.daemon"; }
+          { app_id = "xdg-desktop-portal-gtk"; } # file chooser from an app
         ];
       };
 

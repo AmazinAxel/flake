@@ -8,12 +8,6 @@
 
     upower.enable = true; # battery level for the astal shell
 
-    scx = { # sched_ext scheduler for less active cores
-      enable = true;
-      package = pkgs.scx.rustscheds;
-      scheduler = "scx_lavd";
-    };
-
     tlp = { # Better battery life
       enable = true;
       settings = {
