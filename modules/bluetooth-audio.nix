@@ -34,10 +34,16 @@
       "wireplumber.settings"."bluetooth.autoswitch-to-headset-profile" = false;
       "monitor.bluez.properties"."bluez5.codecs" = [ "sbc_xq" "sbc" ];
 
-      "device.profile.priority.rules" = [{ # higher quality
-        matches = [{ "device.name" = "~bluez_card.*"; }];
-        actions.update-props.priorities = [ "a2dp-sink-sbc_xq" "a2dp-sink" ];
-      }];
+      "device.profile.priority.rules" = [
+        { # higher quality
+          matches = [{ "device.name" = "~bluez_card.*"; }];
+          actions.update-props.priorities = [ "a2dp-sink-sbc_xq" "a2dp-sink" ];
+        }
+        { # K38 can't sustain sbc_xq's 452kbps, drops packets
+          matches = [{ "device.name" = "bluez_card.67_10_1D_B6_4C_E2"; }];
+          actions.update-props.priorities = [ "a2dp-sink-sbc" ];
+        }
+      ];
     };
   };
 }

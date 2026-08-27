@@ -6,6 +6,9 @@
 // reader never touches it.
 //
 // One POST decides the whole sync, so a no-op costs a single round trip.
+//
+// Reading positions are not synced: the device keeps its own book.pos and this
+// side never sees it. .sync.json holds only the append-only read history.
 
 import { readdirSync, statSync, existsSync, rmSync, renameSync, writeFileSync, readFileSync, openSync, fsyncSync, closeSync } from "fs";
 
@@ -19,33 +22,16 @@ const SAFE = /^[A-Za-z0-9 ._-]+$/;
 const safeName = (s) =>
   typeof s === "string" && s.length > 0 && s.length < 128 && SAFE.test(s) && !s.includes("..");
 
-// The four numbers the device stores in <book>/book.pos: chapter, paragraph,
-// offset, text_offset.
-const validPos = (p) =>
-  Array.isArray(p) && p.length === 4 && p.every((n) => Number.isInteger(n) && n >= 0);
-
-// Is `a` strictly further into the book than `b`?
-//
-// Lexicographic over the tuple, which is monotonic as you read forward. This
-// replaces comparing reading *percentages*: percent is a uint8 on the device,
-// so on a long book one percent spans several pages and two genuinely different
-// positions compare equal — reading a few pages then syncing would silently
-// lose them.
-export const ahead = (a, b) => {
-  for (let i = 0; i < 4; i++) if (a[i] !== b[i]) return a[i] > b[i];
-  return false;
-};
-
 function load() {
   try {
     const s = JSON.parse(readFileSync(STATE, "utf8"));
-    return { pos: s.pos ?? {}, finished: s.finished ?? [] };
+    return { finished: s.finished ?? [] };
   } catch {
-    return { pos: {}, finished: [] };
+    return { finished: [] };
   }
 }
 
-// Atomic: a torn state file would lose reading positions for the whole library.
+// Atomic: a torn state file would lose the read history for the whole library.
 // fsync before rename, because rename only orders the directory entry.
 function save(state) {
   const tmp = `${STATE}.tmp`;
@@ -66,16 +52,6 @@ const compiledBooks = () => {
   }
 };
 
-// Drop a book's stored position. Called on re-convert: a position tuple indexes
-// into a specific book.wgb, so it is meaningless against a rebuilt one, and
-// resuming at the wrong place silently is worse than losing the bookmark.
-export function dropPos(name) {
-  const state = load();
-  if (state.pos[name] === undefined) return;
-  delete state.pos[name];
-  save(state);
-}
-
 export async function handleSync(req) {
   let body;
   try {
@@ -87,16 +63,9 @@ export async function handleSync(req) {
   const have = Array.isArray(body.have) ? body.have.filter(safeName) : [];
   const state = load();
 
-  // 1. Merge positions, furthest-read wins.
   const reply = {};
-  const devicePos = body.pos && typeof body.pos === "object" ? body.pos : {};
-  for (const [name, p] of Object.entries(devicePos)) {
-    if (!safeName(name) || !validPos(p)) continue;
-    const mine = state.pos[name];
-    if (!mine || ahead(p, mine)) state.pos[name] = p;
-  }
 
-  // 2. Retire finished books. The state write is fsynced *before* anything is
+  // 1. Retire finished books. The state write is fsynced *before* anything is
   // unlinked, so a crash can only ever leave the book still present — the
   // device likewise waits for `delete` before removing its own copy.
   const done = Array.isArray(body.done) ? body.done : [];
@@ -108,11 +77,10 @@ export async function handleSync(req) {
     const key = `${title}|${author}`;
     if (!state.finished.some((f) => `${f.title}|${f.author}` === key))
       state.finished.push({ title, author, at: Math.floor(Date.now() / 1000) });
-    delete state.pos[d.dir];
     deleted.push(d.dir);
   }
 
-  if (deleted.length || Object.keys(devicePos).length) save(state);
+  if (deleted.length) save(state);
 
   for (const dir of deleted) {
     rmSync(`${COMPILED}/${dir}`, { recursive: true, force: true });
@@ -120,49 +88,12 @@ export async function handleSync(req) {
       if (existsSync(f)) rmSync(f, { force: true });
   }
 
-  // 3. What the device is missing, and only that.
+  // 2. What the device is missing, and only that.
   const gone = new Set(deleted);
   reply.get = compiledBooks().filter((n) => !have.includes(n) && !gone.has(n));
   reply.delete = deleted;
 
-  // Positions to send back: those we are strictly ahead on, plus every book the
-  // device is downloading right now.
-  //
-  // **The books in `get` are the point.** An earlier version iterated `have`
-  // alone, so a book arriving in this same sync got no position — and on a
-  // fresh card `have` is empty, so *nothing* did. Restoring a wiped device
-  // pulled every book back and started all of them at page one.
-  //
-  // A book being downloaded has no local position by definition, so there is
-  // nothing to compare against: send whatever we hold.
-  reply.pos = {};
-  for (const name of [...have, ...reply.get]) {
-    const mine = state.pos[name];
-    if (!mine) continue;
-    const theirs = devicePos[name];
-    if (!theirs || ahead(mine, theirs)) reply.pos[name] = mine;
-  }
-
   return Response.json(reply);
-}
-
-// POST /booksync/dropped, form-encoded `dir=<name>` — the converter telling us
-// it rebuilt a book, so any stored position for it is stale. Internal hook, not
-// part of the device protocol.
-//
-// The name is in the body rather than the path because book names contain
-// spaces and curl refuses to put those in a URL.
-export async function handleDropped(req) {
-  let dir;
-  try {
-    dir = (await req.formData()).get("dir");
-  } catch {
-    return new Response("bad body", { status: 400 });
-  }
-  if (!safeName(dir))
-    return new Response("bad name", { status: 400 });
-  dropPos(dir);
-  return new Response("ok");
 }
 
 // GET /booksync/<dir>/<file> — one file out of a compiled book.

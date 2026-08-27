@@ -21,7 +21,6 @@
   };
   users.users.alec.shell = pkgs.fish; # use shell
 
-  # We don't import desktop.nix (and therefore home.nix) so the home-manager configuration is minimal here
   home-manager.extraSpecialArgs = { inherit inputs; };
   home-manager.users.alec = {
     imports = [

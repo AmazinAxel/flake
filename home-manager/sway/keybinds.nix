@@ -164,7 +164,7 @@ in {
       "control+${mod}+shift+h" = moveItemToWorkspace "-";
 
       "${mod}+minus" = "move scratchpad";
-      "${mod}+equal" = "scratchpad show";
+      "${mod}+equal" = "scratchpad show, resize set 1800 960, move position center";
 
       "${mod}+F" = "floating toggle";
       "F11" = "fullscreen toggle";

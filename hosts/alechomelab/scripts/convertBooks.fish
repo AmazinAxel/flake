@@ -31,22 +31,6 @@ for epub in $BOOKS/*.epub $BOOKS/*.EPUB
         mv $tmp/$stem $out
         chmod -R a+rX $out
 
-        # A stored reading position indexes into a specific book.wgb, so it is
-        # meaningless against a rebuilt one. Dropping it costs a bookmark;
-        # keeping it would silently resume at the wrong place.
-        #
-        # Done through the webserver rather than by editing .sync.json here:
-        # the server is the file's only writer, so there is no torn-write race
-        # between two processes, and it already does this atomically.
-        #
-        # The name goes in the body, not the path: book names contain spaces
-        # ("the hobbit"), and curl rejects those in a URL outright — every
-        # single call failed with "Malformed input to a URL function". Encoding
-        # them by hand in fish is worse than just not putting them in the URL.
-        curl -fsS -m 5 -X POST --data-urlencode "dir=$stem" \
-            http://localhost/booksync/dropped >/dev/null
-        or echo "warn: could not drop stored position for $stem" >&2
-
         echo "converted $stem"
     else
         echo "FAILED $stem" >&2

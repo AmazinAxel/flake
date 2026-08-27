@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import { Database } from 'bun:sqlite';
 import { execSync } from "child_process";
-import { handleSync, handleBookFile, handleDropped } from "./booksync.js";
+import { handleSync, handleBookFile } from "./booksync.js";
 
 // is usb mounted?
 try { execSync("mountpoint -q /media"); }
@@ -63,8 +63,6 @@ serve({
 
     if (pathname == "/booksync" && req.method === "POST")
       return handleSync(req);
-    else if (pathname == "/booksync/dropped" && req.method === "POST")
-      return handleDropped(req);
     else if (pathname.startsWith("/booksync/"))
       return handleBookFile(pathname);
 
