@@ -1,67 +1,113 @@
 .statusElement {
-    background: @dark1;
-    margin: 0.4rem;
-    border: 0.15rem @dark4 solid;
+  background: @dark1;
+  margin: 0.4rem;
+  border: 0.15rem @dark4 solid;
 }
 
-#status .statusElement { border-radius: 0.5rem 0.5rem 0 0; }
-#status .statusElement#media { border-radius: 0.5rem; border: none; }
-#workspaces .statusElement { border-radius: 0 0 0.5rem 0.5rem; }
+#status .statusElement {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
 
-.statusMenu { padding: 0.5rem 0 1rem 0; }
+#status .statusElement#media {
+  border-radius: 0.5rem;
+  border: none;
+}
+
+#workspaces .statusElement {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.statusMenu {
+  padding: 0.5rem 0 1rem 0;
+}
+
 .statusMenu image {
-    -gtk-icon-size: 0.9rem;
-    -gtk-icon-shadow: 0 0 12px @light3;
-    color: @light3;
+  -gtk-icon-size: 0.9rem;
+  -gtk-icon-shadow: 0 0 12px @light3;
+  color: @light3;
 }
-.statusMenu image.batteryIcon.dimmed { opacity: 0.55; }
+
+.statusMenu image.batteryIcon.dimmed {
+  opacity: 0.4;
+}
+
 .batteryPercent {
-    font-size: 0.5rem;
-    font-weight: bold;
-    color: @light3;
-    opacity: 0.7;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: @blue2;
 }
-.timeSection { padding: 0.4rem 0 0.5rem 0; }
+
+.timeSection {
+  padding: 0.4rem 0 0.5rem 0;
+}
 
 /* Time/date module */
-.time .date, .time .day {
-    color: @blue2;
-    text-shadow: 0 0 3px @blue3;
-    margin: 0;
-    font-style: italic;
-    font-size: 1.1rem;
+.time .date,
+.time .day {
+  color: @blue2;
+  text-shadow: 0 0 3px @blue3;
+  margin: 0;
+  font-style: italic;
+  font-size: 1.1rem;
 }
-.time { font-family: 'WenQuanYi Zen Hei Mono'; }
+
+.time {
+  font-family: 'WenQuanYi Zen Hei Mono';
+}
+
 .time .time {
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: @blue2;
-    text-shadow: 0 0 5px @blue3;
-    padding: 4px 5px 2px 5px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: @blue2;
+  text-shadow: 0 0 5px @blue3;
+  padding: 4px 5px 2px 5px;
 }
-.time .day { font-size: 1.1rem; }
+
+.time .day {
+  font-size: 1.1rem;
+}
 
 /* Bluetooth */
 .unpowered {
-    padding: 2rem;
-    margin: 0.5rem;
-    -gtk-icon-size: 3rem;
+  padding: 2rem;
+  margin: 0.5rem;
+  -gtk-icon-size: 3rem;
 }
-.bluetoothButton, .wifiButton { transition: none; }
+
+.bluetoothButton,
+.wifiButton {
+  transition: none;
+}
 
 /* Aside lists */
-#asideStatus button { margin: 0.22rem; }
+#asideStatus button {
+  margin: 0.22rem;
+}
 
 /* Recording indicator */
 .recIndicator {
-    color: #bf616a;
-    padding: 0.5rem;
-    -gtk-icon-shadow: 0 0 10px #bf616a;
+  color: #bf616a;
+  padding: 0.5rem;
+  -gtk-icon-shadow: 0 0 10px #bf616a;
 }
 
 /* Media/mpris player */
-#mediaBtn image, #media image { -gtk-icon-size: 1.3rem; }
-#status #mediaBtn { border-radius: 0.3rem; padding: 0.5rem; }
-#status #mprisBtn { padding: 0.8rem 0; }
-#status #media, #status #mediaBtn { transition-duration: 0.3s; }
+#mediaBtn image,
+#media image {
+  -gtk-icon-size: 1.3rem;
+}
+
+#status #mediaBtn {
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+}
+
+#status #mprisBtn {
+  padding: 0.8rem 0;
+}
+
+#status #media,
+#status #mediaBtn {
+  transition-duration: 0.3s;
+}
