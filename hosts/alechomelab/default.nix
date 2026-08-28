@@ -2,7 +2,6 @@
   imports = [
     ./services.nix
     ./books.nix
-    ./sd-image.nix
     ../common.nix
     ../../modules/pi.nix
   ];
