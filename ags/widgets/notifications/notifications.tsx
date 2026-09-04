@@ -14,7 +14,7 @@ export const [ notificationlist, setNotificationList ] = createState(new Array<N
 const notify = () => setNotificationList([...map.values()].reverse());
 
 const setKey = (key: number, value: Notifd.Notification) =>
-    !streamingMode.peek() && (map.set(key, value), notify());
+    (!streamingMode.peek() || value.appName == 'batsignal') && (map.set(key, value), notify());
 
 const deleteKey = (key: number) => (map.delete(key), notify());
 

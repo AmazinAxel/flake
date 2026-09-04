@@ -380,26 +380,6 @@
         "type": "github"
       }
     },
-    "printerblot": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1787467127,
-        "narHash": "sha256-i1IfYs5Na/4HSKNTJCtQJK4dY/HtK7tAYRarZYP5SPI=",
-        "owner": "AmazinAxel",
-        "repo": "printerblot",
-        "rev": "b2340432cc2e021b28163223af39121d5436cbde",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AmazinAxel",
-        "repo": "printerblot",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "ags": "ags",
@@ -413,7 +393,6 @@
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nixpkgs": "nixpkgs_2",
         "playit": "playit",
-        "printerblot": "printerblot",
         "spicetify-nix": "spicetify-nix",
         "wintergreen": "wintergreen",
         "zen-browser": "zen-browser"

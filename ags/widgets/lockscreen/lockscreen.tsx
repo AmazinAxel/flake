@@ -27,7 +27,6 @@ const checkLogin = (entry: Gtk.Entry) => {
     const password = entry.get_text();
     entry.set_text('');
     entry.set_sensitive(false);
-    setAuthFailed(false);
 
     Auth.Pam.authenticate(password, (_, task) => {
         try {
@@ -94,6 +93,7 @@ const assignLockWindow = (monitor: Gdk.Monitor) =>
                     visibility={false}
                     invisibleChar={0}
                     onActivate={checkLogin}
+                    onNotifyText={(self) => self.get_text() && setAuthFailed(false)} // typing clear error
                     $={(self) => (entry = self, self.connect('map', () => self.grab_focus()))}
                 />
                 <box

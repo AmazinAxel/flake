@@ -42,10 +42,6 @@
       url = "github:AmazinAxel/homelab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    printerblot = {
-      url = "github:AmazinAxel/printerblot";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     wintergreen = {
       url = "github:AmazinAxel/wintergreen";
       inputs.nixpkgs.follows = "nixpkgs";

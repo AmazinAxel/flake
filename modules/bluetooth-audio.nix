@@ -18,8 +18,8 @@
           "stream.props"."audio.rate" = 48000;
           "stream.rules" = [{
             matches = [
-              { "node.name" = "bluez_output.94_4B_F8_8F_85_28.1"; }
-              { "node.name" = "bluez_output.D6_1F_21_FC_F9_C7.1"; }
+              { "node.name" = "~bluez_output\\.00_00_AB_CF_DF_9C\\..*"; }
+              { "node.name" = "~bluez_output\\.D6_1F_21_FC_F9_C7\\..*"; }
             ];
             actions.create-stream = { };
           }];
