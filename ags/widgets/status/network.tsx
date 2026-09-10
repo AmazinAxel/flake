@@ -1,7 +1,6 @@
 import { createState, For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
-import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
@@ -167,9 +166,7 @@ const refresh = async () => {
         );
 
         if (!menuHasFocus()) focusWifiMenu(); // focus in case of a rebuild
-    } catch(e) {
-        console.error('Network refresh error:', e);
-    };
+    } catch {};
 };
 
 const toggleWifi = async () => {
@@ -184,9 +181,7 @@ const toggleWifi = async () => {
         setWifiOn(next);
         if (!next) setNetworks([]);
         else await refresh();
-    } catch(e) {
-        console.error('WiFi toggle error:', e);
-    };
+    } catch {};
 };
 
 const scan = async () => {
@@ -198,8 +193,7 @@ const scan = async () => {
             if (!String(e).includes('Operation already in progress')) throw e;
         });
         refresh();
-    } catch(e) {
-        console.error('Scan error:', e);
+    } catch {
         setScanning(false);
     };
 };
@@ -217,7 +211,6 @@ export default () =>
                 hexpand halign={Gtk.Align.START}
                 cssClasses={wifiOn.as(on => on ? ['active', 'wifiButton'] : ['unpowered', 'wifiButton'])}
                 onClicked={toggleWifi}
-                cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 $={(self) => {
                     powerButton = self;
                     self.connect('map', () => { watchIwd(); refresh(); focusWifiMenu(); });
@@ -232,7 +225,6 @@ export default () =>
                 onClicked={scan}
                 sensitive={scanning.as(s => !s)}
                 visible={wifiOn}
-                cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 cssClasses={scanning.as(s => s ? ['active'] : [])}
                 $={(self) => scanButton = self}
             >
@@ -260,7 +252,6 @@ export default () =>
                     execAsync(args).then(() => { refresh(); popover?.popdown(); }).catch(() => {});
                 };
                 return <button
-                    cursor={Gdk.Cursor.new_from_name('pointer', null)}
                     cssClasses={net.connected ? ['active'] : []}
                     onClicked={() => {
                         if (net.connected) {

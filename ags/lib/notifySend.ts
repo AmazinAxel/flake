@@ -45,7 +45,6 @@ export const notifySend = ({
             } else {
                 execAsync(actions.find((a) => String(a.id) == out)?.command ?? '');
             };
-        },
-        (err) => console.error('[Notify] ' + err)
+        }
     );
 });

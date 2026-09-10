@@ -37,6 +37,10 @@
   color: @blue2;
 }
 
+.batteryPercent.charging {
+  color: @green;
+}
+
 .timeSection {
   padding: 0.4rem 0 0.5rem 0;
 }

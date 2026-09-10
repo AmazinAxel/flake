@@ -21,6 +21,7 @@
     flashprint
     kdePackages.kdenlive
     thunderbird
+    aesprite
     zettlr
     (symlinkJoin {
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];

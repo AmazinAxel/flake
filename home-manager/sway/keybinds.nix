@@ -107,7 +107,7 @@ in {
       "${mod}+Z" = "exec ags request toggleInfoArea";
 
       "${mod}+V" = "exec ags toggle clipboard";
-      # Enter = select entry, C = copy 2nd entry, E = edit image with swappy, W = wipe clipboard
+      # Enter = select entry, C = copy 2nd entry, E = edit image with swappy, G = open in gthumb, M = compress video, N = show in nemo, W = wipe clipboard
 
       "${mod}+R" = "exec ags request record";
       # R = toggle mic, Q = toggle quality, C = clip last 30s, Space = record

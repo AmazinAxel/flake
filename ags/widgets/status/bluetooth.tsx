@@ -1,7 +1,6 @@
 import BluetoothService from 'gi://AstalBluetooth';
 import { createBinding, createState, For, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
-import Gdk from 'gi://Gdk';
 import Wp from 'gi://AstalWp';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
 
@@ -45,7 +44,6 @@ export default () =>
         <box>
             <button
                 hexpand halign={Gtk.Align.START}
-                cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={() => bluetooth.toggle()}
                 cssClasses={bluetoothOn.as(power => power ? ['active', 'bluetoothButton'] : ['unpowered', 'bluetoothButton'])}
                 $={(self) => {
@@ -58,7 +56,6 @@ export default () =>
                 <image iconName="bluetooth-active-symbolic"/>
             </button>
             <button
-                cursor={Gdk.Cursor.new_from_name('pointer', null)}
                 onClicked={() => {
                     const adapter = bluetooth.adapter;
                     adapter.discovering ? adapter.stop_discovery() : adapter.start_discovery();
@@ -99,7 +96,6 @@ export default () =>
                         let pairHandler = 0; // pending notify::paired handler, if mid-pairing
                         return <button hexpand
                             sensitive={connectingBind(c => !c)}
-			    cursor={Gdk.Cursor.new_from_name('pointer', null)}
                             $={(self) => {
                                 btn = self;
 
@@ -162,10 +158,10 @@ export default () =>
                             }}/>
                             <box orientation={Gtk.Orientation.HORIZONTAL} hexpand valign={Gtk.Align.CENTER} spacing={10}>
                                 <image iconName={device.icon + '-symbolic'}/>
-                                <label label={nameSubstitute(device.alias)} halign={Gtk.Align.START} ellipsize={3}/>
+                                <label label={nameSubstitute(device.alias)} halign={Gtk.Align.START} hexpand ellipsize={3}/>
                                 <label
                                     label={batteryBind((p) => Math.round(p * 100) + '%')}
-                                    halign={Gtk.Align.START}
+                                    halign={Gtk.Align.END}
                                     $={(self) => {
                                         const update = () => { self.visible = device.connected && device.batteryPercentage >= 0; };
                                         const hConnected = device.connect('notify::connected', update);

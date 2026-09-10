@@ -116,7 +116,7 @@ const handleKeys = (_ctrl: any, key: number) => {
         hide();
         openCompress(file, selectedId());
         break;
-    case 115: // S - show in nemo
+    case 110: // N - open in nemo
         if (!file) break;
         hide();
         Gio.DBus.session.call(

@@ -21,6 +21,8 @@ const BluetoothIcon = () =>
 const batPercentageBind = createBinding(battery, 'percentage');
 const batteryIconName = createBinding(battery, 'batteryIconName')
 const batLowBind = batPercentageBind((p) => Math.round(p * 100) < 99);
+const batChargingBind = createBinding(battery, 'charging');
+
 const BatteryWidget = () =>
     <overlay
       visible={Boolean(battery.percentage)} // Hide if on desktop
@@ -31,7 +33,7 @@ const BatteryWidget = () =>
       />
       <label
         $type='overlay'
-        cssClasses={['batteryPercent']}
+        cssClasses={batChargingBind((c) => c ? ['batteryPercent', 'charging'] : ['batteryPercent'])}
         visible={batLowBind}
         label={batPercentageBind((p) => String(Math.round(p * 100)))}
       />

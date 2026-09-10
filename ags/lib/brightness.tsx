@@ -24,8 +24,7 @@ export const monitorBrightness = () =>
             if (!ok) return;
             const v = Number(new TextDecoder().decode(contents).trim()) / screenMax;
             if (v !== brightness.peek()) setBrightnessValue(v); // only updates for non internal changes
-        },
-        (err) => console.error('[Brightness] ' + err)
+        }
     );
 
 export const BrightnessSlider = () =>
