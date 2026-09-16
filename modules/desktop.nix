@@ -60,6 +60,7 @@ in {
       gpu-screen-recorder
       cifs-utils # Needed for mounting Samba NAS drive
       rsync # Quickly pull files from NAS drive
+      spotdl # Playlist downloads
       playerctl # mpris control from shell
       # killall
       pass # password management
@@ -82,6 +83,7 @@ in {
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
+      (writeScriptBin "homelab-update" (builtins.readFile ../scripts/homelab-update.fish))
       (writeScriptBin "nx-gc" (builtins.readFile ../scripts/nx-gc.fish))
       (writeScriptBin "persist-prune" (builtins.readFile ../scripts/persist-prune.fish))
     ];

@@ -31,11 +31,9 @@ in {
         };
       };
       daily = {
-        path = with pkgs; [ util-linux curl jq gawk spotdl toybox fish git ];
+        path = with pkgs; [ util-linux curl jq toybox fish git ];
         script = ''
           fish ${./scripts}/githubBackup.fish
-          fish ${./scripts}/spotifySync.fish
-
           date +%s > /home/alec/lastSynced
         '';
         serviceConfig = {

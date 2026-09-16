@@ -1,4 +1,4 @@
-#!/usr/bin/env fish
+# no shebang so i can run this on a pi without fish
 
 # Delete stuff
 sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system

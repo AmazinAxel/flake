@@ -64,7 +64,7 @@
     "/etc/NetworkManager/system-connections" # networkmanager wifi
   ];
 
-  services.journald.extraConfig = "Storage=volatile";
+  services.journald.settings.Journal.Storage = "volatile";
   nixpkgs.hostPlatform = "aarch64-linux";
 
   boot.kernel.sysctl = {

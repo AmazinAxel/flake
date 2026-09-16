@@ -19,6 +19,7 @@
     spi = { };
   };
   users.users.alec.extraGroups = [ "gpio" "spi" ];
+  security.sudo.wheelNeedsPassword = false;
 
   hardware = {
     i2c.enable = true;
@@ -98,12 +99,16 @@
     options = [ "nofail" ];
   };
 
-  environment.persistence."/persist" = {
-    directories = [
-      "/var/lib/samba" # NAS login
-      "/etc/homelab" # Airnow token
-    ];
-    users.alec.files = [ "GithubToken" ]; # githubBackup
+  environment = {
+    systemPackages = [(pkgs.writeScriptBin "nx-gc" (builtins.readFile ../../scripts/nx-gc.fish))];
+
+    persistence."/persist" = {
+      directories = [
+        "/var/lib/samba" # NAS login
+        "/etc/homelab" # Airnow token
+      ];
+      users.alec.files = [ "GithubToken" ]; # githubBackup
+    };
   };
 
   swapDevices = [{

@@ -1,8 +1,10 @@
 #!/usr/bin/env fish
 
 set mntPoint /mnt/alechomelab
-read -l -P "[Sync] Enter password: " passwd --silent
-echo
+if not set -q passwd # caller (eg homelab-update) may have already asked
+    read -g -P "[Sync] Enter password: " passwd --silent
+    echo
+end
 
 function s --inherit-variable passwd
     echo $passwd | sudo -S -p '' $argv

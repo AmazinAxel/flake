@@ -105,7 +105,7 @@
     channel.enable = false; # we only use flakes
 
     settings = {
-      experimental-features = "nix-command flakes";
+      experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       warn-dirty = false;
       download-buffer-size = 268435456; # 256 MiB
@@ -129,7 +129,7 @@
       KbdInteractiveAuthentication = false;
     };
 
-    journald.extraConfig = "SystemMaxUse=20M";
+    journald.settings.Journal.SystemMaxUse = "20M";
 
     avahi = {
       enable = true;
