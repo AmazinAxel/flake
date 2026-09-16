@@ -84,9 +84,19 @@
   transition: none;
 }
 
+#asideStatus button.connecting,
+#asideStatus button.connecting:disabled {
+  background-color: @blue3;
+  border: 1px solid @blue2;
+}
+
 /* Aside lists */
 #asideStatus button {
   margin: 0.22rem;
+}
+
+#asideStatus scrolledwindow>viewport>box {
+  padding: 4.5px;
 }
 
 /* Recording indicator */

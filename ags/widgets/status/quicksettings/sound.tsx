@@ -2,7 +2,8 @@ import Wp from 'gi://AstalWp';
 import { createBinding, createComputed, createState, For } from "ags"
 import { Gtk } from 'ags/gtk4';
 import Gdk from "gi://Gdk"
-import { subprocess } from 'ags/process';
+import { exec, execAsync } from 'ags/process';
+import { timeout } from 'ags/time';
 
 const audio = Wp.get_default()?.audio!;
 
@@ -42,98 +43,103 @@ const nameSubstitute = (name: string) => {
 
 const speakersBind = createBinding(audio, 'speakers');
 
-const COMBINED = 'Bluetooth combined output';
-const isCombined = (s: Wp.Endpoint) => s.description == COMBINED || s.name == COMBINED;
-const [ extras, setExtras ] = createState<string[]>([]);
-const loopbacks = new Map<string, ReturnType<typeof subprocess>>();
+const COMBINED = 'combined-bt-sink';
+const isCombined = (s: Wp.Endpoint) => nodeName(s) == COMBINED;
 
-const startLoopback = (sink: Wp.Endpoint, combinedSerial: number) => {
-    const key = sink.description;
-    if (loopbacks.has(key)) return;
+const nodeName = (s: Wp.Endpoint) =>
+    s.get_pw_property('node.name') ?? String(s.serial);
 
-    const vol = Number(sink.volume);
-    const proc = subprocess([
-        'pw-loopback',
-        '-C', String(combinedSerial),
-        '-P', String(sink.serial),
-        '--capture-props=' + JSON.stringify({
-            'stream.capture.sink': true,
-            'node.passive': true
-        }),
-        '--playback-props=' + JSON.stringify({
-            'channelVolumes': [ vol, vol ],
-            'resample.quality': 10 // better quality!
-        })
-    ], () => {});
+const ports = (name: string, dir: 'monitor' | 'playback') =>
+    [ `${name}:${dir}_FL`, `${name}:${dir}_FR` ];
 
-    proc.connect('exit', () => { // device dropped!!!
-        if (loopbacks.get(key) != proc) return; // superseded by stopLoopback
-        loopbacks.delete(key);
+const linkedSinks = (): string[] => {
+    let out = '';
+    try {
+        out = exec([ 'pw-link', '-l' ]);
+    } catch { return []; }
 
-        // if the other sink is available use that!
-        const survivors = [...loopbacks.keys()];
-        if (survivors.length > 0) return applySelection(survivors);
-
-        // otherwise fall back to some other output like the speakers
-        const fallback = audio.speakers.find(s => !isCombined(s));
-        if (fallback) applySelection([ fallback.description ]);
-    });
-    loopbacks.set(key, proc);
+    const found = new Set<string>();
+    let onMonitor = false;
+    for (const line of out.split('\n')) {
+        if (!/^\s/.test(line)) { // a port header, not a link line
+            onMonitor = line.startsWith(`${COMBINED}:monitor_`);
+            continue;
+        }
+        if (!onMonitor) continue;
+        const peer = line.replace(/^\s*\|->\s*/, '').trim();
+        if (!peer.includes(':')) continue;
+        const node = peer.slice(0, peer.lastIndexOf(':'));
+        if (node != COMBINED && audio.speakers.some(s => nodeName(s) == node))
+            found.add(node);
+    }
+    return [...found];
 };
 
-const stopLoopback = (key: string) => {
-    const proc = loopbacks.get(key);
-    if (!proc) return;
-    loopbacks.delete(key);
-    proc.kill(); // dont need it anymore
+const link = (target: string, connect: boolean) => {
+    const args = connect ? [] : [ '-d' ];
+    ports(COMBINED, 'monitor').forEach((src, i) =>
+        execAsync([ 'pw-link', ...args, src, ports(target, 'playback')[i] ])
+            .catch(() => {})
+    );
 };
 
 const applySelection = (names: string[]) => {
-    if (names.length == 0) return;
+    const byName = (n: string) => audio.speakers.find(s => nodeName(s) == n);
 
-    const sinkFor = (n: string) => audio.speakers.find((s: Wp.Endpoint) => s.description == n);
-
-    if (names.length == 1) { // don't use a combined sink, just a normal one works!
-        const only = sinkFor(names[0]);
-        if (!only) return; // tear nothing down if the target disappears
-        for (const key of [...loopbacks.keys()]) stopLoopback(key);
-        only.isDefault = true;
-        setExtras([]);
-    } else {
-        const combined = audio.speakers.find(isCombined);
-        if (!combined) return;
-
-        for (const key of [...loopbacks.keys()])
-            if (!names.includes(key)) stopLoopback(key);
-
-        for (const name of names) {
-            const sink = sinkFor(name);
-            if (sink) startLoopback(sink, combined.serial);
-        }
-        if (loopbacks.size == 0) return;
-
-        combined.isDefault = true;
-        setExtras([...loopbacks.keys()]);
+    names = [...new Set(names.filter(byName))];
+    if (names.length == 0) { // fallback
+        const fallback = audio.speakers.find(s => !isCombined(s));
+        if (!fallback) return;
+        names = [ nodeName(fallback) ];
     }
+
+    const live = linkedSinks();
+    if (names.length == 1) { // no comb
+        for (const t of live) link(t, false);
+        byName(names[0])!.isDefault = true;
+    } else {
+        if (!audio.speakers.some(isCombined)) return;
+        for (const t of live) if (!names.includes(t)) link(t, false);
+        for (const n of names) if (!live.includes(n)) link(n, true);
+        audio.speakers.find(isCombined)!.isDefault = true;
+    }
+    setSelection(names.length > 1 ? names : []);
 };
 
-// bind
-const selected = createComputed((track) => {
-    const mixed = track(extras);
-    if (mixed.length > 0) return mixed;
+const [ selection, setSelection ] = createState<string[]>([]);
 
-    track(speakersBind);
+const reconcile = () => {
+    const def = audio.defaultSpeaker;
+    const live = linkedSinks();
+    setSelection(live.length > 1 ? live : []);
+
+    if (!def || !isCombined(def)) return;
+    if (live.length > 0) return;
+
+    const wired = audio.speakers.find(s =>
+        !isCombined(s) && !nodeName(s).startsWith('bluez_'));
+    const real = wired ?? audio.speakers.find(s => !isCombined(s));
+    if (real) real.isDefault = true;
+};
+
+speakersBind.subscribe(reconcile);
+defaultSpeaker.subscribe(reconcile);
+
+timeout(1500, reconcile);
+
+const selected = createComputed((track) => {
+    const ours = track(selection);
+    if (ours.length > 0) return ours;
+
     const def = track(defaultSpeaker);
-    if (!def) return [];
-    const description = track(createBinding(def, 'description'));
-    return description && !isCombined(def) ? [ description ] : [];
+    return def && !isCombined(def) ? [ nodeName(def) ] : [];
 });
 
-// shift+enter / enter
 const toggleSink = (sink: Wp.Endpoint) => {
     const current = selected.get();
-    if (!current.includes(sink.description)) return applySelection([...current, sink.description]);
-    if (current.length > 1) applySelection(current.filter(n => n != sink.description));
+    const name = nodeName(sink);
+    if (!current.includes(name)) return applySelection([ ...current, name ]);
+    if (current.length > 1) applySelection(current.filter(n => n != name));
 };
 
 export const SinkSelector = () =>
@@ -142,9 +148,9 @@ export const SinkSelector = () =>
     >
         <For each={speakersBind(all => all.filter(s => !isCombined(s)))}>
             {(speaker) => {
-                const isSelected = selected(names => names.includes(speaker.description));
+                const isSelected = selected(names => names.includes(nodeName(speaker)));
                 return <button
-					onClicked={() => applySelection([ speaker.description ])}
+					onClicked={() => applySelection([ nodeName(speaker) ])}
 					cssClasses={isSelected(v => v ? ['active'] : [])}
 				>
                     <Gtk.EventControllerKey onKeyPressed={(_, key, __, mod) => {

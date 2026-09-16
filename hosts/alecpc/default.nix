@@ -22,6 +22,14 @@
     openjdk25
   ];
 
+  environment.persistence."/persist".users.alec.directories = [
+    ".thunderbird"
+    ".config/GIMP"
+    ".config/libreoffice"
+    ".local/share/kdenlive"
+    ".bun"
+  ];
+
   services = {
     xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
     openssh.enable = true;  # for remote builds

@@ -21,7 +21,7 @@
     flashprint
     kdePackages.kdenlive
     thunderbird
-    aesprite
+    aseprite
     zettlr
     (symlinkJoin {
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
@@ -64,6 +64,19 @@
       ".thunderbird" # Thunderbird
       ".config/kdeconnect" # kdeconnect
       ".config/playit_gg" # playit agent login
+
+      # apps
+      ".config/GIMP"
+      ".config/libreoffice"
+      ".config/kicad"
+      ".local/share/kicad"
+      ".FlashPrint5" # FlashPrint slicer
+      ".config/godot"
+      ".local/share/godot"
+      ".config/Zettlr"
+      ".config/aseprite"
+      ".config/flowblade"
+      ".local/share/kdenlive"
     ];
   };
 

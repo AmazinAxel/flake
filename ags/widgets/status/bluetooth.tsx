@@ -1,5 +1,5 @@
 import BluetoothService from 'gi://AstalBluetooth';
-import { createBinding, createState, For, onCleanup } from 'ags';
+import { createBinding, createComputed, createState, For, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
@@ -17,9 +17,10 @@ const wireAdapter = (adapter: BluetoothService.Adapter | null) => {
 wireAdapter(bluetooth.adapter);
 bluetooth.connect('notify::adapter', () => wireAdapter(bluetooth.adapter));
 
-const devicesBind = createBinding(bluetooth, 'devices')((devs: BluetoothService.Device[]) =>
-    devs.filter(d => d.alias.replaceAll('-', ':') != d.address) // not a mac
-);
+const devicesBind = createBinding(bluetooth, 'devices');
+
+const hasName = (d: BluetoothService.Device) =>
+    !!d.alias && d.alias.replaceAll('-', ':') != d.address; // alias resolved, not a mac
 
 const firstConnected = () => devicesBind.peek().find(d => d.connected) ?? null;
 
@@ -101,10 +102,15 @@ export default () =>
 
                                 // use this workaround since we have two binds, TODO use a derivable!!
                                 const update = () => {
-                                    self.visible = device.paired || device.connected || (bluetooth.adapter?.discovering ?? false);
+                                    // trusted covers devices we've used whose bond BlueZ dropped (paired == false)
+                                    self.visible = hasName(device)
+                                        && (device.paired || device.trusted || device.connected || (bluetooth.adapter?.discovering ?? false));
                                 };
                                 const adapter = bluetooth.adapter;
                                 const hConnected = device.connect('notify::connected', update);
+                                const hPaired = device.connect('notify::paired', update);
+                                const hTrusted = device.connect('notify::trusted', update);
+                                const hAlias = device.connect('notify::alias', update);
                                 const hDiscovering = adapter?.connect('notify::discovering', update);
                                 update();
 
@@ -115,6 +121,9 @@ export default () =>
 
                                 onCleanup(() => {
                                     device.disconnect(hConnected);
+                                    device.disconnect(hPaired);
+                                    device.disconnect(hTrusted);
+                                    device.disconnect(hAlias);
                                     if (hDiscovering) adapter?.disconnect(hDiscovering);
                                     if (pairHandler) device.disconnect(pairHandler); // pairing left incomplete
                                     unsubFocus();
@@ -148,17 +157,21 @@ export default () =>
                                     device.pair();
                                 }
                             }}
-                            cssClasses={connectedBind((c: boolean) => c ? ['active'] : [])}
+                            cssClasses={createComputed((track) =>
+                                track(connectingBind) ? ['connecting']
+                                : track(connectedBind) ? ['active']
+                                : []
+                            )}
                         >
                             <Gtk.EventControllerKey onKeyPressed={(_, key) => {
-                                if (key == 65288 && device.paired && !bluetooth.adapter?.discovering) {
+                                if (key == 65288 && (device.paired || device.trusted) && !bluetooth.adapter?.discovering) {
                                     btn.visible = false;
                                     bluetooth.adapter?.remove_device(device);
                                 }
                             }}/>
                             <box orientation={Gtk.Orientation.HORIZONTAL} hexpand valign={Gtk.Align.CENTER} spacing={10}>
                                 <image iconName={device.icon + '-symbolic'}/>
-                                <label label={nameSubstitute(device.alias)} halign={Gtk.Align.START} hexpand ellipsize={3}/>
+                                <label label={createBinding(device, 'alias')(nameSubstitute)} halign={Gtk.Align.START} hexpand ellipsize={3}/>
                                 <label
                                     label={batteryBind((p) => Math.round(p * 100) + '%')}
                                     halign={Gtk.Align.END}

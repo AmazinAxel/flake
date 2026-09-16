@@ -16,8 +16,13 @@
       ".config/libreoffice"
       ".config/kicad"
       ".local/share/kicad"
+      ".FlashPrint5"
+      ".config/godot"
+      ".local/share/godot"
+      ".config/Zettlr"
       ".platformio"
       ".config/kdeconnect"
+      ".config/aseprite"
       ".local/share/kdeconnect"
       ".bun"
     ];
@@ -37,6 +42,8 @@
     libreoffice
     thunderbird
     zettlr
+    flashprint
+    aseprite
     (symlinkJoin {
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
