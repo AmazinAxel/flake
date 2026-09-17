@@ -101,6 +101,7 @@
           { app_id = "foot-float"; } # terminal
           { app_id = "org.gnome.FileRoller"; } # file extraction dialogs
           { app_id = "org.gnome.SystemMonitor"; }
+          { app_id = "org.gnome.gThumb"; } # image viewer
           { app_id = "zen-beta"; title = ".*PassFF.*"; } # PassFF popup
           { app_id = "PrismLauncher"; } # Minecraft launcher
           { app_id = "org.kde.kdeconnect.daemon"; }

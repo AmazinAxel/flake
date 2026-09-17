@@ -3,12 +3,20 @@
 
   wayland.windowManager.sway.config = {
     output = {
-      "HDMI-A-1" = {
+      "HDMI-A-1" = { # main built in hdmi
+        resolution = "1920x1080@144Hz";
+        position = "0 0";
+      };
+      "DP-9" = { # main with adapter
         resolution = "1920x1080@144Hz";
         position = "0 0";
       };
       "*".position = "1920 0"; # Laptop/other monitors
       "DP-1" = {
+        position = "3200 0"; # Right
+        scale = "1.5";
+      };
+      "DP-7" = { # adapter
         position = "3200 0"; # Right
         scale = "1.5";
       };

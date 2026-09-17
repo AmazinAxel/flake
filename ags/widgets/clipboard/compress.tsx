@@ -9,7 +9,7 @@ import { notifySend } from '../../lib/notifySend';
 
 export const tmpDir = '/tmp/ags';
 GLib.mkdir_with_parents(tmpDir, 0o755);
-const targets = [8, 25, 50, 100]; // MB
+const targets = [10, 20, 50, 100, 500]; // MB
 const quote = GLib.shell_quote;
 
 const [ target, setTarget ] = createState(0);
