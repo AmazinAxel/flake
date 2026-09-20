@@ -47,11 +47,21 @@ let listBox: Gtk.Box | null = null;
 let powerButton: Gtk.Widget | null = null;
 let scanButton: Gtk.Widget | null = null;
 
+const rowBySsid = new Map<string, Gtk.Widget>(); // survives For rebuilds
+let focusedSsid: string | null = null; // row to restore after a refresh
+const focusTarget = () => {
+    if (!wifiOn()) return powerButton;
+    const remembered = focusedSsid && rowBySsid.get(focusedSsid);
+    if (remembered?.get_mapped()) return remembered;
+    const connected = networks.peek().find(n => n.connected);
+    const connectedRow = connected && rowBySsid.get(connected.ssid);
+    if (connectedRow?.get_mapped()) return connectedRow;
+    return listBox?.get_first_child() ?? scanButton;
+};
+
 const focusWifiMenu = () => GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
     if (currentAsideWindow.peek() === 'wifi') {
-        const target = wifiOn()
-            ? (listBox?.get_first_child() ?? scanButton)
-            : powerButton;
+        const target = focusTarget();
         if (target?.get_mapped()) target.grab_focus();
     };
     return GLib.SOURCE_REMOVE;
@@ -254,6 +264,7 @@ export default () =>
                 return <button
                     cssClasses={net.connected ? ['active'] : []}
                     onClicked={() => {
+                        focusedSsid = net.ssid; // keep focus here through the reorder
                         if (net.connected) {
                             busctlAct(stationPath, stationInterface, 'Disconnect')
                                 .then(refresh).catch(() => {});
@@ -271,6 +282,14 @@ export default () =>
                         }
                     }}
                     $={(self) => {
+                        rowBySsid.set(net.ssid, self);
+                        self.connect('state-flags-changed', () => {
+                            if (self.has_focus) focusedSsid = net.ssid; // remember across refreshes
+                        });
+                        self.connect('unrealize', () => {
+                            if (rowBySsid.get(net.ssid) === self) rowBySsid.delete(net.ssid);
+                        });
+
                         popover = new Gtk.Popover();
                         popover.add_css_class('passwordRow');
 

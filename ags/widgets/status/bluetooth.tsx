@@ -2,6 +2,7 @@ import BluetoothService from 'gi://AstalBluetooth';
 import { createBinding, createComputed, createState, For, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
+import GLib from 'gi://GLib';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
 
 const bluetooth = BluetoothService.get_default();
@@ -23,6 +24,9 @@ const hasName = (d: BluetoothService.Device) =>
     !!d.alias && d.alias.replaceAll('-', ':') != d.address; // alias resolved, not a mac
 
 const firstConnected = () => devicesBind.peek().find(d => d.connected) ?? null;
+
+let focusedDevice: BluetoothService.Device | null = null; // focused
+const focusDevice = () => focusedDevice ?? firstConnected();
 
 const nameSubstitute = (name: string) => {
 	if (!name) return '';
@@ -65,7 +69,7 @@ export default () =>
                 cssClasses={discovering.as((d) => d ? ['active'] : [])}
                 $={(self) => {
                     currentAsideWindow.subscribe(() => {
-                        if (currentAsideWindow.peek() === 'bluetooth' && bluetooth.isPowered && !firstConnected())
+                        if (currentAsideWindow.peek() === 'bluetooth' && bluetooth.isPowered && !focusDevice())
                             self.grab_focus();
                     });
                 }}
@@ -82,7 +86,7 @@ export default () =>
             visible={bluetoothOn}
             $={(self) => {
                 bluetooth.connect('notify::is-powered', () => {
-                    if (bluetooth.isPowered)
+                    if (bluetooth.isPowered && !focusDevice())
                         self.get_first_child()?.get_first_child()?.get_first_child()?.grab_focus();
                 });
             }}
@@ -114,12 +118,25 @@ export default () =>
                                 const hDiscovering = adapter?.connect('notify::discovering', update);
                                 update();
 
-                                const unsubFocus = currentAsideWindow.subscribe(() => {
-                                    if (currentAsideWindow.peek() === 'bluetooth' && firstConnected() === device)
+                                const refocus = () => {
+                                    if (currentAsideWindow.peek() === 'bluetooth' && focusDevice() === device && self.get_mapped())
                                         self.grab_focus();
+                                };
+                                const unsubFocus = currentAsideWindow.subscribe(refocus);
+
+                                self.connect('state-flags-changed', () => {
+                                    if (self.has_focus) focusedDevice = device; // remember across state churn
                                 });
 
+                                const hRefocus = device.connect('notify::connected', () =>
+                                    GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => { refocus(); return GLib.SOURCE_REMOVE; }));
+                                const hRefocusing = device.connect('notify::connecting', () =>
+                                    GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => { refocus(); return GLib.SOURCE_REMOVE; }));
+
                                 onCleanup(() => {
+                                    if (focusedDevice === device) focusedDevice = null; // row gone
+                                    device.disconnect(hRefocus);
+                                    device.disconnect(hRefocusing);
                                     device.disconnect(hConnected);
                                     device.disconnect(hPaired);
                                     device.disconnect(hTrusted);
@@ -130,6 +147,7 @@ export default () =>
                                 });
                             }}
                             onClicked={() => {
+                                focusedDevice = device; // keep focus here
                                 if (device.connected) {
                                     device.disconnect_device((_, res) => device.disconnect_device_finish(res));
                                     return;

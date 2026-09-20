@@ -41,7 +41,7 @@ in
           trim-final-newlines = true; # only trims extra newlines
           trim-trailing-whitespace = true;
           popup-border = "all";
-          clipboard-provider = "wayland";
+          # clipboard-provider = "termcode";
 
           statusline = {
             left = ["mode" "file-name" ];
