@@ -4,14 +4,42 @@ import { Gtk } from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 import GLib from 'gi://GLib';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
+import { timeout } from 'ags/time';
 
 const bluetooth = BluetoothService.get_default();
 const audio = Wp.get_default()?.audio; // for auto-sink switching
 const bluetoothOn = createBinding(bluetooth, 'isPowered');
 
+const hook = <T extends { connect(s: string, cb: () => void): number; disconnect(id: number): void }>(
+    obj: T | null | undefined, signal: string, cb: () => void,
+) => {
+    const id = obj?.connect(signal, cb);
+    if (id) onCleanup(() => obj!.disconnect(id));
+};
+
+const switchToBluetoothSink = (address: string) => {
+    if (!audio) return;
+    const wanted = address.replaceAll(':', '_');
+    const find = () => audio.speakers.find(s =>
+        (s.get_pw_property('node.name') ?? '').includes(wanted));
+
+    let id = 0;
+    const take = () => {
+        const sink = find();
+        if (!sink) return false;
+        sink.isDefault = true;
+        return true;
+    };
+    const stop = () => { if (id) { audio.disconnect(id); id = 0; } };
+
+    if (take()) return;
+    id = audio.connect('notify::speakers', () => take() && stop());
+    timeout(10000, stop);
+};
+
 const [ discovering, setDiscovering ] = createState(false);
 const wireAdapter = (adapter: BluetoothService.Adapter | null) => {
-    if (!adapter) return; // fix crash
+    if (!adapter) return;
     setDiscovering(adapter.discovering);
     adapter.connect('notify::discovering', () => setDiscovering(adapter.discovering));
 };
@@ -20,29 +48,25 @@ bluetooth.connect('notify::adapter', () => wireAdapter(bluetooth.adapter));
 
 const devicesBind = createBinding(bluetooth, 'devices');
 
-const hasName = (d: BluetoothService.Device) =>
-    !!d.alias && d.alias.replaceAll('-', ':') != d.address; // alias resolved, not a mac
+const hasName = (alias: string, address: string) =>
+    !!alias && alias.replaceAll('-', ':') != address;
+const NAMES: Record<string, string> = {
+    S80A: 'Touchscreen Earbuds',
+    MINI_KEYBOARD: '2-key Presenter',
+    K38: 'Karaoke Speaker',
+    'MOU-302': 'Ergo Mouse',
+};
+const nameSubstitute = (name: string) => NAMES[name] ?? name ?? '';
 
 const firstConnected = () => devicesBind.peek().find(d => d.connected) ?? null;
 
-let focusedDevice: BluetoothService.Device | null = null; // focused
+let focusedDevice: BluetoothService.Device | null = null;
 const focusDevice = () => focusedDevice ?? firstConnected();
 
-const nameSubstitute = (name: string) => {
-	if (!name) return '';
-
-	if (name == 'S80A') {
-		return "Touchscreen Earbuds";
-	} else if (name == 'MINI_KEYBOARD') {
-		return "2-key Presenter";
-	} else if (name == 'K38') {
-		return 'Karaoke Speaker';
-	} else if (name == 'MOU-302') {
-		return 'Ergo Mouse';
-    };
-	return name;
-};
-
+const focusOnOpen = (self: Gtk.Widget, when: () => boolean) =>
+    onCleanup(currentAsideWindow.subscribe(() => {
+        if (currentAsideWindow.peek() === 'bluetooth' && when()) self.grab_focus();
+    }));
 
 export default () =>
     <box orientation={Gtk.Orientation.VERTICAL}>
@@ -50,13 +74,8 @@ export default () =>
             <button
                 hexpand halign={Gtk.Align.START}
                 onClicked={() => bluetooth.toggle()}
-                cssClasses={bluetoothOn.as(power => power ? ['active', 'bluetoothButton'] : ['unpowered', 'bluetoothButton'])}
-                $={(self) => {
-                    currentAsideWindow.subscribe(() => {
-                        if (currentAsideWindow.peek() === 'bluetooth' && !bluetooth.isPowered)
-                            self.grab_focus();
-                    });
-                }}
+                cssClasses={bluetoothOn.as(power => [power ? 'active' : 'unpowered', 'bluetoothButton'])}
+                $={(self) => focusOnOpen(self, () => !bluetooth.isPowered)}
             >
                 <image iconName="bluetooth-active-symbolic"/>
             </button>
@@ -67,12 +86,7 @@ export default () =>
                 }}
                 visible={bluetoothOn}
                 cssClasses={discovering.as((d) => d ? ['active'] : [])}
-                $={(self) => {
-                    currentAsideWindow.subscribe(() => {
-                        if (currentAsideWindow.peek() === 'bluetooth' && bluetooth.isPowered && !focusDevice())
-                            self.grab_focus();
-                    });
-                }}
+                $={(self) => focusOnOpen(self, () => bluetooth.isPowered && !focusDevice())}
             >
                 <image iconName="view-refresh-symbolic"/>
             </button>
@@ -84,125 +98,87 @@ export default () =>
             propagateNaturalWidth propagateNaturalHeight
             maxContentHeight={500}
             visible={bluetoothOn}
-            $={(self) => {
-                bluetooth.connect('notify::is-powered', () => {
-                    if (bluetooth.isPowered && !focusDevice())
-                        self.get_first_child()?.get_first_child()?.get_first_child()?.grab_focus();
-                });
-            }}
+            $={(self) => hook(bluetooth, 'notify::is-powered', () => {
+                if (bluetooth.isPowered && !focusDevice())
+                    self.get_first_child()?.get_first_child()?.get_first_child()?.grab_focus();
+            })}
         >
             <box orientation={Gtk.Orientation.VERTICAL}>
                 <For each={devicesBind}>
                     {(device: BluetoothService.Device) => {
-                        const connectedBind = createBinding(device, 'connected');
-                        const connectingBind = createBinding(device, 'connecting');
-                        const batteryBind = createBinding(device, 'batteryPercentage');
-                        let btn: Gtk.Button;
-                        let pairHandler = 0; // pending notify::paired handler, if mid-pairing
+                        const connected = createBinding(device, 'connected');
+                        const connecting = createBinding(device, 'connecting');
+                        const battery = createBinding(device, 'batteryPercentage');
+                        const paired = createBinding(device, 'paired');
+                        const trusted = createBinding(device, 'trusted');
+                        const alias = createBinding(device, 'alias');
+
+                        const visible = createComputed((track) =>
+                            hasName(track(alias), device.address)
+                                && (track(paired) || track(trusted) || track(connected) || track(discovering)));
+
+                        const connectAndSwitch = () => device.connect_device((_, res) => {
+                            device.connect_device_finish(res);
+                            switchToBluetoothSink(device.address);
+                        });
+
                         return <button hexpand
-                            sensitive={connectingBind(c => !c)}
+                            visible={visible}
+                            sensitive={connecting(c => !c)}
                             $={(self) => {
-                                btn = self;
-
-                                // use this workaround since we have two binds, TODO use a derivable!!
-                                const update = () => {
-                                    // trusted covers devices we've used whose bond BlueZ dropped (paired == false)
-                                    self.visible = hasName(device)
-                                        && (device.paired || device.trusted || device.connected || (bluetooth.adapter?.discovering ?? false));
-                                };
-                                const adapter = bluetooth.adapter;
-                                const hConnected = device.connect('notify::connected', update);
-                                const hPaired = device.connect('notify::paired', update);
-                                const hTrusted = device.connect('notify::trusted', update);
-                                const hAlias = device.connect('notify::alias', update);
-                                const hDiscovering = adapter?.connect('notify::discovering', update);
-                                update();
-
                                 const refocus = () => {
-                                    if (currentAsideWindow.peek() === 'bluetooth' && focusDevice() === device && self.get_mapped())
+                                    if (currentAsideWindow.peek() === 'bluetooth'
+                                        && focusDevice() === device && self.get_mapped())
                                         self.grab_focus();
                                 };
-                                const unsubFocus = currentAsideWindow.subscribe(refocus);
+                                focusOnOpen(self, () => focusDevice() === device && self.get_mapped());
 
                                 self.connect('state-flags-changed', () => {
-                                    if (self.has_focus) focusedDevice = device; // remember across state churn
+                                    if (self.has_focus) focusedDevice = device; // remember
                                 });
 
-                                const hRefocus = device.connect('notify::connected', () =>
-                                    GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => { refocus(); return GLib.SOURCE_REMOVE; }));
-                                const hRefocusing = device.connect('notify::connecting', () =>
-                                    GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => { refocus(); return GLib.SOURCE_REMOVE; }));
+                                const later = () => GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE,
+                                    () => { refocus(); return GLib.SOURCE_REMOVE; });
+                                hook(device, 'notify::connected', later);
+                                hook(device, 'notify::connecting', later);
 
                                 onCleanup(() => {
                                     if (focusedDevice === device) focusedDevice = null; // row gone
-                                    device.disconnect(hRefocus);
-                                    device.disconnect(hRefocusing);
-                                    device.disconnect(hConnected);
-                                    device.disconnect(hPaired);
-                                    device.disconnect(hTrusted);
-                                    device.disconnect(hAlias);
-                                    if (hDiscovering) adapter?.disconnect(hDiscovering);
-                                    if (pairHandler) device.disconnect(pairHandler); // pairing left incomplete
-                                    unsubFocus();
                                 });
                             }}
                             onClicked={() => {
                                 focusedDevice = device; // keep focus here
-                                if (device.connected) {
-                                    device.disconnect_device((_, res) => device.disconnect_device_finish(res));
-                                    return;
-                                }
+                                if (device.connected)
+                                    return device.disconnect_device((_, res) => device.disconnect_device_finish(res));
+
                                 if (bluetooth.adapter?.discovering) bluetooth.adapter.stop_discovery();
                                 device.trusted = true; // adds to list
+                                if (device.paired) return connectAndSwitch();
 
-                                // todo clean this up
-                                const connectAndSwitch = () => device.connect_device((_, res) => {
-                                    device.connect_device_finish(res);
-                                    // auto switch sink
-                                    const audioSink = audio.speakers.find((s: Wp.Endpoint) => s.name?.includes(device.name));
-                                    if (audioSink) audioSink.isDefault = true;
-                                });
-                                if (device.paired) {
+                                const id = device.connect('notify::paired', () => {
+                                    if (!device.paired) return;
+                                    device.disconnect(id);
                                     connectAndSwitch();
-                                } else {
-                                    pairHandler = device.connect('notify::paired', () => {
-                                        if (device.paired) {
-                                            device.disconnect(pairHandler);
-                                            pairHandler = 0;
-                                            connectAndSwitch();
-                                        }
-                                    });
-                                    device.pair();
-                                }
+                                });
+                                device.pair();
                             }}
                             cssClasses={createComputed((track) =>
-                                track(connectingBind) ? ['connecting']
-                                : track(connectedBind) ? ['active']
+                                track(connecting) ? ['connecting']
+                                : track(connected) ? ['active']
                                 : []
                             )}
                         >
                             <Gtk.EventControllerKey onKeyPressed={(_, key) => {
-                                if (key == 65288 && (device.paired || device.trusted) && !bluetooth.adapter?.discovering) {
-                                    btn.visible = false;
+                                if (key == 65288 && (device.paired || device.trusted) && !bluetooth.adapter?.discovering)
                                     bluetooth.adapter?.remove_device(device);
-                                }
                             }}/>
                             <box orientation={Gtk.Orientation.HORIZONTAL} hexpand valign={Gtk.Align.CENTER} spacing={10}>
                                 <image iconName={device.icon + '-symbolic'}/>
-                                <label label={createBinding(device, 'alias')(nameSubstitute)} halign={Gtk.Align.START} hexpand ellipsize={3}/>
+                                <label label={alias(nameSubstitute)} halign={Gtk.Align.START} hexpand ellipsize={3}/>
                                 <label
-                                    label={batteryBind((p) => Math.round(p * 100) + '%')}
+                                    visible={createComputed((track) => track(connected) && track(battery) >= 0)}
+                                    label={battery((p) => Math.round(p * 100) + '%')}
                                     halign={Gtk.Align.END}
-                                    $={(self) => {
-                                        const update = () => { self.visible = device.connected && device.batteryPercentage >= 0; };
-                                        const hConnected = device.connect('notify::connected', update);
-                                        const hBattery = device.connect('notify::battery-percentage', update);
-                                        update();
-                                        onCleanup(() => {
-                                            device.disconnect(hConnected);
-                                            device.disconnect(hBattery);
-                                        });
-                                    }}
                                 />
                             </box>
                         </button>
