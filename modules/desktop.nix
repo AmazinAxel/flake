@@ -235,6 +235,7 @@ in {
   services = {
     gvfs.enable = true; # For nemo trash & NAS autodiscov
     devmon.enable = true; # Automatic drive mount/unmount
+    tailscale.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
     # Prevent crashes

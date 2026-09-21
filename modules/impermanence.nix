@@ -10,6 +10,7 @@
       "/var/lib/nixos" # uid/gid map
       "/root/.cache/nix" # flake cache
       "/etc/ssh" # host keys for ssh
+      "/var/lib/tailscale" # node key, keeps machine enrolled
     ];
     files = [
       "/etc/machine-id" # stable id
