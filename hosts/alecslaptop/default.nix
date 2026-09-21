@@ -48,7 +48,10 @@
       compressorArgs = [ "-19" "-T0" ];
     };
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # Arch64 cross compilation support
+    loader.timeout = lib.mkOverride 40 5; # show menu to pick Windows (beats common.nix mkForce 0) TODO Remove
   };
+
+  services.fstrim.enable = true; # pairs with LUKS allowDiscards
 
   hardware = { # OpenCL drivers for better hardware acceleration
     graphics.extraPackages = [ pkgs.rocmPackages.clr.icd ];
