@@ -2,16 +2,15 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usbhid" "hid_generic" "i8042" "atkbd" ];
   boot.kernelModules = [ "kvm-amd" ];
 
-  # After LUKS: swap device to /dev/mapper/cryptpersist and add the luks.devices block below.
-  # boot.initrd.luks.devices."cryptpersist" = {
-  #   device = "/dev/disk/by-uuid/<crypto_LUKS UUID from cryptsetup reencrypt>";
-  #   allowDiscards = true;
-  #   bypassWorkqueues = true;
-  #   crypttabExtraOpts = [ "password-echo=no" ];
-  # };
+  boot.initrd.luks.devices."cryptpersist" = {
+    device = "/dev/disk/by-uuid/0bcca084-f072-4c32-9467-8f5a0efc6dc0";
+    allowDiscards = true;
+    bypassWorkqueues = true;
+    crypttabExtraOpts = [ "password-echo=no" ];
+  };
 
   fileSystems."/persist" = {
-    device = "/dev/disk/by-uuid/ca0e7cbb-b202-4129-a821-ff5dcdbb8488";
+    device = "/dev/mapper/cryptpersist";
     fsType = "ext4";
     neededForBoot = true;
     options = [ "noatime" ];
