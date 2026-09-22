@@ -44,10 +44,13 @@ const Thumbnail = (id: string, file: string, produce: string[], video = false) =
         try {
             const stream = Gio.File.new_for_path(file).read(null);
             GdkPixbuf.Pixbuf.new_from_stream_at_scale_async(stream, maxWidth, maxHeight, true, null, (_, res) => {
-                const pixbuf = GdkPixbuf.Pixbuf.new_from_stream_finish(res);
-                picture.set_paintable(Gdk.Texture.new_for_pixbuf(pixbuf));
-                container.set_size_request(pixbuf.get_width(), pixbuf.get_height());
-                stream.close_async(0, null, null);
+                try {
+                    const pixbuf = GdkPixbuf.Pixbuf.new_from_stream_finish(res);
+                    picture.set_paintable(Gdk.Texture.new_for_pixbuf(pixbuf));
+                    container.set_size_request(pixbuf.get_width(), pixbuf.get_height());
+                } catch (_) {} finally {
+                    stream.close_async(0, null, null);
+                }
             });
         } catch (_) {}
     };
@@ -60,8 +63,7 @@ const Thumbnail = (id: string, file: string, produce: string[], video = false) =
     return container;
 };
 
-export const ClipboardItem = (id: string, content: string, path: string | null) => {
-    const image = content.match(binaryData);
+export const ClipboardItem = (id: string, content: string, path: string | null, image = content.match(binaryData)) => {
     const video = path !== null && videoExts.test(path) && GLib.file_test(path, GLib.FileTest.EXISTS);
 
     if (streamingMode.peek()) // describe

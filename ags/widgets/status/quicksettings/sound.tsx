@@ -33,13 +33,10 @@ export const VolumeSlider = () =>
     </box>
 
 const nameSubstitute = (name: string) => {
-	if (!name) return '';
-	if (name.includes('HD Audio Controller')) {
-		return String(name.split(' ').pop()); // returns 'Speaker' or 'Headphones'
-	} else if (name.includes('HDMI')) {
-		return "Monitor"; // Monitor has a speaker
-	};
-	return name;
+    if (!name) return '';
+    if (name.includes('HD Audio Controller')) return name.split(' ').pop()!; // 'Speaker' or 'Headphones'
+    if (name.includes('HDMI')) return 'Monitor'; // monitor has a speaker
+    return name;
 };
 
 const speakersBind = createBinding(audio, 'speakers');
@@ -50,57 +47,45 @@ const isCombined = (s: Wp.Endpoint) => nodeName(s) == COMBINED;
 const nodeName = (s: Wp.Endpoint) =>
     s.get_pw_property('node.name') ?? String(s.serial);
 
-const linkedSinks = (): string[] | null => {
-    let out = '';
-    try {
-        out = exec([ 'pw-link', '-l', `${COMBINED}:monitor_FL` ]);
-    } catch { return null; }
+const isBluetooth = (s: Wp.Endpoint) => nodeName(s).startsWith('bluez_');
+let linked: string[] = [];
 
-    const names = new Set(audio.speakers.map(nodeName));
-    return out.split('\n')
-        .filter(l => l.includes('|->'))
-        .map(l => l.slice(l.indexOf('|->') + 3, l.lastIndexOf(':')).trim())
-        .filter(n => names.has(n));
-};
-
-const link = (target: string, connect: boolean): boolean => {
+const link = (target: string, connect: boolean) => {
     try {
         exec([ 'pw-link', ...(connect ? [] : [ '-d' ]), COMBINED, target ]);
-        return true;
-    } catch { return false; }
-};
-
-const applySelection = (names: string[]) => {
-    const byName = (n: string) => audio.speakers.find(s => nodeName(s) == n);
-    const combined = audio.speakers.find(isCombined);
-
-    names = [...new Set(names.filter(byName))];
-    if (names.length > 1 && !combined) names = names.slice(0, 1);
-    const want = names.length > 1 ? names : [];
-
-    const live = linkedSinks();
-    if (live != null) {
-        let ok = true;
-        for (const t of live) if (!want.includes(t)) ok = link(t, false) && ok;
-        for (const n of want) if (!live.includes(n)) ok = link(n, true) && ok;
-        const target = want.length ? combined! : byName(names[0]);
-        if (ok && target) target.isDefault = true;
-    }
-    reconcileNow();
+    } catch { /* sink vanished mid-switch; wire() prunes it */ }
 };
 
 const [ selected, setSelected ] = createState<string[]>([]);
 
+const resolve = (names: string[]) => {
+    const byName = new Map(audio.speakers.map(s => [ nodeName(s), s ]));
+    return [ ...new Set(names) ].flatMap(n => byName.get(n) ?? []);
+};
+
+const applySelection = (names: string[]) => {
+    const sinks = resolve(names);
+    if (!sinks.length) return reconcileNow();
+
+    const combined = audio.speakers.find(isCombined);
+    const want = sinks.length > 1 && combined ? sinks.map(nodeName) : [];
+
+    for (const t of linked) if (!want.includes(t)) link(t, false);
+    for (const n of want) if (!linked.includes(n)) link(n, true);
+    linked = want;
+
+    const target = want.length ? combined! : sinks[0];
+    target.isDefault = true;
+    setSelected(want.length ? want : [ nodeName(sinks[0]) ]);
+};
+
 const reconcileNow = () => {
-    const live = linkedSinks();
-    if (live == null) return;
-    if (live.length > 0) return setSelected(live);
+    if (linked.length > 1) return setSelected(linked);
 
     const def = audio.defaultSpeaker;
     if (def && !isCombined(def)) return setSelected([ nodeName(def) ]);
 
-    const real = audio.speakers.find(s =>
-            !isCombined(s) && !nodeName(s).startsWith('bluez_'))
+    const real = audio.speakers.find(s => !isCombined(s) && !isBluetooth(s))
         ?? audio.speakers.find(s => !isCombined(s));
     if (real) real.isDefault = true;
     else setSelected([]);
@@ -119,13 +104,36 @@ const reconcile = () => {
 
 defaultSpeaker.subscribe(reconcile);
 
-const watched = new Set<string>();
+const watched = new Map<string, [ Wp.Endpoint, number ]>();
+let firstWire = true;
 const wire = () => {
-    for (const s of audio.speakers)
-        if (!watched.has(nodeName(s))) {
-            watched.add(nodeName(s));
-            s.connect('notify::is-default', reconcile);
+    const wasFirst = firstWire;
+    const present = new Set(audio.speakers.map(nodeName));
+
+    for (const [ name, [ sink, id ] ] of watched)
+        if (!present.has(name)) {
+            sink.disconnect(id);
+            watched.delete(name);
         }
+
+    let fresh: Wp.Endpoint | null = null;
+    for (const s of audio.speakers) {
+        const name = nodeName(s);
+        if (watched.has(name)) continue;
+        watched.set(name, [ s, s.connect('notify::is-default', reconcile) ]);
+        if (isBluetooth(s)) fresh = s;
+    }
+
+    const survivors = linked.filter(n => present.has(n));
+    const collapsed = survivors.length != linked.length;
+    if (collapsed) {
+        linked = [];
+        for (const n of survivors) link(n, false);
+    }
+    firstWire = false;
+    if (collapsed && survivors.length) return applySelection(survivors);
+
+    if (fresh && !wasFirst && linked.length < 2) applySelection([ nodeName(fresh) ]);
     reconcile();
 };
 speakersBind.subscribe(wire);
@@ -141,6 +149,18 @@ const toggleSink = (sink: Wp.Endpoint) => {
         : [ ...current, name ]);
 };
 
+const shiftEnter = (fn: () => void) => (self: Gtk.Widget) => {
+    const key = new Gtk.EventControllerKey();
+    key.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+    key.connect('key-pressed', (_, keyval, __, mod) => {
+        const enter = keyval == Gdk.KEY_Return || keyval == Gdk.KEY_KP_Enter;
+        if (!enter || !(mod & Gdk.ModifierType.SHIFT_MASK)) return false;
+        fn();
+        return true;
+    });
+    self.add_controller(key);
+};
+
 export const SinkSelector = () =>
     <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['sinkSelector']}
         $={(self) => { self.connect('map', () => self.get_first_child()?.grab_focus()); }}
@@ -151,19 +171,7 @@ export const SinkSelector = () =>
                 return <button
 					onClicked={() => applySelection([ nodeName(speaker) ])}
 					cssClasses={isSelected(v => v ? ['active'] : [])}
-					$={(self) => {
-					    const key = new Gtk.EventControllerKey();
-					    key.propagation_phase = Gtk.PropagationPhase.CAPTURE;
-					    key.connect('key-pressed', (_, keyval, __, mod) => {
-					        if ((keyval == Gdk.KEY_Return || keyval == Gdk.KEY_KP_Enter)
-					            && (mod & Gdk.ModifierType.SHIFT_MASK)) {
-					            toggleSink(speaker);
-					            return true;
-					        }
-					        return false;
-					    });
-					    self.add_controller(key);
-					}}
+					$={shiftEnter(() => toggleSink(speaker))}
 				>
                     <box>
                         <image visible={isSelected} iconName="emblem-default-symbolic" marginEnd={7}/>

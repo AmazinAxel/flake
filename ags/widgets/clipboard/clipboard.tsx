@@ -5,7 +5,7 @@ import app from 'ags/gtk4/app'
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import { ClipboardItem, entryPath, cacheDir, videoExts, binaryData } from './clipboardItem';
-import { openCompress, tmpDir } from './compress';
+import { openCompress } from './compress';
 import BackgroundSection from '../../lib/backgroundSection';
 import inputControl from '../../lib/inputControl';
 import { streamingMode } from '../notifications/notifications';
@@ -38,18 +38,15 @@ streamingMode.subscribe(() => {
 let inFlight: Promise<void> = Promise.resolve();
 const refreshItems = () => inFlight = inFlight.then(async () => {
     const entries = (await execAsync('cliphist list')).split('\n')
-        .map((entry) => {
-            const [id, content] = entry.split('\t');
-            return { id, content };
-        })
-        .filter((entry) => entry.id && entry.content);
+        .map((entry) => entry.split('\t') as [string, string])
+        .filter(([id, content]) => id && content);
 
-    entries.forEach(({ id, content }) => {
+    entries.forEach(([id, content]) => {
         if (items.has(id)) return;
 
         const image = content.match(binaryData);
         const path = entryPath(id, content);
-        const child = ClipboardItem(id, content, path) as Gtk.Widget;
+        const child = ClipboardItem(id, content, path, image) as Gtk.Widget;
         list.append(child);
 
         items.set(id, { path, child, mime:
@@ -58,7 +55,7 @@ const refreshItems = () => inFlight = inFlight.then(async () => {
             : 'text/plain' });
     });
 
-    const current = new Set(entries.map((entry) => entry.id));
+    const current = new Set(entries.map(([id]) => id));
     const stale = [...items].filter(([id]) => !current.has(id));
 
     stale.forEach(([id, { child }]) => {
@@ -83,55 +80,51 @@ const focusTop = () => {
     first?.grab_focus();
 };
 
-const selectedId = () => (list.get_selected_row() ?? list.get_row_at_index(0))?.child.name ?? '';
+const selectedRow = () => list.get_selected_row() ?? list.get_row_at_index(0);
+const selectedId = () => selectedRow()?.child.name ?? '';
 
-const selectedFile = () => {
-    const file = items.get(selectedId())?.path;
+const showInFileManager = (file: string) => Gio.DBus.session.call(
+    'org.freedesktop.FileManager1',
+    '/org/freedesktop/FileManager1',
+    'org.freedesktop.FileManager1',
+    'ShowItems',
+    new GLib.Variant('(ass)', [[GLib.filename_to_uri(file, null)], '']),
+    null, Gio.DBusCallFlags.NONE, -1, null, null);
 
-    return (file && GLib.file_test(file, GLib.FileTest.EXISTS)) ? file : null;
+// want: null any file, videoExts videos only, notVideo everything else
+const notVideo = { test: (f: string) => !videoExts.test(f) };
+
+// streaming mode skips thumbnails, so image entries have no decode on disk yet
+const withFile = (want: { test: (f: string) => boolean } | null,
+                  action: (file: string, id: string) => void) => {
+    const id = selectedId();
+    const { path, mime } = items.get(id) ?? {};
+    if (!path || (want && !want.test(path))) return;
+
+    const run = () => GLib.file_test(path, GLib.FileTest.EXISTS) && (hide(), action(path, id));
+
+    if (GLib.file_test(path, GLib.FileTest.EXISTS) || !mime?.startsWith('image/')) return run();
+
+    execAsync(['bash', '-c', `cliphist decode ${id} > ${path}`]).then(run).catch(() => {});
+};
+
+const actions: Record<number, () => void> = {
+    65293: () => selectedRow()?.activate(),              // Enter
+    99:    () => list.get_row_at_index(1)?.activate(),   // C - copy 2nd recent entry
+    101:   () => withFile(notVideo, (f) => execAsync(['swappy', '-f', f])), // E - edit in swappy
+    103:   () => withFile(null, (f) => execAsync(['gthumb', f])),       // G - open in gthumb
+    109:   () => withFile(videoExts, openCompress),                     // M - compress video
+    110:   () => withFile(null, showInFileManager),                     // N - open in nemo
+    119:   () => {                                       // W - wipe clipboard history
+        execAsync(['bash', '-c', `cliphist wipe && rm -rf ${cacheDir}/* && mkdir -p ${cacheDir}`]);
+        hide();
+    },
 };
 
 const handleKeys = (_ctrl: any, key: number) => {
-    const file = selectedFile();
-
-    switch (key) {
-    case 65293: // Enter
-        (list.get_selected_row() ?? list.get_row_at_index(0))?.activate();
-        break;
-    case 99: // C - copy 2nd recent entry
-        list.get_row_at_index(1)?.activate()
-        break;
-    case 101: // E - edit image with swappy
-        if (!file || videoExts.test(file)) break;
-        hide();
-        execAsync(['swappy', '-f', file]);
-        break;
-    case 103: // G - open in gthumb
-        if (!file) break;
-        hide();
-        execAsync(['gthumb', file]);
-        break;
-    case 109: // M - compress video to a size limit
-        if (!file || !videoExts.test(file)) break;
-        hide();
-        openCompress(file, selectedId());
-        break;
-    case 110: // N - open in nemo
-        if (!file) break;
-        hide();
-        Gio.DBus.session.call(
-            'org.freedesktop.FileManager1',
-            '/org/freedesktop/FileManager1',
-            'org.freedesktop.FileManager1',
-            'ShowItems',
-            new GLib.Variant('(ass)', [[GLib.filename_to_uri(file, null)], '']),
-            null, Gio.DBusCallFlags.NONE, -1, null, null);
-        break;
-    case 119: // W - wipe clipboard history
-        execAsync(['bash', '-c', `cliphist wipe && rm -rf ${tmpDir}/* && mkdir -p ${cacheDir}`]);
-        hide();
-        break;
-    };
+    const action = actions[key];
+    action?.();
+    return !!action;
 };
 
 export default () => inputControl('clipboard', () =>

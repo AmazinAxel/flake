@@ -52,7 +52,8 @@
         General.EnableNetworkConfiguration = false; # networkd handles DHCP now
         Network.NameResolvingService = "systemd";
         Scan.InitialPeriodicScanInterval = 10;
-        Scan.MaximumPeriodicScanInterval = 30;
+        Scan.MaximumPeriodicScanInterval = 300; # low value caused roam flapping between mesh APs
+        Scan.DisablePeriodicScan = true; # only scan when disconnected
       };
     };
   };
