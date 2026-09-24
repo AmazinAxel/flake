@@ -1,6 +1,6 @@
 import { Astal, Gtk } from 'ags/gtk4';
 import { createComputed, createState, For, This, onCleanup } from "ags"
-import { execAsync, subprocess } from 'ags/process';
+import { createSubprocess, execAsync } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
@@ -32,11 +32,7 @@ const updateWorkspaces = () =>
       const list: { num: number, focused: boolean }[] = JSON.parse(out);
       setOccupied(new Set(list.map((w) => w.num).filter((n) => IDS.includes(n))));
 
-      const active = list.find((w) => w.focused)?.num ?? 0;
-      if (active === focused.peek()) return;
-      const startup = focused.peek() === 0;
-      setFocused(active);
-      if (!startup) showWorkspaces(); // don't flash the popup on launch
+      setFocused(list.find((w) => w.focused)?.num ?? 0);
     })
     .catch(() => {});
 
@@ -50,17 +46,11 @@ const updateScratchpad = () =>
     })
     .catch(() => {});
 
-let event = '';
-subprocess(['swaymsg', '-t', 'subscribe', '-m', '["workspace", "window"]'], (line) => { // Show workspaces on workspace change
-  event += line;
-  if (line !== '}') return;
-  const text = event;
-  event = '';
-  let change, container;
-  try { ({ change, container } = JSON.parse(text)); } catch { return; }
-  if (container && !['new', 'close', 'move'].includes(change)) return;
+const eventStream = createSubprocess('', ['swaymsg', '-t', 'subscribe', '-m', '["workspace"]']);
+eventStream.subscribe(() => { // Show workspaces on workspace change
   updateWorkspaces();
-  if (container) updateScratchpad();
+  updateScratchpad();
+  showWorkspaces();
 });
 updateWorkspaces();
 updateScratchpad();
