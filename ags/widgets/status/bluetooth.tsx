@@ -58,14 +58,24 @@ const NAMES: Record<string, string> = {
 };
 const nameSubstitute = (name: string) => NAMES[name] ?? name ?? '';
 
-const firstConnected = () => devicesBind.peek().find(d => d.connected) ?? null;
+const listed = (d: BluetoothService.Device) =>
+    hasName(d.alias, d.address) && (d.paired || d.trusted || d.connected || discovering.peek());
+
+const firstListed = () => {
+    const devices = devicesBind.peek();
+    return devices.find(d => d.connected && listed(d)) ?? devices.find(listed) ?? null;
+};
 
 let focusedDevice: BluetoothService.Device | null = null;
-const focusDevice = () => focusedDevice ?? firstConnected();
+const focusDevice = () => (focusedDevice && listed(focusedDevice) ? focusedDevice : firstListed());
 
 const focusOnOpen = (self: Gtk.Widget, when: () => boolean) =>
     onCleanup(currentAsideWindow.subscribe(() => {
-        if (currentAsideWindow.peek() === 'bluetooth' && when()) self.grab_focus();
+        if (currentAsideWindow.peek() !== 'bluetooth') return;
+        GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            if (currentAsideWindow.peek() === 'bluetooth' && when()) self.grab_focus();
+            return GLib.SOURCE_REMOVE;
+        });
     }));
 
 export default () =>

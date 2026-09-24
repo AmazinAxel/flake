@@ -1,6 +1,6 @@
 import { Gtk } from "ags/gtk4";
 import Gdk from "gi://Gdk";
-import { exec, execAsync } from 'ags/process';
+import { execAsync } from 'ags/process';
 import { createState } from 'ags';
 
 const mediaCss = new Gtk.CssProvider();
@@ -16,17 +16,20 @@ export const [ playlistName, setPlaylistName ] = createState('');
 const playlists =      ['Study',  'Focus',  'Synthwave', 'Liked', 'SynthAmbient', 'Ambient'];
 const playlistColors = ['bf616a', '5e81ac', 'b48ead',    '8fbcbb',      'ebcb8b',       '81a1c1'];
 
-export const updTrack = (direction: musicAction) => {
-    exec('mpc pause');
-    exec('mpc ' + direction);
+let mpcQueue: Promise<unknown> = Promise.resolve();
+const mpc = (...cmds: string[]) => {
+    for (const c of cmds)
+        mpcQueue = mpcQueue.then(() => execAsync('mpc ' + c).catch(() => {}));
+    return mpcQueue;
+};
 
-    // Start playing again
-    execAsync('mpc play');
+export const updTrack = (direction: musicAction) => {
+    mpc('pause', direction, 'play');
     setIsPlaying(true);
 };
 
 export const playPause = () => {
-    execAsync('mpc toggle');
+    mpc('toggle');
     setIsPlaying(!isPlaying.peek());
 };
 
@@ -42,28 +45,21 @@ export const chngPlaylist = (direction: musicAction) => {
     };
 
     // Stop playing music
-    exec('mpc pause');
+    mpc('pause');
     setIsPlaying(false);
 
     setPlaylistName(playlists[Number(playlist.peek()) - 1]);
     execAsync(`swaybg -i /home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg -m fill`);
 
     // Clear the current cache and add the new playlist
-    exec('mpc clear');
-    exec(`mpc add ${playlistName.peek()}/`);
-    exec('mpc shuffle');
+    mpc('clear', `add ${playlistName.peek()}/`, 'shuffle');
     playPause(); // Start playing
 };
 
 export const initMedia = () => {
     setPlaylistName('Study'); // Must set to invoke binds
-
-    execAsync('mpc crossfade 2');
     execAsync('swaybg -i /home/alec/Projects/flake/wallpapers/Study.jpg -m fill');
-
-    exec('mpc clear');
-    exec(`mpc add ${playlistName.peek()}/`);
-    execAsync('mpc shuffle');
+    mpc('crossfade 2', 'clear', `add ${playlistName.peek()}/`, 'shuffle');
 };
 
 

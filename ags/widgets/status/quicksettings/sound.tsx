@@ -2,7 +2,7 @@ import Wp from 'gi://AstalWp';
 import { createBinding, createComputed, createState, For } from "ags"
 import { Gtk } from 'ags/gtk4';
 import Gdk from "gi://Gdk"
-import { exec } from 'ags/process';
+import { execAsync } from 'ags/process';
 import { timeout } from 'ags/time';
 import GLib from 'gi://GLib';
 
@@ -50,10 +50,12 @@ const nodeName = (s: Wp.Endpoint) =>
 const isBluetooth = (s: Wp.Endpoint) => nodeName(s).startsWith('bluez_');
 let linked: string[] = [];
 
+let linkQueue: Promise<unknown> = Promise.resolve();
+
 const link = (target: string, connect: boolean) => {
-    try {
-        exec([ 'pw-link', ...(connect ? [] : [ '-d' ]), COMBINED, target ]);
-    } catch { /* sink vanished mid-switch; wire() prunes it */ }
+    linkQueue = linkQueue.then(() =>
+        execAsync([ 'pw-link', ...(connect ? [] : [ '-d' ]), COMBINED, target ])
+            .catch(() => {}));
 };
 
 const [ selected, setSelected ] = createState<string[]>([]);

@@ -20,7 +20,8 @@ const search = (text: string) => setAppsList(
     text.length < 2 ? [] : apps.fuzzy_query(text).filter(a => !isBlocked(a)).slice(0, 5)
 );
 
-const launchApp = (selectedApp: Apps.Application) => {
+const launchApp = (selectedApp?: Apps.Application) => {
+    if (!selectedApp || isBlocked(selectedApp)) return;
     const cmd = selectedApp.executable.replace(/ ?%[a-zA-Z]/g, '').trim();
     app.toggle_window("launcher");
     execAsync(['swaymsg', 'exec', '--', cmd]);
@@ -33,7 +34,7 @@ export default () => inputControl('launcher', () =>
             $type="overlay"
             primaryIconName="system-search-symbolic"
             placeholderText="Search"
-            onActivate={() => launchApp(apps.fuzzy_query(textBox.text)?.[0])}
+            onActivate={() => launchApp(appsList.peek()[0])}
             onNotifyText={({ text }) => search(text)}
             $={self => { textBox = self; }}>
         </entry>}

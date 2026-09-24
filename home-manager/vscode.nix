@@ -33,6 +33,7 @@
       }];
 
       userSettings = {
+        security.workspace.trust.enabled = false; # trust everything
         editor = {
           wordWrap = "on";
           fontFamily = "'Iosevka Nerd Font Mono'";

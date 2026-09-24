@@ -30,6 +30,7 @@
 
     bun
     openjdk25
+    jdk25
     nodejs_22
     steam-run
   ];

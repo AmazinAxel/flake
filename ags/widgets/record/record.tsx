@@ -1,9 +1,7 @@
-import { execAsync } from "ags/process";
 import { Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import BackgroundSection from "../../lib/backgroundSection";
-import { notifySend } from '../../lib/notifySend';
-import { recMic, setRecMic, recQuality, startRec, setRecQuality, isRec } from './service';
+import { recMic, setRecMic, recQuality, startRec, setRecQuality, isRec, saveClip } from './service';
 import inputControl from "../../lib/inputControl";
 
 const handleKeys = (_ctrl: any, key: number) => {
@@ -13,16 +11,7 @@ const handleKeys = (_ctrl: any, key: number) => {
             app.get_window('recordMenu')?.hide()
             break;
         case 99: // C - clip & save last 30 seconds
-            execAsync("pkill -SIGUSR1 -f gpu-screen-recorder")
-            notifySend({
-                appName: 'Clip',
-                title: 'Clip saved',
-                actions: [{
-                    id: 1,
-                    label: 'Open Clips folder',
-                    command: 'nemo /home/alec/Videos/Clips',
-                }]
-            });
+            saveClip();
             app.get_window('recordMenu')?.hide()
             break;
         case 114: // R - toggle microphone input
