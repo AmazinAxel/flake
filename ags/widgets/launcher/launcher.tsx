@@ -17,7 +17,7 @@ const isBlocked = (a: Apps.Application) =>
     focus.peek() && focusBlockedAppNames.some(b => a.name.toLowerCase().includes(b));
 
 const search = (text: string) => setAppsList(
-    text.length < 2 ? [] : apps.fuzzy_query(text).filter(a => !isBlocked(a)).slice(0, 5)
+    text.length < 2 ? [] : apps.fuzzy_query(text).slice(0, 5)
 );
 
 const launchApp = (selectedApp?: Apps.Application) => {
@@ -34,7 +34,7 @@ export default () => inputControl('launcher', () =>
             $type="overlay"
             primaryIconName="system-search-symbolic"
             placeholderText="Search"
-            onActivate={() => launchApp(appsList.peek()[0])}
+            onActivate={() => launchApp(appsList.peek().find(a => !isBlocked(a)))}
             onNotifyText={({ text }) => search(text)}
             $={self => { textBox = self; }}>
         </entry>}
@@ -44,7 +44,8 @@ export default () => inputControl('launcher', () =>
                 {(app) => (
                     <button
                         onClicked={() => launchApp(app)}
-                        cssClasses={["button"]}
+                        sensitive={!isBlocked(app)}
+                        cssClasses={isBlocked(app) ? ["button", "blocked"] : ["button"]}
                     >
                         <box>
                             <image iconName={app.iconName} />

@@ -121,6 +121,10 @@ button {
   border: 1px solid @dark4;
 }
 
+.button.blocked {
+  opacity: 0.35;
+}
+
 button.active,
 .button:focus,
 .button:hover,
