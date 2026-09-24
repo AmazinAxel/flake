@@ -1,10 +1,9 @@
 import { Astal, Gtk } from 'ags/gtk4';
-import { createComputed, createState, For, This } from "ags"
-import { execAsync } from 'ags/process';
+import { createComputed, createState, For, This, onCleanup } from "ags"
+import { execAsync, subprocess } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
-import Workspace from 'gi://AstalWorkspace';
 import { monitors } from '../lib/monitors';
 import OutTransition from '../lib/outTransition';
 
@@ -27,24 +26,19 @@ const showWorkspaces = () => {
   });
 };
 
-const manager = Workspace.get_default();
+const updateWorkspaces = () =>
+  execAsync(['swaymsg', '-t', 'get_workspaces', '-r'])
+    .then((out) => {
+      const list: { num: number, focused: boolean }[] = JSON.parse(out);
+      setOccupied(new Set(list.map((w) => w.num).filter((n) => IDS.includes(n))));
 
-const updateWorkspaces = () => {
-  const ids = new Set<number>();
-  let active = 0;
-
-  for (let i = 0; i < manager.get_n_items(); i++) {
-    const ws = manager.get_item(i) as Workspace.Workspace | null;
-    const id = Number(ws?.name);
-    if (!ws || !IDS.includes(id)) continue;
-
-    ids.add(id);
-    if (ws.state & Workspace.WorkspaceState.ACTIVE) active = id;
-  };
-
-  setOccupied(ids);
-  return active;
-};
+      const active = list.find((w) => w.focused)?.num ?? 0;
+      if (active === focused.peek()) return;
+      const startup = focused.peek() === 0;
+      setFocused(active);
+      if (!startup) showWorkspaces(); // don't flash the popup on launch
+    })
+    .catch(() => {});
 
 const updateScratchpad = () =>
   execAsync(['swaymsg', '-t', 'get_tree', '-r'])
@@ -56,14 +50,17 @@ const updateScratchpad = () =>
     })
     .catch(() => {});
 
-manager.connect('updated', () => { // Show workspaces on workspace change
-  const active = updateWorkspaces();
-  updateScratchpad();
-
-  if (active === focused.peek()) return;
-  const startup = focused.peek() === 0;
-  setFocused(active);
-  if (!startup) showWorkspaces(); // don't flash the popup on launch
+let event = '';
+subprocess(['swaymsg', '-t', 'subscribe', '-m', '["workspace", "window"]'], (line) => { // Show workspaces on workspace change
+  event += line;
+  if (line !== '}') return;
+  const text = event;
+  event = '';
+  let change, container;
+  try { ({ change, container } = JSON.parse(text)); } catch { return; }
+  if (container && !['new', 'close', 'move'].includes(change)) return;
+  updateWorkspaces();
+  if (container) updateScratchpad();
 });
 updateWorkspaces();
 updateScratchpad();
@@ -78,6 +75,7 @@ export default () =>
         gdkmonitor={monitor}
         application={app}
         visible={windowVisible}
+        $={(self) => onCleanup(() => self.destroy())}
         defaultHeight={1} // gtk layer shell glitch workaround
         defaultWidth={1}
       >

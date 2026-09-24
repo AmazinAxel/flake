@@ -38,6 +38,44 @@ import asideStatusWindow, { setAsideWindow, closeAsideWindow } from './lib/aside
 
 let blueLightFilter = false;
 
+const media: Record<string, () => void> = {
+    next: () => updTrack('next'),
+    prev: () => updTrack('prev'),
+    toggle: playPause,
+    nextPlaylist: () => chngPlaylist('next'),
+    prevPlaylist: () => chngPlaylist('prev'),
+};
+
+const requests: Record<string, (arg?: string) => void> = {
+    hideNotif: clearOldestNotification,
+    invokeOldestNotif: invokeOldestNotification,
+    toggleSideviewSize,
+    sideviewPlan: () => showPage('plan'),
+    sideviewClaude: () => showPage('claude'),
+    sideviewCustom: () => showPage('custom'),
+    closeSideview,
+    hideSideview,
+    toggleSideviewFocus,
+    record: () => isRec.peek() ? stopRec() : app.toggle_window("recordMenu"),
+    media: (arg) => media[arg ?? '']?.(),
+    toggleQuicksettings: () => setAsideWindow('quickSettings'),
+    toggleCalendar: () => setAsideWindow('calendar'),
+    toggleBluetooth: () => setAsideWindow('bluetooth'),
+    toggleWifi: () => setAsideWindow('wifi'),
+    closeAsideStatusMenuWidget: closeAsideWindow,
+    toggleInfoArea: () => {
+        setStatusMargin(app.get_window('status')?.visible ? 0 : 41);
+        app.toggle_window('status');
+    },
+    toggleStreamingMode: () => setStreamingMode(!streamingMode.peek()),
+    toggleFocus: () => setIsFocused(!focus.peek()),
+    toggleFilter: () => {
+        execAsync(`busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q ${blueLightFilter ? 3500 : 6500}`);
+        blueLightFilter = !blueLightFilter;
+    },
+};
+
+
 app.start({
     css: style + searchableDialogStyle + clipboardStyle + statusStyle + notificationStyle + osdStyle + lockscreenStyle,
     main() {
@@ -71,90 +109,12 @@ app.start({
         startClippingService(); // Run last so if not installed it wont impact start
     },
     requestHandler(req, res) {
-        const reqArgs = req[0].split(" ");
-        switch(reqArgs[0]) {
-            case "hideNotif":
-                clearOldestNotification();
-                break;
-            case "invokeOldestNotif":
-                invokeOldestNotification();
-                break;
-            case "toggleSideviewSize":
-                toggleSideviewSize();
-                break;
-            case "sideviewPlan":
-                showPage('plan');
-                break;
-            case "sideviewClaude":
-                showPage('claude');
-                break;
-            case "sideviewCustom":
-                showPage('custom');
-                break;
-            case "closeSideview":
-                closeSideview();
-                break;
-            case "hideSideview":
-                hideSideview();
-                break;
-            case "toggleSideviewFocus":
-                toggleSideviewFocus();
-                break;
-            case "record":
-                (isRec.peek() == true)
-                    ? stopRec()
-                    : app.toggle_window("recordMenu");
-                break;
-            case "media":
-                switch (reqArgs[1]) {
-                    case "next":
-                        updTrack('next');
-                        break;
-                    case "prev":
-                        updTrack('prev');
-                        break;
-                    case "toggle":
-                        playPause();
-                        break;
-                    case "nextPlaylist":
-                        chngPlaylist('next');
-                        break;
-                    case "prevPlaylist":
-                        chngPlaylist('prev');
-                        break;
-                };
-                break;
-            case "toggleQuicksettings":
-                setAsideWindow('quickSettings');
-                break;
-            case "toggleCalendar":
-                setAsideWindow('calendar');
-                break;
-            case "toggleBluetooth":
-                setAsideWindow('bluetooth');
-                break;
-            case "toggleWifi":
-                setAsideWindow('wifi');
-                break;
-            case "closeAsideStatusMenuWidget":
-                closeAsideWindow();
-                break;
-            case "toggleInfoArea":
-                setStatusMargin(app.get_window('status')?.visible ? 0 : 41);
-                app.toggle_window('status');
-                break;
-            case "toggleStreamingMode":
-                setStreamingMode(!streamingMode.peek())
-                break;
-            case "toggleFocus":
-                setIsFocused(!focus.peek());
-                break;
-            case "toggleFilter":
-                execAsync(`busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q ${blueLightFilter ? 3500 : 6500}`);
-                blueLightFilter = !blueLightFilter;
-                break;
+        const [ cmd, arg ] = req[0].split(" ");
+        try {
+            requests[cmd]?.(arg);
+        } finally {
+            res("Request handled successfully");
         };
-        res("Request handled successfully");
     }
 });
 
@@ -174,8 +134,8 @@ const reminders = async () => {
         return;
     };
 
-    const folderSize = await execAsync(`bash -c "du -sb /home/alec/Downloads | awk '{print \$1}'"`)
-        .then(Number).catch(() => 0);
+    const folderSize = await execAsync(['du', '-sb', '/home/alec/Downloads'])
+        .then((out) => parseInt(out)).catch(() => 0);
     if (folderSize > 100000000) { // Greater than 100MB
         notifySend({
             appName: 'Cleanup',

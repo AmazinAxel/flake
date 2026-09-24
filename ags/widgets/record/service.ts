@@ -45,7 +45,10 @@ export const startClippingService = (): Promise<void> => {
 		p.connect('exit', () => {
 			if (clipper !== p) return;
 			clipper = null;
-			if (gen === clipperGen && !isRec.peek()) startClippingService();
+			GLib.timeout_add(GLib.PRIORITY_DEFAULT, 5000, () => {
+				if (gen === clipperGen && !isRec.peek()) startClippingService();
+				return GLib.SOURCE_REMOVE;
+			});
 		});
 	}).catch(() => {});
 };

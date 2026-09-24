@@ -19,6 +19,11 @@ const isMuted = createBinding(speaker, 'mute');
 
 timeout(2000, () => dontShow = false); // stop osd from showing when ags starts
 
+brightness.subscribe(() => osdChange('display-brightness-symbolic', brightness.peek()));
+const volumeChanged = () => osdChange(speaker.volume_icon, speaker.volume);
+volumeBind.subscribe(volumeChanged);
+isMuted.subscribe(volumeChanged);
+
 export default () =>
     <For each={monitors}>
         {(monitor) => <This this={app}>
@@ -31,19 +36,7 @@ export default () =>
                 visible={windowVisible}
                 defaultHeight={1} // fix bug
                 defaultWidth={1}
-                $={() => {
-                    // for when monitor is unplugged
-                    const unsubBrightness = brightness.subscribe(() =>
-                        osdChange('display-brightness-symbolic', brightness.peek())
-                    );
-
-                    // volume changes for the mute bind as well
-                    const volumeChanged = () => osdChange(speaker.volume_icon, speaker.volume);
-                    const unsubVolume = volumeBind.subscribe(volumeChanged);
-                    const unsubMute = isMuted.subscribe(volumeChanged);
-
-                    onCleanup(() => { unsubBrightness(); unsubVolume(); unsubMute(); });
-                }}
+                $={(self) => onCleanup(() => self.destroy())}
             >
                 <OutTransition duration={125} reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false)} type={Gtk.RevealerTransitionType.SLIDE_UP}>
                     <box cssClasses={['osd']}>

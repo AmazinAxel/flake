@@ -11,6 +11,7 @@ GLib.mkdir_with_parents(cacheDir, 0o755);
 export const videoExts = /\.(mp4|mkv|webm|mov|m4v|avi)$/i;
 
 const maxWidth = 400, maxHeight = 150;
+let produceQueue: Promise<unknown> = Promise.resolve();
 export const binaryData = /\[\[ binary data \d+ (?:B|KiB|MiB|GiB) (\w+) (\d+)x(\d+) \]\]/;
 
 export const entryPath = (id: string, content: string) => {
@@ -58,7 +59,7 @@ const Thumbnail = (id: string, file: string, produce: string[], video = false) =
     if (GLib.file_test(file, GLib.FileTest.EXISTS))
         load();
     else
-        execAsync(produce).then(load).catch(() => {}); // producer can fail on odd media
+        produceQueue = produceQueue.then(() => execAsync(produce)).then(load).catch(() => {}); // producer can fail on odd media
 
     return container;
 };

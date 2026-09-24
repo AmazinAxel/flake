@@ -10,12 +10,17 @@ const time = (time: number) => GLib.DateTime.new_from_unix_local(time).format("%
 
 const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+const pointer = Gdk.Cursor.new_from_name('pointer', null);
+
+const invoke = (n: Notifd.Notification, id: string) => {
+    n.invoke(id);
+    if (n.desktopEntry) execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]).catch(() => {});
+    setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
+};
+
 export const invokeFirstAction = (n: Notifd.Notification) => {
     const action = n.get_actions()[0];
-    if (!action) return;
-    n.invoke(action.id);
-    n.desktopEntry && execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]);
-    setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
+    if (action) invoke(n, action.id);
 };
 
 export const notificationItem = (n: Notifd.Notification) =>
@@ -49,12 +54,8 @@ export const notificationItem = (n: Notifd.Notification) =>
                     {n.get_actions().map(({ label, id }) =>
                         <button
                             hexpand
-                            cursor={Gdk.Cursor.new_from_name('pointer', null)}
-                            onClicked={() => {
-                                n.invoke(id);
-                                n.desktopEntry && execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]);
-                                setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
-                            }}>
+                            cursor={pointer}
+                            onClicked={() => invoke(n, id)}>
                             <label label={label.replace('Activate', 'Open') ?? ''} halign={CENTER}/>
                         </button>
                     )}

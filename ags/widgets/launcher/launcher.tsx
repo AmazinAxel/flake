@@ -13,8 +13,9 @@ const [ appsList, setAppsList ] = createState(new Array<Apps.Application>());
 export const [ focus, setIsFocused ] = createState(false);
 const focusBlockedAppNames = ['discord', 'slack'];
 
-const isBlocked = (a: Apps.Application) =>
-    focus.peek() && focusBlockedAppNames.some(b => a.name.toLowerCase().includes(b));
+const blockable = (a: Apps.Application) =>
+    focusBlockedAppNames.some(b => a.name.toLowerCase().includes(b));
+const isBlocked = (a: Apps.Application) => focus.peek() && blockable(a);
 
 const search = (text: string) => setAppsList(
     text.length < 2 ? [] : apps.fuzzy_query(text).slice(0, 5)
@@ -34,18 +35,19 @@ export default () => inputControl('launcher', () =>
             $type="overlay"
             primaryIconName="system-search-symbolic"
             placeholderText="Search"
-            onActivate={() => launchApp(appsList.peek().find(a => !isBlocked(a)))}
+            onActivate={() => launchApp(appsList.peek()[0])}
             onNotifyText={({ text }) => search(text)}
             $={self => { textBox = self; }}>
         </entry>}
 
         content={<box spacing={6} orientation={Gtk.Orientation.VERTICAL}>
             <For each={appsList}>
-                {(app) => (
-                    <button
+                {(app) => {
+                    const blocked = focus(f => f && blockable(app));
+                    return <button
                         onClicked={() => launchApp(app)}
-                        sensitive={!isBlocked(app)}
-                        cssClasses={isBlocked(app) ? ["button", "blocked"] : ["button"]}
+                        sensitive={blocked(b => !b)}
+                        cssClasses={blocked(b => b ? ["button", "blocked"] : ["button"])}
                     >
                         <box>
                             <image iconName={app.iconName} />
@@ -57,8 +59,8 @@ export default () => inputControl('launcher', () =>
                                 />
                             </box>
                         </box>
-                    </button>
-                )}
+                    </button>;
+                }}
             </For>
         </box>}
         />, () => textBox.text = '', true, undefined, undefined, undefined, () => textBox);

@@ -2,21 +2,30 @@ import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import Notifd from 'gi://AstalNotifd';
 import { notificationItem, invokeFirstAction } from './notificationItem';
-import { createState, For, This } from 'ags';
+import { createState, For, This, onCleanup } from 'ags';
 import { monitors } from '../../lib/monitors';
 
 const { TOP, RIGHT } = Astal.WindowAnchor;
 export const [ streamingMode, setStreamingMode ] = createState(false);
 
+const notifd = Notifd.get_default();
 const map: Map<number, Notifd.Notification> = new Map();
 export const [ notificationlist, setNotificationList ] = createState(new Array<Notifd.Notification>())
 
 const notify = () => setNotificationList([...map.values()].reverse());
 
-const setKey = (key: number, value: Notifd.Notification) =>
-    (!streamingMode.peek() || value.appName == 'batsignal') && (map.set(key, value), notify());
+const hidden = (n: Notifd.Notification) =>
+    (streamingMode.peek() && n.appName != 'batsignal')
+    || n.body.startsWith('Failed to connect to server'); // Hide annoying message
 
-const deleteKey = (key: number) => (map.delete(key), notify());
+notifd.connect("notified", (_, id) => {
+    const n = notifd.get_notification(id);
+    if (!n) return;
+    if (hidden(n)) return n.dismiss();
+    map.set(id, n);
+    notify();
+});
+notifd.connect("resolved", (_, id) => map.delete(id) && notify());
 
 export const notifications = () =>
     <For each={monitors}>
@@ -27,18 +36,10 @@ export const notifications = () =>
                 application={app}
                 layer={Astal.Layer.TOP}
                 gdkmonitor={monitor}
+                $={(self) => onCleanup(() => self.destroy())}
 
                 // This prop gives broken accounting warning but fixes allocation size
-                visible={notificationlist.as(n => (n.length != 0) ? true : false)}
-                $={() => {
-                    const notifd = Notifd.get_default();
-                    notifd.connect("notified", (_, id) => {
-                        const notif = notifd.get_notification(id)!;
-                				if (!notif.body.startsWith('Failed to connect to server')) // Hide annoying message
-                            setKey(id, notif)
-                    });
-                    notifd.connect("resolved", (_, id) => deleteKey(id));
-                }}
+                visible={notificationlist.as(n => n.length != 0)}
             >
                 <box orientation={Gtk.Orientation.VERTICAL} widthRequest={200}>
                     <For each={notificationlist}>
@@ -50,9 +51,9 @@ export const notifications = () =>
     </For>
 
 export const clearOldestNotification = () =>
-	deleteKey([...map][0][0]);
+    map.values().next().value?.dismiss();
 
 export const invokeOldestNotification = () => {
-    const oldest = [...map.values()][0];
+    const oldest = map.values().next().value;
     oldest && invokeFirstAction(oldest);
 };

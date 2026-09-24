@@ -127,9 +127,18 @@ export default () =>
                             hasName(track(alias), device.address)
                                 && (track(paired) || track(trusted) || track(connected) || track(discovering)));
 
+                        let pairId = 0;
+                        const stopPairWatch = () => {
+                            if (pairId) device.disconnect(pairId);
+                            pairId = 0;
+                        };
+                        onCleanup(stopPairWatch);
+
                         const connectAndSwitch = () => device.connect_device((_, res) => {
-                            device.connect_device_finish(res);
-                            switchToBluetoothSink(device.address);
+                            try {
+                                device.connect_device_finish(res);
+                                switchToBluetoothSink(device.address);
+                            } catch {};
                         });
 
                         return <button hexpand
@@ -159,17 +168,19 @@ export default () =>
                             onClicked={() => {
                                 focusedDevice = device; // keep focus here
                                 if (device.connected)
-                                    return device.disconnect_device((_, res) => device.disconnect_device_finish(res));
+                                    return device.disconnect_device((_, res) => { try { device.disconnect_device_finish(res); } catch {}; });
 
                                 if (bluetooth.adapter?.discovering) bluetooth.adapter.stop_discovery();
                                 device.trusted = true; // adds to list
                                 if (device.paired) return connectAndSwitch();
 
-                                const id = device.connect('notify::paired', () => {
+                                stopPairWatch();
+                                const id = pairId = device.connect('notify::paired', () => {
                                     if (!device.paired) return;
-                                    device.disconnect(id);
+                                    stopPairWatch();
                                     connectAndSwitch();
                                 });
+                                timeout(30000, () => pairId === id && stopPairWatch());
                                 device.pair();
                             }}
                             cssClasses={createComputed((track) =>

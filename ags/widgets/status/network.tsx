@@ -1,4 +1,4 @@
-import { createState, For } from 'ags';
+import { createState, For, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 import Gio from 'gi://Gio';
@@ -156,24 +156,25 @@ const refresh = async () => {
 
         const ordered: [string, number][] = await busctlJSON(stationPath, stationInterface, 'GetOrderedNetworks');
 
-        setNetworks(
-            ordered
-                .map(([netPath, signalMbm]): WifiNet | null => {
-                    const p = objects[netPath]?.[networkInterface];
-                    if (!p?.['Name']) return null;
-                    const kn = p['KnownNetwork'];
-                    return {
-                        ssid: p['Name'] as string,
-                        security: p['Type'] as string,
-                        icon: sigIcon(signalMbm),
-                        connected: p['Connected'] as boolean,
-                        known: typeof kn === 'string' && kn !== '' && kn !== '/',
-                        path: netPath,
-                    };
-                })
-                .filter((n): n is WifiNet => n !== null)
-                .sort((a, b) => Number(b.connected) - Number(a.connected))
-        );
+        const next = ordered
+            .map(([netPath, signalMbm]): WifiNet | null => {
+                const p = objects[netPath]?.[networkInterface];
+                if (!p?.['Name']) return null;
+                const kn = p['KnownNetwork'];
+                return {
+                    ssid: p['Name'] as string,
+                    security: p['Type'] as string,
+                    icon: sigIcon(signalMbm),
+                    connected: p['Connected'] as boolean,
+                    known: typeof kn === 'string' && kn !== '' && kn !== '/',
+                    path: netPath,
+                };
+            })
+            .filter((n): n is WifiNet => n !== null)
+            .sort((a, b) => Number(b.connected) - Number(a.connected));
+
+        if (openPopovers.size || JSON.stringify(next) === JSON.stringify(networks.peek())) return;
+        setNetworks(next);
 
         if (!menuHasFocus()) focusWifiMenu(); // focus in case of a rebuild
     } catch {};
@@ -259,23 +260,47 @@ export default () =>
                     const args = pw
                         ? ['iwctl', '--passphrase', pw, 'station', station, 'connect', net.ssid]
                         : ['iwctl', 'station', station, 'connect', net.ssid];
-                    execAsync(args).then(() => { refresh(); popover?.popdown(); }).catch(() => {});
+                    execAsync(args).then(() => { popover?.popdown(); refresh(); }).catch(() => {});
+                };
+                const removePopover = () => {
+                    if (!popover) return;
+                    openPopovers.delete(popover);
+                    popover.unparent();
+                    popover = entry = null;
+                };
+                const openPasswordPopover = (self: Gtk.Widget) => {
+                    const p = popover = new Gtk.Popover();
+                    p.add_css_class('passwordRow');
+
+                    entry = new Gtk.Entry({ hexpand: true, visibility: false, placeholderText: 'Password' });
+                    entry.connect('activate', submit);
+
+                    // todo jsx components
+                    const row = new Gtk.Box();
+                    row.append(entry);
+                    p.set_child(row);
+                    p.set_parent(self);
+
+                    p.connect('closed', () => GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                        if (popover === p) removePopover();
+                        queueRefresh();
+                        return GLib.SOURCE_REMOVE;
+                    }));
+                    openPopovers.add(p);
+                    p.popup();
+                    entry.grab_focus();
                 };
                 return <button
                     cssClasses={net.connected ? ['active'] : []}
-                    onClicked={() => {
+                    onClicked={(self) => {
                         focusedSsid = net.ssid; // keep focus here through the reorder
                         if (net.connected) {
                             busctlAct(stationPath, stationInterface, 'Disconnect')
                                 .then(refresh).catch(() => {});
                         } else if (net.security !== 'open' && !net.known) {
-                            if (!popover) return;
-                            if (popover.get_visible()) popover.popdown();
-                            else {
-                                closeAllPopovers();
-                                popover.popup();
-                                entry?.grab_focus();
-                            }
+                            if (popover) return popover.popdown();
+                            closeAllPopovers();
+                            openPasswordPopover(self);
                         } else {
                             busctlAct(net.path, networkInterface, 'Connect')
                                 .then(refresh).catch(() => {});
@@ -286,29 +311,9 @@ export default () =>
                         self.connect('state-flags-changed', () => {
                             if (self.has_focus) focusedSsid = net.ssid; // remember across refreshes
                         });
-                        self.connect('unrealize', () => {
+                        onCleanup(() => {
                             if (rowBySsid.get(net.ssid) === self) rowBySsid.delete(net.ssid);
-                        });
-
-                        popover = new Gtk.Popover();
-                        popover.add_css_class('passwordRow');
-
-                        entry = new Gtk.Entry({ hexpand: true, visibility: false, placeholderText: 'Password' });
-                        entry.connect('activate', submit);
-
-                        // todo jsx components
-                        const row = new Gtk.Box();
-                        row.append(entry);
-                        popover.set_child(row);
-                        popover.set_parent(self);
-
-                        const p = popover;
-                        p.connect('show', () => openPopovers.add(p));
-                        p.connect('closed', () => openPopovers.delete(p));
-
-                        self.connect('unrealize', () => {
-                            openPopovers.delete(p);
-                            p.unparent();
+                            removePopover();
                         });
                     }}
                 >

@@ -14,8 +14,6 @@ interface NotifySendProps {
     actions?: NotifyAction[]
 };
 
-const escapeShellArg = (arg: string): string => `'${arg?.replace(/'/g, '\'\\\'\'')}'`;
-
 export const notifySend = ({
     title,
     body,
@@ -28,13 +26,12 @@ export const notifySend = ({
     const cmd = [
         'notify-send',
         '--print-id',
-        escapeShellArg(title),
-        escapeShellArg(body ?? ''),
-
-        // Optional params
-        appName && '--app-name=' + escapeShellArg(appName),
-        category && '--category=' + escapeShellArg(category)
-    ].concat(actions.map(({ id, label }) => '--action=' + id + '=' + escapeShellArg(label))).join(' ');
+        ...(appName ? ['--app-name=' + appName] : []),
+        ...(category ? ['--category=' + category] : []),
+        ...actions.map(({ id, label }) => `--action=${id}=${label}`),
+        title,
+        body ?? '',
+    ];
 
     subprocess(
         cmd,
@@ -42,9 +39,10 @@ export const notifySend = ({
             if (!printedId) {
                 resolve(parseInt(out));
                 printedId = true;
-            } else {
-                execAsync(actions.find((a) => String(a.id) == out)?.command ?? '');
+                return;
             };
+            const command = actions.find((a) => String(a.id) == out)?.command;
+            if (command) execAsync(command).catch(() => {});
         }
     );
 });

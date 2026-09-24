@@ -50,7 +50,7 @@ in {
       enabledPlugins."typescript-lsp@claude-plugins-official" = true;
 
       alwaysThinkingEnabled = false; # think only when the turn needs it
-      todoFeatureEnabled = false; # todo list re-injects into every turn
+      todoFeatureEnabled = false;
       spinnerTipsEnabled = false;
       includeCoAuthoredBy = false;
       autoCompactEnabled = true; # cheaper than blowing the window

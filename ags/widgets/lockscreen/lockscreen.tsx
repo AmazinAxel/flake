@@ -6,22 +6,18 @@ import Gdk from 'gi://Gdk';
 import { createPoll, timeout } from 'ags/time';
 import { execAsync } from 'ags/process';
 import { createState, createRoot } from 'ags';
-import { playlistName } from '../../lib/mediaPlayer';
 
 const [ authFailed, setAuthFailed ] = createState(false);
 const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'));
 
 let lock: SessionLock.Instance | null = null;
+let lockWindows: Gtk.Window[] = [];
+const destroyLockWindows = () => { lockWindows.forEach((w) => w.destroy()); lockWindows = []; };
 
 const hiddenCursor = Gdk.Cursor.new_from_texture( // no cursor
     Gdk.MemoryTexture.new(1, 1, Gdk.MemoryFormat.R8G8B8A8, GLib.Bytes.new(new Uint8Array([0, 0, 0, 0])), 4),
     0, 0, null,
 );
-
-const lockCss = new Gtk.CssProvider();
-Gtk.StyleContext.add_provider_for_display(
-    Gdk.Display.get_default()!, lockCss, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-playlistName.subscribe(() => lockCss.load_from_string(`#lockscreen entry { background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("file:///home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg"); }`))
 
 const checkLogin = (entry: Gtk.Entry) => {
     const password = entry.get_text();
@@ -70,6 +66,7 @@ const assignLockWindow = (monitor: Gdk.Monitor) =>
     createRoot((dispose) => {
         const win = new Gtk.Window({ name: 'lockscreen', cursor: hiddenCursor });
         win.connect('destroy', dispose);
+        lockWindows.push(win);
 
         let entry: Gtk.Entry;
         win.set_child(
@@ -111,8 +108,8 @@ export const lockScreen = () => {
     if (lock) return; // Already locked?
 
     lock = SessionLock.Instance.new();
-    lock.connect('failed', () => lock = null);
-    lock.connect('unlocked', () => lock = null);
+    lock.connect('failed', () => { lock = null; destroyLockWindows(); });
+    lock.connect('unlocked', () => { lock = null; destroyLockWindows(); });
 
     lock.connect('monitor', (_, monitor: Gdk.Monitor) => assignLockWindow(monitor));
 
@@ -124,5 +121,6 @@ export const lockScreen = () => {
 
 export const unlockScreen = () => {
     lock?.unlock();
+    destroyLockWindows();
     lock = null;
 };

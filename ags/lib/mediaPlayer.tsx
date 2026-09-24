@@ -1,11 +1,13 @@
 import { Gtk } from "ags/gtk4";
 import Gdk from "gi://Gdk";
 import { execAsync } from 'ags/process';
+import { timeout } from 'ags/time';
 import { createState } from 'ags';
+import AstalIO from 'gi://AstalIO';
 
-const mediaCss = new Gtk.CssProvider();
+const themeCss = new Gtk.CssProvider();
 Gtk.StyleContext.add_provider_for_display(
-    Gdk.Display.get_default()!, mediaCss, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+    Gdk.Display.get_default()!, themeCss, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 export type musicAction = 'next' | 'prev';
 export const [ isPlaying, setIsPlaying ] = createState(false);
@@ -33,23 +35,29 @@ export const playPause = () => {
     setIsPlaying(!isPlaying.peek());
 };
 
+let swaybg: AstalIO.Process | null = null;
+playlistName.subscribe(() => {
+    const wallpaper = `/home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg`;
+    const old = swaybg;
+    swaybg = AstalIO.Process.subprocessv(['swaybg', '-i', wallpaper, '-m', 'fill']);
+    if (old) timeout(1000, () => old.kill());
+
+    themeCss.load_from_string(`
+        #status #mediaBtn { background-color: #${playlistColors[playlist.peek() - 1]}; }
+        .backgroundOverlay { background-image: url("file://${wallpaper}"); }
+        #lockscreen entry { background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("file://${wallpaper}"); }
+    `);
+});
+
 export const chngPlaylist = (direction: musicAction) => {
-    if (direction == 'next') {
-        (playlist.peek() == playlists.length)
-        ? (setPlaylist(1)) // Go to first
-        : (setPlaylist(Number(playlist.peek()) + 1));
-    } else if (direction == 'prev') {
-        (playlist.peek() == 1)
-        ? (setPlaylist(playlists.length)) // Go to last
-        : (setPlaylist(Number(playlist.peek()) - 1));
-    };
+    const n = playlists.length;
+    setPlaylist((playlist.peek() - 1 + (direction == 'next' ? 1 : n - 1)) % n + 1);
 
     // Stop playing music
     mpc('pause');
     setIsPlaying(false);
 
-    setPlaylistName(playlists[Number(playlist.peek()) - 1]);
-    execAsync(`swaybg -i /home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg -m fill`);
+    setPlaylistName(playlists[playlist.peek() - 1]);
 
     // Clear the current cache and add the new playlist
     mpc('clear', `add ${playlistName.peek()}/`, 'shuffle');
@@ -58,22 +66,12 @@ export const chngPlaylist = (direction: musicAction) => {
 
 export const initMedia = () => {
     setPlaylistName('Study'); // Must set to invoke binds
-    execAsync('swaybg -i /home/alec/Projects/flake/wallpapers/Study.jpg -m fill');
     mpc('crossfade 2', 'clear', `add ${playlistName.peek()}/`, 'shuffle');
 };
 
 
 export const Media = () =>
-    <box name={'mediaBtn'}
-        $={() => playlistName.subscribe(() => {
-            const color = playlistColors[playlist.peek() - 1];
-            mediaCss.load_from_string(`
-                #status #mediaBtn {
-                    background-color: #${color};
-                }
-            `);
-        })
-    }>
+    <box name={'mediaBtn'}>
     <Gtk.EventControllerScroll
         flags={Gtk.EventControllerScrollFlags.VERTICAL}
         onScroll={(_, __, y) => {

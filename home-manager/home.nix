@@ -34,7 +34,6 @@
         mpris
         notifd
         wireplumber
-        workspace
         wl4
         # idle-notify
 
