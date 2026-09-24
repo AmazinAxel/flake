@@ -34,6 +34,9 @@
         mpris
         notifd
         wireplumber
+        workspace
+        wl4
+        # idle-notify
 
         pkgs.webkitgtk_6_0 # webview
         pkgs.glib-networking # TLS stuff for webview

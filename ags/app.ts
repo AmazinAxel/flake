@@ -31,6 +31,7 @@ import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
 import { monitorBrightness } from './lib/brightness';
+// import { monitorIdle } from './lib/idle';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
 import workspaces from './widgets/workspaces';
 import asideStatusWindow, { setAsideWindow, closeAsideWindow } from './lib/asideStatusWindow';
@@ -59,6 +60,7 @@ app.start({
         workspaces();
 
         monitorBrightness();
+        // monitorIdle();
         notifications();
         initMedia();
         reminders();

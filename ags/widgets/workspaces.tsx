@@ -1,40 +1,22 @@
 import { Astal, Gtk } from 'ags/gtk4';
-import { createState, For, This } from "ags"
-import { createSubprocess, execAsync } from 'ags/process';
+import { createComputed, createState, For, This } from "ags"
+import { execAsync } from 'ags/process';
 import { timeout } from 'ags/time';
 const { TOP, LEFT } = Astal.WindowAnchor;
 import app from 'ags/gtk4/app';
+import Workspace from 'gi://AstalWorkspace';
 import { monitors } from '../lib/monitors';
 import OutTransition from '../lib/outTransition';
 
-export const [ workspaces, setWorkspaces ] = createState(
-  [...Array(9).keys()].map((i) => ({ id: i + 1, focused: false, occupied: false })) // Starting state
-);
-let count = 0;
+const IDS = [...Array(9).keys()].map((i) => i + 1);
+
+const [ focused, setFocused ] = createState(0);
+const [ occupied, setOccupied ] = createState(new Set<number>());
+const [ scratchpad, setScratchpad ] = createState(0);
 const [ windowVisible, setWindowVisible ] = createState(false);
 const [ reveal, setReveal ] = createState(false);
 
-const updateWorkspaces = () =>
-  execAsync(['swaymsg', '-t', 'get_workspaces'])
-    .then((out) => {
-      const active = JSON.parse(out);
-      setWorkspaces(
-        [...Array(9).keys()].map((i) => {
-          const id = i + 1;
-          const ws = active.find((w: { num: number }) => w.num === id);
-          return { id, focused: ws?.focused ?? false, occupied: !!ws?.representation };
-        })
-      );
-    })
-    .catch(() => {});
-
-const eventStream = createSubprocess('', ['swaymsg', '-t', 'subscribe', '-m', '["workspace"]']);
-eventStream.subscribe(() => { // Show workspaces on workspace change
-  updateWorkspaces();
-  showWorkspaces();
-});
-updateWorkspaces();
-
+let count = 0;
 const showWorkspaces = () => {
   setWindowVisible(true);
   setReveal(true);
@@ -44,6 +26,47 @@ const showWorkspaces = () => {
     if (count === 0) setReveal(false);
   });
 };
+
+const manager = Workspace.get_default();
+
+const updateWorkspaces = () => {
+  const ids = new Set<number>();
+  let active = 0;
+
+  for (let i = 0; i < manager.get_n_items(); i++) {
+    const ws = manager.get_item(i) as Workspace.Workspace | null;
+    const id = Number(ws?.name);
+    if (!ws || !IDS.includes(id)) continue;
+
+    ids.add(id);
+    if (ws.state & Workspace.WorkspaceState.ACTIVE) active = id;
+  };
+
+  setOccupied(ids);
+  return active;
+};
+
+const updateScratchpad = () =>
+  execAsync(['swaymsg', '-t', 'get_tree', '-r'])
+    .then((out) => {
+      const scratch = JSON.parse(out).nodes
+        ?.find((o: any) => o.name === '__i3')
+        ?.nodes?.find((w: any) => w.name === '__i3_scratch');
+      setScratchpad(scratch?.floating_nodes?.length ?? 0);
+    })
+    .catch(() => {});
+
+manager.connect('updated', () => { // Show workspaces on workspace change
+  const active = updateWorkspaces();
+  updateScratchpad();
+
+  if (active === focused.peek()) return;
+  const startup = focused.peek() === 0;
+  setFocused(active);
+  if (!startup) showWorkspaces(); // don't flash the popup on launch
+});
+updateWorkspaces();
+updateScratchpad();
 
 export default () =>
   <For each={monitors}>
@@ -60,19 +83,18 @@ export default () =>
       >
         <OutTransition duration={150} reveal={reveal} onHidden={() => (count === 0) && setWindowVisible(false)} type={Gtk.RevealerTransitionType.SLIDE_RIGHT}>
           <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement']}>
-            {[...Array(9).keys()].map((i) => i + 1).map((id) =>
-              <box cssClasses={workspaces((ws) => {
-                const w = ws.find((w) => w.id === id);
-                if (!w)
-                  return ['workspace'];
-
-                return w.focused
-                  ? ['workspace', 'active']
-                  : w.occupied
-                    ? ['workspace', 'occupied']
-                    : ['workspace'];
-              })}/>
+            {IDS.map((id) =>
+              <box cssClasses={createComputed((track) => track(focused) === id
+                ? ['workspace', 'active']
+                : track(occupied).has(id)
+                  ? ['workspace', 'occupied']
+                  : ['workspace'])}/>
             )}
+            <label
+              cssClasses={['scratchpad']}
+              visible={scratchpad((c) => c > 0)}
+              label={scratchpad(String)}
+            />
           </box>
         </OutTransition>
       </window>

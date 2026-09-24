@@ -25,7 +25,7 @@ const brightnessPath = `${backlightDir}/${screen}/brightness`;
 const screenMax = readNum(`${backlightDir}/${screen}/max_brightness`);
 export const [ brightness, setBrightnessValue ] = createState(readNum(brightnessPath) / (screenMax || 1))
 
-const setBrightness = (percent: number) => {
+export const setBrightness = (percent: number) => {
     if (!screenMax) return;
     const steps = Math.max(0, Math.min(screenMax, Math.floor(percent * screenMax)));
     setBrightnessValue(steps / screenMax);
