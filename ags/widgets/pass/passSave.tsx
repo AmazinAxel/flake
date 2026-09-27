@@ -1,4 +1,7 @@
 import { Gtk } from 'ags/gtk4';
+import Gdk from 'gi://Gdk';
+import GLib from 'gi://GLib';
+import { createState } from 'ags';
 import app from 'ags/gtk4/app';
 import { execAsync } from 'ags/process';
 import BackgroundSection from '../../lib/backgroundSection';
@@ -9,10 +12,39 @@ let siteBox: Gtk.Entry;
 let userBox: Gtk.Entry;
 let passBox: Gtk.Entry;
 
+const [generated, setGenerated] = createState(false);
+
+const lower = 'abcdefghijklmnopqrstuvwxyz';
+const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const digits = '0123456789';
+const symbols = '!@#$%^&*()-_=+[]{};:,.?';
+const alphabet = lower + upper + digits + symbols;
+
+const pick = (set: string) => set[GLib.random_int_range(0, set.length)];
+
+const randomPassword = (length = 20) => {
+    const chars = [pick(lower), pick(upper), pick(digits), pick(symbols)];
+    while (chars.length < length) chars.push(pick(alphabet));
+    for (let i = chars.length - 1; i > 0; i--) {
+        const j = GLib.random_int_range(0, i + 1);
+        [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+    return chars.join('');
+};
+
+const generate = () => {
+    const password = randomPassword();
+    passBox.text = password;
+    passBox.set_position(-1);
+    setGenerated(true);
+    execAsync(['bash', '-c', `printf '%s' "$1" | wl-copy -n -t text/plain`, 'bash', password]);
+};
+
 const reset = () => {
     siteBox.text = '';
     userBox.text = '';
     passBox.text = '';
+    setGenerated(false);
 };
 
 const save = async () => {
@@ -64,12 +96,26 @@ export default () => inputControl('passSave', () =>
                         placeholderText="Username"
                         onActivate={() => passBox.grab_focus()} // next
                     />
-                    <entry
-                        $={self => passBox = self}
-                        visibility={false}
-                        placeholderText="Password"
-                        onActivate={save} // save
-                    />
+                    <box spacing={4}>
+                        <entry
+                            $={self => passBox = self}
+                            hexpand
+                            visibility={false}
+                            placeholderText="Password"
+                            onActivate={save} // save
+                        >
+                            <Gtk.EventControllerKey
+                                onKeyPressed={(_ctrl, key, _keycode, state) => {
+                                    if (key !== Gdk.KEY_Tab || (state & Gdk.ModifierType.SHIFT_MASK)) return false;
+                                    generate();
+                                    return true;
+                                }}/>
+                        </entry>
+                        <image
+                            cssClasses={generated(on => on ? ['passGenIcon', 'generated'] : ['passGenIcon'])}
+                            iconName="dialog-password-symbolic"
+                        />
+                    </box>
                 </box>
             }
         />

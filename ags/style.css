@@ -189,6 +189,16 @@ window .backgroundSection .header:first-child {
   font-size: 2rem;
 }
 
+.passGenIcon {
+  color: @dark4;
+  -gtk-icon-size: 1rem;
+  margin-right: 0.2rem;
+}
+
+.passGenIcon.generated {
+  color: @blue2;
+}
+
 /* Record menu */
 #recordMenu label {
   font-size: 2.2rem;

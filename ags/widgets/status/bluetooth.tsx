@@ -17,36 +17,54 @@ const hook = <T extends { connect(s: string, cb: () => void): number; disconnect
     if (id) onCleanup(() => obj!.disconnect(id));
 };
 
+let pendingSinkId = 0;
 const switchToBluetoothSink = (address: string) => {
     if (!audio) return;
     const wanted = address.replaceAll(':', '_');
-    const find = () => audio.speakers.find(s =>
-        (s.get_pw_property('node.name') ?? '').includes(wanted));
-
-    let id = 0;
     const take = () => {
-        const sink = find();
+        const sink = audio.speakers.find(s =>
+            (s.get_pw_property('node.name') ?? '').includes(wanted));
         if (!sink) return false;
         sink.isDefault = true;
         return true;
     };
-    const stop = () => { if (id) { audio.disconnect(id); id = 0; } };
+    const stop = () => { if (pendingSinkId) { audio.disconnect(pendingSinkId); pendingSinkId = 0; } };
 
+    stop();
     if (take()) return;
-    id = audio.connect('notify::speakers', () => take() && stop());
-    timeout(10000, stop);
+    const id = pendingSinkId = audio.connect('notify::speakers', () => take() && stop());
+    timeout(10000, () => pendingSinkId === id && stop());
 };
 
 const [ discovering, setDiscovering ] = createState(false);
+let adapterId = 0;
+let wiredAdapter: BluetoothService.Adapter | null = null;
 const wireAdapter = (adapter: BluetoothService.Adapter | null) => {
-    if (!adapter) return;
+    if (wiredAdapter && adapterId) wiredAdapter.disconnect(adapterId);
+    wiredAdapter = adapter;
+    adapterId = 0;
+    if (!adapter) return setDiscovering(false);
     setDiscovering(adapter.discovering);
-    adapter.connect('notify::discovering', () => setDiscovering(adapter.discovering));
+    adapterId = adapter.connect('notify::discovering', () => setDiscovering(adapter.discovering));
 };
 wireAdapter(bluetooth.adapter);
 bluetooth.connect('notify::adapter', () => wireAdapter(bluetooth.adapter));
 
+const [ stickyKeys, setStickyKeys ] = createState<ReadonlySet<string>>(new Set());
+const stickyAdd = (address: string) => {
+    if (stickyKeys.peek().has(address)) return;
+    const next = new Set(stickyKeys.peek());
+    next.add(address);
+    setStickyKeys(next);
+};
+const stickyClear = () => stickyKeys.peek().size && setStickyKeys(new Set());
+
+let scanToken = 0;
+
 const devicesBind = createBinding(bluetooth, 'devices');
+const menuOpen = currentAsideWindow((a) => a === 'bluetooth');
+const visibleDevices = createComputed((track) =>
+    track(menuOpen) ? track(devicesBind) : []);
 
 const hasName = (alias: string, address: string) =>
     !!alias && alias.replaceAll('-', ':') != address;
@@ -59,7 +77,8 @@ const NAMES: Record<string, string> = {
 const nameSubstitute = (name: string) => NAMES[name] ?? name ?? '';
 
 const listed = (d: BluetoothService.Device) =>
-    hasName(d.alias, d.address) && (d.paired || d.trusted || d.connected || discovering.peek());
+    hasName(d.alias, d.address)
+        && (d.paired || d.trusted || d.connected || discovering.peek() || stickyKeys.peek().has(d.address));
 
 const firstListed = () => {
     const devices = devicesBind.peek();
@@ -78,8 +97,15 @@ const focusOnOpen = (self: Gtk.Widget, when: () => boolean) =>
         });
     }));
 
+const wireMenuLifecycle = () =>
+    onCleanup(currentAsideWindow.subscribe(() => {
+        if (currentAsideWindow.peek() === 'bluetooth') return;
+        if (bluetooth.adapter?.discovering) bluetooth.adapter.stop_discovery();
+        stickyClear();
+    }));
+
 export default () =>
-    <box orientation={Gtk.Orientation.VERTICAL}>
+    <box orientation={Gtk.Orientation.VERTICAL} $={wireMenuLifecycle}>
         <box>
             <button
                 hexpand halign={Gtk.Align.START}
@@ -92,7 +118,14 @@ export default () =>
             <button
                 onClicked={() => {
                     const adapter = bluetooth.adapter;
-                    adapter.discovering ? adapter.stop_discovery() : adapter.start_discovery();
+                    if (!adapter) return;
+                    if (adapter.discovering) return adapter.stop_discovery();
+                    adapter.start_discovery();
+                    const token = ++scanToken;
+                    timeout(60000, () => {
+                        if (token === scanToken && bluetooth.adapter?.discovering)
+                            bluetooth.adapter.stop_discovery();
+                    });
                 }}
                 visible={bluetoothOn}
                 cssClasses={discovering.as((d) => d ? ['active'] : [])}
@@ -114,7 +147,7 @@ export default () =>
             })}
         >
             <box orientation={Gtk.Orientation.VERTICAL}>
-                <For each={devicesBind}>
+                <For each={visibleDevices}>
                     {(device: BluetoothService.Device) => {
                         const connected = createBinding(device, 'connected');
                         const connecting = createBinding(device, 'connecting');
@@ -125,7 +158,8 @@ export default () =>
 
                         const visible = createComputed((track) =>
                             hasName(track(alias), device.address)
-                                && (track(paired) || track(trusted) || track(connected) || track(discovering)));
+                                && (track(paired) || track(trusted) || track(connected)
+                                    || track(discovering) || track(stickyKeys).has(device.address)));
 
                         let pairId = 0;
                         const stopPairWatch = () => {
@@ -170,14 +204,18 @@ export default () =>
                                 if (device.connected)
                                     return device.disconnect_device((_, res) => { try { device.disconnect_device_finish(res); } catch {}; });
 
+                                stickyAdd(device.address);
                                 if (bluetooth.adapter?.discovering) bluetooth.adapter.stop_discovery();
-                                device.trusted = true; // adds to list
-                                if (device.paired) return connectAndSwitch();
+                                if (device.paired) {
+                                    device.trusted = true;
+                                    return connectAndSwitch();
+                                }
 
                                 stopPairWatch();
                                 const id = pairId = device.connect('notify::paired', () => {
                                     if (!device.paired) return;
                                     stopPairWatch();
+                                    device.trusted = true;
                                     connectAndSwitch();
                                 });
                                 timeout(30000, () => pairId === id && stopPairWatch());

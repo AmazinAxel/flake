@@ -276,6 +276,8 @@ in {
       settings.General = {
         Experimental = true; # battery reporting
         FastConnectable = true;
+        ReconnectAttempts = 7;
+        ReconnectIntervals = "1,2,4,8,16,32,64";
       };
     };
   };
