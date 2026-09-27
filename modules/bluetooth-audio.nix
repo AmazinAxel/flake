@@ -29,7 +29,7 @@
       # wpctl set-profile <card> headset-head-unit
       "wireplumber.settings"."bluetooth.autoswitch-to-headset-profile" = false;
       "monitor.bluez.properties" = {
-        "bluez5.codecs" = [ "sbc_xq" "sbc" ];
+        "bluez5.codecs" = [ "sbc_xq" "sbc" "aac" "msbc" ];
         "bluez5.enable-sbc-xq" = true;
         "bluez5.hw-volume" = [ "a2dp-sink" ];
       };
@@ -39,9 +39,16 @@
           matches = [{ "device.name" = "~bluez_card.*"; }];
           actions.update-props.priorities = [ "a2dp-sink-sbc_xq" "a2dp-sink" ];
         }
-        { # K38 drops packets on 452kbps!!! :p
-          matches = [{ "device.name" = "bluez_card.67_10_1D_B6_4C_E2"; }];
-          actions.update-props.priorities = [ "a2dp-sink-sbc" ];
+        { # drops packets or is wonky on 452kbps!!! :p
+          matches = [
+            { "device.name" = "bluez_card.67_10_1D_B6_4C_E2"; }
+            { "device.name" = "bluez_card.D6_1F_21_FC_F9_C7"; }
+          ];
+          actions.update-props.priorities = [ "a2dp-sink" ];
+        }
+        { # Rail ANC
+          matches = [{ "device.name" = "bluez_card.88_08_94_2F_FB_D2"; }];
+          actions.update-props.priorities = [ "a2dp-sink-aac" "a2dp-sink-sbc_xq" "a2dp-sink" ];
         }
       ];
 

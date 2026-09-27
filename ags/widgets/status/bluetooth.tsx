@@ -3,6 +3,7 @@ import { createBinding, createComputed, createState, For, onCleanup } from 'ags'
 import { Gtk } from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 import GLib from 'gi://GLib';
+import Gdk from 'gi://Gdk';
 import { currentAsideWindow } from '../../lib/asideStatusWindow';
 import { timeout } from 'ags/time';
 
@@ -63,8 +64,30 @@ let scanToken = 0;
 
 const devicesBind = createBinding(bluetooth, 'devices');
 const menuOpen = currentAsideWindow((a) => a === 'bluetooth');
-const visibleDevices = createComputed((track) =>
-    track(menuOpen) ? track(devicesBind) : []);
+
+const orderPath = GLib.get_user_state_dir() + '/ags/bluetooth-order.json';
+const loadOrder = (): string[] => {
+    try {
+        const [ ok, contents ] = GLib.file_get_contents(orderPath);
+        return ok ? JSON.parse(new TextDecoder().decode(contents)) : [];
+    } catch { return []; }
+};
+const [ order, setOrder ] = createState<string[]>(loadOrder());
+const saveOrder = (addresses: string[]) => {
+    const next = [ ...addresses, ...order.peek().filter(a => !addresses.includes(a)) ];
+    setOrder(next);
+    GLib.mkdir_with_parents(GLib.path_get_dirname(orderPath), 0o755);
+    GLib.file_set_contents(orderPath, JSON.stringify(next));
+};
+
+const isKnown = (d: BluetoothService.Device) => d.paired || d.trusted;
+const visibleDevices = createComputed((track) => {
+    if (!track(menuOpen)) return [];
+    const ord = track(order);
+    const rank = (d: BluetoothService.Device) =>
+        isKnown(d) ? ord.indexOf(d.address) + 1 || ord.length + 1 : Infinity;
+    return [ ...track(devicesBind) ].sort((a, b) => (rank(a) - rank(b)) || 0);
+});
 
 const hasName = (alias: string, address: string) =>
     !!alias && alias.replaceAll('-', ':') != address;
@@ -83,6 +106,16 @@ const listed = (d: BluetoothService.Device) =>
 const firstListed = () => {
     const devices = devicesBind.peek();
     return devices.find(d => d.connected && listed(d)) ?? devices.find(listed) ?? null;
+};
+
+const knownDevices = () => visibleDevices.peek().filter(d => isKnown(d) && listed(d));
+const moveDevice = (device: BluetoothService.Device, delta: number) => {
+    const list = knownDevices();
+    const i = list.indexOf(device), j = i + delta;
+    if (i < 0 || j < 0 || j >= list.length) return false;
+    [ list[i], list[j] ] = [ list[j], list[i] ];
+    saveOrder(list.map(d => d.address));
+    return true;
 };
 
 let focusedDevice: BluetoothService.Device | null = null;
@@ -216,6 +249,7 @@ export default () =>
                                     if (!device.paired) return;
                                     stopPairWatch();
                                     device.trusted = true;
+                                    saveOrder(knownDevices().map(d => d.address));
                                     connectAndSwitch();
                                 });
                                 timeout(30000, () => pairId === id && stopPairWatch());
@@ -227,9 +261,16 @@ export default () =>
                                 : []
                             )}
                         >
-                            <Gtk.EventControllerKey onKeyPressed={(_, key) => {
-                                if (key == 65288 && (device.paired || device.trusted) && !bluetooth.adapter?.discovering)
+                            <Gtk.EventControllerKey onKeyPressed={(ctrl, key, _, state) => {
+                                if (key == 65288 && isKnown(device) && !bluetooth.adapter?.discovering)
                                     bluetooth.adapter?.remove_device(device);
+                                const delta = { [Gdk.KEY_Up]: -1, [Gdk.KEY_k]: -1, [Gdk.KEY_Down]: 1, [Gdk.KEY_j]: 1 }[Gdk.keyval_to_lower(key)];
+                                if (!delta || !(state & Gdk.ModifierType.SHIFT_MASK)) return false;
+                                if (moveDevice(device, delta)) GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                                    ctrl.get_widget()?.grab_focus();
+                                    return GLib.SOURCE_REMOVE;
+                                });
+                                return true;
                             }}/>
                             <box orientation={Gtk.Orientation.HORIZONTAL} hexpand valign={Gtk.Align.CENTER} spacing={10}>
                                 <image iconName={device.icon + '-symbolic'}/>

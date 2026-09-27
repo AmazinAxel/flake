@@ -20,7 +20,7 @@ export default (ctrl: Gtk.EventControllerKey, key: number, _keycode: number, sta
     const dir = dirs[key];
     const focus = win.get_focus();
     if (!dir || !focus || focus.get_native() !== win
-        || (state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.ALT_MASK))
+        || (state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.ALT_MASK | Gdk.ModifierType.SHIFT_MASK))
         || ownsArrows(focus, dir[0] == LEFT || dir[0] == RIGHT)) return false;
 
     if (!win.child_focus(dir[0]))
