@@ -1,6 +1,7 @@
 import { createState } from "ags"
 import { Astal, Gtk } from "ags/gtk4"
 import app from "ags/gtk4/app"
+import wrapFocus from "./wrapFocus"
 import { statusMargin } from "../widgets/status/status"
 const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
@@ -23,6 +24,7 @@ export default (menus: Record<string, () => JSX.Element>) =>
         class="backgroundDim"
     >
         <Gtk.EventControllerKey onKeyPressed={(_, key) => (key == 65307) && closeAsideWindow()}/>
+        <Gtk.EventControllerKey propagationPhase={Gtk.PropagationPhase.CAPTURE} onKeyPressed={wrapFocus}/>
         <box
             halign={Gtk.Align.START}
             valign={Gtk.Align.END}

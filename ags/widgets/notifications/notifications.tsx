@@ -1,7 +1,7 @@
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app'
 import Notifd from 'gi://AstalNotifd';
-import { notificationItem, invokeFirstAction } from './notificationItem';
+import { notificationItem, invokeAction } from './notificationItem';
 import { createState, For, This, onCleanup } from 'ags';
 import { monitors } from '../../lib/monitors';
 
@@ -53,7 +53,7 @@ export const notifications = () =>
 export const clearOldestNotification = () =>
     map.values().next().value?.dismiss();
 
-export const invokeOldestNotification = () => {
+export const invokeOldestNotification = (i = 0) => {
     const oldest = map.values().next().value;
-    oldest && invokeFirstAction(oldest);
+    oldest && invokeAction(oldest, i);
 };

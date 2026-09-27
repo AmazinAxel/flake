@@ -14,12 +14,12 @@ const pointer = Gdk.Cursor.new_from_name('pointer', null);
 
 const invoke = (n: Notifd.Notification, id: string) => {
     n.invoke(id);
-    if (n.desktopEntry) execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]).catch(() => {});
+    if (id === 'default' && n.desktopEntry) execAsync(['swaymsg', `[app_id="${n.desktopEntry}"] focus`]).catch(() => {});
     setTimeout(() => notifd.get_notification(n.id) && n.dismiss(), 100);
 };
 
-export const invokeFirstAction = (n: Notifd.Notification) => {
-    const action = n.get_actions()[0];
+export const invokeAction = (n: Notifd.Notification, i = 0) => {
+    const action = n.get_actions()[i];
     if (action) invoke(n, action.id);
 };
 

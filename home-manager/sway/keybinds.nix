@@ -100,7 +100,9 @@ in {
       "${mod}+G" = "exec ags request toggleSideviewSize";
 
       "${mod}+C" = "exec ags request hideNotif"; # Closes last notification
-      "${mod}+M" = "exec ags request invokeOldestNotif"; # Activates first action of the oldest notification
+      "${mod}+M" = "exec ags request invokeOldestNotif"; # Activates first action of the oldest notification!
+      "shift+${mod}+M" = "exec ags request 'invokeOldestNotif 1'"; # 2nd action
+      "control+${mod}+M" = "exec ags request 'invokeOldestNotif 2'"; # 3rd action
       "${mod}+S" = "exec ags request toggleStreamingMode";
       "${mod}+O" = "exec ${toggleTheme}";
       "${mod}+T" = "exec ags request toggleFocus";

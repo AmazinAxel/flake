@@ -225,8 +225,9 @@ window .backgroundSection .header:first-child {
 }
 
 #workspaces .scratchpad {
-  color: @dark4;
-  font-size: 0.9rem;
+  color: @light4;
+  opacity: 0.5;
+  font-size: 1rem;
   margin: 0.1rem 0.5rem 0.2rem;
 }
 

@@ -48,7 +48,7 @@ const media: Record<string, () => void> = {
 
 const requests: Record<string, (arg?: string) => void> = {
     hideNotif: clearOldestNotification,
-    invokeOldestNotif: invokeOldestNotification,
+    invokeOldestNotif: (arg) => invokeOldestNotification(Number(arg ?? 0)),
     toggleSideviewSize,
     sideviewPlan: () => showPage('plan'),
     sideviewClaude: () => showPage('claude'),

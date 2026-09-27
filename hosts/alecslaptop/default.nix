@@ -22,6 +22,7 @@
     kdePackages.kdenlive
     thunderbird
     aseprite
+    foliate
     zettlr
     (symlinkJoin {
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
