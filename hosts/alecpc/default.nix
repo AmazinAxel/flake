@@ -3,12 +3,20 @@
     ./hardware-configuration.nix
     ../common.nix
     ../../modules/desktop.nix
+    ../../modules/mcdev.nix
+    ../../modules/playit.nix
   ];
 
   networking.hostName = "alecpc";
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   swapDevices = [{ device = "/persist/swapfile"; size = 18 * 1024; }];
+
+  mcdev = {
+    enable = true;
+    serverDir = "/home/alec/Projects/nocturn";
+    heapMB = 4096;
+  };
 
   environment.systemPackages = with pkgs; [
     kdePackages.kdenlive
@@ -19,20 +27,38 @@
     thunderbird
 
     bun
-    openjdk25
   ];
 
-  environment.persistence."/persist".users.alec.directories = [
-    ".thunderbird"
-    ".config/GIMP"
-    ".config/libreoffice"
-    ".local/share/kdenlive"
-    ".bun"
-  ];
+  environment.persistence."/persist" = {
+    directories = [
+      "/var/lib/tailscale"
+    ];
+
+    users.alec.directories = [
+      ".thunderbird"
+      ".config/GIMP"
+      ".config/libreoffice"
+      ".local/share/kdenlive"
+      ".bun"
+    ];
+  };
 
   services = {
     xserver.videoDrivers = [ "nvidia" ]; # Load nvidia drivers
-    openssh.enable = true;  # for remote builds
+
+    # ONLY TAILNET
+    openssh = {
+      enable = true;  # for remote builds
+      openFirewall = false;
+      settings.PasswordAuthentication = false;
+    };
+
+    tailscale.enable = true;
+  };
+
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ 41641 ];
   };
 
   powerManagement.cpuFreqGovernor = "performance";

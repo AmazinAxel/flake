@@ -3,6 +3,7 @@
     ../mcscripts.nix
     ../common.nix
     ../../modules/pi.nix
+    ../../modules/mcdev.nix
   ];
 
   systemd.tmpfiles.rules = [
@@ -30,13 +31,10 @@
     home.stateVersion = "26.05";
   };
 
-  services.minecraft-server = {
+  mcdev = {
     enable = true;
-    dataDir = "/var/lib/minecraft";
-    package = pkgs.papermc;
-    jvmOpts = "-Xms2048M -Xmx2048M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"; # jar is ran with --nogui
-    openFirewall = true;
-    eula = true;
+    serverDir = "/var/lib/minecraft";
+    heapMB = 2048;
   };
 
   environment.persistence."/persist".directories = [ "/var/lib/minecraft" ];
