@@ -21,6 +21,8 @@ in {
   boot = {
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
 
+    bcache.enable = false; # dont need
+
     # more ram on desktops so use more zram
     kernel.sysctl."vm.swappiness" = 180;
 
@@ -42,6 +44,14 @@ in {
     useGlobalPkgs = true; # Faster eval
   };
   users.users.alec.shell = pkgs.fish; # default shell for ssh and foot
+
+  xdg.sounds.enable = false; # don't need
+  system.tools = { # don't need
+    nixos-generate-config.enable = false;
+    nixos-install.enable = false;
+    nixos-enter.enable = false;
+    nixos-option.enable = false;
+  };
 
   environment = {
     systemPackages = with pkgs; [
@@ -78,8 +88,6 @@ in {
       slack
       filezilla
 
-      inputs.lightbrowse.packages.${pkgs.stdenv.hostPlatform.system}.default
-
       # Scripts
       (writeScriptBin "fetch" (builtins.readFile ../scripts/fetch.fish))
       (writeScriptBin "sys-sync" (builtins.readFile ../scripts/sys-sync.fish))
@@ -115,8 +123,6 @@ in {
           ".local/share/PrismLauncher"
           ".claude"
           ".config/zen"
-          ".config/lightbrowse"
-          ".cache/lightbrowse"
           ".config/spotify"
           ".cache/spotify"
           ".local/share/mpd"
@@ -162,6 +168,15 @@ in {
       "R! /home/alec/*/.Trash-* - - - - -" # wipe trash in each persisted folder on boot
     ];
     sleep.settings.Sleep.HibernateMode = "platform"; # ONLY POWER BUTTON FOR UNHIBERNATION
+    oomd.enable = false; # earlyoom already handles OOM
+
+    # we don't want these running
+    user.services = lib.genAttrs [
+      "gvfs-afc-volume-monitor"
+      "gvfs-goa-volume-monitor"
+      "gvfs-gphoto2-volume-monitor"
+      "gvfs-mtp-volume-monitor"
+    ] (_: { enable = false; });
   };
 
   fonts.packages = with pkgs; [
@@ -233,8 +248,9 @@ in {
   ];
 
   services = {
-    gvfs.enable = true; # For nemo trash & NAS autodiscov
+    gvfs.enable = true; # Samba shares in nemo
     devmon.enable = true; # Automatic drive mount/unmount
+    logrotate.enable = false; # no logs
     tailscale.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore"; # Don't turn off computer on power key press
 
@@ -243,6 +259,7 @@ in {
        enable = true;
        freeMemThreshold = 10; # 10%
     };
+    speechd.enable = false; # unused TTS daemon, browsers spawn it
 
     # Sound
     pipewire = {
@@ -264,7 +281,7 @@ in {
 
   security = {
     rtkit.enable = true; # better audio latency
-    pam.services.astal-auth = {}; # For astal lockscreen to work
+    pam.services.astal-auth.nodelay = true; # handle our own delays
   };
 
   # Bluetooth

@@ -31,7 +31,7 @@
       "monitor.bluez.properties" = {
         "bluez5.codecs" = [ "sbc_xq" "sbc" "aac" "msbc" ];
         "bluez5.enable-sbc-xq" = true;
-        "bluez5.hw-volume" = [ "a2dp-sink" ];
+        "bluez5.hw-volume" = [ "a2dp_sink" ];
       };
 
       "device.profile.priority.rules" = [

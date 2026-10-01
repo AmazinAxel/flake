@@ -46,10 +46,7 @@
         "audio/ogg"
         "audio/mp4"
       ];
-      "com.amazinaxel.lightbrowse.desktop" = [
-      #   "x-scheme-handler/http"
-      #   "x-scheme-handler/https"
-      #   "text/html"
+      "zen-beta.desktop" = [
         "application/pdf"
       ];
     };

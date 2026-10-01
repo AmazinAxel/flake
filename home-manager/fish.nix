@@ -3,7 +3,7 @@
     fish = {
       enable = true;
       shellAliases = {
-        nx-switch = "sudo nixos-rebuild switch --flake 'path:/home/alec/Projects/flake/' --impure";
+        nx-switch = "sudo nixos-rebuild switch --flake 'path:/home/alec/Projects/flake/'";
         g = "git";
         ga = "git add -A";
         gl = "git pull";
@@ -22,7 +22,7 @@
         nfu = "nix flake update";
         nb = "nix build";
         nd = "nix develop";
-        nfc = "nix flake check --impure";
+        nfc = "nix flake check";
       };
       functions = {
         gcm = ''git commit -m "$argv"'';

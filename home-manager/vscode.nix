@@ -14,7 +14,6 @@
         ms-vscode-remote.remote-ssh
         svelte.svelte-vscode
         ms-vsliveshare.vsliveshare
-        wakatime.vscode-wakatime # hackatime
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{
         name = "Sk-VSC";
         publisher = "ayhamalali";

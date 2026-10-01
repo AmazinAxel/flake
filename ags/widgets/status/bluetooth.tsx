@@ -143,7 +143,7 @@ export default () =>
             <button
                 hexpand halign={Gtk.Align.START}
                 onClicked={() => bluetooth.toggle()}
-                cssClasses={bluetoothOn.as(power => [power ? 'active' : 'unpowered', 'bluetoothButton'])}
+                cssClasses={bluetoothOn.as(power => [power ? 'active' : 'unpowered'])}
                 $={(self) => focusOnOpen(self, () => !bluetooth.isPowered)}
             >
                 <image iconName="bluetooth-active-symbolic"/>

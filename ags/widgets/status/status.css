@@ -79,11 +79,6 @@
   -gtk-icon-size: 3rem;
 }
 
-.bluetoothButton,
-.wifiButton {
-  transition: none;
-}
-
 #asideStatus button.connecting,
 #asideStatus button.connecting:disabled {
   background-color: @blue3;
@@ -121,7 +116,3 @@
   padding: 0.8rem 0;
 }
 
-#status #media,
-#status #mediaBtn {
-  transition-duration: 0.3s;
-}

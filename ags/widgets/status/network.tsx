@@ -220,7 +220,7 @@ export default () =>
         <box>
             <button
                 hexpand halign={Gtk.Align.START}
-                cssClasses={wifiOn.as(on => on ? ['active', 'wifiButton'] : ['unpowered', 'wifiButton'])}
+                cssClasses={wifiOn.as(on => [on ? 'active' : 'unpowered'])}
                 onClicked={toggleWifi}
                 $={(self) => {
                     powerButton = self;

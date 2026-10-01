@@ -233,26 +233,6 @@
         "type": "github"
       }
     },
-    "lightbrowse": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1786905949,
-        "narHash": "sha256-pVJ5kW1fkmF+cwTXKxLGEgjJugVwzTNKQ/JQP6SP4ig=",
-        "owner": "AmazinAxel",
-        "repo": "lightbrowse",
-        "rev": "71eed5348e68647427e1e8e41891879032c3724a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AmazinAxel",
-        "repo": "lightbrowse",
-        "type": "github"
-      }
-    },
     "nix-cachyos-kernel": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -389,7 +369,6 @@
         "homelab": "homelab",
         "impermanence": "impermanence",
         "lanzaboote": "lanzaboote",
-        "lightbrowse": "lightbrowse",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nixpkgs": "nixpkgs_2",
         "playit": "playit",

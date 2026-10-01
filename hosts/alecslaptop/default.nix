@@ -12,7 +12,6 @@
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   environment.systemPackages = with pkgs; [
-    flowblade
     godot
     gimp3
     libreoffice
@@ -22,8 +21,8 @@
     kdePackages.kdenlive
     thunderbird
     aseprite
-    foliate
-    zettlr
+    iotas
+    maven
     (symlinkJoin {
       name = "kicad"; paths = [ kicad ]; nativeBuildInputs = [ makeWrapper ];
       postBuild = "wrapProgram $out/bin/kicad --set GTK_THEME Adwaita";
@@ -67,7 +66,6 @@
       ".local/share/Steam" ".steam" # Steam
       ".thunderbird" # Thunderbird
       ".config/kdeconnect" # kdeconnect
-      ".config/playit_gg" # playit agent login
 
       # apps
       ".config/GIMP"
@@ -77,9 +75,8 @@
       ".FlashPrint5" # FlashPrint slicer
       ".config/godot"
       ".local/share/godot"
-      ".config/Zettlr"
+      ".local/share/iotas"
       ".config/aseprite"
-      ".config/flowblade"
       ".local/share/kdenlive"
     ];
   };

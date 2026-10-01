@@ -6,39 +6,46 @@ import Gdk from 'gi://Gdk';
 import { createPoll, timeout } from 'ags/time';
 import { execAsync } from 'ags/process';
 import { createState, createRoot } from 'ags';
+import { wallpaperTexture } from '../../lib/mediaPlayer';
 
 const [ authFailed, setAuthFailed ] = createState(false);
 const time = createPoll('', 1000, () => GLib.DateTime.new_now_local().format('%H\n%M'));
 
 let lock: SessionLock.Instance | null = null;
 let lockWindows: Gtk.Window[] = [];
-const destroyLockWindows = () => { lockWindows.forEach((w) => w.destroy()); lockWindows = []; };
+const destroyLockWindows = () => { const wins = lockWindows; lockWindows = []; timeout(100, () => wins.forEach((w) => w.destroy())); };
 
 const hiddenCursor = Gdk.Cursor.new_from_texture( // no cursor
     Gdk.MemoryTexture.new(1, 1, Gdk.MemoryFormat.R8G8B8A8, GLib.Bytes.new(new Uint8Array([0, 0, 0, 0])), 4),
     0, 0, null,
 );
 
+let busy = false;
+let failures = 0;
+
 const checkLogin = (entry: Gtk.Entry) => {
+    if (busy) return;
+    busy = true;
     const password = entry.get_text();
     entry.set_text('');
-    entry.set_sensitive(false);
 
     Auth.Pam.authenticate(password, (_, task) => {
         try {
             Auth.Pam.authenticate_finish(task);
+            busy = false;
+            failures = 0;
             unlockScreen();
         } catch { // Wrong password
             setAuthFailed(true);
-            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => (entry.grab_focus(), GLib.SOURCE_REMOVE));
+            if (++failures >= 5) return void execAsync('systemctl reboot');
+            timeout(2000, () => { setAuthFailed(false); busy = false; });
         };
-        entry.set_sensitive(true);
     });
 };
 
 const handleKeys = (entry: Gtk.Entry, key: number, state: Gdk.ModifierType) => {
     if (key == 65379) return true; // Insert
-    if (!(state & Gdk.ModifierType.CONTROL_MASK)) return false;
+    if (!(state & Gdk.ModifierType.CONTROL_MASK)) return busy;
 
     switch (key) {
         case 115: // S - sleep
@@ -75,6 +82,16 @@ const assignLockWindow = (monitor: Gdk.Monitor) =>
                     propagationPhase={Gtk.PropagationPhase.CAPTURE}
                     onKeyPressed={(_ctrl, key, _keycode, state) => handleKeys(entry, key, state)}
                 />
+                <Gtk.Picture paintable={wallpaperTexture} contentFit={Gtk.ContentFit.COVER} />
+                <entry
+                    hexpand
+                    vexpand
+                    visibility={false}
+                    invisibleChar={0}
+                    onActivate={checkLogin}
+                    $type="overlay"
+                    $={(self) => (entry = self, self.connect('map', () => self.grab_focus()))}
+                />
                 <label
                     halign={Gtk.Align.CENTER}
                     valign={Gtk.Align.CENTER}
@@ -83,15 +100,6 @@ const assignLockWindow = (monitor: Gdk.Monitor) =>
                     css_classes={authFailed((v) => v ? ['failed'] : [])}
                     canTarget={false}
                     $type="overlay"
-                />
-                <entry
-                    hexpand
-                    vexpand
-                    visibility={false}
-                    invisibleChar={0}
-                    onActivate={checkLogin}
-                    onNotifyText={(self) => self.get_text() && setAuthFailed(false)} // typing clear error
-                    $={(self) => (entry = self, self.connect('map', () => self.grab_focus()))}
                 />
                 <box
                     hexpand

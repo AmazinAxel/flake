@@ -3,8 +3,6 @@ import { createState } from "ags";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
 import Gdk from "gi://Gdk";
-// @ts-expect-error
-import WebKit from "gi://WebKit?version=6.0";
 import app from "ags/gtk4/app";
 import inputControl from "../lib/inputControl";
 
@@ -28,6 +26,14 @@ applyColorScheme();
 interfaceSettings.connect("changed::color-scheme", applyColorScheme);
 
 const [ width, setWidth ] = createState(400);
+
+let WebKit: any;
+const loadWebKit = async () => {
+  if (WebKit) return;
+  // @ts-expect-error
+  WebKit = (await import("gi://WebKit?version=6.0")).default;
+  WebKit.WebContext.get_default().set_cache_model(WebKit.CacheModel.DOCUMENT_VIEWER);
+};
 
 const dataDir = GLib.get_user_data_dir() + '/ags-sideview';
 let networkSession: any;
@@ -114,11 +120,12 @@ const ensurePage = (name: PageName) => {
   stack.add_named(webview, name);
 };
 
-export const showPage = (name: PageName) => {
+export const showPage = async (name: PageName) => {
   const window = getWindow();
   if (window.visible && currentPage === name) return hideSideview();
 
   const freshOpen = !window.visible;
+  await loadWebKit();
   ensurePage(name);
   stack.set_visible_child_name(name);
   currentPage = name;

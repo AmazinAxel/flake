@@ -41,7 +41,6 @@
     godot
     libreoffice
     thunderbird
-    zettlr
     flashprint
     aseprite
     (symlinkJoin {

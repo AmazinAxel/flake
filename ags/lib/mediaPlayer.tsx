@@ -13,6 +13,7 @@ export type musicAction = 'next' | 'prev';
 export const [ isPlaying, setIsPlaying ] = createState(false);
 export const [ playlist, setPlaylist ] = createState(1);
 export const [ playlistName, setPlaylistName ] = createState('');
+export const [ wallpaperTexture, setWallpaperTexture ] = createState<Gdk.Texture | null>(null);
 
 // These playlists match with the folder names in ~/Music
 const playlists =      ['Study',  'Focus',  'Synthwave', 'Liked', 'SynthAmbient', 'Ambient'];
@@ -41,11 +42,10 @@ playlistName.subscribe(() => {
     const old = swaybg;
     swaybg = AstalIO.Process.subprocessv(['swaybg', '-i', wallpaper, '-m', 'fill']);
     if (old) timeout(1000, () => old.kill());
+    setWallpaperTexture(Gdk.Texture.new_from_filename(wallpaper));
 
     themeCss.load_from_string(`
         #status #mediaBtn { background-color: #${playlistColors[playlist.peek() - 1]}; }
-        .backgroundOverlay { background-image: url("file://${wallpaper}"); }
-        #lockscreen entry { background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("file://${wallpaper}"); }
     `);
 });
 

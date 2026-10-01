@@ -154,6 +154,7 @@
   };
   fileSystems."/".options = [ "noatime" ];
   documentation.enable = false;
+  documentation.man.enable = false; # faster rebuilds, even if docs off
   environment.defaultPackages = lib.mkForce [];
 
   system.stateVersion = lib.mkDefault "24.05";

@@ -34,10 +34,6 @@
     };
 
     # my programs
-    lightbrowse = {
-      url = "github:AmazinAxel/lightbrowse";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     homelab = {
       url = "github:AmazinAxel/homelab";
       inputs.nixpkgs.follows = "nixpkgs";

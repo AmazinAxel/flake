@@ -1,4 +1,9 @@
-{ pkgs, ... }: {
+{ pkgs, config, ... }: {
+  services.swayidle = { # lock before suspend on laptop lid close
+    enable = true;
+    events.before-sleep = "${config.home.profileDirectory}/bin/ags request lock; sleep 1";
+  };
+
   wayland.windowManager.sway = {
     enable = true;
     systemd.dbusImplementation = "broker"; # this needs to match the new nixos default
@@ -120,7 +125,6 @@
         { command = "fcitx5 -d"; }
         { command = "wl-gammarelay-rs"; }
         { command = "sleep 1 && busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 3500"; }
-        { command = "lightbrowse --prewarm"; }
       ];
     };
     # Disable middle mouse paste

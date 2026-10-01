@@ -1,24 +1,24 @@
-#lockscreen label { /* Time */
-    font-size: 12rem;
-    color: @blue2;
-    text-shadow: 0 0 2rem @blue2;
-    font-family: 'WenQuanYi Zen Hei Mono';
-    border-radius: 0.5rem;
-    outline: 3px solid #ffffff1c;
-    padding: 30px 31px 20px 26px;
-    transition-duration: 0.1s;
-    background-color: rgba(236, 239, 244, 0.05);
+#lockscreen label {
+  /* Time */
+  font-size: 12rem;
+  color: @blue2;
+  text-shadow: 0 0 2rem @blue2;
+  font-family: 'WenQuanYi Zen Hei Mono';
+  border-radius: 0.5rem;
+  outline: 3px solid #ffffff1c;
+  padding: 30px 31px 20px 26px;
+  background-color: rgba(236, 239, 244, 0.05);
 }
 
 #lockscreen label.failed {
-    color: @red;
-    text-shadow: 0 0 1rem @red;
+  color: @red;
+  text-shadow: 0 0 1rem @red;
 }
 
-#lockscreen entry { /* Also a background */
-    background-position: center;
-    background-size: cover;
-    border: none;
-    outline: none;
-    border-radius: 0;
+#lockscreen entry {
+  /* Also a background */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
+  border: none;
+  outline: none;
+  border-radius: 0;
 }

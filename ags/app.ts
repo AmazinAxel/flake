@@ -30,6 +30,7 @@ import quickSettings from './widgets/status/quicksettings/quicksettings';
 import { notifySend } from './lib/notifySend';
 import { isRec, stopRec, startClippingService } from './widgets/record/service';
 
+import { lockScreen } from './widgets/lockscreen/lockscreen';
 import { monitorBrightness } from './lib/brightness';
 // import { monitorIdle } from './lib/idle';
 import { initMedia, updTrack, playPause, chngPlaylist } from './lib/mediaPlayer';
@@ -48,6 +49,7 @@ const media: Record<string, () => void> = {
 
 const requests: Record<string, (arg?: string) => void> = {
     hideNotif: clearOldestNotification,
+    lock: lockScreen,
     invokeOldestNotif: (arg) => invokeOldestNotification(Number(arg ?? 0)),
     toggleSideviewSize,
     sideviewPlan: () => showPage('plan'),

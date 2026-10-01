@@ -74,7 +74,6 @@ in {
       "XF86MonBrightnessDown" = "exec brightnessctl set 15%-";
 
       # Apps
-      "${mod}+shift+E" = ''exec busctl --user call com.amazinaxel.lightbrowse /com/amazinaxel/lightbrowse org.gtk.Application Activate 'a{sv}' 1 activation-token s "$XDG_ACTIVATION_TOKEN" || exec lightbrowse'';
       "${mod}+E" = "exec zen-beta";
       "${mod}+return" = "exec ${openFoot}";
       "${mod}+N" = "exec nemo";
@@ -164,6 +163,14 @@ in {
       "control+${mod}+shift+left" = moveItemToWorkspace "-";
       "control+${mod}+shift+l" = moveItemToWorkspace "+";
       "control+${mod}+shift+h" = moveItemToWorkspace "-";
+      "control+${mod}+down" = workspace "+";
+      "control+${mod}+up" = workspace "-";
+      "control+${mod}+j" = workspace "+";
+      "control+${mod}+k" = workspace "-";
+      "control+${mod}+shift+down" = moveItemToWorkspace "+";
+      "control+${mod}+shift+up" = moveItemToWorkspace "-";
+      "control+${mod}+shift+j" = moveItemToWorkspace "+";
+      "control+${mod}+shift+k" = moveItemToWorkspace "-";
 
       "${mod}+minus" = "move scratchpad";
       "${mod}+equal" = "scratchpad show, resize set 1800 960, move position center";

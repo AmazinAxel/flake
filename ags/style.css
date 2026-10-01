@@ -28,6 +28,10 @@
 @define-color blue3 #5e81ac;
 @define-color blue4 #8fbcbb;
 
+* {
+  transition: none;
+}
+
 button:focus {
   outline: @blue2 solid 2px;
   outline-offset: 1px;
@@ -162,11 +166,11 @@ list row:hover,
 
 .backgroundOverlay {
   padding: 3rem 3rem 3rem 0;
-  background-position: center;
-  background-size: cover;
-  filter: blur(3px);
   min-height: 2rem;
-  transition-duration: 0.5s;
+}
+
+.backgroundImage {
+  filter: blur(3px);
 }
 
 .backgroundSection {
@@ -219,7 +223,6 @@ window .backgroundSection .header:first-child {
   min-width: 1.32rem;
   min-height: 1.6rem;
   border-radius: 5px;
-  transition: 0.1s;
   margin: 0.3rem 0.5rem;
 }
 

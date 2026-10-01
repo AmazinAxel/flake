@@ -1,4 +1,5 @@
 import { Gtk } from 'ags/gtk4';
+import { wallpaperTexture } from './mediaPlayer';
 
 export default ({ header, content, height, width }: { header: any; content: any, height?: number, width: number }) =>
     <box
@@ -15,6 +16,7 @@ export default ({ header, content, height, width }: { header: any; content: any,
         >
             <overlay cssClasses={['header']}>
                 <box cssClasses={['backgroundOverlay']}/>
+                <Gtk.Picture paintable={wallpaperTexture} contentFit={Gtk.ContentFit.COVER} cssClasses={['backgroundImage']} $type="overlay"/>
                 {header}
             </overlay>
 

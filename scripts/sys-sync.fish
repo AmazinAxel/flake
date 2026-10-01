@@ -38,21 +38,6 @@ for f in $keyEntries
     and echo "[Sync] Installed ssh key $name"
 end
 
-echo \n"[Sync] Syncing bookmarks"
-set bookmarksDir /home/alec/.config/lightbrowse/bookmarks
-set bookmarksRemote ssh://alec@alechomelab.local/media/bookmarks
-
-if not test -d $bookmarksDir/.git
-    echo "[Sync] Cloning bookmarks..."
-    git clone $bookmarksRemote $bookmarksDir
-else
-    git -C $bookmarksDir pull --rebase
-    git -C $bookmarksDir add -A
-    git -C $bookmarksDir diff --cached --quiet
-    or git -C $bookmarksDir commit -q -m "sync: "(date '+%Y-%m-%d %H:%M')
-    git -C $bookmarksDir push
-end
-
 ## Rebuild latest
 cd /home/alec/Projects/flake/
 set isDirty (git status --porcelain)
@@ -61,7 +46,7 @@ if test -n "$isDirty"
     echo \n"[Sync] System flake is dirty - not updating system"
 else
     git pull
-    s nixos-rebuild boot --flake 'path:/home/alec/Projects/flake/' --impure
+    s nixos-rebuild boot --flake 'path:/home/alec/Projects/flake/'
 end
 
 # Astal

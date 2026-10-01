@@ -1,5 +1,5 @@
 {
-  imports = [ ../../home-manager/laptop.nix ];
+  imports = [ ../../home-manager/laptop.nix ../../home-manager/iotas.nix ];
 
   wayland.windowManager.sway.config = {
     output = {
