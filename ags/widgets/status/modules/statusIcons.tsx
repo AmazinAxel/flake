@@ -1,21 +1,18 @@
 import { Gtk } from 'ags/gtk4'
 import { createBinding, createState } from "ags"
 import { streamingMode } from '../../notifications/notifications';
-import { focus }  from '../../launcher/launcher';
-import Bluetooth from 'gi://AstalBluetooth';
+import { btPowered } from '../../../lib/bluetooth';
 import Wp from 'gi://AstalWp';
 import Battery from 'gi://AstalBattery';
 import Gio from 'gi://Gio';
 
-const bluetooth = Bluetooth.get_default()
 const speaker = Wp.get_default()?.audio.defaultSpeaker!;
 const battery = Battery.get_default();
 
-const btIsPoweredBind = createBinding(bluetooth, 'isPowered');
 const BluetoothIcon = () =>
   <image
     iconName='bluetooth-active-symbolic'
-    visible={btIsPoweredBind}
+    visible={btPowered}
   />
 
 const batPercentageBind = createBinding(battery, 'percentage');
@@ -45,9 +42,6 @@ const VolumeIcon = () =>
 
 const StreamingModeIcon = () =>
   <image visible={streamingMode} iconName='notifications-disabled-symbolic'/>
-
-const FocusIcon = () =>
-  <image visible={focus} iconName='emoji-flags-symbolic'/>
 
 const iwdBus = 'net.connman.iwd';
 const stationInterface = 'net.connman.iwd.Station';
@@ -98,5 +92,4 @@ export const Status = () =>
     <NetworkIcon/>
     <BluetoothIcon/>
     <StreamingModeIcon/>
-    <FocusIcon/>
   </box>

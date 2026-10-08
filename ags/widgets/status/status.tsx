@@ -1,5 +1,5 @@
 import app from "ags/gtk4/app"
-import { Astal, Gtk } from "ags/gtk4"
+import { Astal, Gdk, Gtk } from "ags/gtk4"
 import { createState } from 'ags';
 import { Time } from './modules/time';
 import { Status } from './modules/statusIcons';
@@ -30,7 +30,7 @@ export default () =>
       <box orientation={Gtk.Orientation.VERTICAL} cssClasses={['statusElement', 'infoCenter']}>
         <Gtk.EventControllerScroll
           flags={Gtk.EventControllerScrollFlags.VERTICAL}
-          onScroll={(_, __, y) => { speaker.volume = (y < 0) ? speaker.volume + 0.05 : speaker.volume - 0.05 }}
+          onScroll={(self, __, y) => { speaker.volume -= self.get_unit() === Gdk.ScrollUnit.WHEEL ? Math.sign(y) * 0.05 : y * 0.002 }}
         />
         <RecordingIndicator/>
         <Time/>

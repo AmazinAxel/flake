@@ -133,7 +133,9 @@ const getObjects = async (): Promise<ObjMap> => {
     return result;
 };
 
+let refreshGen = 0;
 const refresh = async () => {
+    const gen = ++refreshGen;
     try {
         const objects = await getObjects();
 
@@ -144,6 +146,7 @@ const refresh = async () => {
                 if (stationInterface in ifaces) stationPath = path;
             };
         };
+        if (gen !== refreshGen) return;
 
         const powered: boolean = objects[devicePath]?.[deviceInterface]?.['Powered'] ?? true;
         setWifiOn(powered);
@@ -155,6 +158,7 @@ const refresh = async () => {
         };
 
         const ordered: [string, number][] = await busctlJSON(stationPath, stationInterface, 'GetOrderedNetworks');
+        if (gen !== refreshGen) return;
 
         const next = ordered
             .map(([netPath, signalMbm]): WifiNet | null => {

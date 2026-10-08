@@ -3,6 +3,7 @@ import { execAsync } from 'ags/process';
 import AstalIO from 'gi://AstalIO';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
+import Battery from 'gi://AstalBattery';
 
 import { notifySend } from '../../lib/notifySend';
 const captureDir = '/home/alec/Videos/Captures';
@@ -33,9 +34,17 @@ const stopClipper = () => {
 	clipper = null;
 };
 
+const battery = Battery.get_default();
+const onBattery = () => battery.state === Battery.State.DISCHARGING;
+battery.connect('notify::state', () => {
+	if (onBattery()) stopClipper();
+	else if (!clipper && !isRec.peek()) startClippingService();
+});
+
 export const startClippingService = (): Promise<void> => {
 	stopClipper();
 	const gen = clipperGen;
+	if (onBattery()) return Promise.resolve();
 
 	return getFocusedMonitor().then((monitor) => {
 		if (gen !== clipperGen || isRec.peek()) return;

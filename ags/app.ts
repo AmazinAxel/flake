@@ -12,14 +12,15 @@ import { execAsync } from "ags/process";
 import astalIO from "gi://AstalIO"
 
 import status, { setStatusMargin } from './widgets/status/status';
-import bluetooth from './widgets/status/bluetooth';
+import bluetooth from './lib/bluetooth';
 import wifi from './widgets/status/network';
 import sideview, { showPage, closeSideview, hideSideview, toggleSideviewFocus, toggleSideviewSize } from './widgets/sideview';
 import calendar from './widgets/status/calendar';
 import clipboard from './widgets/clipboard/clipboard';
 import compress from './widgets/clipboard/compress';
 import emojiPicker from './widgets/emojiPicker';
-import launcher, { focus, setIsFocused }  from './widgets/launcher/launcher';
+import launcher from './widgets/launcher/launcher';
+import { focusMenu, focusTask, toggleFocus } from './widgets/focus';
 import pass from './widgets/pass/pass';
 import passSave from './widgets/pass/passSave';
 import recordMenu from './widgets/record/record';
@@ -70,7 +71,7 @@ const requests: Record<string, (arg?: string) => void> = {
         app.toggle_window('status');
     },
     toggleStreamingMode: () => setStreamingMode(!streamingMode.peek()),
-    toggleFocus: () => setIsFocused(!focus.peek()),
+    toggleFocus,
     toggleFilter: () => {
         execAsync(`busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q ${blueLightFilter ? 3500 : 6500}`);
         blueLightFilter = !blueLightFilter;
@@ -89,6 +90,8 @@ app.start({
         compress();
         emojiPicker();
         recordMenu();
+        focusMenu();
+        focusTask();
         osd();
         powermenu();
         asideStatusWindow({

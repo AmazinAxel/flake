@@ -12,8 +12,6 @@
   home-manager.users.alec.imports = [ ./hm.nix ];
 
   environment.systemPackages = with pkgs; [
-    godot
-    gimp3
     libreoffice
     gnome-sound-recorder
     gnome-disk-utility
@@ -42,8 +40,7 @@
     kernelParams = [ "amd_pstate=active" ];
     consoleLogLevel = 3; # Suppress ACPI BIOS firmware bug spam
 
-    initrd = { # AMD GPU support
-      kernelModules = [ "amdgpu" ];
+    initrd = {
       includeDefaultModules = false;
       compressor = "zstd";
       compressorArgs = [ "-19" "-T0" ];
@@ -62,23 +59,26 @@
 
   environment.persistence."/persist" = {
     directories = [ "/var/lib/flatpak" ]; # Sober
-    users.alec.directories = [
-      ".local/share/Steam" ".steam" # Steam
-      ".thunderbird" # Thunderbird
-      ".config/kdeconnect" # kdeconnect
+    users.alec = {
+      directories = [
+        ".local/share/Steam" ".steam" # Steam
+        ".thunderbird" # Thunderbird
+        ".config/kdeconnect" # kdeconnect
 
-      # apps
-      ".config/GIMP"
-      ".config/libreoffice"
-      ".config/kicad"
-      ".local/share/kicad"
-      ".FlashPrint5" # FlashPrint slicer
-      ".config/godot"
-      ".local/share/godot"
-      ".local/share/iotas"
-      ".config/aseprite"
-      ".local/share/kdenlive"
-    ];
+        # apps
+        ".config/GIMP"
+        ".config/libreoffice"
+        ".config/kicad"
+        ".local/share/kicad"
+        ".FlashPrint5" # FlashPrint slicer
+        ".config/godot"
+        ".local/share/godot"
+        ".local/share/iotas"
+        ".config/aseprite"
+        ".local/share/kdenlive"
+      ];
+      files = [ ".config/ponderosa/config.toml" ];
+    };
   };
 
   services = {
@@ -87,6 +87,7 @@
       enable = true;
       package = pkgs.scx.rustscheds;
       scheduler = "scx_lavd";
+      extraArgs = [ "--autopower" ];
     };
 
     udev = {

@@ -217,14 +217,13 @@ export default () =>
                                         && focusDevice() === device && self.get_mapped())
                                         self.grab_focus();
                                 };
-                                focusOnOpen(self, () => focusDevice() === device && self.get_mapped());
-
                                 self.connect('state-flags-changed', () => {
                                     if (self.has_focus) focusedDevice = device; // remember
                                 });
 
                                 const later = () => GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE,
                                     () => { refocus(); return GLib.SOURCE_REMOVE; });
+                                self.connect('map', later);
                                 hook(device, 'notify::connected', later);
                                 hook(device, 'notify::connecting', later);
 

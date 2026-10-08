@@ -18,7 +18,7 @@ in {
       main = {
         title = "Terminal";
         pad = "5x5";
-        font = "Iosevka Nerd Font Mono:size=9";
+        font = "Iosevka Nerd Font Mono:size=11";
       };
       cursor = {
         style = "beam";
@@ -26,7 +26,7 @@ in {
         blink = true;
         beam-thickness = 1;
       };
-      key-bindings.clipboard-paste = "Control+v XF86Paste";
+      key-bindings.clipboard-paste = "Control+Shift+v XF86Paste";
 
       colors-dark = nordColors // {
         alpha = 0.95;

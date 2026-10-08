@@ -22,6 +22,7 @@ in {
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
 
     bcache.enable = false; # dont need
+    initrd.systemd.tpm2.enable = false; # no TPM unlock! dont need
 
     # more ram on desktops so use more zram
     kernel.sysctl."vm.swappiness" = 180;
@@ -42,6 +43,7 @@ in {
     users.alec.imports = [ ../home-manager/home.nix ];
     backupFileExtension = "backup2";
     useGlobalPkgs = true; # Faster eval
+    useUserPackages = true; # skip nix-env profile install on boot
   };
   users.users.alec.shell = pkgs.fish; # default shell for ssh and foot
 
@@ -169,6 +171,9 @@ in {
     ];
     sleep.settings.Sleep.HibernateMode = "platform"; # ONLY POWER BUTTON FOR UNHIBERNATION
     oomd.enable = false; # earlyoom already handles OOM
+    tpm2.enable = false; # no TPM unlock, faster boot!
+    services.systemd-boot-random-seed.enable = false; # faster boot
+    services.greetd.serviceConfig.Type = lib.mkForce "simple"; # faster boot
 
     # we don't want these running
     user.services = lib.genAttrs [
@@ -293,6 +298,8 @@ in {
       settings.General = {
         Experimental = true; # battery reporting
         FastConnectable = true;
+      };
+      settings.Policy = {
         ReconnectAttempts = 7;
         ReconnectIntervals = "1,2,4,8,16,32,64";
       };

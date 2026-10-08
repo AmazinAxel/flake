@@ -12,10 +12,16 @@
       enable = true;
       settings = {
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+        CPU_BOOST_ON_BAT = 0;
 
         PLATFORM_PROFILE_ON_BAT = "low-power";
-        PCIE_ASPM_ON_BAT = "powersave";
+        PCIE_ASPM_ON_BAT = "powersupersave";
+        RUNTIME_PM_ON_BAT = "auto";
+        WIFI_PWR_ON_BAT = "on";
+
+        RADEON_DPM_PERF_LEVEL_ON_BAT = "low";
+        AMDGPU_ABM_LEVEL_ON_BAT = 1;
 
         # causes crackling noises otherwise
         SOUND_POWER_SAVE_ON_AC = 0;

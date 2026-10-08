@@ -19,7 +19,7 @@
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/FE43-9BB0";
     fsType = "vfat";
-    options = [ "fmask=0137" "dmask=0027" ];
+    options = [ "fmask=0137" "dmask=0027" "noauto" "x-systemd.automount" "x-systemd.idle-timeout=1min" ];
   };
 
 

@@ -3,6 +3,7 @@
     ./sway/keybinds.nix
     ./sway/sway.nix
 
+    ./aseprite.nix
     ./claude.nix
     ./fish.nix
     ./foot.nix

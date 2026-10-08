@@ -4,6 +4,7 @@ import Notifd from 'gi://AstalNotifd';
 import { notificationItem, invokeAction } from './notificationItem';
 import { createState, For, This, onCleanup } from 'ags';
 import { monitors } from '../../lib/monitors';
+import { focus } from '../focus';
 
 const { TOP, RIGHT } = Astal.WindowAnchor;
 export const [ streamingMode, setStreamingMode ] = createState(false);
@@ -15,7 +16,7 @@ export const [ notificationlist, setNotificationList ] = createState(new Array<N
 const notify = () => setNotificationList([...map.values()].reverse());
 
 const hidden = (n: Notifd.Notification) =>
-    (streamingMode.peek() && n.appName != 'batsignal')
+    ((streamingMode.peek() || focus.peek()) && n.appName != 'Low battery')
     || n.body.startsWith('Failed to connect to server'); // Hide annoying message
 
 notifd.connect("notified", (_, id) => {

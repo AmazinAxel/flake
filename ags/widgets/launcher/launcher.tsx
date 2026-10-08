@@ -5,12 +5,12 @@ import { createState, For } from 'ags';
 import { execAsync } from 'ags/process';
 import BackgroundSection from "../../lib/backgroundSection";
 import inputControl from '../../lib/inputControl';
+import { focus } from '../focus';
 
 const apps = new Apps.Apps();
 let textBox: Gtk.Entry;
 const [ appsList, setAppsList ] = createState(new Array<Apps.Application>());
 
-export const [ focus, setIsFocused ] = createState(false);
 const focusBlockedAppNames = ['discord', 'slack'];
 
 const blockable = (a: Apps.Application) =>

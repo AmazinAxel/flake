@@ -212,6 +212,16 @@ window .backgroundSection .header:first-child {
   -gtk-icon-shadow: 0 0 10px @light3;
 }
 
+#focusTask label {
+  margin-top: 6px;
+  border: 0.2rem solid @blue3;
+  border-top: none;
+  font-size: 2rem;
+  font-family: 'Hammersmith One';
+  padding: 0.2rem 0.4rem;
+  background-color: @dark1;
+}
+
 /* Workspace preview */
 #workspaces .statusElement {
   padding: 0.2rem 0;

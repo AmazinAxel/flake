@@ -11,7 +11,10 @@ let
     version = "1.0.0";
     src = skriptTreesitterSrc;
   };
-  helixPkg = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  # TODO drop override once tree-sitter-perl builds with glibc 2.44 (bsearch _Generic macro clash)
+  helixPkg = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+    includeGrammarIf = g: g.name != "perl";
+  };
 in
 {
   programs = {
@@ -89,13 +92,18 @@ in
             S-tab = "unindent";
             tab = "indent";
             C-s = [ "normal_mode" ":write" ]; # ctrl+S save
+            C-v = "paste_clipboard_before";
             C-r = [ ":reload" ]; # reload file
             C-q = [ ":quit" ]; # ctrl+Q quit
+            C-left = "move_prev_word_start";
+            C-right = "move_next_word_start";
           };
         in {
           normal = keybinds // {
             C-c = "yank_main_selection_to_clipboard";
             c = "toggle_comments";
+            space.f = "file_picker_in_current_directory";
+            space.F = "file_picker";
             space.m = "@:move <C-r>%<C-w>";
             space.x = [ ":sh rm '%{buffer_name}'"  ":buffer-close!" ];
             space.o = [ ":sh cp '%{buffer_name}' ./"  ":open %sh{basename '%{buffer_name}'}" ];
@@ -104,8 +112,10 @@ in
               ":vsplit /tmp/hx-diff-show.diff"
             ];
           };
-          insert = keybinds;
+          insert = keybinds // { tab = "insert_tab"; };
           select = keybinds // {
+            C-left = "extend_prev_word_start";
+            C-right = "extend_next_word_start";
             C-c = "yank_main_selection_to_clipboard";
             c = "toggle_comments";
           };

@@ -20,11 +20,11 @@ const script = (input: string, out: string, limit: number) => {
     const i = quote(input);
 
     return [
-        `vb=$(ffmpeg -i ${i} 2>&1 | awk -F'[ ,:]+' '/Duration:/ { d = $3*3600 + $4*60 + $5;`
-            + ` v = ${limit} * 7360000 / d - 128000; printf "%d", (v > 100000) ? v : 100000; exit }')`,
-        `ffmpeg -v error -y -i ${i} -c:v libx264 -preset veryfast -b:v "$vb"`
-            + ` -c:a aac -b:a 128k ${quote(out)}`
-    ].join('\n');
+        `d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 ${i})`,
+        `vb=$(awk -v d="$d" 'BEGIN { v = ${limit} * 7600000 / d - 128000; printf "%d", (v > 100000) ? v : 100000 }')`,
+        `ffmpeg -v error -y -i ${i} -c:v libx264 -preset veryfast -b:v "$vb" -maxrate "$vb" -bufsize "$((vb * 2))"`
+            + ` -c:a aac -b:a 128k -movflags +faststart ${quote(out)}`
+    ].join(' && \\\n');
 };
 
 const compress = async () => {

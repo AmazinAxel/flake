@@ -65,6 +65,8 @@
     initrd = {
       kernelModules = [ "amdgpu" ];
       includeDefaultModules = false;
+      compressor = "zstd";
+      compressorArgs = [ "-19" "-T0" ];
     };
     binfmt.emulatedSystems = [ "aarch64-linux" ];
     kernelParams = [
