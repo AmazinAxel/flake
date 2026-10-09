@@ -4,6 +4,7 @@ import { execAsync } from 'ags/process';
 import { timeout } from 'ags/time';
 import { createState } from 'ags';
 import AstalIO from 'gi://AstalIO';
+import GdkPixbuf from 'gi://GdkPixbuf';
 
 const themeCss = new Gtk.CssProvider();
 Gtk.StyleContext.add_provider_for_display(
@@ -14,6 +15,7 @@ export const [ isPlaying, setIsPlaying ] = createState(false);
 export const [ playlist, setPlaylist ] = createState(1);
 export const [ playlistName, setPlaylistName ] = createState('');
 export const [ wallpaperTexture, setWallpaperTexture ] = createState<Gdk.Texture | null>(null);
+export const [ wallpaperLight, setWallpaperLight ] = createState(false);
 
 // These playlists match with the folder names in ~/Music
 const playlists =      ['Study',  'Focus',  'Synthwave', 'Liked', 'SynthAmbient', 'Ambient'];
@@ -44,6 +46,8 @@ export const randomWallpaper = async () => {
     swaybg = AstalIO.Process.subprocessv(['swaybg', '-i', wallpaper, '-m', 'fill']);
     if (old) timeout(1000, () => old.kill());
     setWallpaperTexture(Gdk.Texture.new_from_filename(wallpaper));
+    const [r, g, b] = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper, 1, 1, false).get_pixels();
+    setWallpaperLight(0.299 * r + 0.587 * g + 0.114 * b > 150);
 };
 
 playlistName.subscribe(() => {

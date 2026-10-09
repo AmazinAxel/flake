@@ -192,7 +192,7 @@ export default () => {
     widthRequest={width}
   >
     <Gtk.EventControllerKey onKeyPressed={(_, key, __, state) => {
-      if (key === 114 && (state & Gdk.ModifierType.CONTROL_MASK) && currentPage)
+      if (Gdk.keyval_to_lower(key) === 114 && (state & Gdk.ModifierType.CONTROL_MASK) && currentPage)
         webviews[currentPage]?.reload(); // ctrl+R to reload page
     }}/>
     {stack}

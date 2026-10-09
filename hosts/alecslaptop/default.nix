@@ -76,6 +76,7 @@
         ".local/share/iotas"
         ".config/aseprite"
         ".local/share/kdenlive"
+        ".platformio" # dont break builds
       ];
       files = [ ".config/ponderosa/config.toml" ];
     };

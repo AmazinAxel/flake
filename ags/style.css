@@ -193,6 +193,11 @@ window .backgroundSection .header:first-child {
   font-size: 2rem;
 }
 
+.backgroundSection .header.light:first-child,
+.backgroundSection .header.light * {
+  color: @dark1;
+}
+
 .passGenIcon {
   color: @dark4;
   -gtk-icon-size: 1rem;

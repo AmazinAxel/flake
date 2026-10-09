@@ -1,5 +1,5 @@
 import { Gtk } from 'ags/gtk4';
-import { wallpaperTexture } from './mediaPlayer';
+import { wallpaperTexture, wallpaperLight } from './mediaPlayer';
 
 export default ({ header, content, height, width }: { header: any; content: any, height?: number, width: number }) =>
     <box
@@ -14,7 +14,7 @@ export default ({ header, content, height, width }: { header: any; content: any,
             orientation={Gtk.Orientation.VERTICAL}
             valign={Gtk.Align.START}
         >
-            <overlay cssClasses={['header']}>
+            <overlay cssClasses={wallpaperLight((l) => l ? ['header', 'light'] : ['header'])}>
                 <box cssClasses={['backgroundOverlay']}/>
                 <Gtk.Picture paintable={wallpaperTexture} contentFit={Gtk.ContentFit.COVER} cssClasses={['backgroundImage']} $type="overlay"/>
                 {header}

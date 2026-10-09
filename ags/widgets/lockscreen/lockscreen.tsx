@@ -47,7 +47,7 @@ const handleKeys = (entry: Gtk.Entry, key: number, state: Gdk.ModifierType) => {
     if (key == 65379) return true; // Insert
     if (!(state & Gdk.ModifierType.CONTROL_MASK)) return busy;
 
-    switch (key) {
+    switch (Gdk.keyval_to_lower(key)) {
         case 115: // S - sleep
             execAsync('systemctl suspend');
             break;
@@ -59,8 +59,7 @@ const handleKeys = (entry: Gtk.Entry, key: number, state: Gdk.ModifierType) => {
             break;
         case 99: // C - clear input
             break;
-        case 86: // V - do not paste from clipboard
-        case 118:
+        case 118: // V - no paste from clipboard!
             return true;
         default: return false;
     };

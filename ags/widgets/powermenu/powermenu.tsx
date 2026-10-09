@@ -1,11 +1,12 @@
 import app from 'ags/gtk4/app'
+import Gdk from 'gi://Gdk';
 import { execAsync } from 'ags/process';
 import { lockScreen } from '../lockscreen/lockscreen';
 import inputControl from '../../lib/inputControl';
 
 const handleKeys = (_ctrl: any, key: number) => {
    app.get_window('powermenu')?.hide();
-   switch (key) {
+   switch (Gdk.keyval_to_lower(key)) {
       case 115: // S - sleep
          lockScreen();
          execAsync('systemctl suspend');

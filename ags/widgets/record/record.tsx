@@ -1,11 +1,12 @@
 import { Gtk } from 'ags/gtk4';
+import Gdk from "gi://Gdk";
 import app from 'ags/gtk4/app'
 import BackgroundSection from "../../lib/backgroundSection";
 import { recMic, setRecMic, recQuality, startRec, setRecQuality, isRec, saveClip } from './service';
 import inputControl from "../../lib/inputControl";
 
 const handleKeys = (_ctrl: any, key: number) => {
-    switch (key) {
+    switch (Gdk.keyval_to_lower(key)) {
         case 32: // Space - start recording
             startRec();
             app.get_window('recordMenu')?.hide()
