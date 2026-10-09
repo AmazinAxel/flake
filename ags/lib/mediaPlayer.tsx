@@ -37,13 +37,16 @@ export const playPause = () => {
 };
 
 let swaybg: AstalIO.Process | null = null;
-playlistName.subscribe(() => {
-    const wallpaper = `/home/alec/Projects/flake/wallpapers/${playlistName.peek()}.jpg`;
+export const randomWallpaper = async () => {
+    const files = (await execAsync(['find', '/home/alec/Projects/flake/wallpapers', '-type', 'f'])).split('\n');
+    const wallpaper = files[Math.floor(Math.random() * files.length)];
     const old = swaybg;
     swaybg = AstalIO.Process.subprocessv(['swaybg', '-i', wallpaper, '-m', 'fill']);
     if (old) timeout(1000, () => old.kill());
     setWallpaperTexture(Gdk.Texture.new_from_filename(wallpaper));
+};
 
+playlistName.subscribe(() => {
     themeCss.load_from_string(`
         #status #mediaBtn { background-color: #${playlistColors[playlist.peek() - 1]}; }
     `);
@@ -65,6 +68,7 @@ export const chngPlaylist = (direction: musicAction) => {
 };
 
 export const initMedia = () => {
+    randomWallpaper();
     setPlaylistName('Study'); // Must set to invoke binds
     mpc('crossfade 2', 'clear', `add ${playlistName.peek()}/`, 'shuffle');
 };

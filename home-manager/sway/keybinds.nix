@@ -82,6 +82,7 @@ in {
       # Ags
       "${mod}+space" = "exec ags toggle launcher";
       "${mod}+P" = "exec ags toggle pass";
+      "${mod}+I" = "exec ags request randomWallpaper";
       "${mod}+period" = "exec ags toggle emojiPicker";
       "${mod}+X" = "exec ags request closeAsideStatusMenuWidget";
       "control+${mod}+P" = "exec ags toggle passSave";
